@@ -13,6 +13,22 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 
 ---
 
+## 2026-09-26: Firmware v0.1 (steppers)
+
+**Goal:** Smooth, non-blocking control of 8 steppers from the PC, behind a HAL that the SCS0009 servos can later plug into.
+
+**Setup:** PlatformIO, espressif32 / Arduino, `esp32-s3-devkitc-1` board with 16 MB flash, PSRAM off, USB CDC on boot.
+
+**Result:**
+- Builds cleanly: RAM 5.9%, flash 4.1%.
+- Motion profile (trapezoidal, step-by-step: v² ± 2a per step) tested on the PC: ends exactly on target; a 4000-step move takes 5.506 s (ideal 5.5 s); reverses cleanly mid-move; worst step-to-step acceleration 1761 vs a 1600 steps/s² limit (discretisation).
+- Half-step mode for smoothness. Coils are released after 1 s idle to respect the 5 V / 2 A supply. The coil phase is kept continuous across `Z` (re-zeroing), so there's no jump when re-energizing.
+- **Not yet tested on hardware**; the hand isn't finished.
+
+**Conclusion / next:** PC-side Python client + digital twin v1 (MuJoCo sliders drive the real hand). On hardware: first power-on checklist in `firmware/README.md`, direction check and scale calibration per joint.
+
+---
+
 ## 2026-09-26: First MuJoCo model
 
 **Goal:** Load the thumb + index in MuJoCo with correct physics and joint conventions.

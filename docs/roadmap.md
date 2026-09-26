@@ -21,11 +21,12 @@ Set up the project so everything after it is easy.
 ## Phase 1: Thumb + index moving smoothly (steppers)
 Make the current 8-joint prototype move cleanly, and control it from the PC.
 
-- [ ] Firmware skeleton in PlatformIO; all motor pins LOW at boot, PSRAM disabled
-- [ ] Motor **hardware abstraction layer** (`MotorDriver` interface) + `Uln2003StepperDriver`
-- [ ] Smooth motion: acceleration/deceleration ramps, non-blocking stepping of all 8 motors at once
-- [ ] Coil release when idle (power budget: 5 V / 2 A)
-- [ ] PC ↔ ESP32 serial protocol (joint targets in, estimated joint states out)
+- [x] Firmware skeleton in PlatformIO; all motor pins LOW at boot, PSRAM disabled
+- [x] Motor **hardware abstraction layer** (`MotorDriver` interface) + `Uln2003Stepper`
+- [x] Smooth motion: acceleration/deceleration ramps, non-blocking stepping of all 8 motors at once (tested on PC; hardware test pending)
+- [x] Coil release when idle (power budget: 5 V / 2 A)
+- [x] PC ↔ ESP32 serial protocol, firmware side (text v0.1)
+- [ ] PC-side serial client
 - [ ] Python `Hand` API with `RealHand` and `SimHand` backends
 - [ ] Per-joint calibration: steps per radian, direction, limits
 - [ ] **Digital twin v1:** sim mirrors the commanded pose. Control the real hand from the MuJoCo sliders.

@@ -118,6 +118,8 @@ Every folder has a README explaining what goes there. Keep them current.
   - Firmware has a `MotorDriver` interface with `Uln2003StepperDriver` now and `Scs0009ServoDriver` later. Joint-level code never talks to pins directly.
   - PC has a `Hand` interface with interchangeable backends: `SimHand` (MuJoCo), `RealHand` (serial), and a mirror/digital-twin mode.
 - **All joint commands are in joint space**, SI units (rad). The ESP32 converts to steps or servo ticks using per-joint calibration.
+- **Firmware v0.1** (`firmware/`, see its README): `MotorDriver` HAL, `Uln2003Stepper` (half-step, 4076 steps/rev), trapezoidal `MotionProfile` (defaults 800 steps/s, 1600 steps/s², hard cap 1000 steps/s), coils released after 1 s idle, text protocol (`P/J/S/X/R/Z/M/K/V/I`), joint targets clamped to limits. Scale defaults to 1:1 (648.7 steps/rad) until calibrated per joint.
+- Build: `pio run` in `firmware/`. Motion-profile unit tests run on the PC with `uvx --from ziglang` (command in `firmware/test/host/test_motion_profile.cpp`).
 - **Serial link:** native USB CDC. The baud rate setting is ignored for native USB (it always runs at USB speed), but keep it at 921600 for tools that need a value.
 
 ## Licensing (decided 2026-09-26)

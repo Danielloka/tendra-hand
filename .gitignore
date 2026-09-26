@@ -1,0 +1,64 @@
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.env
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+
+# ---------- MuJoCo / simulation ----------
+MUJOCO_LOG.TXT
+*.mjb
+sim/**/output/
+sim/**/renders/
+
+# ---------- AI / experiments ----------
+# Large or generated artifacts; publish final models via GitHub Releases or Hugging Face
+runs/
+wandb/
+outputs/
+checkpoints/
+*.ckpt
+*.pt
+*.pth
+*.onnx
+*.npz
+research/experiments/**/data/raw/
+
+# ---------- ESP32 / PlatformIO / Arduino ----------
+.pio/
+.pioenvs/
+.piolibdeps/
+firmware/**/build/
+*.elf
+*.bin
+*.map
+
+# ---------- CAD / 3D printing ----------
+# Fusion 360 backup and lock files (keep .f3d and .step)
+*.f3d.bak
+~$*
+*.gcode
+*.bgcode
+
+# ---------- Editors ----------
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+
+# ---------- OS ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/

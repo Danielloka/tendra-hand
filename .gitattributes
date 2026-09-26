@@ -1,0 +1,20 @@
+# Normalize line endings: store text as LF in the repo
+* text=auto eol=lf
+
+# Windows-only scripts keep CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# CAD, meshes and other binaries: never touch
+*.stl binary
+*.STL binary
+*.3mf binary
+*.step binary
+*.stp binary
+*.f3d binary
+*.png binary
+*.jpg binary
+*.gif binary
+*.pdf binary
+*.mp4 binary

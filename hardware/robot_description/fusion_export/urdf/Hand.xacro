@@ -1,0 +1,260 @@
+<?xml version="1.0" ?>
+<robot name="Hand" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find Hand_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find Hand_description)/urdf/Hand.trans" />
+<xacro:include filename="$(find Hand_description)/urdf/Hand.gazebo" />
+<link name="base_link">
+  <inertial>
+    <origin xyz="-0.03777068462234341 0.02327196685078711 0.006594720592782829" rpy="0 0 0"/>
+    <mass value="0.5460361346454996"/>
+    <inertia ixx="0.000295" iyy="0.000629" izz="0.000375" ixy="-1.3e-05" iyz="-2e-06" ixz="-4.9e-05"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="Indexfix_1">
+  <inertial>
+    <origin xyz="2.2304717936030838e-05 0.006517871144740152 0.006450604350141623" rpy="0 0 0"/>
+    <mass value="0.01603110386594604"/>
+    <inertia ixx="1e-06" iyy="1e-06" izz="0.0" ixy="0.0" iyz="-0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.008531 -0.012523 -0.059976" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/Indexfix_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.008531 -0.012523 -0.059976" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/Indexfix_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="Indexend_1">
+  <inertial>
+    <origin xyz="0.005500094052565433 0.00011252611470038282 0.01872282860307055" rpy="0 0 0"/>
+    <mass value="0.041407323431063965"/>
+    <inertia ixx="6e-06" iyy="6e-06" izz="1e-06" ixy="0.0" iyz="0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.014031 -0.019023 -0.078976" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/Indexend_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.014031 -0.019023 -0.078976" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/Indexend_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="Indexmiddle_1">
+  <inertial>
+    <origin xyz="0.00551302966278297 0.00024944179119607 0.009722196457126825" rpy="0 0 0"/>
+    <mass value="0.02101649364830199"/>
+    <inertia ixx="2e-06" iyy="1e-06" izz="1e-06" ixy="0.0" iyz="0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.014031 -0.019023 -0.118976" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/Indexmiddle_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.014031 -0.019023 -0.118976" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/Indexmiddle_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="Indextip_1">
+  <inertial>
+    <origin xyz="0.005493257746451662 -0.0002846037536686323 0.009522164207143607" rpy="0 0 0"/>
+    <mass value="0.022704811734369713"/>
+    <inertia ixx="2e-06" iyy="1e-06" izz="0.0" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.014031 -0.019023 -0.141976" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/Indextip_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.014031 -0.019023 -0.141976" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/Indextip_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="Thumbroll_1">
+  <inertial>
+    <origin xyz="9.186167287673669e-05 -0.0013490725238598789 -0.02712996583655558" rpy="0 0 0"/>
+    <mass value="0.03694987232707526"/>
+    <inertia ixx="8e-06" iyy="9e-06" izz="3e-06" ixy="0.0" iyz="-0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.001 -0.015524 -0.038476" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/Thumbroll_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.001 -0.015524 -0.038476" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/Thumbroll_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="Thumbend_1">
+  <inertial>
+    <origin xyz="0.011004986490972316 -0.01762966389249578 -0.0006197567673547743" rpy="0 0 0"/>
+    <mass value="0.05264211961831972"/>
+    <inertia ixx="8e-06" iyy="2e-06" izz="9e-06" ixy="0.0" iyz="-0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.01 -0.010024 -0.011376" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/Thumbend_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.01 -0.010024 -0.011376" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/Thumbend_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="Thumbmiddle_1">
+  <inertial>
+    <origin xyz="0.005419702611819439 -0.014854927488871128 0.005230471286483964" rpy="0 0 0"/>
+    <mass value="0.04992622344198199"/>
+    <inertia ixx="6e-06" iyy="2e-06" izz="6e-06" ixy="-0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.004303 0.031976 -0.006073" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/Thumbmiddle_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.004303 0.031976 -0.006073" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/Thumbmiddle_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="Thumbtip_1">
+  <inertial>
+    <origin xyz="0.005111507331948879 -0.008822894678284787 0.005523429376397139" rpy="0 0 0"/>
+    <mass value="0.03466320649263508"/>
+    <inertia ixx="3e-06" iyy="1e-06" izz="3e-06" ixy="-0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.004303 0.066976 -0.006073" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/Thumbtip_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.004303 0.066976 -0.006073" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Hand_description/meshes/Thumbtip_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="Revolute 1" type="revolute">
+  <origin xyz="-0.008531 0.012523 0.059976" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="Indexfix_1"/>
+  <axis xyz="-0.0 1.0 0.0"/>
+  <limit upper="0.261799" lower="-0.261799" effort="100" velocity="100"/>
+</joint>
+
+<joint name="Revolute 2" type="revolute">
+  <origin xyz="-0.0055 0.0065 0.019" rpy="0 0 0"/>
+  <parent link="Indexfix_1"/>
+  <child link="Indexend_1"/>
+  <axis xyz="1.0 -0.0 0.0"/>
+  <limit upper="1.658063" lower="-0.087266" effort="100" velocity="100"/>
+</joint>
+
+<joint name="Revolute 3" type="revolute">
+  <origin xyz="0.0 0.0 0.04" rpy="0 0 0"/>
+  <parent link="Indexend_1"/>
+  <child link="Indexmiddle_1"/>
+  <axis xyz="1.0 0.0 0.0"/>
+  <limit upper="1.658063" lower="-0.087266" effort="100" velocity="100"/>
+</joint>
+
+<joint name="Revolute 4" type="revolute">
+  <origin xyz="0.0 0.0 0.023" rpy="0 0 0"/>
+  <parent link="Indexmiddle_1"/>
+  <child link="Indextip_1"/>
+  <axis xyz="1.0 0.0 0.0"/>
+  <limit upper="1.658063" lower="-0.087266" effort="100" velocity="100"/>
+</joint>
+
+<joint name="Revolute 5" type="revolute">
+  <origin xyz="0.001 0.015524 0.038476" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="Thumbroll_1"/>
+  <axis xyz="-0.0 0.0 -1.0"/>
+  <limit upper="0.698132" lower="-1.745329" effort="100" velocity="100"/>
+</joint>
+
+<joint name="Revolute 6" type="revolute">
+  <origin xyz="-0.011 -0.0055 -0.0271" rpy="0 0 0"/>
+  <parent link="Thumbroll_1"/>
+  <child link="Thumbend_1"/>
+  <axis xyz="1.0 0.0 0.0"/>
+  <limit upper="0.226893" lower="-1.396263" effort="100" velocity="100"/>
+</joint>
+
+<joint name="Revolute 7" type="revolute">
+  <origin xyz="0.005697 -0.042 -0.005303" rpy="0 0 0"/>
+  <parent link="Thumbend_1"/>
+  <child link="Thumbmiddle_1"/>
+  <axis xyz="0.707107 0.0 0.707107"/>
+  <limit upper="0.087266" lower="-1.658063" effort="100" velocity="100"/>
+</joint>
+
+<joint name="Revolute 8" type="revolute">
+  <origin xyz="0.0 -0.035 0.0" rpy="0 0 0"/>
+  <parent link="Thumbmiddle_1"/>
+  <child link="Thumbtip_1"/>
+  <axis xyz="-0.707107 -0.0 -0.707107"/>
+  <limit upper="1.658063" lower="-0.087266" effort="100" velocity="100"/>
+</joint>
+
+</robot>

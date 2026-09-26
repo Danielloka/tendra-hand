@@ -46,7 +46,11 @@ Shell notes: use forward slashes / Git Bash syntax in the Bash tool. The project
 
 ### Motor ↔ joint ↔ pin map
 
-Sign convention: **positive = flex (bend), negative = extend.** `q = 0` means the joint is straight.
+Sign convention: **positive = closing the hand, negative = opening.** `q = 0` means the joint is straight (manual homing pose).
+- Flexion joints: positive bends toward the palm side (−Y in the model).
+- `thumb_cmc_rot`: positive swings the thumb across the palm (opposition, toward −X where the other fingers will be). Range −100°…+40°. At 0° the thumb points straight out of the palm.
+- `index_mcp_abd`: positive moves the index toward the thumb side (+X).
+- The physical motor direction for "positive" must be verified per motor during calibration.
 
 | Motor | IN1 IN2 IN3 IN4 | Joint (new name) | URDF original | Anatomy |
 |---|---|---|---|---|
@@ -98,6 +102,11 @@ Every folder has a README explaining what goes there. Keep them current.
   - `Indexfix_1.stl` has 2 open edges.
   - The export's `LICENSE` and `package.xml` are fusion2urdf template leftovers, not the owner's.
 - Joint limits in the URDF are **close to the real hand's** (owner-confirmed).
+- **Generated model:** `sim/models/tendra_hand.xml`, produced by `uv run python sim/convert.py`. It is committed so people can use it without running the converter. After changing `convert.py` or the export, re-run it; `uv run pytest` fails if the model is stale.
+  - PLA density 1240 kg/m³ (solid), 131 g total. Printed parts are lighter; update after weighing.
+  - Inertia computed from the meshes (`exact`; `legacy` for the defective `Indexfix_1`).
+  - Position actuators in motor order, kp 0.5 N·m/rad, ±0.05 N·m (placeholders until system identification).
+  - Contact excludes: palm ↔ direct children (the palm is welded to the world, so MuJoCo's parent filter doesn't apply), and palm ↔ thumb_metacarpal (a convex-hull artifact). Proper fix: convex decomposition of the palm.
 - DOF now: 8 (index 4, thumb 4). A human thumb has 5, so the thumb design needs a revisit before the full hand.
 
 ## Software architecture

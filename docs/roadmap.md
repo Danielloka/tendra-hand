@@ -10,10 +10,11 @@ Set up the project so everything after it is easy.
 
 - [x] Project structure, CLAUDE.md, READMEs
 - [x] Inspect the Fusion URDF export and document its problems
-- [ ] Git + public GitHub repo, licenses
-- [ ] Python environment (uv, Python 3.12, MuJoCo)
-- [ ] Converter: Fusion export → cleaned URDF + MuJoCo MJCF (PLA masses, valid inertias, joint names, flexion-positive)
-- [ ] MuJoCo viewer with a slider per joint
+- [x] Git + public GitHub repo, licenses
+- [x] Python environment (uv, Python 3.12, MuJoCo)
+- [x] Converter: Fusion export → MuJoCo MJCF (PLA masses, valid inertias, joint names, closing-positive)
+- [x] MuJoCo viewer with a slider per joint
+- [ ] Owner checks the sim motions against the real hand
 
 **Done when:** the hand model loads in MuJoCo with correct joint limits and can be posed with sliders.
 
@@ -48,6 +49,7 @@ Get position feedback, frees up GPIO pins, and removes manual homing.
 Make the hardware robust and the simulation realistic.
 
 - [ ] Tendon routing, friction and pre-tension study; model tendons in MuJoCo
+- [ ] Convex decomposition of the palm (and other concave parts) for accurate contact
 - [ ] TPU fingertip pads
 - [ ] **System identification:** measure real speed, friction and backlash, and tune the sim to match
 - [ ] Redesign the thumb toward 5 DOF (human-like opposition)

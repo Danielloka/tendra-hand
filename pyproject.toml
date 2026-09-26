@@ -1,0 +1,28 @@
+[project]
+name = "tendra-hand"
+version = "0.1.0"
+description = "Open-source tendon-driven robotic hand: simulation, control and AI"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "mujoco>=3.3",
+    "numpy>=2.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "ruff>=0.6",
+]
+
+[tool.uv]
+# Scripts-only for now; becomes an installable package when software/ gets code.
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["sim/tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

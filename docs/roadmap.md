@@ -14,7 +14,7 @@ Set up the project so everything after it is easy.
 - [x] Python environment (uv, Python 3.12, MuJoCo)
 - [x] Converter: Fusion export → MuJoCo MJCF (PLA masses, valid inertias, joint names, closing-positive)
 - [x] MuJoCo viewer with a slider per joint
-- [ ] Owner checks the sim motions against the real hand
+- [x] Owner checks the sim motions against the real hand (confirmed 2026-09-26)
 
 **Done when:** the hand model loads in MuJoCo with correct joint limits and can be posed with sliders.
 

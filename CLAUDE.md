@@ -30,12 +30,13 @@
 | Smart App Control | Turned **off** (2026-09-26); it had blocked MuJoCo's DLLs. Verified: MuJoCo 3.14.0 imports on Python 3.12 via uv. |
 
 Shell notes: use forward slashes / Git Bash syntax in the Bash tool. The project path has no spaces.
+Tidy root: `.git`, `.venv`, `.gitignore` and `.gitattributes` have the Windows *hidden* attribute. pytest/ruff caches live in `.venv/` (set in `pyproject.toml`). Keep new tool caches out of the root too.
 
 ## Hardware (current prototype: thumb + index)
 
 - 3D-printed rigid skeleton, PLA/PETG. TPU fingertip pads are planned.
 - **Tendon-driven.** Each joint is driven independently by **one motor that both flexes and extends** it (an antagonistic tendon loop on one spool).
-- Motor spool: **≈1 cm** (radius vs. diameter still to confirm). The joint-side moment arm is unknown, so steps-per-radian is **calibrated empirically** per joint.
+- Motor spool: **radius 1 cm** (diameter 2 cm), so one output revolution pulls ≈62.8 mm of tendon, or ≈0.031 mm per full step. The joint-side moment arm is unknown, so steps-per-radian is **calibrated empirically** per joint.
 - **Actuators now:** 8× **28BYJ-48 (5 V)** unipolar steppers + **ULN2003** driver boards.
   - Gear ratio ≈ 63.68:1, so **≈2038 steps/output rev (full-step)** and ≈4076 (half-step). Top speed ≈ 15 rpm.
   - Open loop, with no position feedback. **Homing is manual:** before power-up the owner straightens every joint, and that pose is `q = 0`.
@@ -63,7 +64,7 @@ Sign convention: **positive = closing the hand, negative = opening.** `q = 0` me
 | 7 | **36, 35, 0**, 45 | `thumb_cmc_flex` | Revolute 6 | Thumb 3rd joint from tip |
 | 8 | **48**, 47, 21, **43** | `thumb_cmc_rot` | Revolute 5 | Thumb base rotation ("other direction") |
 
-The motor 7/8 anatomy mapping is inferred from the owner's description. **Verify it on the real hand.**
+The mapping and the joint directions were confirmed by the owner in the MuJoCo viewer (2026-09-26).
 
 ### ⚠️ Pin constraints (ESP32-S3-N16R8)
 

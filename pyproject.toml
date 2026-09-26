@@ -22,7 +22,9 @@ package = false
 
 [tool.pytest.ini_options]
 testpaths = ["sim/tests"]
+cache_dir = ".venv/.pytest_cache"  # keep the repo root tidy
 
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+cache-dir = ".venv/.ruff_cache"  # keep the repo root tidy

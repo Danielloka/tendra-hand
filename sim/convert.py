@@ -246,7 +246,7 @@ def main() -> None:
         "Do not edit by hand: change convert.py and re-run it. -->\n"
     )
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUT_PATH.write_text(header + ET.tostring(mjcf, encoding="unicode") + "\n", encoding="utf-8")
+    OUT_PATH.write_text(header + ET.tostring(mjcf, encoding="unicode") + "\n", encoding="utf-8", newline="\n")
     print(f"Wrote {OUT_PATH.relative_to(ROOT)}")
 
 

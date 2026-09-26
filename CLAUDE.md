@@ -26,7 +26,7 @@
 | CPU / RAM | Intel i3-1125G4 (4 cores), 16 GB |
 | GPU | Intel UHD (integrated). **No NVIDIA**, so Isaac Sim/Lab can't run locally; use MuJoCo on CPU, and cloud GPUs for heavy training later |
 | Python | system 3.14.6; `uv` installed. Project uses a **uv-managed venv with Python 3.12** for library compatibility |
-| Firmware tools | **PlatformIO** (VS Code) with the Arduino framework |
+| Firmware tools | **PlatformIO** with the Arduino framework: VS Code extension (owner) + PlatformIO Core 6.2 CLI via `uv tool` (`pio`, used by Claude to build and flash) |
 | Smart App Control | Turned **off** (2026-09-26); it had blocked MuJoCo's DLLs. Verified: MuJoCo 3.14.0 imports on Python 3.12 via uv. |
 
 Shell notes: use forward slashes / Git Bash syntax in the Bash tool. The project path has no spaces.

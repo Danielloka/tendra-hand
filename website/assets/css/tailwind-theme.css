@@ -1,0 +1,47 @@
+/* ==========================================================================
+   Tailwind CSS v4 mapping — only needed if the site adopts Tailwind.
+
+   Usage (in the app's main CSS):
+     @import "tailwindcss";
+     @import "./tokens.css";
+     @import "./tailwind-theme.css";
+
+   `inline` makes utilities reference the CSS variables, so classes like
+   bg-bg-alt or text-accent-ink switch automatically with data-theme.
+   ========================================================================== */
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-alt: var(--bg-alt);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-text-faint: var(--text-faint);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-ink: var(--accent-ink);
+  --color-on-accent: var(--on-accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warm: var(--warm);
+  --color-warm-soft: var(--warm-soft);
+
+  /* font-sans, font-mono, radius-*, shadow-* and ease-* already use Tailwind's
+     names in tokens.css. It is unlayered, so it overrides Tailwind's defaults. */
+
+  --text-display: var(--fs-display);
+  --text-h1: var(--fs-h1);
+  --text-h2: var(--fs-h2);
+  --text-h3: var(--fs-h3);
+  --text-h4: var(--fs-h4);
+  --text-lead: var(--fs-lead);
+  --text-body: var(--fs-body);
+  --text-small: var(--fs-small);
+  --text-caption: var(--fs-caption);
+}

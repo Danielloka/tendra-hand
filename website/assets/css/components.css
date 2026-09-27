@@ -1,0 +1,361 @@
+/* ==========================================================================
+   Components. Requires tokens.css + base.css.
+   BEM-ish naming: .block, .block__part, .block--variant
+   ========================================================================== */
+
+/* ---- Navigation -----------------------------------------------------------
+   Transparent at the top; frosted glass + hairline once .is-scrolled is set. */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+.nav.is-scrolled {
+  background: var(--nav-glass);
+  border-bottom-color: var(--border);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+.nav__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  height: 3.5rem;
+}
+.nav__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.nav__brand:hover { text-decoration: none; }
+.nav__brand-mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, var(--accent), #5aa9ff);
+}
+.nav__inner > nav { margin-left: auto; }
+.nav__links {
+  display: flex;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nav__link {
+  display: inline-block;
+  padding: 0.4rem 0.75rem;
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  border-radius: var(--radius-pill);
+}
+.nav__link:hover { color: var(--text); text-decoration: none; }
+.nav__link[aria-current="page"] { color: var(--text); font-weight: 500; }
+.nav__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+@media (max-width: 63.99rem) { /* 7 links + actions need ~1000px */
+  .nav__links { display: none; } /* a menu sheet comes with the real site */
+  .nav__actions { margin-left: auto; }
+}
+
+/* Round icon button (theme toggle) */
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.icon-btn:hover { background: var(--bg-alt); color: var(--text); }
+.icon-btn svg { width: 18px; height: 18px; }
+.theme-toggle .icon-sun { display: none; }
+:root[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+:root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
+/* ---- Buttons --------------------------------------------------------------
+   Pill-shaped. Primary = blue fill, secondary = soft grey fill,
+   ghost = text link with a chevron ("Learn more ›"). */
+.btn {
+  --btn-h: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  height: var(--btn-h);
+  padding-inline: 1.35rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+.btn:hover { text-decoration: none; }
+.btn:active { transform: scale(0.98); }
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.4;
+  pointer-events: none;
+}
+.btn svg { width: 14px; height: 14px; flex: none; }
+.btn .btn__chevron { transition: transform var(--dur-base) var(--ease-out); }
+.btn:hover .btn__chevron { transform: translateX(2px); }
+
+.btn--primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.btn--primary:hover {
+  background: var(--accent-hover);
+  color: var(--on-accent);
+  box-shadow: 0 6px 20px -6px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.btn--secondary {
+  background: var(--bg-alt);
+  color: var(--text);
+}
+.section--alt .btn--secondary { background: var(--surface); }
+.btn--secondary:hover {
+  background: var(--border);
+  color: var(--text);
+}
+/* Dark: --bg-alt is barely lighter than --bg (and darker than the nav glass),
+   so the pill would almost vanish. Lift it one step. */
+:root[data-theme="dark"] .btn--secondary { background: var(--surface-raised); }
+:root[data-theme="dark"] .btn--secondary:hover { background: var(--border); }
+
+.btn--outline {
+  border-color: var(--accent);
+  background: transparent;
+  color: var(--accent-ink);
+}
+.btn--outline:hover {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+.btn--ghost {
+  height: auto;
+  padding: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--accent-ink);
+}
+.btn--ghost:hover { text-decoration: underline; text-underline-offset: 0.18em; }
+.btn--ghost:active { transform: none; }
+
+.btn--sm { --btn-h: 2.125rem; padding-inline: 1rem; font-size: var(--fs-small); }
+.btn--lg { --btn-h: 3.25rem; padding-inline: 1.75rem; font-size: 1.0625rem; }
+
+/* ---- Card -----------------------------------------------------------------
+   Soft rounded tile. On hover: lifts slightly and a "Learn more" line appears. */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background: var(--bg-alt);
+  border-radius: var(--radius-lg);
+  color: var(--text);
+  overflow: hidden;
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out);
+}
+.section--alt .card { background: var(--surface); }
+a.card:hover { text-decoration: none; color: var(--text); }
+.card__media {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 10;
+  margin: calc(var(--space-6) * -1) calc(var(--space-6) * -1) var(--space-3);
+  background: var(--media-bg, linear-gradient(160deg, #eef4fd, #f7f7f9));
+  color: var(--accent);
+}
+:root[data-theme="dark"] .card__media { --media-bg: linear-gradient(160deg, #10233b, #1c1c1e); }
+.card__media svg { width: 34%; height: auto; }
+.card__kicker { font-size: var(--fs-caption); font-weight: 600; color: var(--text-muted); }
+.card__title { font-size: var(--fs-h4); font-weight: 600; letter-spacing: -0.015em; }
+.card__body { color: var(--text-muted); font-size: 0.9375rem; line-height: 1.55; }
+.card__more {
+  margin-top: auto;
+  padding-top: var(--space-3);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--accent-ink);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+}
+.card__more::after { content: " ›"; }
+
+a.card:hover,
+a.card:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+a.card:hover .card__more,
+a.card:focus-visible .card__more {
+  opacity: 1;
+  transform: none;
+}
+/* Touch screens have no hover, so show the link line permanently */
+@media (hover: none) {
+  .card__more { opacity: 1; transform: none; }
+}
+
+/* ---- Section header ------------------------------------------------------ */
+.section-head {
+  display: grid;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+  max-width: 44rem;
+}
+.section-head--center {
+  margin-inline: auto;
+  text-align: center;
+  justify-items: center;
+}
+.section-head__lead { color: var(--text-muted); font-size: var(--fs-lead); line-height: 1.45; letter-spacing: -0.01em; }
+
+/* ---- Spec table -----------------------------------------------------------
+   <dl class="spec"> with rows of <div class="spec__row"><dt/><dd/></div> */
+.spec { margin: 0; }
+.spec__row {
+  display: grid;
+  grid-template-columns: minmax(8rem, 2fr) 3fr;
+  gap: var(--space-4);
+  align-items: baseline;
+  padding-block: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.spec__row:first-child { border-top: 1px solid var(--border); }
+.spec dt { font-weight: 600; font-size: 0.9375rem; }
+.spec dd {
+  margin: 0;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.spec dd strong { color: var(--text); font-weight: 500; }
+
+/* ---- Tag (status) -------------------------------------------------------- */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-pill);
+  background: var(--bg-alt);
+  font-size: var(--fs-caption);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.section--alt .tag { background: var(--surface); }
+.tag--accent { background: var(--accent-soft) !important; color: var(--accent-ink); }
+.tag--success { background: var(--success-soft) !important; color: var(--success); }
+.tag--warm { background: var(--warm-soft) !important; color: var(--warm); }
+.tag__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.tag--live .tag__dot { animation: pulse 2s var(--ease-out) infinite; }
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 50%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 6px transparent; }
+}
+
+/* ---- Code block ---------------------------------------------------------- */
+.code {
+  margin: 0;
+  overflow: hidden;
+  background: var(--bg-alt);
+  border-radius: var(--radius-md);
+}
+.section--alt .code { background: var(--surface); }
+.code__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 0.75rem 1rem 0 1.25rem;
+}
+.code__file { font-size: var(--fs-caption); color: var(--text-muted); }
+.code__copy { font-size: var(--fs-caption); }
+.code__copy[data-copied] { color: var(--success); }
+.code pre {
+  margin: 0;
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.75;
+  tab-size: 4;
+  color: var(--text);
+}
+.code pre:focus-visible { outline-offset: -2px; }
+.tok-c { color: var(--text-muted); }                 /* comment */
+.tok-k { color: #a2349f; }                           /* keyword */
+.tok-s { color: #b4441b; }                           /* string */
+.tok-n { color: #1c52b8; }                           /* number */
+.tok-f { color: #2f5d8a; }                           /* function */
+.tok-p { color: var(--text-muted); }                 /* punctuation / prompt */
+:root[data-theme="dark"] .tok-k { color: #ff7ac6; }
+:root[data-theme="dark"] .tok-s { color: #ff9f7a; }
+:root[data-theme="dark"] .tok-n { color: #8ab8ff; }
+:root[data-theme="dark"] .tok-f { color: #7fc8ff; }
+
+/* ---- Stat (count-up numbers) --------------------------------------------- */
+.stat { display: grid; gap: var(--space-1); }
+.stat__value {
+  font-size: var(--fs-h1);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.stat__unit {
+  margin-left: 0.12em;
+  font-size: 0.45em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.stat__label { color: var(--text-muted); font-size: 0.9375rem; }
+
+/* ---- Feature panel: large rounded area for hero images / renders --------- */
+.panel {
+  border-radius: var(--radius-xl);
+  background: var(--bg-alt);
+  padding: clamp(1.5rem, 1rem + 3vw, 3.5rem);
+}
+.section--alt .panel { background: var(--surface); }

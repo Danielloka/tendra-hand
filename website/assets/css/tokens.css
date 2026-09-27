@@ -1,0 +1,129 @@
+/* ==========================================================================
+   Tendra Hand — design tokens
+   Clean, open, friendly. Light is the default; dark is opt-in via
+   <html data-theme="dark">.
+
+   Every component reads these variables; never hard-code colours elsewhere.
+   Contrast ratios are measured live on /styleguide (target: WCAG AA).
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* ---- Colour: light (default) ------------------------------------------ */
+  --bg: #ffffff;
+  --bg-alt: #f5f5f7;           /* alternating sections, like Apple's grey bands */
+  --surface: #ffffff;          /* cards */
+  --surface-raised: #fbfbfd;   /* hover, code blocks */
+  --border: #e3e3e8;           /* hairlines */
+  --border-strong: #c9c9d0;
+  --text: #1d1d1f;             /* near-black, softer than #000 */
+  --text-muted: #6e6e73;
+  --text-faint: #a1a1a6;       /* decorative only — not for body text */
+
+  --accent: #0066cc;           /* calm blue — links, primary buttons, focus */
+  --accent-hover: #0055b0;
+  --accent-ink: #0066cc;       /* accent-coloured TEXT (same as accent in light) */
+  --on-accent: #ffffff;
+  --accent-soft: #e8f1fd;      /* tinted backgrounds (tags, highlights) */
+
+  --success: #16733f;
+  --success-soft: #e6f4ea;
+  --warm: #975000;             /* "in progress" status */
+  --warm-soft: #fdf1e3;
+
+  --nav-glass: rgb(255 255 255 / 0.78);
+
+  /* ---- Typography ------------------------------------------------------- */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-sans);
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+
+  /* Fluid sizes: min at ~360px viewport, max at ~1440px */
+  --fs-display: clamp(2.75rem, 1.6rem + 5.6vw, 6.5rem);
+  --fs-h1: clamp(2.25rem, 1.6rem + 3.2vw, 4.25rem);
+  --fs-h2: clamp(1.75rem, 1.35rem + 2vw, 3rem);
+  --fs-h3: clamp(1.35rem, 1.18rem + 0.8vw, 1.875rem);
+  --fs-h4: clamp(1.125rem, 1.07rem + 0.25vw, 1.25rem);
+  --fs-lead: clamp(1.15rem, 1.05rem + 0.5vw, 1.5rem);
+  --fs-body: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);
+  --fs-small: 0.875rem;
+  --fs-caption: 0.8125rem;
+
+  --lh-tight: 1.02;
+  --lh-heading: 1.1;
+  --lh-body: 1.6;
+
+  --tracking-display: -0.035em;
+  --tracking-heading: -0.025em;
+
+  --measure: 65ch;
+
+  /* ---- Spacing (4px base) ---------------------------------------------- */
+  --space-1: 0.25rem;   /*   4 */
+  --space-2: 0.5rem;    /*   8 */
+  --space-3: 0.75rem;   /*  12 */
+  --space-4: 1rem;      /*  16 */
+  --space-5: 1.5rem;    /*  24 */
+  --space-6: 2rem;      /*  32 */
+  --space-7: 3rem;      /*  48 */
+  --space-8: 4rem;      /*  64 */
+  --space-9: 6rem;      /*  96 */
+  --space-10: 8rem;     /* 128 */
+  --section-gap: clamp(4.5rem, 3rem + 7vw, 10rem);
+  --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+  --container: 72rem;
+
+  /* ---- Radius: soft and friendly ---------------------------------------- */
+  --radius-sm: 8px;      /* inputs, small tiles, code */
+  --radius-md: 14px;     /* medium tiles */
+  --radius-lg: 22px;     /* cards */
+  --radius-xl: 32px;     /* large feature panels */
+  --radius-pill: 999px;  /* buttons, tags */
+
+  /* ---- Elevation: soft, diffuse shadows --------------------------------- */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.04), 0 2px 8px rgb(0 0 0 / 0.04);
+  --shadow-md: 0 2px 6px rgb(0 0 0 / 0.04), 0 12px 32px rgb(0 0 0 / 0.08);
+  --shadow-lg: 0 4px 12px rgb(0 0 0 / 0.05), 0 24px 60px rgb(0 0 0 / 0.12);
+
+  /* ---- Motion ----------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);      /* default: fast start, soft landing */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);   /* moving between two states */
+  --ease-in: cubic-bezier(0.55, 0, 1, 0.45);       /* leaving the screen */
+  --dur-fast: 150ms;    /* hover, focus, colour */
+  --dur-base: 300ms;    /* small movement */
+  --dur-slow: 700ms;    /* scroll reveals */
+  --stagger: 80ms;      /* delay between revealed lines */
+}
+
+/* ---- Colour: dark (opt-in) ---------------------------------------------- */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #000000;
+  --bg-alt: #111113;
+  --surface: #1c1c1e;
+  --surface-raised: #232326;
+  --border: #2e2e32;
+  --border-strong: #48484c;
+  --text: #f5f5f7;
+  --text-muted: #a1a1a6;
+  --text-faint: #6e6e73;
+
+  --accent: #2f8cff;
+  --accent-hover: #4d9dff;
+  --accent-ink: #4da0ff;
+  --on-accent: #000000;
+  --accent-soft: #0f2640;
+
+  --success: #4cd07d;
+  --success-soft: #10291a;
+  --warm: #ffb65c;
+  --warm-soft: #33230f;
+
+  --nav-glass: rgb(22 22 23 / 0.72);
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 12px 32px rgb(0 0 0 / 0.45);
+  --shadow-lg: 0 24px 60px rgb(0 0 0 / 0.55);
+}

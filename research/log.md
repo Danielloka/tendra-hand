@@ -13,6 +13,21 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 
 ---
 
+## 2026-09-27: Python `tendra` package + digital twin v1
+
+**Goal:** Control the hand from the PC with one API for sim and real, and drive the real hand from the MuJoCo sliders.
+
+**Setup:** `software/tendra` (Hand, SimHand, RealHand, FakeEsp32), `sim/twin.py`, pyserial 3.5.
+
+**Result:**
+- 20 tests pass, including consistency checks that Python, `config.h` and the MJCF agree on joint names and limits.
+- Twin smoke test with the software ESP32: viewer, simulation, bridge and status run together and shut down cleanly. Targets are sent only when changed, at most 20 Hz.
+- At rest the sim thumb sags ~1.2° under gravity (soft position actuator), while a stepper holds rigidly. Tune the actuator kp against the real hand.
+
+**Conclusion / next:** Waiting for the finished hand: first power-on checklist, direction check, then scale calibration per joint (build a guided calibration tool).
+
+---
+
 ## 2026-09-26: Firmware v0.1 (steppers)
 
 **Goal:** Smooth, non-blocking control of 8 steppers from the PC, behind a HAL that the SCS0009 servos can later plug into.

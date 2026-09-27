@@ -9,6 +9,8 @@ From the repository root (needs [uv](https://docs.astral.sh/uv/)):
 ```bash
 uv sync                          # create the Python 3.12 environment (first time only)
 uv run python sim/view.py        # open the hand in the MuJoCo viewer
+uv run python sim/twin.py --fake # digital twin with a software ESP32
+uv run python sim/twin.py --port auto   # digital twin driving the real hand
 ```
 
 Move the joints with the sliders under **Control** in the right-hand panel.
@@ -20,6 +22,7 @@ Move the joints with the sliders under **Control** in the right-hand panel.
 | `convert.py` | Turns the raw Fusion export (`hardware/robot_description/fusion_export/`) into `models/tendra_hand.xml` and fixes it along the way: PLA masses, recomputed inertias, joint names, sign convention, actuators |
 | `models/tendra_hand.xml` | The generated MuJoCo model (**don't edit by hand**; re-run `convert.py`) |
 | `view.py` | Interactive viewer |
+| `twin.py` | **Digital twin v1**: slider targets are sent to the real hand (rate-limited, only on change); the terminal shows real-vs-sim difference |
 | `tests/` | Model sanity checks: `uv run pytest` |
 
 After a new Fusion export, or a change to `convert.py`:

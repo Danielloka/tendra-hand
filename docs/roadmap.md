@@ -26,10 +26,11 @@ Make the current 8-joint prototype move cleanly, and control it from the PC.
 - [x] Smooth motion: acceleration/deceleration ramps, non-blocking stepping of all 8 motors at once (tested on PC; hardware test pending)
 - [x] Coil release when idle (power budget: 5 V / 2 A)
 - [x] PC ↔ ESP32 serial protocol, firmware side (text v0.1)
-- [ ] PC-side serial client
-- [ ] Python `Hand` API with `RealHand` and `SimHand` backends
+- [x] PC-side serial client (`tendra.RealHand`, tested against a software ESP32)
+- [x] Python `Hand` API with `RealHand` and `SimHand` backends
 - [ ] Per-joint calibration: steps per radian, direction, limits
-- [ ] **Digital twin v1:** sim mirrors the commanded pose. Control the real hand from the MuJoCo sliders.
+- [x] **Digital twin v1** software: control the real hand from the MuJoCo sliders (`sim/twin.py`)
+- [ ] Hardware bring-up: first power-on checklist, direction check per motor
 - [ ] Basic motions: open/close, pinch, point
 
 **Done when:** all 8 joints move smoothly (no jerks, no missed steps) through their full range, and the sim and the real hand match within a few degrees.

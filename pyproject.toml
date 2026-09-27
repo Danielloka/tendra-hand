@@ -8,6 +8,7 @@ requires-python = ">=3.12,<3.13"
 dependencies = [
     "mujoco>=3.3",
     "numpy>=2.0",
+    "pyserial>=3.5",
 ]
 
 [dependency-groups]
@@ -16,12 +17,16 @@ dev = [
     "ruff>=0.6",
 ]
 
-[tool.uv]
-# Scripts-only for now; becomes an installable package when software/ gets code.
-package = false
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+# The importable package `tendra` lives in software/tendra.
+packages = ["software/tendra"]
 
 [tool.pytest.ini_options]
-testpaths = ["sim/tests"]
+testpaths = ["sim/tests", "software/tests"]
 cache_dir = ".venv/.pytest_cache"  # keep the repo root tidy
 
 [tool.ruff]

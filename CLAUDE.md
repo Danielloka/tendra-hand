@@ -120,6 +120,8 @@ Every folder has a README explaining what goes there. Keep them current.
 - **All joint commands are in joint space**, SI units (rad). The ESP32 converts to steps or servo ticks using per-joint calibration.
 - **Firmware v0.1** (`firmware/`, see its README): `MotorDriver` HAL, `Uln2003Stepper` (half-step, 4076 steps/rev), trapezoidal `MotionProfile` (defaults 800 steps/s, 1600 steps/s², hard cap 1000 steps/s), coils released after 1 s idle, text protocol (`P/J/S/X/R/Z/M/K/V/I`), joint targets clamped to limits. Scale defaults to 1:1 (648.7 steps/rad) until calibrated per joint.
 - Build: `pio run` in `firmware/`. Motion-profile unit tests run on the PC with `uvx --from ziglang` (command in `firmware/test/host/test_motion_profile.cpp`).
+- **PC side:** Python package `tendra` in `software/tendra` (installed editable by `uv sync`). `Hand` interface with `SimHand` / `RealHand`; `FakeEsp32` emulates the firmware protocol for tests. Joint names and limits live in `tendra/joints.py`; tests check that they match `config.h` and the MJCF.
+- **Digital twin v1:** `sim/twin.py` (`--fake` / `--port auto`). Sim → real only; real → sim (measured positions) comes with the servos.
 - **Serial link:** native USB CDC. The baud rate setting is ignored for native USB (it always runs at USB speed), but keep it at 921600 for tools that need a value.
 
 ## Licensing (decided 2026-09-26)

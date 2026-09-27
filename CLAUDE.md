@@ -85,7 +85,7 @@ sim/        MuJoCo models, URDF→MJCF converter, digital twin
 software/   PC-side Python: Hand API, control, calibration, AI
 docs/       roadmap and guides
 research/   log.md, experiments, references
-website/    project website source
+website/    project website (Next.js app + design system)
 ```
 
 Every folder has a README explaining what goes there. Keep them current.
@@ -123,6 +123,16 @@ Every folder has a README explaining what goes there. Keep them current.
 - **PC side:** Python package `tendra` in `software/tendra` (installed editable by `uv sync`). `Hand` interface with `SimHand` / `RealHand`; `FakeEsp32` emulates the firmware protocol for tests. Joint names and limits live in `tendra/joints.py`; tests check that they match `config.h` and the MJCF.
 - **Digital twin v1:** `sim/twin.py` (`--fake` / `--port auto`). Sim → real only; real → sim (measured positions) comes with the servos.
 - **Serial link:** native USB CDC. The baud rate setting is ignored for native USB (it always runs at USB speed), but keep it at 921600 for tools that need a value.
+
+## Website
+
+- **Stack (chosen 2026-09-27):** Next.js 16 (App Router) + TypeScript + Tailwind v4, React Three Fiber + drei (3D hand), GSAP ScrollTrigger + Lenis (scroll story), MDX content. The app lives in `website/`; plan, file ownership and the scroll timeline are in `website/PLAN.md`. Hosting not chosen yet.
+- **Design system v0.2** in `website/assets/css` is the source of truth (imported into Tailwind layers; tokens map to utilities). Style guide: `website/styleguide/index.html`, served at `/styleguide/`. Its grid helper is `.auto-grid` (not `.grid`, which clashes with Tailwind).
+- **All text lives in `website/content/`** (JSON + MDX); components don't hard-code copy. Placeholders are marked `TODO`.
+- **3D hand:** `src/lib/handState.ts` is the scroll ↔ 3D contract (plain numbers GSAP tweens, R3F reads per frame). The real model swaps in via `HAND_MODEL_URL` in `src/components/three/model.ts` (naming rules in `public/models/README.md`). The canvas loads on first interaction to keep mobile Lighthouse ≥ 90. `/dev/hand` is the hand lab.
+- Commands (in `website/`): `npm run dev`, `npm run build`, `npm run lint`, `npm run typecheck`. Review agents for new pages: `.claude/agents/{design-reviewer,accessibility-checker,performance-checker,code-reviewer}.md`.
+- Style: **clean, open, friendly, Apple-like** (owner rejected a dark "robotic/nerdy" look on 2026-09-27). **Light default**, dark opt-in (`data-theme="dark"`). One calm **blue accent `#0066CC`**, only for clickable things. No orange. Font: Inter (JetBrains Mono only for code). Pill buttons, rounded cards, soft shadows. Plain words for a general audience.
+- Colours only through tokens; motion must respect `prefers-reduced-motion` and work without JS.
 
 ## Licensing (decided 2026-09-26)
 

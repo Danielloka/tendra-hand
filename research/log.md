@@ -13,6 +13,39 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 
 ---
 
+## 2026-09-27: Website v1 (Next.js + scroll-driven 3D hand)
+
+**Goal:** Build the project website on the design system, with a 3D hand that tells the story as you scroll.
+
+**Setup:** Next.js 16 (App Router, Turbopack), TypeScript, Tailwind v4 mapped to the design tokens, React Three Fiber 9 + drei 10, GSAP 3 ScrollTrigger + Lenis, MDX via `@next/mdx`. Built by a lead agent plus Content, 3D, Docs, Pages and Scroll agents, then design/accessibility/performance/code reviews (plan in `website/PLAN.md`).
+
+**Result:**
+- 26 static routes: home, project, hardware, software, docs (7 pages with search, table of contents, prev/next), build log (3 posts), gallery (lightbox), contribute, 404, sitemap, robots, OG image. A hand lab at `/dev/hand` has sliders for every animation value.
+- Placeholder hand built from primitives with all 17 joints of the planned full hand; the real `hand.glb` swaps in with one line (`src/components/three/model.ts`).
+- Lighthouse (production build, local): every route 90+ on mobile and 100 on desktop for performance; 100 for accessibility, best practices and SEO. axe: no serious/critical issues in light or dark.
+- The homepage first scored 66 on mobile: parsing three.js (~270 kB gzipped) and building the scene blocked the main thread for ~3.5 s under Lighthouse's CPU throttling. Deferring the environment map / edge geometry and compiling shaders asynchronously didn't help much. What worked: loading the 3D scene on the first interaction (scroll, touch, mouse, key; or after 10 s). Mobile went to 95, TBT 130 ms.
+- Design-system changes: `.grid` → `.auto-grid` (clashed with Tailwind's `grid`), mobile menu below 1024px, lighter secondary buttons in dark mode. Code blocks use Shiki's high-contrast GitHub themes (the normal ones failed contrast).
+
+**Conclusion / next:** Replace the placeholders (photos, videos, `hand.glb`, a static hand render for no-JS/reduced motion), choose hosting and a domain (`content/site.json`), add CONTRIBUTING.md and a code of conduct.
+
+---
+
+## 2026-09-27: Website design system v0.2
+
+**Goal:** Define the visual identity of the project website before building real pages.
+
+**Setup:** `website/assets/` (tokens, base, components CSS + `site.js`), reviewed on `website/styleguide/index.html`. Plain CSS + vanilla JS, no build step; site framework still undecided.
+
+**Result:**
+- v0.1 was "precision lab at night": dark, signal orange, mono labels, grain, blueprint grid. Owner feedback: **too robotic and nerdy**. They want light, clean, Apple-like, not orange, open to everyone.
+- v0.2: light default (white / `#F5F5F7` bands), optional dark mode, one blue accent `#0066CC` for clickable things only, Inter for all text, pill buttons, 22 px rounded cards, soft shadows, plain-language copy.
+- Contrast measured in the browser, all WCAG AA or better. Light: text 15.5:1, muted 4.7:1, blue text 5.1:1, button label 5.6:1. Dark: all at least 6.3:1.
+- Checked: no horizontal scroll at 390 px, no console errors, reveals and counters show instantly with reduced motion or with JS off.
+
+**Conclusion / next:** Audience matters more than tech flavour; the site should feel approachable. Next: owner reviews, then choose the site stack (e.g. Astro on GitHub Pages) and self-host fonts.
+
+---
+
 ## 2026-09-27: Python `tendra` package + digital twin v1
 
 **Goal:** Control the hand from the PC with one API for sim and real, and drive the real hand from the MuJoCo sliders.

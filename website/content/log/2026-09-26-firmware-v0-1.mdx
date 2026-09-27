@@ -1,0 +1,41 @@
+---
+title: "Firmware v0.1: smooth motion for 8 steppers"
+date: "2026-09-26"
+summary: "The first firmware for the ESP32-S3: gentle speed-up and slow-down, all 8 motors moving at once, and a simple text command language. Tested on the computer, not yet on the hand."
+cover: /images/placeholders/log-firmware-v0-1.svg
+tags: ["firmware", "esp32", "motors"]
+---
+
+With the simulation working, the next job was the firmware: the code on the ESP32-S3 microcontroller that turns joint angles into motor motion.
+
+## Smooth, not jerky
+
+A stepper motor that starts at full speed jerks, and can skip steps. So every move follows a trapezoid: speed up gently, cruise, then slow down gently before the target. If a new target arrives halfway through, the motor brakes and turns around smoothly instead of stopping dead. All 8 motors run at the same time without waiting for each other.
+
+Because the hand wasn't finished, I tested the motion code on the laptop instead. A 4000-step move ends exactly on target in 5.506 seconds, against an ideal of 5.5.
+
+## Careful with power
+
+Each 28BYJ-48 motor draws around 200 to 250 mA per coil while it's switched on, and the motors share a 5 V / 2 A supply. So a motor switches off after 1 second of standing still. Startup is careful too: every motor pin goes low first thing, and nothing moves until the computer asks.
+
+## Talking to it
+
+The computer and the ESP32 talk in short lines of text over USB. Angles are always in radians, and positive means closing the hand. This sets joint 2 (the index finger's middle joint) to 0.8 radians, then asks for the status of all joints:
+
+```text title="Serial monitor"
+J 2 0.8
+S
+```
+
+Plain text means anyone can type commands by hand while testing.
+
+## Ready for servos
+
+All the motor code sits behind one small interface, and the joint logic never touches a pin directly. When the Feetech SCS0009 smart servos replace the steppers, only a new driver has to be written.
+
+{/* TODO: replace with a photo of the ESP32-S3 and the ULN2003 driver boards wired up. */}
+<Figure src="/images/placeholders/gallery-electronics.svg" alt="Placeholder for a photo of the ESP32-S3 wired to the motor driver boards" caption="The ESP32-S3 and the eight ULN2003 driver boards." width={1500} height={1000} />
+
+## Not done yet
+
+None of this has driven a real motor so far. The next hardware steps are a first power-on, one motor at a time, checking that each one turns the right way, and measuring how many steps each joint needs per radian.

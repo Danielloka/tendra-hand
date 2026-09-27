@@ -1,0 +1,247 @@
+/* Long-form MDX content (docs, pages, build log): <div className="prose">.
+   Owned by the Docs Agent. Tokens only. Children of .not-prose keep their own
+   styles (cards, code blocks), so element rules are scoped with :where() and
+   skip anything inside .not-prose. */
+
+.prose {
+  --prose-flow: 1.25em;
+  max-width: var(--measure);
+  font-size: var(--fs-body);
+  line-height: 1.7;
+  color: var(--text);
+}
+/* Code blocks, tables, cards and figures may use the full column. */
+.prose > :where(.code, .prose-table, .prose-cards, .prose-figure, .callout, .steps) {
+  max-width: none;
+}
+.docs-article .prose { max-width: none; }
+.docs-article .prose > :where(p, ul, ol, blockquote, h2, h3, h4, dl) { max-width: var(--measure); }
+
+/* ---- Vertical rhythm ------------------------------------------------------ */
+.prose :where(ul, ol, blockquote, figure, pre, table, dl) { margin: 0; }
+.prose > * + * { margin-top: var(--prose-flow); }
+.prose :where(li > * + *, blockquote > * + *, .callout__body > * + *, .steps__body > * + *):not(:where(.not-prose *)) { margin-top: 0.75em; }
+
+/* ---- Headings ------------------------------------------------------------- */
+.prose :where(h2, h3, h4):not(:where(.not-prose *)) {
+  position: relative;
+  scroll-margin-top: calc(var(--nav-h, 3.5rem) + var(--space-5));
+}
+.prose > :where(h2) {
+  margin-top: 2em;
+  font-size: clamp(1.5rem, 1.3rem + 0.9vw, 2rem);
+  letter-spacing: -0.025em;
+}
+.prose > :where(h3) {
+  margin-top: 1.8em;
+  font-size: clamp(1.2rem, 1.12rem + 0.4vw, 1.4rem);
+}
+.prose > :where(h4) {
+  margin-top: 1.8em;
+  font-size: var(--fs-h4);
+}
+.prose > :where(h2, h3, h4) + * { margin-top: 1em; }
+.prose > :first-child { margin-top: 0; }
+
+/* "#" anchor: appears on hover/focus, sits in the left margin on wide screens */
+.heading-anchor {
+  margin-left: 0.35em;
+  padding-inline: 0.15em;
+  color: var(--text-faint);
+  font-weight: 400;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.heading-anchor:hover { color: var(--accent-ink); text-decoration: none; }
+:where(h2, h3, h4):hover > .heading-anchor,
+.heading-anchor:focus-visible { opacity: 1; }
+@media (hover: none) { .heading-anchor { display: none; } }
+
+/* ---- Text ----------------------------------------------------------------- */
+.prose :where(p):not(:where(.not-prose *)) { max-width: var(--measure); }
+.prose :where(strong):not(:where(.not-prose *)) { font-weight: 600; }
+.prose :where(a):not(:where(.not-prose *, .heading-anchor, .btn)) {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent-ink) 35%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--dur-fast) var(--ease-out);
+}
+.prose :where(a):not(:where(.not-prose *, .heading-anchor, .btn)):hover { text-decoration-color: currentColor; }
+.prose :where(:not(pre) > code):not(:where(.not-prose *)) {
+  padding: 0.12em 0.38em;
+  border-radius: 6px;
+  background: var(--bg-alt);
+  font-size: 0.86em;
+  overflow-wrap: break-word;
+}
+.prose :where(a code) { color: inherit; }
+.prose :where(kbd) {
+  padding: 0.1em 0.45em;
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  background: var(--surface);
+  font-size: 0.82em;
+}
+
+/* ---- Lists ---------------------------------------------------------------- */
+.prose :where(ul, ol):not(:where(.not-prose *, .steps, [role="list"])) { padding-left: 1.4em; }
+.prose :where(ul):not(:where(.not-prose *, [role="list"], .contains-task-list)) { list-style: disc; }
+.prose :where(ol):not(:where(.not-prose *, .steps, [role="list"])) { list-style: decimal; }
+.prose :where(li):not(:where(.not-prose *, .steps__item)) { padding-left: 0.25em; }
+.prose :where(li + li):not(:where(.not-prose *, .steps__item)) { margin-top: 0.4em; }
+.prose :where(ul > li)::marker { color: var(--text-faint); }
+.prose :where(ol > li)::marker { color: var(--text-muted); font-variant-numeric: tabular-nums; font-size: 0.92em; }
+.prose :where(li > ul, li > ol) { margin-top: 0.4em; }
+/* GFM task lists */
+.prose :where(.contains-task-list) { list-style: none; padding-left: 0.2em; }
+.prose :where(.task-list-item input) { margin: 0 0.5em 0 0; accent-color: var(--accent); translate: 0 0.1em; }
+
+/* ---- Blockquote ------------------------------------------------------------ */
+.prose :where(blockquote):not(:where(.not-prose *)) {
+  padding: 0.1em 0 0.1em 1.25em;
+  border-left: 3px solid var(--border-strong);
+  color: var(--text-muted);
+  font-size: 1.05em;
+}
+
+/* ---- Rule ------------------------------------------------------------------ */
+.prose :where(hr):not(:where(.not-prose *)) {
+  margin-block: 3em;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+/* ---- Tables (wrapped in .prose-table so they scroll on phones) ------------ */
+.prose-table {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  scrollbar-width: thin;
+}
+.prose-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-small);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+.prose-table :where(th, td) {
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+.prose-table th {
+  background: var(--bg-alt);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.prose-table tr:last-child td { border-bottom: 0; }
+.prose-table td code { white-space: nowrap; }
+
+/* ---- Images and figures ---------------------------------------------------- */
+.prose :where(img, video):not(:where(.not-prose *)) {
+  border-radius: var(--radius-md);
+  height: auto;
+}
+.prose-figure { display: grid; gap: var(--space-3); margin-block: 2em; }
+.prose > .prose-figure { margin-top: 2em; }
+.prose-figure video { width: 100%; background: var(--bg-alt); }
+.prose-figure figcaption { text-align: center; }
+
+/* ---- Code block (design-system .code + Shiki) ----------------------------- */
+.prose > .code { margin-top: 1.5em; }
+.code pre.shiki,
+.code pre { background: transparent; }
+.code pre code { font-size: inherit; padding: 0; background: none; }
+.code .line { min-height: 1lh; display: inline-block; }
+
+/* ---- Callout ----------------------------------------------------------------- */
+.callout {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  background: var(--bg-alt);
+  font-size: 0.96em;
+  line-height: 1.6;
+}
+.prose > .callout { margin-top: 1.75em; }
+.prose > .callout + * { margin-top: 1.75em; }
+.callout__icon { width: 20px; height: 20px; margin-top: 0.15em; color: var(--text-muted); }
+.callout__title { font-weight: 600; }
+.callout__body > :where(p) { max-width: none; }
+.callout--tip { background: var(--success-soft); }
+.callout--tip .callout__icon,
+.callout--tip .callout__title { color: var(--success); }
+.callout--warning { background: var(--warm-soft); }
+.callout--warning .callout__icon,
+.callout--warning .callout__title { color: var(--warm); }
+
+/* ---- Steps ------------------------------------------------------------------- */
+.steps {
+  counter-reset: step;
+  list-style: none;
+  padding: 0;
+}
+.prose > .steps { margin-top: 2em; }
+.steps__item {
+  position: relative;
+  counter-increment: step;
+  padding: 0 0 var(--space-6) 3.25rem;
+}
+.steps__item:last-child { padding-bottom: 0; }
+.steps__item::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--text);
+  color: var(--bg);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+/* the thin line joining the numbers */
+.steps__item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: calc(1rem - 0.5px);
+  top: 2.5rem;
+  bottom: 0.5rem;
+  width: 1px;
+  background: var(--border);
+}
+.steps__title {
+  position: relative;
+  min-height: 2rem;
+  padding-top: 0.2rem;
+  font-size: 1.15rem;
+  letter-spacing: -0.015em;
+  scroll-margin-top: calc(var(--nav-h, 3.5rem) + var(--space-5));
+}
+.steps__body { margin-top: 0.6em; }
+.steps__body > * + * { margin-top: 0.9em; }
+.steps__body :where(.prose-figure) { margin-block: 1em 0; max-width: 34rem; }
+
+/* ---- Cards inside prose -------------------------------------------------------- */
+.prose > .prose-cards { margin-top: 1.75em; }
+/* Four cards: 4 across on wide screens, 2 × 2 on tablets, never 3 + 1. */
+@media (min-width: 40rem) {
+  .prose-cards:has(> :nth-child(4):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 64rem) {
+  .prose-cards:has(> :nth-child(4):last-child) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.prose-cards .card { padding: var(--space-5); }
+.prose-cards .card__body > * + * { margin-top: 0.5em; }

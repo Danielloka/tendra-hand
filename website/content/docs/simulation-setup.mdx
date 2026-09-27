@@ -1,0 +1,80 @@
+---
+title: Simulation setup
+description: Run the Tendra Hand in MuJoCo on any laptop, understand how the model is made from the Fusion 360 export, and use the digital twin.
+updated: 2026-09-27
+---
+
+The simulation is a virtual copy of the hand. You can use it to try out motions, test code before it touches real motors, and, later, train AI controllers. It runs in [MuJoCo](https://mujoco.org/), a free, open-source physics engine made for robotics.
+
+<Callout type="tip" title="No graphics card needed">
+  MuJoCo runs on the CPU, so any recent laptop works. The project itself is developed on a laptop with integrated Intel graphics.
+</Callout>
+
+## Quick start
+
+From the repository root (you need [uv](https://docs.astral.sh/uv/); see [Getting started](/docs/getting-started)):
+
+```sh title="Terminal"
+uv sync                                  # first time only
+uv run python sim/view.py                # open the hand in the viewer
+uv run python sim/twin.py --fake         # digital twin with a software ESP32
+uv run python sim/twin.py --port auto    # digital twin driving the real hand
+```
+
+In the viewer, open **Control** in the right-hand panel. Each slider moves one joint, in motor order M1 to M8.
+
+## Files
+
+| File | What it does |
+|---|---|
+| `sim/convert.py` | Turns the Fusion 360 export into the MuJoCo model, fixing it along the way |
+| `sim/models/tendra_hand.xml` | The generated model. **Don't edit it by hand**: re-run `convert.py` instead |
+| `sim/view.py` | Interactive viewer with a slider per joint |
+| `sim/twin.py` | The digital twin (see below) |
+| `sim/tests/` | Sanity checks for the model, run with `uv run pytest` |
+
+## From CAD to simulation
+
+The hand is designed in **Fusion 360**. The **fusion2urdf** plugin exports it as a **URDF**, a common file format that describes a robot's parts, joints and masses. The raw export is kept, unedited, in `hardware/robot_description/fusion_export/`.
+
+MuJoCo has its own format, **MJCF**. The script `sim/convert.py` reads the URDF and writes `sim/models/tendra_hand.xml`. Keeping every fix in the script (and never editing the export) means the design can be re-exported from Fusion at any time and converted again in one command:
+
+```sh title="Terminal"
+uv run python sim/convert.py && uv run pytest
+```
+
+The tests fail if the committed model is out of date with the converter, so you'll notice if you forget.
+
+### What the converter fixes
+
+The raw export has a few problems. The converter fixes them all:
+
+- **Wrong material.** Fusion's default material is steel, so the export says the parts weigh 821 g in total. The converter recomputes each part's mass from its 3D mesh at PLA density (1240 kg/m³), which gives about **131 g**.
+- **Invalid inertias.** The export rounds inertia values so much that two parts end up physically impossible. The converter recomputes them from the meshes.
+- **Joint names.** Joints get descriptive names like `index_pip` and `thumb_cmc_rot` instead of `Revolute 3`.
+- **Directions.** Every joint is set up so that **positive closes the hand** and 0 is straight. Two thumb joints had their axes the other way round in the export.
+- **Actuators.** One simple position controller per motor, in motor order. They stand in for the stepper and tendon until the real motors are measured.
+- **Collisions.** A few contacts are turned off that only exist because of how the model is simplified: the palm is fixed in place, and the palm's collision shape is a rough "shrink-wrap" that touches the thumb even when the real parts don't.
+
+<Callout type="note" title="Known limits">
+  The masses assume solid plastic, while printed parts are lighter. The actuator strength is a placeholder. And the palm's collision shape is approximate. All three are on the roadmap: weigh the parts, measure the real motors (*system identification*), and split the palm into several convex pieces.
+</Callout>
+
+## The digital twin
+
+A **digital twin** is a simulated copy of the hand that runs alongside the real one. In version 1, it works in one direction: you move the sliders in the simulator, and the same joint targets are sent to the real hand.
+
+- `--fake` uses a software stand-in for the ESP32, so you can try everything with no hardware.
+- `--port auto` finds the real ESP32 on USB. You can also name the port, like `--port COM5`.
+- Targets are sent only when they change, and at most 20 times per second.
+- The terminal shows how far the real hand's step counters are from the simulation.
+
+<Callout type="warning">
+  Before connecting to the real hand, straighten all its joints by hand and power up (or send `Z`). Nothing is sent until you move a slider, so the hand never moves on start-up.
+</Callout>
+
+Version 2 will also work the other way: once the smart servos report their positions, the simulation will show what the real hand is *actually* doing, not only what it was told to do.
+
+## Later: Isaac Sim and Isaac Lab
+
+For large-scale AI training, NVIDIA's [Isaac Lab](https://isaac-sim.github.io/IsaacLab/) can run thousands of simulated hands in parallel. It needs an NVIDIA graphics card, so if the project uses it, training will run on rented cloud GPUs. For now, MuJoCo covers everything the project needs.

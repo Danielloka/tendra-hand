@@ -1,0 +1,150 @@
+/* Roadmap timeline (RoadmapTimeline.tsx). Tokens only. */
+/* Same layer order as Tailwind, in case this file loads before globals.css. */
+@layer theme, base, components, utilities;
+
+@layer components {
+  .roadmap {
+    --rm-marker: 1.75rem;
+    --rm-gap: var(--space-5);
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .prose > .roadmap { margin-top: 2em; max-width: 48rem; }
+
+  .roadmap__phase {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--rm-marker) minmax(0, 1fr);
+    gap: var(--rm-gap);
+  }
+  /* The line joining the markers: green up to the phase in progress. */
+  .roadmap__phase:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: calc(var(--rm-marker) / 2 - 1px);
+    top: calc(var(--space-5) + var(--rm-marker) + var(--space-2));
+    bottom: calc((var(--space-3) + var(--space-5) - var(--space-2)) * -1);
+    width: 2px;
+    border-radius: 1px;
+    background: var(--border);
+  }
+  .roadmap__phase--done:not(:last-child)::after { background: color-mix(in srgb, var(--success) 45%, var(--border)); }
+
+  .roadmap__marker {
+    display: grid;
+    place-items: center;
+    width: var(--rm-marker);
+    height: var(--rm-marker);
+    margin-top: var(--space-5);
+    border-radius: 50%;
+    border: 2px solid var(--border-strong);
+    background: var(--bg);
+  }
+  .section--alt .roadmap__marker { background: var(--bg-alt); }
+  .roadmap__marker svg { width: 60%; height: 60%; }
+  .roadmap__marker--done {
+    border-color: transparent;
+    background: var(--success-soft) !important;
+    color: var(--success);
+  }
+  .roadmap__marker--in-progress {
+    border-color: var(--warm);
+    background: var(--warm-soft) !important;
+  }
+  .roadmap__marker--in-progress::after {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--warm);
+  }
+
+  .roadmap__card {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-5) var(--space-5) var(--space-5) 0;
+    border-radius: var(--radius-lg);
+  }
+  /* The phase in progress is the one to look at: raised card. */
+  .roadmap__phase--in-progress .roadmap__card {
+    padding-left: var(--space-5);
+    margin-left: calc(var(--space-3) * -1);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+  }
+  .roadmap__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .roadmap__label {
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .roadmap__title {
+    font-size: var(--fs-h4);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+  }
+  .roadmap__phase--planned .roadmap__title { color: var(--text); }
+  .roadmap__summary { color: var(--text-muted); font-size: 0.9875rem; line-height: 1.55; }
+
+  .roadmap__items {
+    display: grid;
+    gap: 0.45rem;
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-small);
+    line-height: 1.5;
+  }
+  .roadmap__item {
+    position: relative;
+    padding-left: 1.5rem;
+    color: var(--text-muted);
+  }
+  /* open item: small ring; done item: check */
+  .roadmap__item::before {
+    content: "";
+    position: absolute;
+    left: 0.2rem;
+    top: 0.42em;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-strong);
+  }
+  .roadmap__item--done { color: var(--text); }
+  .roadmap__item--done::before {
+    left: 0.25rem;
+    top: 0.3em;
+    width: 0.4rem;
+    height: 0.7rem;
+    border: solid var(--success);
+    border-width: 0 2px 2px 0;
+    border-radius: 0;
+    rotate: 45deg;
+  }
+
+  /* Compact (homepage): tighter, no item lists except the phase in progress. */
+  .roadmap--compact { --rm-marker: 1.5rem; --rm-gap: var(--space-4); gap: 0; }
+  .roadmap--compact .roadmap__card { padding-block: var(--space-4); }
+  .roadmap--compact .roadmap__marker { margin-top: var(--space-4); }
+  .roadmap--compact .roadmap__phase:not(:last-child)::after {
+    top: calc(var(--space-4) + var(--rm-marker) + var(--space-2));
+    bottom: calc((var(--space-4) - var(--space-2)) * -1);
+  }
+
+  @media (max-width: 30rem) {
+    .roadmap { --rm-gap: var(--space-3); }
+    .roadmap__phase--in-progress .roadmap__card { padding-left: var(--space-4); padding-right: var(--space-4); margin-left: 0; }
+  }
+}

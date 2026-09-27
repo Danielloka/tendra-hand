@@ -1,0 +1,26 @@
+{
+  "name": "Tendra Hand",
+  "tagline": "An open-source, tendon-driven robotic hand.",
+  "description": "Tendra Hand is a fully open-source, 3D-printed, tendon-driven robotic hand that aims to match the joints of a human hand, with every joint controlled on its own.",
+  "url": "https://tendra-hand.example.com",
+  "_todo_url": "TODO: replace with the real domain once hosting is chosen.",
+  "github": "https://github.com/Danielloka/tendra-hand",
+  "nav": [
+    { "label": "Project", "href": "/project" },
+    { "label": "Hardware", "href": "/hardware" },
+    { "label": "Software", "href": "/software" },
+    { "label": "Docs", "href": "/docs" },
+    { "label": "Build log", "href": "/log" },
+    { "label": "Gallery", "href": "/gallery" },
+    { "label": "Contribute", "href": "/contribute" }
+  ],
+  "footer": {
+    "note": "Built in the open. Every file, every line of code, every mistake.",
+    "contact": "Questions or ideas? Open an issue or a discussion on GitHub.",
+    "licenses": [
+      { "label": "Code: Apache-2.0", "href": "https://github.com/Danielloka/tendra-hand/blob/main/LICENSE" },
+      { "label": "Hardware: CERN-OHL-S-2.0", "href": "https://github.com/Danielloka/tendra-hand/blob/main/hardware/LICENSE" },
+      { "label": "Docs: CC BY 4.0", "href": "https://github.com/Danielloka/tendra-hand/blob/main/docs/LICENSE" }
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+---
+title: FAQ
+description: Honest answers to common questions about Tendra Hand, from why it uses tendons and one motor per joint to cost, licenses, AI and how to help.
+updated: 2026-09-27
+---
+
+## Why tendons instead of motors in the fingers?
+
+Motors are heavy and bulky. Putting them in the fingers makes the fingers thick and slow, and every motor has to carry the ones further out. With tendons, the motors sit further back (in the palm now, and in the forearm later), and thin cords pull the joints. Human hands work the same way: most of the muscles that move your fingers are in your forearm.
+
+## Why one motor per joint?
+
+So every joint can move on its own. Many robotic hands save motors by linking joints together, so one motor bends a whole finger in a fixed pattern. That's simpler, but it can't do things like bending only the fingertip. Tendra Hand aims for the same freedom as a human hand, so each joint gets its own motor. A single tendon loop lets that one motor both close and open the joint.
+
+## How many motors will the full hand need?
+
+The prototype has 8 joints and 8 motors (thumb and index). A full five-finger hand is planned with **around 20 or more** independently driven joints, so about the same number of motors. The final count depends on the thumb redesign (a human thumb has 5 degrees of freedom; the prototype's has 4).
+
+## What does it cost to build?
+
+We don't know yet, honestly. The current prototype uses cheap, common parts (28BYJ-48 steppers, ULN2003 boards, an ESP32-S3, PLA filament), but the smart servos in the next version cost more per joint. A costed parts list will be published on the [Hardware](/hardware) page.
+
+{/* TODO: add a cost estimate once the BOM has prices. */}
+
+## Can I build one now?
+
+Not from instructions yet. The software runs today (see [Getting started](/docs/getting-started)), and you can explore the hand in simulation. The print files, a full parts list and step-by-step assembly are being prepared while the first prototype is finished. Follow the [build log](/log) for progress.
+
+## Why steppers now and servos later?
+
+The 28BYJ-48 steppers were cheap and on hand, which makes them great for a first prototype. But they don't report their position (so every joint must be straightened by hand before power-on), each needs four control pins, and they're slow. The planned **Feetech SCS0009** smart servos report their position, share one data cable, and remove manual homing. The firmware and Python code are built so the switch doesn't change anything above the motor driver.
+
+## Does it use AI?
+
+Not yet. Today the hand is controlled directly: you set joint angles from Python or with sliders in the simulator. AI comes in later phases: first controlling the hand by moving your own hand in front of a webcam, then learning from recorded demonstrations, and training controllers in simulation before moving them to the real hand. See the [roadmap](/project).
+
+## Do I need a powerful computer?
+
+No. The simulation runs in MuJoCo on the CPU, and the project is developed on an ordinary laptop with integrated graphics. Heavy AI training later will use rented cloud GPUs.
+
+## What license is it under?
+
+Everything is open source, with a license that fits each kind of work:
+
+- **Code** (firmware, Python, simulation, AI): Apache-2.0
+- **Hardware** (CAD, print files, electronics): CERN-OHL-S-2.0
+- **Docs and research**: CC BY 4.0
+
+In short: you can use, build, change and even sell Tendra Hand. If you share a modified *hardware* design, you must share its design files under the same license. Please credit the project.
+
+## How can I help?
+
+Ideas, questions and bug reports are all welcome. Open an issue or a discussion on [GitHub](https://github.com/Danielloka/tendra-hand). Good places to start: try the simulation and report anything confusing in these docs, or share your experience with tendon-driven designs. See [Contribute](/contribute) for more.

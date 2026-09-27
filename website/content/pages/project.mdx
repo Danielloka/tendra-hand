@@ -1,0 +1,71 @@
+---
+title: The project
+kicker: About Tendra Hand
+lead: "An open-source robotic hand with the same joints as a human hand, where every joint moves on its own. Built step by step, and shared completely."
+description: "Why Tendra Hand exists, the design decisions behind it, where the project stands today and where it is going next."
+---
+
+## The goal
+
+Tendra Hand aims to be a robotic hand that can do what your hand does: pinch a coin, turn a key, hold a pen. To get there, it needs the same joints as a human hand, and every one of them has to move on its own.
+
+A human hand can make more than 20 separate motions. Each one is called a degree of freedom (DOF). The target for Tendra Hand is around 20 of them, with one motor for each. The current prototype is the first step: a thumb and an index finger with 8 joints.
+
+And all of it is open source. The 3D design, the printable parts, the firmware, the control software, the simulation, future AI models and the research notes are free to use, change and build on.
+
+## Design decisions
+
+<CardGrid>
+  <Card title="Why tendons?" kicker="Mechanics">
+    Motors are heavy and bulky. Putting them inside the fingers makes the fingers thick and clumsy. With tendons (thin cords that pull on the joints, like the ones in your arm), the motors can sit further back and the fingers stay slim.
+  </Card>
+  <Card title="Why one motor per joint?" kicker="Control">
+    Many hands use one motor to curl a whole finger. That is simpler, but every joint then moves in a fixed pattern. Giving each joint its own motor makes the hand harder to build, but it can do much more: bend just the fingertip, hold a pinch, or roll an object between fingers.
+  </Card>
+  <Card title="Why steppers now, servos next?" kicker="Motors">
+    The 28BYJ-48 stepper motors are cheap and easy to get, which makes them good for a first prototype. But they can't tell where they are, so every joint has to be straightened by hand before power-up. Feetech SCS0009 smart servos report their own position and share one data cable, so they are the next step.
+  </Card>
+  <Card title="Why a computer and a microcontroller?" kicker="Electronics">
+    The computer is the brain: it plans the motions and will later run the AI. The ESP32-S3 microcontroller is the spinal cord: it only turns joint angles into smooth motor motion. This split keeps the fast, time-critical work on the ESP32 and the heavy thinking on the computer.
+  </Card>
+</CardGrid>
+
+A few more choices shape the whole project:
+
+- **Printed in PLA or PETG.** Anyone with an ordinary 3D printer can make the parts.
+- **Simulation first.** A virtual copy of the hand in [MuJoCo](https://mujoco.org/) (a free physics simulator) runs on any laptop. It lets us test ideas before touching the hardware, and later train AI safely.
+- **The same code for sim and real.** A script written for the simulated hand runs unchanged on the real one.
+- **Angles, not motor steps.** The computer always talks in joint angles. Only the ESP32 knows about motors, so swapping steppers for servos doesn't change anything above it.
+
+## Where it stands
+
+The project is early. Here is an honest snapshot.
+
+| Part | Status |
+|---|---|
+| Thumb and index finger design, 8 joints | <StatusBadge status="done" /> |
+| Simulation model in MuJoCo, checked against the real hand | <StatusBadge status="done" /> |
+| Firmware with smooth motion, tested on the computer | <StatusBadge status="done" /> |
+| Python control library and digital twin software | <StatusBadge status="done" /> |
+| Finishing the physical prototype, first power-on and calibration of each joint | <StatusBadge status="in-progress" /> |
+| Smart servo upgrade | <StatusBadge status="planned" /> |
+| Middle, ring and little fingers | <StatusBadge status="planned" /> |
+| Touch sensing, camera and AI control | <StatusBadge status="planned" /> |
+
+<Callout type="note" title="Not tested on the real hand yet">
+  The firmware and the control software have been tested against a software stand-in for the hand, not the real motors. Hardware bring-up comes next, and we will share how it goes in the build log.
+</Callout>
+
+## Roadmap
+
+<Roadmap />
+
+## Open source, all of it
+
+Everything is published under open licenses that allow commercial use:
+
+- **Code** (firmware, Python, simulation, AI code and models): Apache-2.0
+- **Hardware** (CAD, print files, electronics, robot model): CERN-OHL-S-2.0. If you share a changed hardware design, share its files under the same license.
+- **Docs and research**: CC BY 4.0. Use them freely, just credit the project.
+
+Want to help? See [how to contribute](/contribute).

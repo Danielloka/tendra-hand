@@ -1,0 +1,9 @@
+{
+  "groups": [
+    { "title": "Start here", "pages": ["getting-started"] },
+    { "title": "Build", "pages": ["build-guide", "assembly", "electronics"] },
+    { "title": "Software", "pages": ["simulation-setup"] },
+    { "title": "Help", "pages": ["faq"] },
+    { "title": "More", "pages": ["resources"] }
+  ]
+}

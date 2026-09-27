@@ -1,0 +1,90 @@
+---
+title: Build guide
+description: An overview of building the Tendra Hand thumb and index prototype, from printed parts and tendons to motors, electronics and the safety rules.
+updated: 2026-09-27
+---
+
+This guide gives you the big picture of building the current prototype: a **thumb and index finger with 8 joints**. It explains what each part does and the rules that keep the hand (and you) safe. The detailed, photo-by-photo steps are in [Assembly](/docs/assembly).
+
+<Callout type="warning" title="Not ready for a full build yet">
+  The print files, exact print settings and a costed parts list aren't published yet. They will be added as the prototype is finished and documented. Until then, treat this page as a preview of how the build works.
+</Callout>
+
+## How the hand works
+
+Each finger is a chain of 3D-printed bones connected by hinge joints. A **tendon** (a thin, strong cord) runs along each joint. When a motor pulls the tendon, the joint bends, the same way muscles in your forearm pull tendons to bend your fingers.
+
+Tendra Hand drives every joint **on its own**, with **one motor per joint**. The tendon runs in a loop around the motor's spool: turning the motor one way closes the joint, turning it the other way opens it. This is called an *antagonistic* loop, because the two halves of the tendon work against each other, like the muscles on the two sides of your arm.
+
+The prototype's 8 joints:
+
+| Finger | Joints |
+|---|---|
+| Index | knuckle sideways (`index_mcp_abd`), knuckle bend (`index_mcp_flex`), middle joint (`index_pip`), tip joint (`index_dip`) |
+| Thumb | base rotation (`thumb_cmc_rot`), base bend (`thumb_cmc_flex`), middle joint (`thumb_mcp`), tip joint (`thumb_ip`) |
+
+## Parts
+
+The main parts of the current prototype:
+
+- **Printed skeleton:** the palm and finger bones.
+- **Tendons:** one loop per joint.
+- **8 × 28BYJ-48 stepper motors (5 V)** with **8 × ULN2003 driver boards**.
+- **ESP32-S3-N16R8** microcontroller board, connected to your PC over USB-C.
+- **A separate 5 V / 2 A power supply** for the motors.
+
+The full bill of materials (with quantities and links) lives on the [Hardware](/hardware) page.
+
+## Printing
+
+- **Material:** PLA or PETG for the rigid skeleton. PETG is a little tougher and handles warmth better; PLA is easier to print.
+- **Fingertip pads:** TPU (a flexible filament) is planned, for grip.
+- **Settings:** layer height, infill, walls, orientation and supports will be listed next to each file in `hardware/print/`.
+
+{/* TODO: add the STL/3MF files and per-part print settings once they're exported. */}
+
+<Callout type="note">
+  The simulation assumes solid PLA (1240 kg/m³, about 131 g for the thumb and index). Real printed parts are lighter because of infill. Once the parts are weighed, the model will be updated.
+</Callout>
+
+## Tendons
+
+Each joint has one tendon loop wrapped around its motor's spool. The spool has a **radius of 1 cm**, so one full turn of the motor pulls about 62.8 mm of tendon.
+
+How far a joint bends for a given length of tendon depends on how far the tendon sits from the joint's hinge (its *moment arm*). That distance hasn't been measured yet, so the number of motor steps per radian is **calibrated by hand** for each joint (see [Electronics](/docs/electronics#calibrating-a-joint)).
+
+{/* TODO: tendon material, diameter, routing and pre-tension, once they're settled (Phase 3 studies friction and pre-tension). */}
+
+## Motors
+
+The prototype uses **28BYJ-48 stepper motors**. They're cheap, easy to find and geared down about 64:1 inside, so they're slow but hold their position well.
+
+- About **2038 full steps** (or 4076 half-steps) per turn of the output shaft.
+- Top speed around **15 rpm**.
+- **Open loop:** the motors don't report where they are. The firmware counts the steps it has sent, so it only knows the position if it knew the starting point.
+
+A planned upgrade replaces them with **Feetech SCS0009** smart servos. Those report their own position, share one data cable (so they need far fewer pins) and remove the need for manual homing.
+
+## Electronics
+
+The ESP32-S3 board receives joint angles from your PC over USB and turns them into motor steps. Each motor has its own ULN2003 driver board, which switches the motor's coils. See [Electronics](/docs/electronics) for the full pin map and the flashing steps.
+
+## Safety rules
+
+<Callout type="warning" title="Read this before the first power-on">
+  - **Power budget: 5 V / 2 A.** Each energised 28BYJ-48 draws about 200–250 mA, so eight motors are close to the limit. The firmware switches off the coils of motors that have been still for 1 s.
+  - **Nothing moves on boot.** At start-up the firmware sets every motor pin LOW and waits for a command.
+  - **Manual homing.** The steppers can't tell where they are. Before power-on, **straighten every joint by hand**. That pose is the zero position (or send `Z` after straightening).
+  - **Stay near the power switch** during first tests. A tendon that's too tight, or a motor turning the wrong way, can pull hard.
+</Callout>
+
+## What's next
+
+<CardGrid>
+  <Card title="Assembly" href="/docs/assembly" kicker="Next step">
+    Put the printed parts, tendons and motors together.
+  </Card>
+  <Card title="Electronics" href="/docs/electronics" kicker="Build">
+    Wire the drivers to the ESP32-S3, flash the firmware and check each motor.
+  </Card>
+</CardGrid>

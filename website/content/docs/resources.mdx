@@ -1,0 +1,41 @@
+---
+title: Resources
+description: Open-source robotic hands, research papers on dexterous and tendon-driven manipulation, simulation tools and parts that Tendra Hand builds on.
+updated: 2026-09-27
+---
+
+Tendra Hand stands on a lot of other people's work. These are the projects, papers and tools we find most useful, with one plain sentence on why each one matters. Every link was checked when this page was last updated.
+
+## Open-source and research hands
+
+- **[LEAP Hand](https://leap-hand.github.io/)** (Carnegie Mellon University). A low-cost, open-source, human-like hand for robot learning, built from off-the-shelf servos. A great reference for how far affordable hardware can go.
+- **[AmazingHand](https://github.com/pollen-robotics/AmazingHand)** (Pollen Robotics). A fully 3D-printed, open-source hand driven by Feetech SCS0009 servos, the same servos planned for Tendra Hand's next version.
+- **[Yale OpenHand Project](https://www.eng.yale.edu/grablab/openhand/)** (Yale GRAB Lab). Open-source, 3D-printable hand designs with tendon-driven fingers, and a long track record of sharing hardware openly.
+- **[InMoov](https://inmoov.fr/)** (Gaël Langevin). A life-size, open-source, 3D-printed humanoid robot that started in 2012 as a printable hand.
+- **[Shadow Dexterous Hand](https://shadowrobot.com/dexterous-hand-series/)** (Shadow Robot). A commercial, tendon-driven research hand with around 20 motors and 24 degrees of freedom; the hand behind OpenAI's in-hand manipulation work.
+- **[Allegro Hand](https://wonikrobotics.com/en/sub/product/hand.php)** (Wonik Robotics). A widely used commercial research hand with a motor in every joint, often used as a comparison point.
+
+## Papers
+
+- **[Learning Dexterous In-Hand Manipulation](https://arxiv.org/abs/1808.00177)**, OpenAI (2018). A Shadow Hand learns to turn objects in its palm, trained entirely in simulation with randomised physics and then moved to the real robot.
+- **[Solving Rubik's Cube with a Robot Hand](https://arxiv.org/abs/1910.07113)**, OpenAI (2019). The same idea taken further: a simulation that gets steadily harder (*automatic domain randomization*) helps the skill survive the jump to the real hand.
+- **[LEAP Hand: Low-Cost, Efficient, and Anthropomorphic Hand for Robot Learning](https://arxiv.org/abs/2309.06440)**, K. Shaw, A. Agarwal, D. Pathak (RSS 2023). The design paper behind the LEAP Hand, including how it compares with far more expensive hands.
+- **[Getting the Ball Rolling: Learning a Dexterous Policy for a Biomimetic Tendon-Driven Hand with Rolling Contact Joints](https://arxiv.org/abs/2308.02453)**, Y. Toshimitsu et al. (2023). ETH Zurich's 3D-printed, tendon-driven Faive Hand learns to spin a ball in simulation and does it on the real hand. Very close to where Tendra Hand is heading. Its simulation code is [open source](https://github.com/srl-ethz/faive_gym_oss).
+- **[MuJoCo: A physics engine for model-based control](https://www.semanticscholar.org/paper/MuJoCo:-A-physics-engine-for-model-based-control-Todorov-Erez/b354ee518bfc1ac0d8ac447eece9edb69e92eae1)**, E. Todorov, T. Erez, Y. Tassa (IROS 2012). The original paper on the physics engine Tendra Hand's simulation runs on.
+
+## Simulation
+
+- **[MuJoCo documentation](https://mujoco.readthedocs.io/)**. The official guide to the physics engine, including the MJCF model format and the Python bindings.
+- **[MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie)** (Google DeepMind). A collection of high-quality, ready-to-use robot models, including several dexterous hands. Great for seeing how good models are built.
+- **[Isaac Lab](https://isaac-sim.github.io/IsaacLab/)** (NVIDIA). A framework for training robots with reinforcement learning on the GPU, with many simulations running in parallel. It needs an NVIDIA graphics card.
+
+## Parts and tools
+
+- **[fusion2urdf](https://github.com/syuntoku14/fusion2urdf)**. The Fusion 360 add-in used to export the hand's design as a URDF robot model.
+- **[Feetech SCS series servos](https://www.feetechrc.com/en/scs_ttl_Servo.html)**. The manufacturer's page for the SCS smart servos, including the SCS0009 planned for Tendra Hand.
+- **[PlatformIO](https://platformio.org/)**. The toolkit used to build and flash the ESP32-S3 firmware.
+- **[uv](https://docs.astral.sh/uv/)**. The fast Python package manager that sets up the project's Python environment.
+
+<Callout type="tip" title="Know a good resource?">
+  Suggest it in an issue on [GitHub](https://github.com/Danielloka/tendra-hand). Papers, open hardware and hard-won build tips are all welcome.
+</Callout>

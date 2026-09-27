@@ -1,0 +1,100 @@
+{
+  "hero": {
+    "kicker": "Open-source robotic hand",
+    "title": "A human hand, rebuilt in the open.",
+    "lead": "Tendra Hand is a 3D-printed robotic hand that aims to move like yours, one joint at a time. Every file, every line of code and every lesson learned is free to use.",
+    "primaryCta": { "label": "Explore the project", "href": "/project" },
+    "secondaryCta": { "label": "View on GitHub", "href": "https://github.com/Danielloka/tendra-hand" }
+  },
+  "story": [
+    {
+      "id": "intro",
+      "kicker": "The idea",
+      "title": "Every joint, its own motor.",
+      "body": [
+        "Many robotic hands take a shortcut: one motor curls a whole finger, and the fingers can only open and close together. That is fine for grabbing a cup, but not for turning a key or picking up a coin.",
+        "Tendra Hand gives every joint its own motor, so each one can move on its own, just like in a real hand. The first prototype is a thumb and an index finger, with 8 joints between them."
+      ],
+      "points": [
+        "Thumb and index finger first",
+        "8 joints, 8 motors",
+        "Printed in PLA or PETG"
+      ]
+    },
+    {
+      "id": "tendons",
+      "kicker": "Tendons",
+      "title": "Pulled by cords, like your own fingers.",
+      "body": [
+        "Most of the muscles that move your fingers sit in your forearm. They pull on long cords, called tendons, that run along the bones. Tendra Hand works the same way, which is what \"tendon-driven\" means.",
+        "Each joint has one closed loop of cord wrapped around a small spool on its motor. Turn the spool one way and the joint bends. Turn it back and the joint straightens. One motor does both."
+      ],
+      "points": [
+        "One cord loop per joint",
+        "One motor bends and straightens",
+        "Motors stay out of the fingers"
+      ]
+    },
+    {
+      "id": "joints",
+      "kicker": "Joints",
+      "title": "The same joints as a human finger.",
+      "body": [
+        "A finger has three bending joints: the knuckle (MCP), the middle joint (PIP) and the joint near the tip (DIP). The knuckle can also move a little from side to side. The index finger copies all four motions.",
+        "The thumb has a base that swings it across the palm, plus three joints that bend. Each motion a joint can make is called a degree of freedom, or DOF. The prototype has 8 of them."
+      ],
+      "points": [
+        "Index: side-to-side, MCP, PIP, DIP",
+        "Thumb: base rotation, CMC, MCP, IP",
+        "Positive angle means closing the hand"
+      ]
+    },
+    {
+      "id": "exploded",
+      "kicker": "Parts",
+      "title": "Made on an ordinary 3D printer.",
+      "body": [
+        "The skeleton is a set of printed parts in PLA or PETG, the two most common printing plastics. No machining, no special tools.",
+        "The design lives in Fusion 360. The CAD, the printable files and the robot model will all be published, so you can print it, change it and share it back. Softer TPU fingertip pads are planned for a better grip."
+      ]
+    },
+    {
+      "id": "electronics",
+      "kicker": "Electronics",
+      "title": "A brain and a spinal cord.",
+      "body": [
+        "A computer does the thinking. It decides where each joint should go and sends the angles over a USB cable. Later, this is where the AI will run.",
+        "A small ESP32-S3 microcontroller does the reflexes. It turns each angle into smooth motor motion, speeding up and slowing down gently so nothing jerks. Today the motors are small 28BYJ-48 steppers. Next come Feetech SCS0009 smart servos, which can report where they are."
+      ],
+      "points": [
+        "Joint angles sent in radians over USB",
+        "Smooth speed-up and slow-down",
+        "Motors switch off when idle to save power"
+      ]
+    }
+  ],
+  "diagram": {
+    "nodes": [
+      { "id": "pc", "label": "Computer", "detail": "Python: planning, simulation and, later, AI" },
+      { "id": "esp32", "label": "ESP32-S3", "detail": "Firmware: smooth, safe motor control" },
+      { "id": "motors", "label": "8 motors", "detail": "Steppers today, smart servos next" }
+    ],
+    "caption": "The computer sends joint angles over USB. The ESP32-S3 turns them into motor steps. Each motor pulls a tendon that moves one joint."
+  },
+  "stats": {
+    "kicker": "By the numbers",
+    "title": "Small today. Built to grow.",
+    "items": [
+      { "value": 8, "unit": "", "label": "joints in the prototype, each with its own motor" },
+      { "value": 20, "unit": "", "label": "joints targeted for the full hand" },
+      { "value": 100, "unit": "%", "label": "open source: design, code and research" },
+      { "value": 131, "unit": "g", "label": "of printed plastic, calculated from the 3D model" }
+    ]
+  },
+  "cta": {
+    "title": "Build it, change it, share it.",
+    "lead": "The design, firmware, simulation and research notes are all on GitHub. Download them, try the hand in simulation on your own computer, or help build the next finger.",
+    "label": "Get the files on GitHub",
+    "href": "https://github.com/Danielloka/tendra-hand"
+  }
+}

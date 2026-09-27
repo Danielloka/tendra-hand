@@ -1,0 +1,71 @@
+---
+title: Contribute
+kicker: Build it with us
+lead: "Tendra Hand is open to everyone. Print a part, fix a bug, improve the simulation or ask a good question."
+description: "How to help build Tendra Hand: print and test parts, improve the firmware, simulation or AI, write docs, or improve the design."
+---
+
+The project is early, which makes this a good time to join. Small help counts: a test print, a typo fix or a question that shows where the docs are unclear.
+
+## Ways to help
+
+<CardGrid min="18rem">
+  <Card title="Print and test" kicker="Hardware">
+    Print the parts, build a finger and tell us what broke, what was hard to assemble and which print settings worked for you.
+  </Card>
+  <Card title="Firmware" kicker="ESP32-S3, C++">
+    Help with smooth motion, calibration and the driver for the Feetech SCS0009 smart servos.
+  </Card>
+  <Card title="Simulation and AI" kicker="Python, MuJoCo">
+    Make the simulation more realistic (tendons, friction, contact), or help build teleoperation and learning-based control.
+  </Card>
+  <Card title="Docs and guides" kicker="Writing">
+    Write build guides, explain things in plain words, add photos, or translate.
+  </Card>
+  <Card title="Mechanical design" kicker="CAD">
+    Improve the fingers, the tendon routing and the thumb, which needs a fifth motion to fully match a human thumb.
+  </Card>
+</CardGrid>
+
+## How to get started
+
+<Steps>
+  <Step title="Look around">
+    Read the [project page](/project) and the [roadmap](/project#roadmap), and skim the [build log](/log) to see where things stand.
+  </Step>
+  <Step title="Say hello">
+    Open an [issue](https://github.com/Danielloka/tendra-hand/issues) for bugs and concrete ideas, or start a [discussion](https://github.com/Danielloka/tendra-hand/discussions) for questions and bigger ideas.
+  </Step>
+  <Step title="Send a change">
+    Fork the repository, make your change and open a [pull request](https://github.com/Danielloka/tendra-hand/pulls). Keep it small and explain what it does and why.
+  </Step>
+</Steps>
+
+To try the software without any hardware, clone the repository and run the simulation:
+
+```sh title="Terminal"
+git clone https://github.com/Danielloka/tendra-hand.git
+cd tendra-hand
+uv sync
+uv run python sim/view.py
+```
+
+{/* TODO: add a CONTRIBUTING.md to the repository (code style, tests, commit messages) and link it here. */}
+
+## Licenses
+
+By contributing, you agree that your work is shared under the same licenses as the project:
+
+| What | License |
+|---|---|
+| Code: firmware, Python, simulation, AI code and models | Apache-2.0 |
+| Hardware: CAD, print files, electronics, robot model | CERN-OHL-S-2.0 |
+| Docs, research and website text | CC BY 4.0 |
+
+In short: anyone may use, build, change and sell Tendra Hand. If you share a changed hardware design, you share its design files under the same license. Please credit the project.
+
+## Code of conduct
+
+Be kind, be patient and assume good intent. Everyone here is learning, including the people who started it.
+
+{/* TODO: adopt a code of conduct (for example the Contributor Covenant), add CODE_OF_CONDUCT.md to the repository and link it here. */}

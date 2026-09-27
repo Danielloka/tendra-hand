@@ -1,0 +1,106 @@
+{
+  "kicker": "Roadmap",
+  "title": "From two fingers to a full hand.",
+  "lead": "Each step has a clear goal, so progress is easy to measure. Some steps overlap, and publishing everything openly runs the whole way through.",
+  "phases": [
+    {
+      "id": "phase-0",
+      "title": "Phase 0: Foundation",
+      "summary": "Set up the project and get the hand model moving in simulation.",
+      "status": "done",
+      "items": [
+        "Project structure, public repo and licenses",
+        "Checked the Fusion 360 export and wrote down its problems",
+        "Converter from the CAD export to a MuJoCo simulation model",
+        "Simulation viewer with a slider for every joint",
+        "Simulated motions checked against the real hand"
+      ]
+    },
+    {
+      "id": "phase-1",
+      "title": "Phase 1: Thumb and index, moving smoothly",
+      "summary": "Make the 8-joint prototype move cleanly on stepper motors, controlled from the computer.",
+      "status": "in-progress",
+      "items": [
+        "Firmware with smooth speed-up and slow-down for all 8 motors (tested on the computer)",
+        "Motors switch off when idle to stay within the power supply",
+        "Python control library that works on the simulation and the real hand",
+        "Digital twin software: move a slider on screen and the real joint follows (not yet tried on the hand)",
+        "Still to do: first power-on, motor direction checks and calibration of each joint",
+        "Still to do: basic motions like open, close, pinch and point"
+      ]
+    },
+    {
+      "id": "phase-2",
+      "title": "Phase 2: Smart servos",
+      "summary": "Swap the steppers for Feetech SCS0009 servos that report their own position.",
+      "status": "planned",
+      "items": [
+        "One shared data cable for all servos, through an FE-URT-1 adapter",
+        "Same Python code as before, with a new motor driver underneath",
+        "Read back position, load and temperature",
+        "Digital twin shows the measured joint positions, live",
+        "Compare steppers and servos for speed, precision, force and noise"
+      ]
+    },
+    {
+      "id": "phase-3",
+      "title": "Phase 3: Mechanics and a realistic simulation",
+      "summary": "Make the hardware robust and the simulation behave like the real thing.",
+      "status": "planned",
+      "items": [
+        "Study tendon routing, friction and tension, and model the tendons in simulation",
+        "Soft TPU fingertip pads",
+        "Measure real speed, friction and play, and tune the simulation to match",
+        "Redesign the thumb toward five motions, like a human thumb",
+        "Weigh the printed parts and update the model"
+      ]
+    },
+    {
+      "id": "phase-4",
+      "title": "Phase 4: Full hand",
+      "summary": "Scale up to five fingers.",
+      "status": "planned",
+      "items": [
+        "Middle, ring and little fingers, based on the index design",
+        "Decide where the motors live: palm or forearm",
+        "Electronics and power for the whole hand on the servo bus",
+        "Full-hand simulation model with around 20 or more joints"
+      ]
+    },
+    {
+      "id": "phase-5",
+      "title": "Phase 5: Sensing",
+      "summary": "Give the hand a sense of touch and a camera.",
+      "status": "planned",
+      "items": [
+        "Touch and force sensing in the fingertips",
+        "A camera to see the hand and what it holds",
+        "Sensor data in the Python library and the simulation"
+      ]
+    },
+    {
+      "id": "phase-6",
+      "title": "Phase 6: AI control",
+      "summary": "Teach the hand to move by itself.",
+      "status": "planned",
+      "items": [
+        "Control the hand by moving your own hand in front of a webcam",
+        "Learn from recorded demonstrations",
+        "Train in simulation on cloud GPUs, then transfer to the real hand",
+        "Optional: larger-scale training in NVIDIA Isaac Sim or Isaac Lab"
+      ]
+    },
+    {
+      "id": "phase-7",
+      "title": "Phase 7: Seeing and grasping",
+      "summary": "Use the camera to find objects and handle them.",
+      "status": "planned",
+      "items": [
+        "Detect objects with the camera and plan how to grasp them",
+        "Harder tasks: turning objects in the hand, using tools, everyday objects",
+        "Publish benchmarks and results"
+      ]
+    }
+  ]
+}

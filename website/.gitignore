@@ -1,0 +1,9 @@
+node_modules/
+.next/
+.next-*/
+out/
+next-env.d.ts
+*.tsbuildinfo
+# Copied from ../styleguide and ../assets by scripts/sync-styleguide.mjs
+public/styleguide/
+public/assets/

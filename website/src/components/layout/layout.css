@@ -1,0 +1,131 @@
+/* Site chrome: mobile menu, scroll progress, route transitions (Pages Agent). Tokens only. */
+/* Same layer order as Tailwind, in case this file loads before globals.css. */
+@layer theme, base, components, utilities;
+
+@layer components {
+  /* ---- Nav tweaks ------------------------------------------------------------ */
+  .nav__brand-mark { flex: none; }
+  .nav.is-menu-open { background: var(--bg); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  /* ---- Menu button: two lines that turn into an X ------------------------------ */
+  .nav .menu-button { display: none; }
+  .menu-button svg { width: 20px; height: 20px; overflow: visible; }
+  .menu-button path {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .menu-button[aria-expanded="true"] { color: var(--text); }
+  .menu-button[aria-expanded="true"] .menu-button__top { transform: translateY(4px) rotate(45deg); }
+  .menu-button[aria-expanded="true"] .menu-button__bottom { transform: translateY(-4px) rotate(-45deg); }
+
+  /* ---- Sheet ------------------------------------------------------------------- */
+  .menu-sheet { display: none; }
+  @media (max-width: 63.99rem) {
+    .nav .menu-button { display: inline-grid; margin-right: -0.4rem; }
+    /* Without JS the button can't open anything, so it isn't shown. */
+    html:not(.js) .nav .menu-button { display: none; }
+
+    .menu-sheet {
+      position: fixed;
+      inset: var(--nav-h, 3.5rem) 0 0;
+      z-index: 49;
+      display: block;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      background: var(--bg);
+      visibility: hidden;
+      opacity: 0;
+      clip-path: inset(0 0 100% 0);
+      transition:
+        clip-path var(--dur-base) var(--ease-in),
+        opacity var(--dur-base) var(--ease-in),
+        visibility 0s linear var(--dur-base);
+    }
+    .menu-sheet[data-open] {
+      visibility: visible;
+      opacity: 1;
+      clip-path: inset(0);
+      transition:
+        clip-path 450ms var(--ease-out),
+        opacity var(--dur-base) var(--ease-out),
+        visibility 0s;
+    }
+    .menu-sheet__inner {
+      display: grid;
+      gap: var(--space-7);
+      padding-block: var(--space-5) var(--space-8);
+    }
+    .menu-sheet__links { display: grid; margin: 0; padding: 0; list-style: none; }
+    .menu-sheet__links > li,
+    .menu-sheet__footer {
+      opacity: 0;
+      translate: 0 -0.75rem;
+      transition: opacity var(--dur-fast) var(--ease-in), translate var(--dur-fast) var(--ease-in);
+    }
+    .menu-sheet[data-open] :where(.menu-sheet__links > li, .menu-sheet__footer) {
+      opacity: 1;
+      translate: 0 0;
+      transition:
+        opacity var(--dur-slow) var(--ease-out),
+        translate var(--dur-slow) var(--ease-out);
+      transition-delay: calc(60ms + var(--i, 0) * 35ms);
+    }
+    .menu-sheet__links > li + li { border-top: 1px solid var(--border); }
+    .menu-sheet__link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-block: 0.9rem;
+      color: var(--text);
+      font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+    }
+    .menu-sheet__link::after {
+      content: "›";
+      color: var(--text-faint);
+      font-weight: 400;
+      transition: translate var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+    }
+    .menu-sheet__link:hover { text-decoration: none; }
+    .menu-sheet__link:hover::after { translate: 3px 0; color: var(--accent-ink); }
+    .menu-sheet__link[aria-current="page"] { color: var(--accent-ink); }
+    .menu-sheet__link[aria-current="page"]::after { color: var(--accent-ink); }
+  }
+  /* Small phones: the GitHub link lives in the menu instead. */
+  @media (max-width: 24rem) {
+    .nav__github { display: none; }
+  }
+
+  /* ---- Scroll progress: along the nav's bottom edge ---------------------------- */
+  .scroll-progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    pointer-events: none;
+    will-change: transform;
+  }
+  .nav.is-menu-open .scroll-progress { opacity: 0; }
+
+  /* ---- Route transition (template.tsx) -------------------------------------------
+     No fill mode: once the animation ends nothing is left on the wrapper, so it
+     never becomes a containing block for fixed or pinned elements. */
+  @media (prefers-reduced-motion: no-preference) {
+    .route-in { animation: route-in 320ms var(--ease-out); }
+    .route-in--fade { animation-name: route-fade; }
+  }
+  @keyframes route-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes route-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}

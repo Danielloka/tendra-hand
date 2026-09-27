@@ -1,0 +1,45 @@
+/* The design system in ../assets/css is the single source of truth.
+   tokens.css stays unlayered so it overrides Tailwind's theme defaults;
+   base/components go into Tailwind layers so utility classes can override them. */
+@import "tailwindcss";
+@import "../../assets/css/tokens.css";
+@import "../../assets/css/tailwind-theme.css";
+@import "../../assets/css/base.css" layer(base);
+@import "../../assets/css/components.css" layer(components);
+
+@import "../styles/prose.css" layer(components);
+
+@source "../../content";
+
+/* Fonts are self-hosted by next/font (see app/layout.tsx). */
+:root {
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Consolas, monospace;
+  --nav-h: 3.5rem;
+}
+
+/* Shiki dual-theme code colours follow data-theme */
+.shiki,
+.shiki span {
+  color: var(--shiki-light);
+}
+:root[data-theme="dark"] .shiki,
+:root[data-theme="dark"] .shiki span {
+  color: var(--shiki-dark);
+}
+
+/* Tailwind v4 also has a `container` utility with breakpoint widths. This
+   unlayered copy of the design system's .container wins over it. */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Placeholder SVGs (public/images/placeholders) are light-only images, so they
+   can't read tokens. In dark mode, flip their lightness but keep the blue hue,
+   so they don't glow as white boxes. Remove once real photos replace them. */
+:root[data-theme="dark"] img[src*="/images/placeholders/"] {
+  filter: invert(1) hue-rotate(180deg) brightness(1.1);
+}

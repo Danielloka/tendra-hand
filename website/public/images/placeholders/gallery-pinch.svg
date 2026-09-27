@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1250" width="1000" height="1250" role="img" aria-label="Photo: thumb and index in a pinch">
+  <!-- TODO: replace with Photo of the real hand holding a pinch pose (thumb tip meeting the index fingertip), ideally holding a small object, portrait 4:5. -->
+  <rect width="1000" height="1250" fill="#f5f5f7"/>
+  <rect x="30" y="30" width="940" height="1190" rx="40" fill="none" stroke="#0066CC" stroke-opacity="0.18" stroke-width="2" stroke-dasharray="10 10"/>
+  <g transform="translate(430.0 501.3) scale(2.917)" fill="none" stroke="#0066CC" stroke-opacity="0.55" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="12" width="40" height="28" rx="6"/><path d="M17 12l3-5h8l3 5"/><circle cx="24" cy="26" r="8"/></g>
+  <text font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="42" font-weight="500" fill="#6e6e73" text-anchor="middle"><tspan x="500" y="709">Photo: thumb and index in a pinch</tspan></text>
+</svg>

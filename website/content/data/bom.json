@@ -1,0 +1,97 @@
+{
+  "updated": "2026-09-27",
+  "groups": [
+    {
+      "name": "Electronics",
+      "items": [
+        {
+          "part": "ESP32-S3-N16R8 development board",
+          "qty": 1,
+          "spec": "16 MB flash, 8 MB octal PSRAM (kept disabled), native USB-C",
+          "notes": "Runs the firmware. PSRAM must stay off because its pins (GPIO 35-37) drive motors 6 and 7.",
+          "status": "have"
+        },
+        {
+          "part": "28BYJ-48 stepper motor, 5 V",
+          "qty": 8,
+          "spec": "Geared stepper, gear ratio about 63.7:1, about 4076 half-steps per output turn, up to about 15 rpm",
+          "notes": "One per joint. Open loop: no position feedback, so joints are straightened by hand before power-up.",
+          "status": "have"
+        },
+        {
+          "part": "ULN2003 driver board",
+          "qty": 8,
+          "spec": "4 inputs per board, one board per stepper",
+          "notes": "Usually sold together with the 28BYJ-48.",
+          "status": "have"
+        },
+        {
+          "part": "5 V power supply for the motors",
+          "qty": 1,
+          "spec": "5 V, 2 A, separate from USB",
+          "notes": "Close to the limit for 8 motors, so the firmware switches idle motors off.",
+          "status": "have"
+        },
+        {
+          "part": "USB-C cable",
+          "qty": 1,
+          "spec": "Data-capable USB-C cable",
+          "notes": "Connects the ESP32-S3 to the computer. Power-only cables will not work.",
+          "status": "have"
+        }
+      ]
+    },
+    {
+      "name": "Mechanics",
+      "items": [
+        {
+          "part": "PLA or PETG filament",
+          "qty": "TODO: grams per hand",
+          "spec": "1.75 mm, TODO: brand and colour used",
+          "notes": "For the rigid skeleton. The 3D model works out to about 131 g of solid plastic; printed parts are usually lighter.",
+          "status": "have"
+        },
+        {
+          "part": "Tendon line",
+          "qty": "TODO: length per joint",
+          "spec": "TODO: line type and diameter",
+          "notes": "One closed loop per joint, wound on a 2 cm spool on the motor.",
+          "status": "have"
+        },
+        {
+          "part": "TPU filament",
+          "qty": "TODO: amount per fingertip pad",
+          "spec": "TODO: shore hardness",
+          "notes": "For soft fingertip pads (planned).",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "name": "Planned upgrade: smart servos",
+      "items": [
+        {
+          "part": "Feetech SCS0009 smart servo",
+          "qty": 8,
+          "spec": "5 V, serial bus (half-duplex), addressable IDs, position feedback",
+          "notes": "Replaces the steppers in Phase 2. Daisy-chained on one cable and no manual homing.",
+          "status": "planned"
+        },
+        {
+          "part": "Feetech FE-URT-1 signal converter",
+          "qty": 1,
+          "spec": "Connects the ESP32-S3 serial port to the servo bus",
+          "notes": "Already on hand.",
+          "status": "have"
+        },
+        {
+          "part": "5 V power supply for the servos",
+          "qty": 1,
+          "spec": "TODO: current rating, sized for stall current",
+          "notes": "To be sized in Phase 2.",
+          "status": "planned"
+        }
+      ]
+    }
+  ]
+}

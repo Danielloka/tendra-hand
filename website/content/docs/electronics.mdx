@@ -1,0 +1,120 @@
+---
+title: Electronics
+description: The ESP32-S3 controller, ULN2003 motor drivers, the motor-to-pin map, pin warnings, flashing the firmware with PlatformIO, and the serial protocol.
+updated: 2026-09-27
+---
+
+The electronics have one job: turn joint angles from your PC into smooth motor motion. The PC does the thinking (control, simulation, later AI); the microcontroller only moves the motors.
+
+```text title="Signal path"
+PC (Python)  --USB-C-->  ESP32-S3  -->  8 × ULN2003  -->  8 × 28BYJ-48  -->  tendons  -->  joints
+```
+
+## Parts
+
+| Part | Qty | Notes |
+|---|---|---|
+| ESP32-S3-N16R8 board | 1 | 16 MB flash, 8 MB PSRAM (kept **off**, see below). USB-C to the PC. |
+| ULN2003 driver board | 8 | One per motor. Switches the four motor coils. |
+| 28BYJ-48 stepper, 5 V | 8 | Geared ≈ 64:1, ≈ 2038 full steps per output turn. |
+| 5 V / 2 A power supply | 1 | For the motors only. Its ground must connect to the ESP32 ground. |
+
+## Motor and pin map
+
+Motors are numbered **M1 to M8**. This order is used everywhere: in the firmware, the serial protocol, the Python code and the simulation. IN1–IN4 are the four inputs on each ULN2003 board.
+
+| Motor | IN1, IN2, IN3, IN4 (GPIO) | Joint | What it moves |
+|---|---|---|---|
+| M1 | 4, 5, 6, 7 | `index_dip` | Index fingertip joint |
+| M2 | 15, 16, 17, 18 | `index_pip` | Index middle joint |
+| M3 | 8, 3, 14, 9 | `index_mcp_flex` | Index knuckle bend |
+| M4 | 10, 11, 12, 13 | `index_mcp_abd` | Index sideways |
+| M5 | 1, 2, 42, 41 | `thumb_ip` | Thumb tip joint |
+| M6 | 40, 39, 38, **37** | `thumb_mcp` | Thumb middle joint |
+| M7 | **36, 35, 0**, 45 | `thumb_cmc_flex` | Thumb base bend |
+| M8 | **48**, 47, 21, **43** | `thumb_cmc_rot` | Thumb base rotation |
+
+**Sign convention:** positive angles close the hand, negative angles open it, and 0 is the joint held straight. For the thumb base rotation, positive swings the thumb across the palm. For the index sideways joint, positive moves the index toward the thumb.
+
+## Pin warnings
+
+The pins in **bold** above need care. They work, but only because of choices in the firmware:
+
+<Callout type="warning" title="GPIO 35, 36, 37: PSRAM must stay off">
+  On the N16R8 module these pins are wired to the 8 MB PSRAM chip. They can drive motors 6 and 7 only because PSRAM is **disabled** in the firmware build (`platformio.ini`). Never enable PSRAM with this pin map.
+</Callout>
+
+- **GPIO 0** (M7) is a *strapping pin*: if it's held LOW at reset, the chip starts in download mode instead of running the firmware. The ULN2003 input may pull it low, so the board might not boot normally with motor 7 connected. This hasn't been tested on the real hand yet; if you run into it, please open an issue. The servo upgrade (below) frees this pin.
+- **GPIO 43** (M8) is the chip's UART0 transmit pin. The boot ROM prints messages on it at reset, so motor 8 may twitch briefly. The firmware never logs on UART0; it talks over USB instead.
+- **GPIO 48** (M8) is often wired to the board's RGB LED. The firmware doesn't drive the LED.
+- **GPIO 3 and 45** are strapping pins too, but LOW is already their default, so they're fine.
+- **GPIO 19 and 20** are the native USB pins. Never use them for motors.
+
+The firmware sets every motor pin LOW (all coils off) as the very first thing it does.
+
+## Power
+
+Each energised 28BYJ-48 draws about 200–250 mA, so eight at once would be close to the 2 A supply's limit. To stay within budget, the firmware **switches off a motor's coils after 1 s without motion**. The motor's internal gearbox mostly holds the joint in place without power.
+
+## Flashing the firmware
+
+The firmware is a [PlatformIO](https://platformio.org/) project (Arduino framework, C++17) in `firmware/`. Install PlatformIO as a VS Code extension or as a command-line tool, then from the `firmware/` folder:
+
+```sh title="Terminal"
+pio run                 # build
+pio run -t upload       # flash (ESP32 on USB-C)
+pio device monitor      # type commands, see replies (Ctrl+C to quit)
+```
+
+<Callout type="tip">
+  If the upload can't connect: hold **BOOT**, tap **RESET**, release BOOT, and try again.
+</Callout>
+
+## Serial protocol
+
+The PC talks to the ESP32 with short text commands, one per line. Joints are numbered 1–8 (= M1–M8), angles are in **radians**, and positive closes the hand. Every command replies `OK` unless noted.
+
+| Command | What it does |
+|---|---|
+| `P q1 … q8` | Set targets for all 8 joints |
+| `J i q` | Set the target of joint *i* |
+| `S` | Status. Replies `S q1 … q8 moving_mask` |
+| `X` | Stop all joints, smoothly |
+| `R` | Release all coils (joints go limp) |
+| `Z` | The current pose becomes zero |
+| `M i n` | Raw move of joint *i* by *n* steps, **ignoring limits** (calibration only; max ±4096) |
+| `K i s` | Set joint *i*'s scale in steps per radian (calibration) |
+| `V i v a` | Max velocity (rad/s) and acceleration (rad/s²) for joint *i* (`0` = all joints) |
+| `I` | Firmware info and scales |
+
+Targets are clamped to each joint's limits. Moves speed up and slow down smoothly (a *trapezoidal* profile), and a new target can arrive mid-move. You rarely need to type these by hand: the Python `RealHand` class sends them for you.
+
+## First power-on
+
+Do this one motor at a time, with a hand near the power switch.
+
+<Steps>
+  <Step title="Flash with only USB connected">
+    Keep the motor power off. Open the monitor and send `I`. It should list 8 joints.
+  </Step>
+  <Step title="Power the motors and zero">
+    Switch on the motor power. Straighten every joint by hand, then send `Z`.
+  </Step>
+  <Step title="Check each motor's direction">
+    For each motor *i*, send `M i 200` (a small move, about 18°), then `M i -200`. Check that the right joint moves and that **positive closes** it. If it opens instead, set `invert = true` for that joint in `firmware/include/config.h`.
+  </Step>
+  <Step title="Calibrate the scale">
+    Send `M i 1000`, measure how far the joint turned, convert it to radians, and send `K i <1000 / angle_in_rad>`. Write the value down: it will go into `config.h`.
+  </Step>
+  <Step title="Move with real angles">
+    Only now use `J i q` or `P …` with real angles, or drive the hand from the [digital twin](/docs/simulation-setup#the-digital-twin).
+  </Step>
+</Steps>
+
+### Calibrating a joint
+
+Why the last steps matter: the motor turns a spool, but how much the *joint* turns for each motor step depends on the tendon's moment arm at that joint, which hasn't been measured. Until each joint is calibrated, the firmware assumes 1:1 (about 648.7 half-steps per radian). A guided calibration tool is planned.
+
+## Coming next: smart servos
+
+The planned upgrade replaces the steppers with **Feetech SCS0009** smart servos on a single serial bus (through an FE-URT-1 adapter). They report their own position, so manual homing goes away, and one shared data line frees up most of the pins, including the tricky ones above. The firmware is already structured for this: joint code talks to a `MotorDriver` interface, and a servo driver can replace the stepper driver without touching the rest.

@@ -1,0 +1,96 @@
+{
+  "items": [
+    {
+      "type": "image",
+      "src": "/images/placeholders/gallery-prototype-three-quarter.svg",
+      "alt": "The thumb and index finger prototype seen from a three-quarter angle",
+      "caption": "The current prototype: a thumb and an index finger with 8 joints.",
+      "width": 1200,
+      "height": 1500,
+      "todo": "Photo of the assembled thumb + index prototype from a three-quarter front angle, on a plain light background, portrait 4:5."
+    },
+    {
+      "type": "image",
+      "src": "/images/placeholders/gallery-tendon-routing.svg",
+      "alt": "The back of the index finger showing the tendon cords running along it",
+      "caption": "Tendon cords run along each finger to the motors.",
+      "width": 1600,
+      "height": 1000,
+      "todo": "Close-up photo of the back of the index finger showing how the tendon loops are routed through the printed parts, landscape 16:10."
+    },
+    {
+      "type": "video",
+      "src": "/images/placeholders/gallery-video-index-close-open.svg",
+      "poster": "/images/placeholders/gallery-video-index-close-open.svg",
+      "alt": "Video of the index finger bending and straightening",
+      "caption": "First motion test: the index finger closing and opening.",
+      "width": 1920,
+      "height": 1080,
+      "todo": "Short muted video (5-10 s, 16:9) of the index finger closing and opening smoothly on the stepper firmware, plus a poster frame. Shoot after hardware bring-up."
+    },
+    {
+      "type": "image",
+      "src": "/images/placeholders/gallery-electronics.svg",
+      "alt": "The ESP32-S3 board wired to eight ULN2003 stepper driver boards",
+      "caption": "The electronics: one ESP32-S3 and a driver board for each of the 8 motors.",
+      "width": 1500,
+      "height": 1000,
+      "todo": "Top-down photo of the ESP32-S3 wired to the 8 ULN2003 boards and the 5 V supply, landscape 3:2."
+    },
+    {
+      "type": "image",
+      "src": "/images/placeholders/gallery-spool.svg",
+      "alt": "Close-up of a 2 cm tendon spool on a 28BYJ-48 motor",
+      "caption": "One spool, one tendon loop: it bends the joint one way and straightens it the other.",
+      "width": 1000,
+      "height": 1000,
+      "todo": "Macro photo of one 28BYJ-48 motor with its 2 cm spool and tendon loop wound on it, square 1:1."
+    },
+    {
+      "type": "image",
+      "src": "/images/placeholders/gallery-printed-parts.svg",
+      "alt": "All printed parts of the thumb and index finger laid out on a table",
+      "caption": "Every part of the skeleton comes off an ordinary 3D printer.",
+      "width": 1600,
+      "height": 900,
+      "todo": "Flat-lay photo of all printed PLA/PETG parts of the thumb + index, neatly arranged on a light surface, landscape 16:9."
+    },
+    {
+      "type": "image",
+      "src": "/images/placeholders/gallery-mujoco-viewer.svg",
+      "alt": "The simulated thumb and index finger in the MuJoCo viewer with joint sliders",
+      "caption": "The simulated hand in MuJoCo, with a slider for every joint.",
+      "width": 1600,
+      "height": 1000,
+      "todo": "Screenshot of `uv run python sim/view.py` with the hand in a pinch pose and the Control sliders visible, landscape 16:10."
+    },
+    {
+      "type": "video",
+      "src": "/images/placeholders/gallery-video-digital-twin.svg",
+      "poster": "/images/placeholders/gallery-video-digital-twin.svg",
+      "alt": "Video of the real hand following a slider in the MuJoCo simulation",
+      "caption": "The digital twin: move a joint on screen and the real finger follows.",
+      "width": 1080,
+      "height": 1350,
+      "todo": "Muted video (10-15 s, portrait 4:5) with the laptop screen running `sim/twin.py --port auto` next to the real hand, showing the real joints following the sliders, plus a poster frame."
+    },
+    {
+      "type": "image",
+      "src": "/images/placeholders/gallery-pinch.svg",
+      "alt": "The thumb tip touching the index fingertip in a pinch pose",
+      "caption": "A pinch: the thumb swings across to meet the index finger.",
+      "width": 1000,
+      "height": 1250,
+      "todo": "Photo of the real hand holding a pinch pose (thumb tip meeting the index fingertip), ideally holding a small object, portrait 4:5."
+    },
+    {
+      "type": "image",
+      "src": "/images/placeholders/gallery-cad.svg",
+      "alt": "The Fusion 360 design of the thumb and index finger",
+      "caption": "The design lives in Fusion 360 and will be published as open CAD files.",
+      "width": 1600,
+      "height": 1000,
+      "todo": "Screenshot of the Fusion 360 design of the thumb + index with a clean background (optionally a section view through a joint), landscape 16:10."
+    }
+  ]
+}

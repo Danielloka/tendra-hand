@@ -1,0 +1,106 @@
+---
+title: Hardware
+kicker: Build it yourself
+lead: "Printed parts, small motors, one microcontroller and some cord. Here is what goes into the prototype and where to find the files."
+description: "The parts, files, print settings, motors and electronics behind the Tendra Hand thumb and index prototype."
+---
+
+## What the prototype is made of
+
+The current prototype is a thumb and an index finger with 8 joints. It has three layers:
+
+<CardGrid>
+  <Card title="Printed skeleton" kicker="Mechanics">
+    The bones of the fingers, printed in PLA or PETG. Soft TPU fingertip pads are planned for a better grip.
+  </Card>
+  <Card title="Tendons" kicker="Motion">
+    Each joint has one closed loop of cord wound on a spool with a 1 cm radius. The motor turns the spool one way to bend the joint and the other way to straighten it.
+  </Card>
+  <Card title="Motors and electronics" kicker="Power">
+    8 small stepper motors, one per joint, each with its own driver board, all controlled by one ESP32-S3.
+  </Card>
+</CardGrid>
+
+## Design files
+
+All hardware files live in the [`hardware/`](https://github.com/Danielloka/tendra-hand/tree/main/hardware) folder on GitHub.
+
+| Folder | What's inside |
+|---|---|
+| `hardware/cad/` | The source design: Fusion 360 files, plus STEP files that open in any CAD program |
+| `hardware/print/` | Ready-to-print STL and 3MF files, with print settings |
+| `hardware/electronics/` | Wiring, pin map and power budget |
+| `hardware/robot_description/` | The robot model exported from Fusion 360, used by the simulation |
+
+<Callout type="note" title="Coming soon">
+  Right now the repository holds the robot model exported from Fusion 360, including a 3D mesh of every part. The editable CAD files and print-ready files are being prepared and will be added to `hardware/cad/` and `hardware/print/`.
+</Callout>
+
+{/* TODO: link each STL/3MF and the .f3d/STEP files once they are committed. */}
+
+## Bill of materials
+
+Everything needed for the thumb and index prototype, plus the planned servo upgrade. Items marked TODO haven't been measured or documented yet.
+
+<BomTable />
+
+## Print settings
+
+The final settings haven't been written down yet. Until then, these are common starting points for small mechanical parts. They are **not** tested values for this hand.
+
+| Setting | Starting point | Tested value |
+|---|---|---|
+| Material | PLA or PETG | TODO |
+| Nozzle | 0.4 mm | TODO |
+| Layer height | 0.2 mm (0.12 to 0.16 mm for small finger parts) | TODO |
+| Walls | 3 or more perimeters, so joint holes stay strong | TODO |
+| Infill | 20 to 40 % | TODO |
+| Supports | Only where needed; orient parts to avoid them in joint holes | TODO |
+| Orientation | Lay parts so layers don't split along the direction the tendon pulls | TODO |
+
+{/* TODO: replace the starting points with the settings actually used for the prototype, per part. */}
+
+The simulation model assumes solid plastic and works out to about 131 g. Real printed parts are lighter because they aren't solid.
+
+## Motors
+
+Each joint is driven by a **28BYJ-48** stepper motor (5 V) through a **ULN2003** driver board.
+
+- A stepper motor turns in small, exact steps. This one has a built-in gearbox (about 63.7:1), so it makes about 4076 half-steps per turn of its output shaft.
+- With the 1 cm spool, one turn pulls about 62.8 mm of cord. That is roughly 0.015 mm of cord per half-step.
+- Top speed is about 15 turns per minute. Slow, but smooth and strong for its size.
+- They are **open loop**: the motor doesn't report where it is. The firmware counts steps instead. So before power-up, every joint is straightened by hand, and that pose counts as zero.
+
+How many steps it takes to bend each joint by a given angle depends on how the tendon wraps around that joint. That number is measured per joint during calibration.
+
+### Next: smart servos
+
+The plan is to replace the steppers with **Feetech SCS0009** smart servos. They report their own position, so no more straightening by hand. They also share one data cable instead of four wires each, connected to the ESP32-S3 through an **FE-URT-1** adapter.
+
+## Electronics
+
+| Part | Role |
+|---|---|
+| ESP32-S3-N16R8 | The microcontroller. Receives joint angles over USB-C and runs the motors |
+| 8 × ULN2003 | Driver boards that switch the motor coils on and off |
+| 5 V / 2 A supply | Powers the motors, separately from USB |
+
+**Power budget.** Each motor draws around 200 to 250 mA per coil when it's switched on, so 8 motors come close to the 2 A limit. The firmware switches a motor's coils off after 1 second without motion.
+
+**Pin notes for the ESP32-S3-N16R8.** 8 motors × 4 wires need 32 pins, which pushes this board to its limits:
+
+- GPIO 35, 36 and 37 are normally used by the board's extra memory (PSRAM). They only work for motors because PSRAM is switched off in the firmware.
+- GPIO 0 decides the boot mode at reset. The driver board can pull it low, which may stop the board from starting normally while motor 7 is connected.
+- GPIO 43 is where the board prints startup messages, so motor 8 may twitch at reset. The firmware talks only over USB.
+- GPIO 19 and 20 are the USB connection and are never used for motors.
+
+The full pin map is in [`firmware/include/config.h`](https://github.com/Danielloka/tendra-hand/blob/main/firmware/include/config.h). The servo upgrade removes most of these problems, since all servos share one cable.
+
+<Callout type="warning" title="Safety first">
+  At startup, all motor pins are switched off and nothing moves until the computer sends a command. During first tests, stay near a power switch: a tendon that is too tight, or a motor turning the wrong way, can pull hard.
+</Callout>
+
+## Wiring diagram
+
+{/* TODO: replace with the real wiring diagram (public/images/placeholders/wiring-diagram.svg is a stand-in). */}
+<Placeholder label="Diagram: wiring of the ESP32-S3, 8 ULN2003 boards and the 5 V supply" ratio="16 / 10" />

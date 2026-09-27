@@ -1,0 +1,8 @@
+/* base.css sets `scroll-behavior: smooth` for anchor jumps without JS. With JS,
+   Lenis does the smoothing itself; CSS smoothing on top would fight it, make
+   ScrollTrigger write an inline `scroll-behavior: smooth` back after each
+   refresh, and trigger Next's route-transition warning. (`.js` is set on
+   <html> by the boot script in layout.tsx before first paint.) */
+html.js {
+  scroll-behavior: auto;
+}

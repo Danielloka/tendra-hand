@@ -1,0 +1,108 @@
+---
+title: Getting started
+description: What Tendra Hand is, what's in the repository, and how to run the simulation and tests on your own computer in a few minutes.
+updated: 2026-09-27
+---
+
+Tendra Hand is an open-source robotic hand that is 3D-printed and driven by tendons, like a human hand. The long-term goal is a hand with the same joints as yours that can do real, useful tasks. Everything is open: the CAD files, firmware, Python code, simulation and research notes.
+
+Right now the project is in **Phase 1**: a thumb and an index finger with **8 joints**, each driven by its own motor. You don't need the hardware to start. The simulation runs on any normal laptop.
+
+<Callout type="note" title="Where things stand">
+  The software side (simulation, Python API, firmware) works today. The printable parts, a full build guide and a parts list with prices are still being written up. This page only lists commands that exist in the repository right now.
+</Callout>
+
+## What's in the repository
+
+| Folder | What's in it |
+|---|---|
+| `hardware/` | CAD, print files, electronics notes and the robot model exported from Fusion 360 |
+| `firmware/` | Code for the ESP32-S3 microcontroller that moves the motors (PlatformIO) |
+| `sim/` | The MuJoCo simulation: model converter, viewer and digital twin |
+| `software/` | The `tendra` Python package: one API for the simulated and the real hand |
+| `docs/` | Roadmap and guides |
+| `research/` | The research log: dated notes on every experiment and decision |
+| `website/` | This website |
+
+## What you need
+
+- **Git**, to download the code.
+- **[uv](https://docs.astral.sh/uv/)**, a fast Python package manager. It installs the right Python version (3.12) for you, so you don't need to set up Python yourself.
+- Any recent Windows, macOS or Linux computer. No graphics card is needed: MuJoCo runs on the CPU.
+
+## Get the code
+
+```sh title="Terminal"
+git clone https://github.com/Danielloka/tendra-hand.git
+cd tendra-hand
+```
+
+## Install the Python environment
+
+From the repository root:
+
+```sh title="Terminal"
+uv sync
+```
+
+This creates a private Python 3.12 environment in `.venv/` and installs MuJoCo, NumPy, pySerial and the `tendra` package itself. You only need to do it once (and again after pulling changes that add dependencies).
+
+## Open the hand in the simulator
+
+```sh title="Terminal"
+uv run python sim/view.py
+```
+
+A MuJoCo window opens with the thumb and index finger. In the right-hand panel, open **Control**: there is one slider per motor (M1 to M8). Drag them to bend the joints.
+
+<Callout type="tip">
+  Mouse controls: left-drag rotates the view, right-drag moves it, and the scroll wheel zooms. Double-click a part to select it, then Ctrl + right-drag to push it.
+</Callout>
+
+## Try the digital twin without hardware
+
+A **digital twin** is a simulated copy of the real hand that stays in sync with it. You move the sliders in the simulator, and the same targets are sent to the real hand. With `--fake`, a software stand-in for the ESP32 takes the place of the real board, so you can try it with no hardware at all:
+
+```sh title="Terminal"
+uv run python sim/twin.py --fake
+```
+
+The terminal shows how far the (fake) hand is from the simulation as it catches up.
+
+## Use the Python API
+
+The same `Hand` interface drives both the simulation and the real hand, so code written for one runs on the other. Angles are in radians, and positive always means closing the hand.
+
+```python title="example.py"
+from tendra import SimHand
+
+hand = SimHand()                     # the MuJoCo simulation
+hand.set_joint("index_pip", 0.8)     # bend the index middle joint ~46°
+hand.set_targets([0.5] * 8)          # all joints, motor order M1..M8
+hand.wait()                          # run the physics until the joints arrive
+print(hand.positions())              # measured angles, in radians
+```
+
+Swap `SimHand()` for `RealHand()` to talk to the real hand over USB. See `software/README.md` for the full list of methods.
+
+## Run the tests
+
+```sh title="Terminal"
+uv run pytest
+```
+
+The tests check the simulation model and the Python package. They also make sure the joint names and limits agree across the firmware, the Python code and the MuJoCo model, so a change in one place can't silently break another.
+
+## Where to go next
+
+<CardGrid>
+  <Card title="Simulation setup" href="/docs/simulation-setup" kicker="Software">
+    How the MuJoCo model is made from the CAD export, and what the converter fixes.
+  </Card>
+  <Card title="Build guide" href="/docs/build-guide" kicker="Build">
+    An overview of building the thumb and index prototype, with the safety rules.
+  </Card>
+  <Card title="Electronics" href="/docs/electronics" kicker="Build">
+    The ESP32-S3, motor drivers, pin map, flashing and the serial protocol.
+  </Card>
+</CardGrid>

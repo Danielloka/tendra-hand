@@ -1,0 +1,47 @@
+---
+title: "One Python library for the real hand and its twin"
+date: "2026-09-27"
+summary: "The tendra Python package controls the simulated hand and the real hand with the same code, and digital twin v1 sends MuJoCo slider moves to the ESP32."
+cover: /images/placeholders/log-python-digital-twin.svg
+tags: ["software", "python", "digital twin"]
+---
+
+The firmware can move motors. Now the computer needs a friendly way to tell it what to do.
+
+## One interface, two hands
+
+The new `tendra` Python package has one interface, `Hand`, with two versions behind it. `SimHand` drives the MuJoCo simulation, and `RealHand` talks to the ESP32 over USB. They share the same commands, so a script (or, later, an AI) written for one runs on the other.
+
+```python title="example.py"
+from tendra import SimHand
+
+hand = SimHand()
+hand.set_joint("index_pip", 0.8)   # radians, positive = closing
+hand.wait()                        # let the simulation settle
+print(hand.positions())
+```
+
+## Testing without hardware
+
+The hand still isn't ready to power on, so I also wrote `FakeEsp32`, a small piece of software that pretends to be the ESP32 and answers the same text commands. `RealHand` can't tell the difference, which means the whole chain from Python to the command language can be tested today.
+
+There are 20 tests so far. Some check that the joint names and limits agree in three places: the firmware, the Python code and the simulation model. If one of them changes and the others don't, a test fails.
+
+## Digital twin v1
+
+A digital twin is a virtual copy of the hand that stays in step with the real one. In this first version, you move a slider in the MuJoCo viewer and the new target goes to the hand. To keep the USB link calm, it only sends when something changes, and at most 20 times a second.
+
+```sh title="Terminal"
+uv run python sim/twin.py --fake
+```
+
+With `--fake`, the software ESP32 stands in for the hand. In a first test, the viewer, the simulation and the link all ran together and shut down cleanly.
+
+{/* TODO: replace with a screenshot of sim/twin.py --fake showing the viewer and the terminal status. */}
+<Figure src="/images/placeholders/log-python-digital-twin.svg" alt="Placeholder for a screenshot of the digital twin running with the software ESP32" caption="Digital twin v1 running against the software ESP32." width={1600} height={900} />
+
+## Something to tune
+
+At rest, the simulated thumb sags about 1.2° under its own weight, because its simulated motor is a little soft. A real stepper holds firmly. That's a setting to tune once I can compare with the real hand.
+
+Next: power on the real hand, check every motor's direction, and build a guided tool to calibrate each joint.

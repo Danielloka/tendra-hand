@@ -1,0 +1,10 @@
+{
+  "autodeskProduct": "Fusion",
+  "type": "script",
+  "author": "Tendra Hand",
+  "description": {
+    "": "Read-only: writes a report of components, bodies, joints and axis positions of the open design."
+  },
+  "supportedOS": "windows|mac",
+  "editEnabled": true
+}

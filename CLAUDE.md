@@ -36,6 +36,7 @@ Tidy root: `.git`, `.venv`, `.gitignore` and `.gitattributes` have the Windows *
 
 - 3D-printed rigid skeleton, PLA/PETG. TPU fingertip pads are planned.
 - **Tendon-driven.** Each joint is driven independently by **one motor that both flexes and extends** it (an antagonistic tendon loop on one spool).
+- **Tendon routing:** each joint's own loop wraps a drum on the child segment (PIP drum groove radius ≈ 6 mm, from the STEP) and is tied through a hole in it. Loops for more distal joints pass through slots near the joint axes; open slots cause coupling, so pass-through tendons should cross each joint **exactly on its axis** (owner's choice, 2026-09-27). Done for the whole index in Fusion (PIP by `TendraPipPinch`, MCP flex + sideways by `TendraIndexPinch`, sideways slit edges filleted 0.4 mm; not yet printed); the thumb is still open. Tendon: 0.4 mm fishing line.
 - Motor spool: **radius 1 cm** (diameter 2 cm), so one output revolution pulls ≈62.8 mm of tendon, or ≈0.031 mm per full step. The joint-side moment arm is unknown, so steps-per-radian is **calibrated empirically** per joint.
 - **Actuators now:** 8× **28BYJ-48 (5 V)** unipolar steppers + **ULN2003** driver boards.
   - Gear ratio ≈ 63.68:1, so **≈2038 steps/output rev (full-step)** and ≈4076 (half-step). Top speed ≈ 15 rpm.
@@ -79,7 +80,7 @@ The mapping and the joint directions were confirmed by the owner in the MuJoCo v
 ## Repository layout
 
 ```
-hardware/   cad/ (f3d, STEP) · print/ (STL) · electronics/ · robot_description/fusion_export/ (raw Fusion URDF export)
+hardware/   cad/ (f3d, STEP, fusion_scripts/ = Fusion API scripts) · print/ (STL) · electronics/ · robot_description/fusion_export/ (raw Fusion URDF export)
 firmware/   PlatformIO project for the ESP32-S3
 sim/        MuJoCo models, URDF→MJCF converter, digital twin
 software/   PC-side Python: Hand API, control, calibration, AI

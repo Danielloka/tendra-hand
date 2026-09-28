@@ -1,0 +1,10 @@
+{
+  "autodeskProduct": "Fusion",
+  "type": "script",
+  "author": "Tendra Hand",
+  "description": {
+    "": "Fills the fingertip tendon slot at the index PIP joint and adds a 1.2 mm hole on the joint axis. Checks the geometry and asks before changing anything."
+  },
+  "supportedOS": "windows|mac",
+  "editEnabled": true
+}

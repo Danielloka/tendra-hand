@@ -1,0 +1,10 @@
+{
+  "autodeskProduct": "Fusion",
+  "type": "script",
+  "author": "Tendra Hand",
+  "description": {
+    "": "Adds tendon pinch points on the index knuckle axes (MCP flex hole and sideways slit). Checks the geometry and asks before changing anything."
+  },
+  "supportedOS": "windows|mac",
+  "editEnabled": true
+}

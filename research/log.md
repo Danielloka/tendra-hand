@@ -39,6 +39,72 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Result:**
 - v0.1 was "precision lab at night": dark, signal orange, mono labels, grain, blueprint grid. Owner feedback: **too robotic and nerdy**. They want light, clean, Apple-like, not orange, open to everyone.
 - v0.2: light default (white / `#F5F5F7` bands), optional dark mode, one blue accent `#0066CC` for clickable things only, Inter for all text, pill buttons, 22 px rounded cards, soft shadows, plain-language copy.
+## 2026-09-27: Pinch points on the index knuckle (MCP flex + sideways), design change, not yet printed
+
+**Goal:** Finish the index so every pass-through tendon crosses every joint on its axis; the owner wants to test the whole finger. The DIP needs nothing (no tendon passes it).
+
+**Setup:** joint-zero STEP, OpenCASCADE prototype and occupancy maps (`research/experiments/2026-09-27-index-pinch/`).
+
+**Result:**
+- Key fact: an axis is a line, so several tendons can sit side by side along it and all be "on the axis". For the flex joints (axis across the finger) tendons go side by side; for the sideways joint (axis through the palm) they stack vertically.
+- **MCP flex** (proximal segment tongue, x −11.04…−6.03): drum groove for the MCP's own loop at x ≈ −9.5 (tie hole next to it); **one** 1 mm pass-through slot at x −8.03…−7.04 carrying the PIP and DIP loops (4 strands), open to the palm and splitting into two channels further on. Change: same plug as the PIP, with a 1.4 mm hole on the axis (0.8 mm walls to the tongue side and the drum groove). Checks: plug never exposed outside the part (the only "unenclosed" plug edges are inside the existing internal funnel), tendon path clear from −5° to 100°.
+- **MCP sideways** (index base): three palm channels (x ≈ −11.9, −8.5, −5.25; one per loop) feed a wide horizontal slot (5.4 × 3.6 mm) at the sideways axis. The side loops crossed it about 2 mm off the axis, so ±15° of sideways movement changed their length by up to 0.73 mm (~5° of joint movement). Change: two 1.2 mm thick blocks leaving a 1 mm vertical slit on the axis; length change through the slit is 0.00 mm. At full ±15° the side strands touch the *existing* slot edge ~5 mm before the joint (unchanged by this).
+- Fusion script: `hardware/cad/fusion_scripts/TendraIndexPinch`. **Applied in Fusion (2026-09-27):** both changes report "slot filled: yes, tendon opening clear: yes", checked on the result in component coordinates.
+
+![before/after](experiments/2026-09-27-index-pinch/index_pinch_before_after.png)
+
+- **Re-checked in the live design via the Fusion MCP (2026-09-28):** all joints at 0, all six Tendra features healthy. PIP and MCP holes are clear along their whole length; the tendon channel past the PIP plug angles ~0.07 mm/mm toward the thumb side on its way to the DIP (normal). Sideways slit clear and centred.
+- **Added `Tendra ABD slit fillet` (2026-09-28):** 0.4 mm fillet on the 4 vertical slit edges, so the side strands (bent up to ~35°) run over rounded edges instead of sharp corners. The slit is still 1 mm wide in the middle (on the axis), and 0.4 mm of flat remains on each 1.2 mm block. The PIP/MCP hole entrances were left sharp on purpose: rounding them moves the tendon's contact point off the axis. Deburr them by hand after printing.
+
+**Conclusion / next:** Owner saves the design, prints the index base, proximal and middle segments, and tests every joint for coupling.
+
+---
+
+## 2026-09-27: Pinch point on the index PIP axis (design change, not yet printed)
+
+**Goal:** Make the fingertip (DIP) tendon cross the PIP joint exactly on its axis, so its length no longer depends on the PIP angle (owner's choice over idler pulleys).
+
+**Setup:** STEP export, OpenCASCADE prototype (`research/experiments/2026-09-27-pip-pinch/pinch.py`). Owner confirmed: only the DIP loop passes through the PIP. Each joint's own loop wraps a drum on the child segment and is tied through a hole in it.
+
+**Result:**
+- PIP drum (the middle segment's own tendon groove): groove bottom radius ≈ 6 mm, so the PIP lever arm is ≈ 6 mm. With the 10 mm spool, that's ≈ 389 half-steps per joint radian (1 : 0.6 of the current 1:1 default), still to be confirmed by calibration.
+- The DIP tendon slot in the middle segment is 1 mm wide (next to the drum groove) and open toward the palm from the axis to ~6 mm distal.
+- Change: fill that slot from the axis to 6.5 mm distal, leaving a 1.2 mm hole whose entrance is on the axis. The plug's palm side leans back 15°, so the tendon has clearance up to 100° of flexion.
+- Checks: plug fully enclosed by the segment walls; tendon path clear from −5° to 100°; tendon length across the PIP constant (16.30 mm) versus up to 4.8 mm shorter at 90° with the open slot. Remaining error from the 0.6 mm hole radius is ≈ 1 mm at 90°.
+- Fusion script `hardware/cad/fusion_scripts/TendraPipPinch` applies it. It first checks that the open design matches the STEP geometry, then asks before changing anything.
+
+![before/after](experiments/2026-09-27-pip-pinch/pip_pinch_before_after.png)
+
+- **Applied in Fusion (2026-09-27):** the script's own final check reported "NO", but TendraInspect confirmed the change. The middle segment grew by 28 mm³ (the plug), and a new r = 0.6 mm cylinder runs along the segment at the PIP axis height and at the predicted position across the segment (−7.50 mm, predicted −7.499). The check was wrong because adding features makes Fusion re-solve the joints, and the finger snapped from the STEP export's pose (index ~6° sideways, PIP ~5° bent) back to all joints at 0. The final check now tests the result in the component's own coordinates.
+- **Re-exported STEP** (all joints at 0) and re-checked on the real geometry: the hole centre is 0.000 mm from the PIP axis height, the plug is present, and the DIP tendon path is clear from −5° to 100°.
+- **Lesson:** export STEP with all joints at 0, and write CAD scripts against the live design geometry, not a posed export.
+
+**Conclusion / next:** Owner prints the middle segment, and tests whether the fingertip still moves when only the PIP moves. Deburr the hole entrance so it doesn't cut the line. If it works, do the same at the MCP (PIP and DIP loops pass through) and on the thumb.
+
+---
+
+## 2026-09-27: Tendon routing review and joint coupling
+
+**Goal:** Understand the tendon drive and find what limits smooth, clean motion.
+
+**Setup:** Owner's description plus the URDF/MJCF. Each joint has one 28BYJ-48 in the forearm driving a closed pull-pull loop (flexor and extensor strands wound in opposite directions on one 10 mm radius spool). Each joint has 2 bearings (one per side) and a hole at the joint; tendons for more distal joints pass through that hole. Tendon: 0.4 mm fishing line.
+
+**Result:**
+- **Coupling confirmed by the owner:** moving one joint moves the more distal joints, because tendon path lengths change when the joints they cross move.
+- Why a hole at the joint doesn't fully fix it: the path length is constant only if the tendon's contact point is *exactly* on the joint axis. Any offset e (hole beside the pin, hole wider than the tendon so it slides to one edge, strands at different spots) changes the length by ≈ e·θ, and the offset can flip sides with the bend direction. Over a ~95° range, each 1 mm of offset is ~1.7 mm of tendon, which is ~20° of unwanted motion at a joint with a 5 mm moment arm. If the palm-side and back-side strands of one loop have different offsets, loop tension also changes (slack or over-tight).
+- **STEP analysis** (`hardware/cad/Hand assebly.step`, read with OpenCASCADE, index finger sliced along and across): joints are forks, with 4 mm axle bosses on the child running in 8 mm bearing seats (4×8 mm, e.g. MR84) in the parent's side lugs. There is no through-axle; the child's knuckle has a central slot, and the tendons run in ~1 × 4 mm channels at about axle height, with funnel-shaped openings at each joint (about ±4 mm toward palm and back). The channels narrow ~13–15 mm on either side of each axis. When a joint bends, the straight line between those narrow points wants to pass far to the palm side (≈10 mm from the axis at 90°, outside the finger), so the tendons press on the palm-side funnel walls. Estimated effect: pass-through strands shorten by ≈ 4 mm × θ (~6 mm at 90°), both strands of a loop in the same direction (slack), plus high friction at the funnel edges. Routing and anchor points are still to be confirmed with the owner.
+- The firmware maps joint → motor independently (`kDefaultStepsPerRad` per joint), so it can't compensate.
+- Other limits: 28BYJ-48 gearbox backlash (a few degrees at the output, ~0.5 mm of tendon on the spool); low force (~3 N of tendon force at 10 mm spool radius); nylon monofilament stretches and creeps under load.
+
+**Conclusion / next:**
+- Mechanical: put a small **idler pulley on each joint axis** (e.g. on the pin between the bearings) and wrap the pass-through strands around it, palm strand on one side, back strand on the other. Then each crossed joint changes the tendon by exactly ±ρ·θ: the loop length stays constant and the coupling becomes linear.
+- Software: replace per-joint scaling with a **coupling matrix**, `motor = A · q`, measured per tendon.
+- Tendon: consider braided PE (Dyneema) instead of nylon monofilament if it's mono; add a tension adjuster per loop.
+- Sim: model the tendons as MuJoCo fixed tendons so the sim shows the same coupling.
+- Consider a smaller spool (4–5 mm radius) once the joint moment arms are measured.
+
+---
+
 - Contrast measured in the browser, all WCAG AA or better. Light: text 15.5:1, muted 4.7:1, blue text 5.1:1, button label 5.6:1. Dark: all at least 6.3:1.
 - Checked: no horizontal scroll at 390 px, no console errors, reveals and counters show instantly with reduced motion or with JS off.
 

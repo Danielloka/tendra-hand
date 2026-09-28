@@ -49,6 +49,7 @@ firmware/**/build/
 ~$*
 *.gcode
 *.bgcode
+hardware/cad/fusion_scripts/**/*_output.txt
 
 # ---------- Editors ----------
 .vscode/*

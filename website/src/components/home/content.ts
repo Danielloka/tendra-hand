@@ -12,6 +12,8 @@ export type HomeContent = {
   diagram: DiagramData;
   stats: { kicker: string; title: string; items: { value: number; unit: string; label: string }[] };
   cta: { title: string; lead: string; label: string; href: string };
+  /** Shown only when the visitor's system asks for reduced motion (MotionToggle). */
+  motionToggle: { play: string; note: string };
 };
 
 /** content/home.json, typed (see PLAN.md, "Content formats"). */

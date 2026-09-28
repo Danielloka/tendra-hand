@@ -109,4 +109,21 @@ Joint ranges (how far `1.0` on a slider turns) are in
 8. Save as `public/models/hand.glb`, set `HAND_MODEL_URL`, and test in
    `/dev/hand`.
 
-TODO: add `hand.glb` once the real model is exported from Fusion 360.
+## Current model
+
+`hand.glb` is made straight from the STEP file by a script (no Blender):
+
+```
+uv run --with cadquery-ocp --with pygltflib python website/scripts/step-to-glb.py
+```
+
+It reads `hardware/cad/Hand assebly.step` (thumb + index prototype, 9 parts,
+~13k triangles, 0.4 MB) and rigs it automatically: each part is matched to a
+body of the MuJoCo model (`sim/models/tendra_hand.xml`) by its bounding box, and
+the joint nodes are placed at the URDF joint pivots with the sim's axis signs
+(positive = closing). `index_tip` / `thumb_tip` mark the fingertips. The STEP
+and the URDF export must come from the same Fusion design; the script stops
+if a sim body has no matching part.
+
+`index_mcp_abd` and `thumb_cmc_rot` have sideways axes, so the tendon line
+skips them and runs through the next joint (see `gltfRig.ts`).

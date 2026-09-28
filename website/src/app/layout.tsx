@@ -26,7 +26,8 @@ export const viewport: Viewport = {
 
 // Runs before first paint: marks JS as available (for scroll reveals) and
 // applies the saved theme so there is no flash. Same key as the style guide.
-const bootScript = `document.documentElement.classList.add("js");try{if(localStorage.getItem("tendra-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}`;
+// "motion" = the homepage story animates (see src/lib/scroll/motion.ts; same storage key).
+const bootScript = `var d=document.documentElement;d.classList.add("js");var m=!matchMedia("(prefers-reduced-motion: reduce)").matches;try{if(localStorage.getItem("tendra-theme")==="dark")d.dataset.theme="dark";if(localStorage.getItem("tendra-motion")==="on")m=true}catch(e){}if(m)d.classList.add("motion")`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

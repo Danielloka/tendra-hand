@@ -101,8 +101,10 @@ export function RigView({ rig, state, mats, animated }: ModelProps & { rig: Rig 
     const fitH = (rig.size.y * 1.12) / (2 * FOV_TAN);
     const fitW = (rig.size.x * 1.35) / (2 * FOV_TAN * aspect);
     const dist = (Math.max(fitH, fitW) * (1 + 0.3 * explode)) / Math.max(state.zoom, 0.1);
-    cam.position.set(0, 0, dist);
-    cam.lookAt(0, 0, 0);
+    // shiftY: aim the camera higher, so the hand sits lower in the frame.
+    const lift = state.shiftY * 2 * dist * FOV_TAN;
+    cam.position.set(0, lift, dist);
+    cam.lookAt(0, lift, 0);
 
     tendons.update(hand, clamp01(state.tendons));
 

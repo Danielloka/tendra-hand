@@ -13,6 +13,17 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 
 ---
 
+## 2026-09-28: Real hand model on the website
+**Goal:** replace the placeholder hand on the homepage with the real CAD, spinning with the scroll.
+**Setup:** `hardware/cad/Hand assebly.step` → `website/scripts/step-to-glb.py` (OpenCascade via `cadquery-ocp`, `RWGltf_CafWriter`) → `website/public/models/hand.glb`.
+**Result:**
+- The first export had one mesh per CAD face (~700 meshes) and froze the browser. `SetMergeFaces(True)` gives one mesh per part: 9 meshes, ~13k triangles, 0.4 MB.
+- Fusion's STEP (Z-up, mm) converted to glTF Y-up already matches the site frame: fingers +Y, thumb out toward +Z, palm plate toward −X.
+- The homepage timeline now turns the hand one full turn per story section, linearly with scroll.
+- Rigging (same day): the STEP and the URDF export share the design frame. Every STEP part's bounding box matches a MuJoCo body to <0.1 mm, so the script matches them automatically and adds joint nodes at the URDF pivots, using the MJCF axes (already flipped so positive = closing). Checked by posing the GLB offline: the index curls toward the palm and the thumb swings across to it. The hand lab shows the bend and the joint labels.
+- The site's `thumb_cmc_rot` range was 55°; lowered to the real +40° limit.
+**Conclusion / next:** the real model now drives every scroll effect. The STEP must stay in sync with the URDF export (same Fusion design), or matching fails loudly.
+
 ## 2026-09-27: Website v1 (Next.js + scroll-driven 3D hand)
 
 **Goal:** Build the project website on the design system, with a 3D hand that tells the story as you scroll.
@@ -30,15 +41,6 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 
 ---
 
-## 2026-09-27: Website design system v0.2
-
-**Goal:** Define the visual identity of the project website before building real pages.
-
-**Setup:** `website/assets/` (tokens, base, components CSS + `site.js`), reviewed on `website/styleguide/index.html`. Plain CSS + vanilla JS, no build step; site framework still undecided.
-
-**Result:**
-- v0.1 was "precision lab at night": dark, signal orange, mono labels, grain, blueprint grid. Owner feedback: **too robotic and nerdy**. They want light, clean, Apple-like, not orange, open to everyone.
-- v0.2: light default (white / `#F5F5F7` bands), optional dark mode, one blue accent `#0066CC` for clickable things only, Inter for all text, pill buttons, 22 px rounded cards, soft shadows, plain-language copy.
 ## 2026-09-27: Pinch points on the index knuckle (MCP flex + sideways), design change, not yet printed
 
 **Goal:** Finish the index so every pass-through tendon crosses every joint on its axis; the owner wants to test the whole finger. The DIP needs nothing (no tendon passes it).
@@ -105,6 +107,15 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 
 ---
 
+## 2026-09-27: Website design system v0.2
+
+**Goal:** Define the visual identity of the project website before building real pages.
+
+**Setup:** `website/assets/` (tokens, base, components CSS + `site.js`), reviewed on `website/styleguide/index.html`. Plain CSS + vanilla JS, no build step; site framework still undecided.
+
+**Result:**
+- v0.1 was "precision lab at night": dark, signal orange, mono labels, grain, blueprint grid. Owner feedback: **too robotic and nerdy**. They want light, clean, Apple-like, not orange, open to everyone.
+- v0.2: light default (white / `#F5F5F7` bands), optional dark mode, one blue accent `#0066CC` for clickable things only, Inter for all text, pill buttons, 22 px rounded cards, soft shadows, plain-language copy.
 - Contrast measured in the browser, all WCAG AA or better. Light: text 15.5:1, muted 4.7:1, blue text 5.1:1, button label 5.6:1. Dark: all at least 6.3:1.
 - Checked: no horizontal scroll at 390 px, no console errors, reveals and counters show instantly with reduced motion or with JS off.
 

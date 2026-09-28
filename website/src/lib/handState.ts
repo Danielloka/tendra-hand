@@ -78,6 +78,8 @@ export type HandState = {
   wireframe: number;
   /** Camera zoom multiplier (1 = default framing). */
   zoom: number;
+  /** Moves the hand down in its canvas, as a fraction of the canvas height (0 = centred). */
+  shiftY: number;
 };
 
 function initialJoints(): Record<JointId, number> {
@@ -95,6 +97,7 @@ export function createHandState(): HandState {
     explode: 0,
     wireframe: 0,
     zoom: 1,
+    shiftY: 0,
   };
 }
 

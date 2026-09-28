@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { Placeholder } from "@/components/ui/Placeholder";
-import { useReducedMotion } from "@/lib/scroll/useReducedMotion";
 
 // three.js (~270 kB gzipped) is only fetched after the first interaction (see below), never on the critical path.
 const HandCanvas = dynamic(() => import("@/components/three/HandCanvas"), { ssr: false, loading: () => null });
@@ -12,6 +11,8 @@ type Props = {
   canvasRef: React.Ref<HTMLDivElement>;
   indicatorRef: React.Ref<HTMLOListElement>;
   chapters: { id: string; label: string }[];
+  /** False = one still render (reduced motion, see src/lib/scroll/motion.ts). */
+  motion: boolean;
 };
 
 /**
@@ -24,8 +25,7 @@ type Props = {
  * takes about a second on a mid-range phone, so doing it before the page is
  * interactive would make the page feel stuck (and cost ~30 Lighthouse points).
  */
-export function HandStage({ canvasRef, indicatorRef, chapters }: Props) {
-  const reduced = useReducedMotion();
+export function HandStage({ canvasRef, indicatorRef, chapters, motion }: Props) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export function HandStage({ canvasRef, indicatorRef, chapters }: Props) {
     <div className="story-stage">
       <div ref={canvasRef} className="story-canvas" aria-hidden="true">
         <div className="story-canvas__glow" />
-        {ready && <HandCanvas mode={reduced ? "static" : "animated"} className="story-canvas__gl" />}
+        {ready && <HandCanvas mode={motion ? "animated" : "static"} className="story-canvas__gl" />}
       </div>
       <noscript>
         {/* TODO: replace with a static render of the hand (public/images/hand-static.webp) once the real model exists. */}

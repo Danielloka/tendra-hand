@@ -10,8 +10,9 @@ const Chevron = () => (
 
 /**
  * Homepage hero. Plain server-rendered text with no reveal animation, so the
- * headline paints immediately and is the page's LCP element. The hand sits in
- * the story's sticky canvas behind/below it (ScrollStory).
+ * headline paints immediately and is the page's LCP element. On desktop the
+ * headline is centred and the hand (the story's sticky canvas, ScrollStory)
+ * sits to the right of the text below it.
  */
 export function Hero() {
   const { kicker, title, lead, primaryCta, secondaryCta } = home.hero;
@@ -24,22 +25,24 @@ export function Hero() {
         <h1 id="hero-title" className="display story-hero__title">
           {title}
         </h1>
-        <p className="lead story-hero__lead">{lead}</p>
-        <div className="story-hero__cta">
-          <Link className="btn btn--primary btn--lg" href={primaryCta.href}>
-            {primaryCta.label}
-          </Link>
-          {isExternal(secondaryCta.href) ? (
-            <a className="btn btn--ghost" href={secondaryCta.href}>
-              {secondaryCta.label}
-              <Chevron />
-            </a>
-          ) : (
-            <Link className="btn btn--ghost" href={secondaryCta.href}>
-              {secondaryCta.label}
-              <Chevron />
+        <div className="story-hero__body">
+          <p className="lead story-hero__lead">{lead}</p>
+          <div className="story-hero__cta">
+            <Link className="btn btn--primary btn--lg" href={primaryCta.href}>
+              {primaryCta.label}
             </Link>
-          )}
+            {isExternal(secondaryCta.href) ? (
+              <a className="btn btn--ghost" href={secondaryCta.href}>
+                {secondaryCta.label}
+                <Chevron />
+              </a>
+            ) : (
+              <Link className="btn btn--ghost" href={secondaryCta.href}>
+                {secondaryCta.label}
+                <Chevron />
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </section>

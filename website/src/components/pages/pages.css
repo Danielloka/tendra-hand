@@ -136,7 +136,6 @@
   .bom__table thead th:nth-child(1) { width: 22%; }
   .bom__table thead th:nth-child(2) { width: 6.5rem; }
   .bom__table thead th:nth-child(3) { width: 26%; }
-  .bom__table thead th:nth-child(5) { width: 7.5rem; }
   .bom__part { font-weight: 600; }
   .bom__qty { font-variant-numeric: tabular-nums; }
   .bom__notes { color: var(--text-muted); }
@@ -171,7 +170,6 @@
       font-size: var(--fs-caption);
       font-weight: 600;
     }
-    .bom__status > * { justify-self: start; }
   }
 
   /* ---- Build log: index ------------------------------------------------------- */

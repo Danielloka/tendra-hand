@@ -12,7 +12,8 @@
     { "label": "Docs", "href": "/docs" },
     { "label": "Build log", "href": "/log" },
     { "label": "Gallery", "href": "/gallery" },
-    { "label": "Contribute", "href": "/contribute" }
+    { "label": "Contribute", "href": "/contribute" },
+    { "label": "Hand lab", "href": "/dev/hand" }
   ],
   "footer": {
     "note": "Built in the open. Every file, every line of code, every mistake.",

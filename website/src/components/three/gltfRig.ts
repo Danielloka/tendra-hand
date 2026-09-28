@@ -81,6 +81,8 @@ export function rigFromGltf(source: Object3D, mats: HandMaterials): Rig {
       if (!merged || !joints[merged]) {
         const ids = (Object.keys(MERGED_LABEL) as JointId[]).filter((k) => MERGED_LABEL[k] === id).concat(id);
         labels.push({ text: JOINT_LABELS[id], ids, anchor: node, side: chain.side });
+      } else {
+        continue; // its sideways axis has no "back of the hand"; the tendon runs through the next joint instead
       }
       node.getWorldScale(worldScale);
       path.push({ node, offset: new Vector3(0, 0, -TENDON_BACK / (worldScale.z || 1)) });

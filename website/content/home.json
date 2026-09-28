@@ -96,5 +96,9 @@
     "lead": "The design, firmware, simulation and research notes are all on GitHub. Download them, try the hand in simulation on your own computer, or help build the next finger.",
     "label": "Get the files on GitHub",
     "href": "https://github.com/Danielloka/tendra-hand"
+  },
+  "motionToggle": {
+    "play": "Play animation",
+    "note": "Your device asks for reduced motion, so the hand stands still."
   }
 }

@@ -13,7 +13,8 @@ type Gsap = typeof GsapType;
  * ScrollTrigger range, so tall and short sections both get the whole segment
  * and nothing has to be rebuilt when the text reflows.
  *
- * Only plain numbers are tweened (handState + one DOM transform on desktop),
+ * Only plain numbers are tweened (handState, the chapter indicator and, on
+ * desktop, one canvas transform),
  * so scrolling never touches React state.
  */
 
@@ -25,13 +26,32 @@ export type StoryLayout = "desktop" | "compact";
 
 const TAU = Math.PI * 2;
 
+/** Scroll-driven spin: the hand turns SPIN_TURNS times between the top and the end of the story. */
+const SPIN_END = STORY_LENGTH - 1;
+const SPIN_TURNS = 2;
+
 /**
- * Hero → story canvas travel on desktop, as a percentage of the canvas box.
- * Translate only: scaling would make R3F re-measure and resize the WebGL canvas
- * every frame. Keep CANVAS_HERO in sync with home.css (first paint).
+ * Where the canvas sits for the chapters (translated right, percent of its
+ * width): the right-hand column. Translate only: resizing would make R3F
+ * re-measure the WebGL canvas every frame.
  */
-const CANVAS_HERO = { x: 0, y: 0, xPercent: 0, yPercent: 62 };
-const CANVAS_STORY = { x: 0, y: 0, xPercent: 23, yPercent: 0 };
+const CANVAS_STORY_X = 23;
+
+/** A little idle sway in the hero only; it fades out as the scroll takes over the rotation. */
+const HERO_IDLE = 0.25;
+
+/**
+ * Desktop hero: the hand starts smaller and lower, below the centred headline
+ * and to the side of the centred text, then grows and glides into the right
+ * column during the first scroll. See HandState.zoom / shiftY.
+ */
+function heroFit(headline: number) {
+  const HAND = 0.89; // share of the canvas height the hand fills at zoom 1 (1 / 1.12, HandModel framing)
+  const top = headline + 0.04; // a little air under the headline
+  const bottom = 0.97; // the bottom of the canvas fades out anyway (home.css mask)
+  const zoom = Math.min(0.75, Math.max(0.35, (bottom - top) / HAND));
+  return { zoom, shiftY: top + (zoom * HAND) / 2 - 0.5 };
+}
 
 /** Flexion (0..1 of range) per joint in the "Joints" section; matches the hand lab's `joints` preset. */
 const BEND: Partial<Record<JointId, number>> = {
@@ -65,33 +85,46 @@ export function staticPose(): HandState {
 type Options = {
   state: HandState;
   layout: StoryLayout;
-  /** Desktop only: the element that carries the canvas from the hero to the right column. */
-  canvas?: HTMLElement | null;
   /** Section-name indicator; fades in once the story starts. */
   indicator?: HTMLElement | null;
+  /**
+   * Desktop hero, measured by ScrollStory: how far down the canvas (0..1) the
+   * headline reaches (the hand starts below it), and how far right (percent of
+   * its width) the canvas moves so the hand sits beside the centred text.
+   */
+  hero?: { headline: number; xPercent: number };
+  /** Desktop: the element that carries the canvas from the hero spot to the right column. */
+  canvas?: HTMLElement | null;
 };
 
-export function buildStoryTimeline(gsap: Gsap, { state, layout, canvas, indicator }: Options) {
+export function buildStoryTimeline(gsap: Gsap, { state, layout, indicator, hero, canvas }: Options) {
   const desktop = layout === "desktop";
-  applyHandState(state, createHandState());
+  applyHandState(state, { ...createHandState(), idle: HERO_IDLE, ...(desktop && heroFit(hero?.headline ?? 0)) });
 
   const tl = gsap.timeline({ paused: true, defaults: { ease: "power1.inOut" } });
   const r = state.rotation;
 
-  // 0 → 1 · Hero → Intro: calm down, turn to a three-quarter palm view, canvas slides right.
-  tl.to(state, { idle: 0.2, rim: 0.6, duration: 1 }, 0).to(r, { y: -0.5, duration: 1 }, 0);
-  if (desktop && canvas) {
-    tl.fromTo(canvas, { ...CANVAS_HERO }, { ...CANVAS_STORY, duration: 1, ease: "power2.inOut" }, 0);
+  // 0 → 1 · Hero → Intro: the idle sway fades out, the lighting calms down.
+  tl.to(state, { idle: 0, rim: 0.6, duration: 1 }, 0);
+  if (desktop) {
+    tl.to(state, { zoom: 1, shiftY: 0, duration: 1, ease: "power2.inOut" }, 0);
+    if (canvas) {
+      const from = hero?.xPercent ?? CANVAS_STORY_X;
+      // x: 0 drops the first-paint translateX from home.css (GSAP would read it as pixels and add it).
+      tl.fromTo(canvas, { x: 0, xPercent: from }, { x: 0, xPercent: CANVAS_STORY_X, duration: 1, ease: "power2.inOut" }, 0);
+    }
   }
+
+  // The whole way down, the hand turns steadily with the scroll (and back when scrolling up).
+  tl.fromTo(r, { y: 0 }, { y: TAU * SPIN_TURNS, duration: SPIN_END, ease: "none" }, 0);
   if (indicator) tl.fromTo(indicator, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, 0.7);
 
-  // 1.75 → 2.3 · Tendons: turn to the back of the hand, cords light up.
-  tl.to(r, { y: Math.PI, duration: 0.55 }, 1.75)
-    .to(state, { rim: 0.3, idle: 0.1, duration: 0.4 }, 1.75)
+  // 1.75 → 2.3 · Tendons: cords light up.
+  tl.to(state, { rim: 0.3, duration: 0.4 }, 1.75)
     .to(state, { tendons: 1, duration: 0.3, ease: "power2.out" }, 2.05);
 
-  // 2.75 → 3.2 · Joints: keep turning the same way to a raised three-quarter view.
-  tl.to(state, { tendons: 0, idle: 0, duration: 0.3 }, 2.75).to(r, { x: 0.2, y: TAU - 0.8, duration: 0.45 }, 2.75);
+  // 2.75 → 3.2 · Joints: tilt to a slightly raised view.
+  tl.to(state, { tendons: 0, duration: 0.3 }, 2.75).to(r, { x: 0.2, duration: 0.45 }, 2.75);
   tl.to(state, { labels: 1, duration: 0.1 }, 3.2);
   if (desktop) {
     // One joint after the other, each label popping as its joint bends.
@@ -107,13 +140,12 @@ export function buildStoryTimeline(gsap: Gsap, { state, layout, canvas, indicato
 
   // 4.0 → 4.85 · Exploded view: apart over the first half, hold, back together.
   // Pulled back while apart so the spread-out parts stay in frame.
-  tl.to(r, { x: 0.1, y: TAU - 0.6, duration: 0.25 }, 4.0)
+  tl.to(r, { x: 0.1, duration: 0.25 }, 4.0)
     .to(state, { explode: 1, zoom: 0.8, duration: 0.3, ease: "power2.inOut" }, 4.15)
     .to(state, { explode: 0, zoom: 1, duration: 0.28, ease: "power2.inOut" }, 4.55);
-  if (desktop) tl.to(r, { y: TAU - 0.15, duration: 0.65, ease: "none" }, 4.25); // slow drift while apart (ends 4.9)
 
   // 4.85 → 5.2 · Electronics: wireframe, pulled back a little for the diagram.
-  tl.to(state, { wireframe: 1, zoom: 0.85, rim: 0.45, duration: 0.35 }, 4.85).to(r, { x: 0, y: TAU - 0.5, duration: 0.35 }, 4.9);
+  tl.to(state, { wireframe: 1, zoom: 0.85, rim: 0.45, duration: 0.35 }, 4.85).to(r, { x: 0, duration: 0.35 }, 4.9);
 
   tl.set({}, {}, STORY_LENGTH); // the timeline always spans the whole story
   return tl;

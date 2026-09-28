@@ -11,7 +11,7 @@ const deg = MathUtils.degToRad;
  * ranges; positive = closing the hand (CLAUDE.md sign convention).
  */
 export const JOINT_RANGE: Record<JointId, number> = {
-  thumb_cmc_rot: deg(55), // opposition: thumb swings across the palm
+  thumb_cmc_rot: deg(40), // opposition: thumb swings across the palm (real limit +40°)
   thumb_cmc_flex: deg(40),
   thumb_mcp: deg(55),
   thumb_ip: deg(75),

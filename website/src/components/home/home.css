@@ -1,11 +1,11 @@
 /* Homepage: hero, scroll story, diagram, stats, roadmap, CTA. Tokens only.
 
    Two layouts:
-   - Static (default): no JS or prefers-reduced-motion. Hero, one still view
+   - Static (default): no JS, or reduced motion. Hero, one still view
      of the hand, then the chapters as a normal readable page.
-   - Motion (html.js + no-preference): the hand canvas is sticky. Desktop
-     (≥1024px): canvas behind the hero, then on the right while the text
-     scrolls on the left. Smaller screens: canvas sticky at the top, text
+   - Motion (html.motion, see src/lib/scroll/motion.ts): the hand canvas is sticky. Desktop
+     (≥1024px): the hand stays in the right column, from the hero on, while
+     the text scrolls on the left. Smaller screens: canvas sticky at the top, text
      scrolls underneath. The GSAP timeline lives in src/lib/scroll/storyTimeline.ts. */
 
 /* Declare the layer order first, in case this file loads before globals.css. */
@@ -34,6 +34,10 @@
   .story-hero__lead {
     max-width: 36rem;
     margin-top: var(--space-5);
+  }
+  .story-hero__body {
+    display: grid;
+    justify-items: center;
   }
   .story-hero__cta {
     display: flex;
@@ -169,145 +173,180 @@
     margin-top: var(--space-5);
   }
 
+  /* ---- Motion toggle (only for reduced-motion visitors) -------------- */
+  .motion-toggle {
+    position: fixed;
+    right: var(--space-5);
+    bottom: var(--space-5);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    max-width: calc(100vw - 2 * var(--space-5));
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+  }
+  .motion-toggle__note {
+    margin: 0;
+    font-size: var(--fs-caption);
+    color: var(--text-muted);
+  }
+  @media (max-width: 640px) {
+    .motion-toggle__note {
+      display: none;
+    }
+    .motion-toggle {
+      padding-left: var(--space-2);
+    }
+  }
+
   /* ---- Motion layout --------------------------------------------------- */
-  @media (prefers-reduced-motion: no-preference) {
-    .js .story-stage {
+  /* html.motion: JS on and motion allowed (system setting, or the visitor pressed "Play animation"). */
+  .motion .story-stage {
+    position: sticky;
+    top: var(--nav-h);
+    overflow: clip;
+  }
+  .motion .story-indicator {
+    position: absolute;
+    bottom: var(--space-4);
+    left: 50%;
+    display: flex;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    translate: -50% 0;
+    font-size: var(--fs-caption);
+    font-weight: 500;
+    color: var(--text-faint);
+    white-space: nowrap;
+    visibility: hidden; /* shown by the timeline once the story starts */
+  }
+  .motion .story-indicator li {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    transition: color var(--dur-base) var(--ease-out);
+  }
+  .motion .story-indicator li::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.5;
+  }
+  .motion .story-indicator li[data-active] {
+    color: var(--text);
+  }
+  .motion .story-indicator li[data-active]::before {
+    opacity: 1;
+  }
+
+  /* Desktop: centred hero, then text on the left and the hand on the right. */
+  @media (min-width: 1024px) {
+    /* Hero: all text centred; the hand starts small, under the headline and to
+       the side of the text, then glides into the right column (heroFit() and
+       measureHero() in ScrollStory), so it never sits under text. */
+    .motion .story-hero {
+      min-height: calc(100svh - var(--nav-h));
+      padding-block: clamp(2rem, 1rem + 3vh, 3.5rem) var(--space-7);
+    }
+    .motion .story-hero__lead {
+      max-width: 32rem;
+    }
+    .motion .story-stage {
+      height: calc(100svh - var(--nav-h));
+      margin-top: calc((100svh - var(--nav-h)) * -1);
+    }
+    .motion .story-canvas {
+      /* Hero: beside the centred text (set by the timeline); chapters: the right-hand column. */
+      inset: var(--space-4) 0 var(--space-8); /* room for the chapter indicator */
+      transform: translateX(32%);
+      will-change: transform;
+    }
+    .motion .story-indicator {
+      left: 73%;
+    }
+    .motion .story-section {
+      display: flex;
+      align-items: flex-start;
+      min-height: 110svh;
+      padding-block: 0;
+    }
+    /* The text column stays centred in view while its section's animation runs. */
+    .motion .story-section > .container {
       position: sticky;
       top: var(--nav-h);
-      overflow: clip;
-    }
-    .js .story-indicator {
-      position: absolute;
-      bottom: var(--space-4);
-      left: 50%;
-      display: flex;
-      gap: var(--space-4);
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      translate: -50% 0;
-      font-size: var(--fs-caption);
-      font-weight: 500;
-      color: var(--text-faint);
-      white-space: nowrap;
-      visibility: hidden; /* shown by the timeline once the story starts */
-    }
-    .js .story-indicator li {
       display: flex;
       align-items: center;
-      gap: 0.4em;
-      transition: color var(--dur-base) var(--ease-out);
+      min-height: calc(100svh - var(--nav-h));
+      padding-block: var(--space-8);
     }
-    .js .story-indicator li::before {
+    /* Taller than the screen: scroll it normally. */
+    .motion .story-section--electronics {
+      align-items: center;
+    }
+    .motion .story-section--electronics > .container {
+      position: static;
+      min-height: 0;
+    }
+    .motion .story-section--joints,
+    .motion .story-section--exploded {
+      min-height: 160svh;
+    }
+    .motion .story-section--electronics {
+      min-height: 130svh;
+    }
+    .motion .story-copy {
+      max-width: min(30rem, 44%);
+    }
+  }
+
+  /* Phones and tablets: canvas sticky at the top, text scrolls underneath. */
+  @media (max-width: 1023.98px) {
+    .motion .story-hero {
+      padding-bottom: var(--space-4);
+    }
+    .motion .story-stage {
+      z-index: 2;
+      height: 42svh;
+      overflow: visible; /* the canvas doesn't travel here; lets the fade below show */
+      background: var(--bg);
+    }
+    /* Soft edge just below the stage (under the chapter indicator), so text
+       fades out as it slides under instead of being cut at a hard line. */
+    .motion .story-stage::after {
       content: "";
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: currentColor;
-      opacity: 0.5;
+      position: absolute;
+      inset: 100% 0 auto;
+      height: var(--space-7);
+      background: linear-gradient(to bottom, var(--bg), transparent);
     }
-    .js .story-indicator li[data-active] {
-      color: var(--text);
+    .motion .story-canvas {
+      inset: 0 0 var(--space-6);
     }
-    .js .story-indicator li[data-active]::before {
-      opacity: 1;
+    .motion .story-indicator {
+      bottom: var(--space-2);
+      z-index: 1;
+      gap: var(--space-3);
     }
-
-    /* Desktop: canvas behind the hero, then on the right. */
-    @media (min-width: 1024px) {
-      .js .story-hero {
-        min-height: calc(100svh - var(--nav-h));
-        padding-top: clamp(2.5rem, 1rem + 4vh, 5rem);
-      }
-      .js .story-stage {
-        height: calc(100svh - var(--nav-h));
-        margin-top: calc((100svh - var(--nav-h)) * -1);
-      }
-      .js .story-canvas {
-        /* = CANVAS_HERO in storyTimeline.ts, so the first paint matches the timeline. */
-        inset: var(--space-4) 0 var(--space-8); /* room for the chapter indicator */
-        transform: translateY(62%);
-        will-change: transform;
-      }
-      .js .story-indicator {
-        left: 73%;
-      }
-      .js .story-section {
-        display: flex;
-        align-items: flex-start;
-        min-height: 110svh;
-        padding-block: 0;
-      }
-      /* The text column stays centred in view while its section's animation runs. */
-      .js .story-section > .container {
-        position: sticky;
-        top: var(--nav-h);
-        display: flex;
-        align-items: center;
-        min-height: calc(100svh - var(--nav-h));
-        padding-block: var(--space-8);
-      }
-      /* Taller than the screen: scroll it normally. */
-      .js .story-section--electronics {
-        align-items: center;
-      }
-      .js .story-section--electronics > .container {
-        position: static;
-        min-height: 0;
-      }
-      .js .story-section--joints,
-      .js .story-section--exploded {
-        min-height: 160svh;
-      }
-      .js .story-section--electronics {
-        min-height: 130svh;
-      }
-      .js .story-copy {
-        max-width: min(30rem, 44%);
-      }
+    .motion .story-section {
+      min-height: 70svh;
+      padding-block: var(--space-7);
     }
-
-    /* Phones and tablets: canvas sticky at the top, text scrolls underneath. */
-    @media (max-width: 1023.98px) {
-      .js .story-hero {
-        padding-bottom: var(--space-4);
-      }
-      .js .story-stage {
-        z-index: 2;
-        height: 42svh;
-        overflow: visible; /* the canvas doesn't travel here; lets the fade below show */
-        background: var(--bg);
-      }
-      /* Soft edge just below the stage (under the chapter indicator), so text
-         fades out as it slides under instead of being cut at a hard line. */
-      .js .story-stage::after {
-        content: "";
-        position: absolute;
-        inset: 100% 0 auto;
-        height: var(--space-7);
-        background: linear-gradient(to bottom, var(--bg), transparent);
-      }
-      .js .story-canvas {
-        inset: 0 0 var(--space-6);
-      }
-      .js .story-indicator {
-        bottom: var(--space-2);
-        z-index: 1;
-        gap: var(--space-3);
-      }
-      .js .story-section {
-        min-height: 70svh;
-        padding-block: var(--space-7);
-      }
-      .js .story-section--joints,
-      .js .story-section--exploded {
-        min-height: 95svh;
-      }
+    .motion .story-section--joints,
+    .motion .story-section--exploded {
+      min-height: 95svh;
     }
-    @media (min-width: 768px) and (max-width: 1023.98px) {
-      .js .story-stage {
-        height: 52svh;
-      }
+  }
+  @media (min-width: 768px) and (max-width: 1023.98px) {
+    .motion .story-stage {
+      height: 52svh;
     }
   }
 

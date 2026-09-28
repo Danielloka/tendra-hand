@@ -3,7 +3,7 @@ import { Tag } from "@/components/ui/Tag";
 import { formatDate } from "./format";
 import "./pages.css";
 
-type BomItem = { part: string; qty: number | string; spec: string; notes: string; link?: string; status: "have" | "planned" };
+type BomItem = { part: string; qty: number | string; spec: string; notes: string; link?: string; planned?: boolean };
 type Bom = { updated: string; groups: { name: string; items: BomItem[] }[] };
 
 const bom = bomData as Bom;
@@ -37,7 +37,6 @@ export function BomTable() {
                 <th scope="col">Qty</th>
                 <th scope="col">Spec</th>
                 <th scope="col">Notes</th>
-                <th scope="col">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -45,6 +44,12 @@ export function BomTable() {
                 <tr key={item.part}>
                   <th scope="row" className="bom__part">
                     {item.link ? <a href={item.link}>{item.part}</a> : item.part}
+                    {item.planned && (
+                      <>
+                        {" "}
+                        <Tag dot>Planned</Tag>
+                      </>
+                    )}
                   </th>
                   <td data-label="Qty" className="bom__qty">
                     <WithTodo text={item.qty} />
@@ -54,15 +59,6 @@ export function BomTable() {
                   </td>
                   <td data-label="Notes" className="bom__notes">
                     <WithTodo text={item.notes} />
-                  </td>
-                  <td data-label="Status" className="bom__status">
-                    {item.status === "have" ? (
-                      <Tag tone="success" dot>
-                        Have
-                      </Tag>
-                    ) : (
-                      <Tag dot>Planned</Tag>
-                    )}
                   </td>
                 </tr>
               ))}

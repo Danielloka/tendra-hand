@@ -3,12 +3,40 @@
 import { useEffect, useRef } from "react";
 import { handState } from "@/lib/handState";
 import { onLenisChange } from "@/lib/scroll/lenis";
+import { useStoryMotion } from "@/lib/scroll/motion";
 import { STORY_IDS, applyHandState, buildStoryTimeline, scrollToStoryTime, staticPose } from "@/lib/scroll/storyTimeline";
 import { HandStage } from "./HandStage";
+import { MotionToggle } from "./MotionToggle";
 
-const DESKTOP = "(min-width: 1024px) and (prefers-reduced-motion: no-preference)";
-const COMPACT = "(max-width: 1023.98px) and (prefers-reduced-motion: no-preference)";
-const REDUCE = "(prefers-reduced-motion: reduce)";
+const DESKTOP = "(min-width: 1024px)";
+const COMPACT = "(max-width: 1023.98px)";
+
+const clamp = (v: number, lo: number, hi: number) => Math.min(Math.max(v, lo), hi);
+
+/**
+ * Desktop hero spot for the hand, measured from the layout: `headline` = how
+ * far down the canvas (0..1) the headline reaches (the hand starts below it);
+ * `xPercent` = how far right to move the canvas so the hand is centred in the
+ * space right of the centred text. The stage is sticky from the start, so its
+ * box doesn't move while the story scrolls; the headline's top-of-page
+ * position is rect + scrollY.
+ */
+function measureHero(root: HTMLElement, canvas: HTMLElement) {
+  const title = root.querySelector(".story-hero__title");
+  const text = root.querySelectorAll(".story-hero__lead, .story-hero__cta > *");
+  // Measure the canvas box without the timeline's transform.
+  const transform = canvas.style.transform;
+  canvas.style.transform = "none";
+  const box = canvas.getBoundingClientRect();
+  canvas.style.transform = transform;
+  const bottom = (title?.getBoundingClientRect().bottom ?? box.top) + window.scrollY;
+  const textRight = Math.max(box.left + box.width / 2, ...Array.from(text, (el) => el.getBoundingClientRect().right));
+  const handCentre = (textRight + box.right) / 2;
+  return {
+    headline: clamp((bottom - box.top) / Math.max(box.height, 1), 0, 0.6),
+    xPercent: clamp(((handCentre - (box.left + box.width / 2)) / Math.max(box.width, 1)) * 100, 0, 38),
+  };
+}
 
 type Props = {
   /** Server-rendered hero (sits over the canvas on desktop). */
@@ -23,20 +51,24 @@ type Props = {
  *
  * GSAP and ScrollTrigger load after hydration (dynamic import) and only here.
  * gsap.matchMedia builds one timeline per layout and tears it down when the
- * breakpoint or the motion preference changes; everything is reverted on
- * unmount (route change). Scrolling writes to `handState` and one transform,
+ * breakpoint changes; the whole story is rebuilt when motion is switched on
+ * or off (src/lib/scroll/motion.ts), and reverted on unmount (route change). Scrolling writes to `handState` and one transform,
  * never to React state.
  */
 export function ScrollStory({ hero, children, chapters }: Props) {
   const root = useRef<HTMLDivElement>(null);
-  const canvas = useRef<HTMLDivElement>(null);
   const indicator = useRef<HTMLOListElement>(null);
+  const canvas = useRef<HTMLDivElement>(null);
+  const motion = useStoryMotion();
 
   useEffect(() => {
     const el = root.current;
     if (!el) return;
-    // Reduced motion needs no GSAP at all: one still pose for the static render.
-    if (window.matchMedia(REDUCE).matches) applyHandState(handState, staticPose());
+    // Without motion no GSAP is needed at all: one still pose for the static render.
+    if (!motion) {
+      applyHandState(handState, staticPose());
+      return;
+    }
 
     let alive = true;
     let cleanup = () => {};
@@ -48,18 +80,14 @@ export function ScrollStory({ hero, children, chapters }: Props) {
       const diagram = el.querySelector<HTMLElement>("[data-diagram]");
       const mm = gsap.matchMedia();
 
-      mm.add({ desktop: DESKTOP, compact: COMPACT, reduce: REDUCE }, (ctx) => {
-        const { desktop, reduce } = ctx.conditions as Record<string, boolean>;
-        if (reduce) {
-          applyHandState(handState, staticPose());
-          return;
-        }
-
+      mm.add({ desktop: DESKTOP, compact: COMPACT }, (ctx) => {
+        const { desktop } = ctx.conditions as Record<string, boolean>;
         const tl = buildStoryTimeline(gsap, {
           state: handState,
           layout: desktop ? "desktop" : "compact",
-          canvas: canvas.current,
           indicator: indicator.current,
+          canvas: desktop ? canvas.current : null,
+          hero: desktop && canvas.current ? measureHero(el, canvas.current) : undefined,
         });
 
         // Each section's scroll range, measured (and re-measured on resize) by ScrollTrigger.
@@ -127,12 +155,13 @@ export function ScrollStory({ hero, children, chapters }: Props) {
       alive = false;
       cleanup();
     };
-  }, []);
+  }, [motion]);
 
   return (
     <div ref={root} className="story">
       {hero}
-      <HandStage canvasRef={canvas} indicatorRef={indicator} chapters={chapters} />
+      <HandStage canvasRef={canvas} indicatorRef={indicator} chapters={chapters} motion={motion} />
+      <MotionToggle motion={motion} />
       <div className="story-sections">{children}</div>
     </div>
   );

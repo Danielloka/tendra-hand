@@ -65,7 +65,7 @@ const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 
 /** Copies every number from `to` into `state`, blended by t (0 = from, 1 = to). */
 function blend(state: HandState, from: Values, to: HandState, t: number) {
   const mix = (a: number, b: number) => a + (b - a) * t;
-  for (const k of ["idle", "rim", "tendons", "labels", "explode", "wireframe", "zoom"] as const) state[k] = mix(from[k], to[k]);
+  for (const k of ["idle", "rim", "tendons", "labels", "explode", "wireframe", "zoom", "shiftY"] as const) state[k] = mix(from[k], to[k]);
   for (const k of ["x", "y", "z"] as const) state.rotation[k] = mix(from.rotation[k], to.rotation[k]);
   for (const id of JOINT_IDS) state.joints[id] = mix(from.joints[id], to.joints[id]);
 }
@@ -196,6 +196,7 @@ export default function HandLab() {
             <Slider key={axis} label={`rotation.${axis}`} min={-Math.PI} max={Math.PI} value={values.rotation[axis]} onChange={(v) => setNumber((s) => void (s.rotation[axis] = v))} />
           ))}
           <Slider label="zoom" min={0.5} max={2} value={values.zoom} onChange={(v) => setNumber((s) => void (s.zoom = v))} />
+          <Slider label="shiftY" min={-0.5} max={0.5} value={values.shiftY} onChange={(v) => setNumber((s) => void (s.shiftY = v))} />
           {(["idle", "rim", "tendons", "labels", "explode", "wireframe"] as const).map((k) => (
             <Slider key={k} label={k} value={values[k]} onChange={(v) => setNumber((s) => void (s[k] = v))} />
           ))}

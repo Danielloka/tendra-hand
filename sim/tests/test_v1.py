@@ -1,4 +1,4 @@
-"""Checks for the v1 (21-DOF, tendon-driven) model. Run: uv run pytest sim/tests/test_v1.py -s
+"""Checks for the v1 (20-DOF, tendon-driven) model. Run: uv run pytest sim/tests/test_v1.py -s
 
 The tendon tests prove the routing rule of the real hand (see sim/convert_v1.py, build_strand):
 each joint's loop changes length only when its own joint moves (6 mm per rad on the drum), and
@@ -31,7 +31,6 @@ SERVO_ORDER = [
     "thumb_mcp_flex",
     "thumb_cmc_flex",
     "thumb_cmc_rot",
-    "thumb_mcp_abd",
     "middle_dip",
     "middle_pip",
     "middle_mcp_flex",
@@ -59,7 +58,6 @@ EXPECTED_TIP_MOTION = {
     "thumb_cmc_flex": Z,  # thumb curls toward the fingers
     "thumb_mcp_flex": Z,
     "thumb_ip": Z,
-    "thumb_mcp_abd": -X,  # toward the index side
 }
 
 
@@ -144,7 +142,7 @@ def test_generated_model_is_up_to_date():
 
 
 def test_counts_and_names(model):
-    assert model.njnt == 21 and model.nu == 21 and model.ntendon == 42
+    assert model.njnt == 20 and model.nu == 20 and model.ntendon == 40
     assert sorted(model.joint(i).name for i in range(model.njnt)) == sorted(SERVO_ORDER)
     strands = [model.tendon(i).name for i in range(model.ntendon)]
     assert strands == [f"{j}_{s}" for j in SERVO_ORDER for s in ("flex", "ext")]
@@ -153,7 +151,7 @@ def test_counts_and_names(model):
 def test_actuators_follow_servo_ids_in_config_v1(model):
     fw = firmware_joints()
     assert [n for n, _, _, _ in fw] == SERVO_ORDER == cv.ACTUATOR_ORDER
-    assert [i for _, i, _, _ in fw] == list(range(1, 22))
+    assert [i for _, i, _, _ in fw] == list(range(1, 21))
     assert [model.actuator(i).name for i in range(model.nu)] == SERVO_ORDER
     for i, name in enumerate(SERVO_ORDER):  # each servo pulls its own joint's flex strand
         assert model.actuator_trntype[i] == mujoco.mjtTrn.mjTRN_TENDON
@@ -327,9 +325,7 @@ def _track(model, targets_deg: dict[str, float]):
     return data, err
 
 
-@pytest.mark.parametrize(
-    "joint", [j for j in SERVO_ORDER if not j.endswith("mcp_abd") or j.startswith("thumb")]
-)
+@pytest.mark.parametrize("joint", [j for j in SERVO_ORDER if not j.endswith("mcp_abd")])
 @pytest.mark.parametrize("fraction", [0.6, -0.6])
 def test_servo_angle_drives_its_joint(model, joint, fraction):
     lo, hi = np.degrees(model.jnt_range[model.joint(joint).id])
@@ -395,3 +391,37 @@ def test_servo_ratio_matches_the_firmware():
     cfg = (Path(__file__).resolve().parents[2] / "firmware" / "include" / "config_v1.h").read_text()
     for name, ratio in re.findall(r'\{"(\w+)",\s*\d+,[^}]*?,\s*([\d.]+)f,\s*-?\d+\}', cfg):
         assert float(ratio) == pytest.approx(cv.servo_per_joint(name)), name
+
+
+THUMB = ["thumb_cmc_rot", "thumb_cmc_flex", "thumb_mcp_flex", "thumb_ip"]
+
+
+def test_thumb_tendons_keep_their_length_at_every_thumb_angle(model):
+    """Owner's requirement (2026-09-29): every thumb tendon's length changes only with its own
+    joint, and each loop (flex + ext) keeps the same total length, at every thumb pose. Checked on
+    a grid of all 4 thumb joints (5 angles each over the full ranges, 625 poses)."""
+    data = mujoco.MjData(model)
+    grids = [np.linspace(*model.jnt_range[model.joint(j).id], 5) for j in THUMB]
+    k = [qadr(model, j) for j in THUMB]
+    worst_coupling = worst_loop = 0.0
+    ref = {}
+    for combo in np.array(np.meshgrid(*grids, indexing="ij")).reshape(4, -1).T:
+        q = np.zeros(model.nq)
+        q[k] = combo
+        lengths = tendon_lengths(model, data, q) * 1000
+        for i, joint in enumerate(THUMB):
+            f, e = model.tendon(f"{joint}_flex").id, model.tendon(f"{joint}_ext").id
+            # the same joint angle alone, all other thumb joints at 0
+            q_own = np.zeros(model.nq)
+            q_own[k[i]] = combo[i]
+            key = (joint, round(float(combo[i]), 6))
+            if key not in ref:
+                ref[key] = tendon_lengths(model, data, q_own)[[f, e]] * 1000
+            worst_coupling = max(worst_coupling, np.abs(lengths[[f, e]] - ref[key]).max())
+            loop0 = ref[(joint, round(float(combo[i]), 6))].sum()
+            worst_loop = max(worst_loop, abs(lengths[f] + lengths[e] - loop0))
+    print(
+        f"\nthumb: worst length change from other joints {worst_coupling:.2e} mm, loop {worst_loop:.2e} mm"
+    )
+    assert worst_coupling < 0.05
+    assert worst_loop < 0.05

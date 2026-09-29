@@ -4,7 +4,7 @@ Physics advances only when `step()` (or `wait()`) is called, so it can run faste
 than real time, which is useful for AI training.
 
     SimHand()                  # v0 model (8 joints)
-    SimHand(hand="v1")         # v1 model (21 joints), sim/models/tendra_hand_v1.xml
+    SimHand(hand="v1")         # v1 model (20 joints), sim/models/tendra_hand_v1.xml
     SimHand("my_model.xml")    # the variant is recognised from the model's actuators
     SimHand(hand="v1", lite=True)  # simplified meshes: much faster to draw (tendra.lite_model)
 """

@@ -83,7 +83,6 @@
     <mesh name="spool_21_little_mcp_abd" file="meshes/spool_21_little_mcp_abd.stl" scale="0.001 0.001 0.001" inertia="exact" />
     <mesh name="thumb_base" file="meshes/thumb_base.stl" scale="0.001 0.001 0.001" inertia="exact" />
     <mesh name="thumb_distal" file="meshes/thumb_distal.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="thumb_mcp_link" file="meshes/thumb_mcp_link.stl" scale="0.001 0.001 0.001" inertia="exact" />
     <mesh name="thumb_metacarpal" file="meshes/thumb_metacarpal.stl" scale="0.001 0.001 0.001" inertia="exact" />
     <mesh name="thumb_proximal" file="meshes/thumb_proximal.stl" scale="0.001 0.001 0.001" inertia="exact" />
   </asset>
@@ -307,86 +306,67 @@
         <site name="ring_mcp_abd_flex_43_anchor" pos="0.00347076 0 0.0054958" />
         <site name="ring_mcp_abd_ext_43_anchor" pos="-0.00349117 0 0.00548286" />
       </body>
-      <body name="thumb_base" pos="0.001 0.0155236 0.0109602">
+      <body name="thumb_base" pos="0.001 0.0155236 0.0102206">
         <joint name="thumb_cmc_rot" axis="-0 0 -1" range="-1.74533 0.698132" />
         <geom name="thumb_cmc_rot_drum" class="drum" fromto="0 -0 0.0015 -0 0 -0.0015" size="0.0075" />
-        <geom name="thumb_base" mesh="thumb_base" pos="-0.001 -0.0155236 -0.0109602" />
-        <body name="thumb_metacarpal" pos="-0.000127971 -0.0055 0.000416206">
+        <geom name="thumb_base" mesh="thumb_base" pos="-0.001 -0.0155236 -0.0102206" />
+        <body name="thumb_metacarpal" pos="-0.000264996 -0.0055 0.00115579">
           <joint name="thumb_cmc_flex" axis="-1 -0 0" range="-0.226893 1.39626" />
           <geom name="thumb_cmc_flex_drum" class="drum" fromto="0.0015 0 -0 -0.0015 -0 0" size="0.006" />
-          <geom name="thumb_metacarpal" mesh="thumb_metacarpal" pos="-0.000872029 -0.0100236 -0.0113764" />
-          <body name="thumb_mcp_link" pos="0.000190304 -0.042 6.24322e-05">
-            <joint name="thumb_mcp_flex" axis="-0.707107 -0 -0.707107" range="-0.0872665 1.65806" />
-            <geom name="thumb_mcp_flex_drum" class="drum" fromto="0.00106066 0 0.00106066 -0.00106066 -0 -0.00106066" size="0.006" />
-            <geom name="thumb_mcp_link" mesh="thumb_mcp_link" pos="-0.00106233 0.0319764 -0.0114388" />
-            <body name="thumb_proximal" pos="-0.00036397 -0.0175236 0.000238806">
-              <joint name="thumb_mcp_abd" axis="0.707107 0 -0.707107" range="-0.349066 0.349066" />
-              <geom name="thumb_mcp_abd_drum" class="drum" fromto="-0.00106066 -0 0.00106066 0.00106066 0 -0.00106066" size="0.006" />
-              <geom name="thumb_proximal" mesh="thumb_proximal" pos="-0.000698362 0.0495 -0.0116776" />
-              <body name="thumb_distal" pos="0.000323511 -0.0174764 -0.000279265">
-                <joint name="thumb_ip" axis="-0.707107 -0 -0.707107" range="-0.0872665 1.65806" />
-                <geom name="thumb_ip_drum" class="drum" fromto="0.00106066 0 0.00106066 -0.00106066 -0 -0.00106066" size="0.006" />
-                <geom name="thumb_distal" mesh="thumb_distal" pos="-0.00102187 0.0669764 -0.0113984" />
-                <site name="thumb_tip" pos="-0.00425756 -0.0224756 -0.000129031" size="0.003" group="0" rgba="1 0.3 0.1 1" />
-                <site name="thumb_ip_flex_78_anchor" pos="0.0032194 -0.00463907 -0.0032194" />
-                <site name="thumb_ip_ext_78_anchor" pos="0.00290638 -0.00503547 -0.00290638" />
-              </body>
-              <site name="thumb_ip_flex_76_cross" pos="-0.00362329 0 0.00362329" />
-              <site name="thumb_ip_flex_77_guide" pos="-0.00360117 -0.00915812 0.00364542" />
-              <site name="thumb_ip_flex_side" class="drum" pos="-0.0059978 -0.0254815 0.00604205" />
-              <site name="thumb_ip_ext_76_cross" pos="0.00484911 0 -0.00484911" />
-              <site name="thumb_ip_ext_77_guide" pos="0.00487124 -0.00981896 -0.00482699" />
-              <site name="thumb_ip_ext_side" class="drum" pos="0.00598399 -0.0264161 -0.00593974" />
-              <site name="thumb_mcp_abd_flex_77_anchor" pos="-0.00210412 -0.00577887 -0.00210412" />
-              <site name="thumb_mcp_abd_ext_77_anchor" pos="0.00212337 -0.00576477 0.00212337" />
+          <geom name="thumb_metacarpal" mesh="thumb_metacarpal" pos="-0.000735004 -0.0100236 -0.0113764" />
+          <body name="thumb_proximal" pos="0.000346416 -0.042 8.14199e-05">
+            <joint name="thumb_mcp_flex" axis="-0.707107 0 -0.707107" range="-0.0872665 1.65806" />
+            <geom name="thumb_mcp_flex_drum" class="drum" fromto="0.00106066 -0 0.00106066 -0.00106066 0 -0.00106066" size="0.006" />
+            <geom name="thumb_proximal" mesh="thumb_proximal" pos="-0.00108142 0.0319764 -0.0114578" />
+            <body name="thumb_distal" pos="-5.94971e-05 -0.035 -5.94971e-05">
+              <joint name="thumb_ip" axis="-0.707107 0 -0.707107" range="-0.0872665 1.65806" />
+              <geom name="thumb_ip_drum" class="drum" fromto="0.00106066 -0 0.00106066 -0.00106066 0 -0.00106066" size="0.006" />
+              <geom name="thumb_distal" mesh="thumb_distal" pos="-0.00102192 0.0669764 -0.0113983" />
+              <site name="thumb_tip" pos="-0.00425761 -0.0224756 -0.000128981" size="0.003" group="0" rgba="1 0.3 0.1 1" />
+              <site name="thumb_ip_flex_77_anchor" pos="0.00321938 -0.00463909 -0.00321938" />
+              <site name="thumb_ip_ext_77_anchor" pos="0.00290636 -0.00503549 -0.00290636" />
             </body>
-            <site name="thumb_ip_flex_75_cross" pos="-6.25822e-05 0 -6.25822e-05" />
-            <site name="thumb_ip_ext_75_cross" pos="-6.25822e-05 0 -6.25822e-05" />
-            <site name="thumb_mcp_flex_flex_76_anchor" pos="0.00336501 -0.00442757 -0.00336501" />
-            <site name="thumb_mcp_flex_ext_76_anchor" pos="0.00306504 -0.00484366 -0.00306504" />
-            <site name="thumb_mcp_abd_flex_75_cross" pos="-0.00431855 0 -0.00431855" />
-            <site name="thumb_mcp_abd_flex_76_guide" pos="-0.00461994 -0.00953778 -0.00401717" />
-            <site name="thumb_mcp_abd_flex_side" class="drum" pos="-0.0063498 -0.0260289 -0.00574702" />
-            <site name="thumb_mcp_abd_ext_75_cross" pos="0.0041667 0 0.0041667" />
-            <site name="thumb_mcp_abd_ext_76_guide" pos="0.00386532 -0.00950947 0.00446809" />
-            <site name="thumb_mcp_abd_ext_side" class="drum" pos="0.00565017 -0.0259888 0.00625294" />
+            <site name="thumb_ip_flex_75_cross" pos="-5.94971e-05 0 -5.94971e-05" />
+            <site name="thumb_ip_flex_76_guide" pos="-0.00398415 -0.0266817 0.00386516" />
+            <site name="thumb_ip_flex_side" class="drum" pos="-0.00638084 -0.0430051 0.00626184" />
+            <site name="thumb_ip_ext_75_cross" pos="-5.94971e-05 0 -5.94971e-05" />
+            <site name="thumb_ip_ext_76_guide" pos="0.00448825 -0.0273426 -0.00460725" />
+            <site name="thumb_ip_ext_side" class="drum" pos="0.00560095 -0.0439397 -0.00571994" />
+            <site name="thumb_mcp_flex_flex_76_anchor" pos="0.00334018 -0.00446501 -0.00334018" />
+            <site name="thumb_mcp_flex_ext_76_anchor" pos="0.0030379 -0.00487774 -0.0030379" />
           </body>
-          <site name="thumb_ip_flex_74_cross" pos="0.000127721 0 0" />
-          <site name="thumb_ip_ext_74_cross" pos="0.000127721 0 0" />
-          <site name="thumb_mcp_flex_flex_74_cross" pos="-0.00399739 0 0" />
-          <site name="thumb_mcp_flex_flex_75_guide" pos="-0.00399739 -0.0339423 0.00425012" />
-          <site name="thumb_mcp_flex_flex_side" class="drum" pos="-0.00586749 -0.0504028 0.00612023" />
-          <site name="thumb_mcp_flex_ext_74_cross" pos="0.0044875 0 0" />
-          <site name="thumb_mcp_flex_ext_75_guide" pos="0.0044875 -0.0340584 -0.00423476" />
-          <site name="thumb_mcp_flex_ext_side" class="drum" pos="0.00613195 -0.050567 -0.00587921" />
-          <site name="thumb_cmc_flex_flex_85_anchor" pos="0 -0.00546374 -0.00352102" />
-          <site name="thumb_cmc_flex_ext_85_anchor" pos="0 -0.005353 -0.00368719" />
-          <site name="thumb_mcp_abd_flex_74_cross" pos="-0.00412825 0 0" />
-          <site name="thumb_mcp_abd_ext_74_cross" pos="0.00435701 0 0" />
+          <site name="thumb_ip_flex_74_cross" pos="0.000286919 0 0" />
+          <site name="thumb_ip_ext_74_cross" pos="0.000286919 0 0" />
+          <site name="thumb_mcp_flex_flex_74_cross" pos="-0.00379615 0 0" />
+          <site name="thumb_mcp_flex_flex_75_guide" pos="-0.00379615 -0.0338958 0.00422398" />
+          <site name="thumb_mcp_flex_flex_side" class="drum" pos="-0.00575811 -0.0503348 0.00618595" />
+          <site name="thumb_mcp_flex_ext_74_cross" pos="0.00468782 0 0" />
+          <site name="thumb_mcp_flex_ext_75_guide" pos="0.00468782 -0.0341067 -0.00425999" />
+          <site name="thumb_mcp_flex_ext_side" class="drum" pos="0.00624004 -0.0506331 -0.0058122" />
+          <site name="thumb_cmc_flex_flex_85_anchor" pos="0 -0.00546691 -0.00351609" />
+          <site name="thumb_cmc_flex_ext_85_anchor" pos="0 -0.00535632 -0.00368236" />
         </body>
-        <site name="thumb_ip_flex_73_cross" pos="0 0 0.000416206" />
-        <site name="thumb_ip_ext_73_cross" pos="0 0 0.000416206" />
-        <site name="thumb_mcp_flex_flex_73_cross" pos="0 0 0.000416206" />
-        <site name="thumb_mcp_flex_ext_73_cross" pos="0 0 0.000416206" />
-        <site name="thumb_cmc_flex_flex_83_cross" pos="0 0 0.0064265" />
-        <site name="thumb_cmc_flex_flex_84_guide" pos="-0.000127971 -0.00221959 0.0064265" />
-        <site name="thumb_cmc_flex_flex_side" class="drum" pos="-0.000127971 -0.0140118 0.0088749" />
-        <site name="thumb_cmc_flex_ext_83_cross" pos="0 0 -0.00557344" />
-        <site name="thumb_cmc_flex_ext_84_guide" pos="-0.000127971 -0.00218204 -0.00557344" />
-        <site name="thumb_cmc_flex_ext_side" class="drum" pos="-0.000127971 -0.0139587 -0.00809558" />
-        <site name="thumb_cmc_rot_flex_48_anchor" pos="-0.00134422 -0.00788626 0" />
-        <site name="thumb_cmc_rot_ext_48_anchor" pos="-0.00616423 -0.00509924 0" />
-        <site name="thumb_mcp_abd_flex_73_cross" pos="0 0 0.000416206" />
-        <site name="thumb_mcp_abd_ext_73_cross" pos="0 0 0.000416206" />
+        <site name="thumb_ip_flex_73_cross" pos="0 0 0.00115579" />
+        <site name="thumb_ip_ext_73_cross" pos="0 0 0.00115579" />
+        <site name="thumb_mcp_flex_flex_73_cross" pos="0 0 0.00115579" />
+        <site name="thumb_mcp_flex_ext_73_cross" pos="0 0 0.00115579" />
+        <site name="thumb_cmc_flex_flex_83_cross" pos="0 0 0.00716312" />
+        <site name="thumb_cmc_flex_flex_84_guide" pos="-0.000264996 -0.00221492 0.00716312" />
+        <site name="thumb_cmc_flex_flex_side" class="drum" pos="-0.000264996 -0.0140042 0.00962216" />
+        <site name="thumb_cmc_flex_ext_83_cross" pos="0 0 -0.00483685" />
+        <site name="thumb_cmc_flex_ext_84_guide" pos="-0.000264996 -0.0021882 -0.00483685" />
+        <site name="thumb_cmc_flex_ext_side" class="drum" pos="-0.000264996 -0.0139664 -0.00734836" />
+        <site name="thumb_cmc_rot_flex_48_anchor" pos="-0.00136631 -0.00788246 0" />
+        <site name="thumb_cmc_rot_ext_48_anchor" pos="-0.0061785 -0.00508195 0" />
       </body>
       <site name="index_mcp_abd_flex_43_guide" pos="-0.00251513 0.0183677 0.051988" />
       <site name="index_mcp_abd_flex_side" class="drum" pos="-6.17588e-05 0.0183677 0.0684781" />
       <site name="index_mcp_abd_ext_43_guide" pos="-0.0145151 0.0183677 0.0519648" />
       <site name="index_mcp_abd_ext_side" class="drum" pos="-0.0170323 0.0183677 0.0684452" />
-      <site name="thumb_cmc_rot_flex_47_guide" pos="-0.00649479 0.0235285 0.0109602" />
-      <site name="thumb_cmc_rot_flex_side" class="drum" pos="-0.0096135 0.0049239 0.0109602" />
-      <site name="thumb_cmc_rot_ext_47_guide" pos="0.0085052 0.0235187 0.0109602" />
-      <site name="thumb_cmc_rot_ext_side" class="drum" pos="0.0115997 0.0049101 0.0109602" />
+      <site name="thumb_cmc_rot_flex_47_guide" pos="-0.00647233 0.0235494 0.0102206" />
+      <site name="thumb_cmc_rot_flex_side" class="drum" pos="-0.00964316 0.00495368 0.0102206" />
+      <site name="thumb_cmc_rot_ext_47_guide" pos="0.00852758 0.0234977 0.0102206" />
+      <site name="thumb_cmc_rot_ext_side" class="drum" pos="0.0115699 0.00488044 0.0102206" />
       <site name="middle_mcp_abd_flex_42_guide" pos="-0.0215165 0.0183653 0.055987" />
       <site name="middle_mcp_abd_flex_side" class="drum" pos="-0.0190603 0.0183653 0.0724767" />
       <site name="middle_mcp_abd_ext_42_guide" pos="-0.0335164 0.0183653 0.0559658" />
@@ -1422,152 +1402,6 @@
     <site name="thumb_cmc_rot_ext_44_route" pos="0.0085 0.031451 -0.004829" />
     <site name="thumb_cmc_rot_ext_45_route" pos="0.0085 0.0308 -0.0047" />
     <site name="thumb_cmc_rot_ext_46_route" pos="0.0085 0.0285 -0.0047" />
-    <site name="thumb_mcp_abd_flex_0_route" pos="-0.006 0.025 -0.125" />
-    <site name="thumb_mcp_abd_flex_1_route" pos="-0.006 0.025 -0.042" />
-    <site name="thumb_mcp_abd_flex_2_route" pos="-0.005999 0.024997 -0.041575" />
-    <site name="thumb_mcp_abd_flex_3_route" pos="-0.005996 0.024987 -0.041149" />
-    <site name="thumb_mcp_abd_flex_4_route" pos="-0.005991 0.024971 -0.040724" />
-    <site name="thumb_mcp_abd_flex_5_route" pos="-0.005984 0.024948 -0.040299" />
-    <site name="thumb_mcp_abd_flex_6_route" pos="-0.005975 0.024919 -0.039873" />
-    <site name="thumb_mcp_abd_flex_7_route" pos="-0.005965 0.024884 -0.039448" />
-    <site name="thumb_mcp_abd_flex_8_route" pos="-0.005952 0.024843 -0.039023" />
-    <site name="thumb_mcp_abd_flex_9_route" pos="-0.005937 0.024795 -0.038597" />
-    <site name="thumb_mcp_abd_flex_10_route" pos="-0.005921 0.024741 -0.038172" />
-    <site name="thumb_mcp_abd_flex_11_route" pos="-0.005902 0.024681 -0.037747" />
-    <site name="thumb_mcp_abd_flex_12_route" pos="-0.005882 0.024615 -0.037322" />
-    <site name="thumb_mcp_abd_flex_13_route" pos="-0.00586 0.024543 -0.036896" />
-    <site name="thumb_mcp_abd_flex_14_route" pos="-0.005837 0.024466 -0.036471" />
-    <site name="thumb_mcp_abd_flex_15_route" pos="-0.005811 0.024383 -0.036046" />
-    <site name="thumb_mcp_abd_flex_16_route" pos="-0.005784 0.024294 -0.03562" />
-    <site name="thumb_mcp_abd_flex_17_route" pos="-0.005755 0.0242 -0.035195" />
-    <site name="thumb_mcp_abd_flex_18_route" pos="-0.005725 0.024101 -0.03477" />
-    <site name="thumb_mcp_abd_flex_19_route" pos="-0.005693 0.023997 -0.034344" />
-    <site name="thumb_mcp_abd_flex_20_route" pos="-0.00566 0.023888 -0.033919" />
-    <site name="thumb_mcp_abd_flex_21_route" pos="-0.005625 0.023774 -0.033494" />
-    <site name="thumb_mcp_abd_flex_22_route" pos="-0.005589 0.023655 -0.033068" />
-    <site name="thumb_mcp_abd_flex_23_route" pos="-0.005551 0.023533 -0.032643" />
-    <site name="thumb_mcp_abd_flex_24_route" pos="-0.005513 0.023406 -0.032218" />
-    <site name="thumb_mcp_abd_flex_25_route" pos="-0.005473 0.023275 -0.031792" />
-    <site name="thumb_mcp_abd_flex_26_route" pos="-0.005431 0.023141 -0.031367" />
-    <site name="thumb_mcp_abd_flex_27_route" pos="-0.005389 0.023003 -0.030942" />
-    <site name="thumb_mcp_abd_flex_28_route" pos="-0.005346 0.022861 -0.030516" />
-    <site name="thumb_mcp_abd_flex_29_route" pos="-0.005302 0.022717 -0.030091" />
-    <site name="thumb_mcp_abd_flex_30_route" pos="-0.005257 0.02257 -0.029666" />
-    <site name="thumb_mcp_abd_flex_31_route" pos="-0.005211 0.02242 -0.029241" />
-    <site name="thumb_mcp_abd_flex_32_route" pos="-0.005165 0.022268 -0.028815" />
-    <site name="thumb_mcp_abd_flex_33_route" pos="-0.005117 0.022113 -0.02839" />
-    <site name="thumb_mcp_abd_flex_34_route" pos="-0.00507 0.021957 -0.027965" />
-    <site name="thumb_mcp_abd_flex_35_route" pos="-0.005021 0.021799 -0.027539" />
-    <site name="thumb_mcp_abd_flex_36_route" pos="-0.004972 0.021639 -0.027114" />
-    <site name="thumb_mcp_abd_flex_37_route" pos="-0.004923 0.021479 -0.026689" />
-    <site name="thumb_mcp_abd_flex_38_route" pos="-0.004874 0.021318 -0.026263" />
-    <site name="thumb_mcp_abd_flex_39_route" pos="-0.004825 0.021156 -0.025838" />
-    <site name="thumb_mcp_abd_flex_40_route" pos="-0.004775 0.020993 -0.025413" />
-    <site name="thumb_mcp_abd_flex_41_route" pos="-0.004725 0.020831 -0.024987" />
-    <site name="thumb_mcp_abd_flex_42_route" pos="-0.004675 0.020668 -0.024562" />
-    <site name="thumb_mcp_abd_flex_43_route" pos="-0.004626 0.020506 -0.024137" />
-    <site name="thumb_mcp_abd_flex_44_route" pos="-0.004577 0.020345 -0.023711" />
-    <site name="thumb_mcp_abd_flex_45_route" pos="-0.004528 0.020184 -0.023286" />
-    <site name="thumb_mcp_abd_flex_46_route" pos="-0.004479 0.020025 -0.022861" />
-    <site name="thumb_mcp_abd_flex_47_route" pos="-0.00443 0.019867 -0.022435" />
-    <site name="thumb_mcp_abd_flex_48_route" pos="-0.004383 0.01971 -0.02201" />
-    <site name="thumb_mcp_abd_flex_49_route" pos="-0.004335 0.019556 -0.021585" />
-    <site name="thumb_mcp_abd_flex_50_route" pos="-0.004289 0.019404 -0.021159" />
-    <site name="thumb_mcp_abd_flex_51_route" pos="-0.004243 0.019254 -0.020734" />
-    <site name="thumb_mcp_abd_flex_52_route" pos="-0.004198 0.019107 -0.020309" />
-    <site name="thumb_mcp_abd_flex_53_route" pos="-0.004154 0.018962 -0.019884" />
-    <site name="thumb_mcp_abd_flex_54_route" pos="-0.004111 0.018821 -0.019458" />
-    <site name="thumb_mcp_abd_flex_55_route" pos="-0.004069 0.018683 -0.019033" />
-    <site name="thumb_mcp_abd_flex_56_route" pos="-0.004027 0.018548 -0.018608" />
-    <site name="thumb_mcp_abd_flex_57_route" pos="-0.003987 0.018418 -0.018182" />
-    <site name="thumb_mcp_abd_flex_58_route" pos="-0.003949 0.018291 -0.017757" />
-    <site name="thumb_mcp_abd_flex_59_route" pos="-0.003911 0.018168 -0.017332" />
-    <site name="thumb_mcp_abd_flex_60_route" pos="-0.003875 0.01805 -0.016906" />
-    <site name="thumb_mcp_abd_flex_61_route" pos="-0.00384 0.017936 -0.016481" />
-    <site name="thumb_mcp_abd_flex_62_route" pos="-0.003807 0.017827 -0.016056" />
-    <site name="thumb_mcp_abd_flex_63_route" pos="-0.003775 0.017723 -0.01563" />
-    <site name="thumb_mcp_abd_flex_64_route" pos="-0.003745 0.017624 -0.015205" />
-    <site name="thumb_mcp_abd_flex_65_route" pos="-0.003716 0.01753 -0.01478" />
-    <site name="thumb_mcp_abd_flex_66_route" pos="-0.003689 0.017441 -0.014354" />
-    <site name="thumb_mcp_abd_flex_67_route" pos="-0.003663 0.017358 -0.013929" />
-    <site name="thumb_mcp_abd_flex_68_route" pos="-0.00364 0.01728 -0.013504" />
-    <site name="thumb_mcp_abd_flex_69_route" pos="-0.003618 0.017209 -0.013078" />
-    <site name="thumb_mcp_abd_flex_70_route" pos="-0.003598 0.017143 -0.012653" />
-    <site name="thumb_mcp_abd_flex_71_route" pos="-0.003579 0.017083 -0.012228" />
-    <site name="thumb_mcp_abd_flex_72_route" pos="-0.003568 0.017047 -0.01195" />
-    <site name="thumb_mcp_abd_ext_0_route" pos="0.006 0.025 -0.125" />
-    <site name="thumb_mcp_abd_ext_1_route" pos="0.006 0.025 -0.042" />
-    <site name="thumb_mcp_abd_ext_2_route" pos="0.006 0.024997 -0.041575" />
-    <site name="thumb_mcp_abd_ext_3_route" pos="0.005999 0.024986 -0.041149" />
-    <site name="thumb_mcp_abd_ext_4_route" pos="0.005999 0.024969 -0.040724" />
-    <site name="thumb_mcp_abd_ext_5_route" pos="0.005997 0.024945 -0.040299" />
-    <site name="thumb_mcp_abd_ext_6_route" pos="0.005996 0.024915 -0.039873" />
-    <site name="thumb_mcp_abd_ext_7_route" pos="0.005994 0.024877 -0.039448" />
-    <site name="thumb_mcp_abd_ext_8_route" pos="0.005992 0.024833 -0.039023" />
-    <site name="thumb_mcp_abd_ext_9_route" pos="0.00599 0.024782 -0.038597" />
-    <site name="thumb_mcp_abd_ext_10_route" pos="0.005987 0.024725 -0.038172" />
-    <site name="thumb_mcp_abd_ext_11_route" pos="0.005984 0.024661 -0.037747" />
-    <site name="thumb_mcp_abd_ext_12_route" pos="0.005981 0.024592 -0.037322" />
-    <site name="thumb_mcp_abd_ext_13_route" pos="0.005978 0.024515 -0.036896" />
-    <site name="thumb_mcp_abd_ext_14_route" pos="0.005974 0.024433 -0.036471" />
-    <site name="thumb_mcp_abd_ext_15_route" pos="0.00597 0.024345 -0.036046" />
-    <site name="thumb_mcp_abd_ext_16_route" pos="0.005965 0.024251 -0.03562" />
-    <site name="thumb_mcp_abd_ext_17_route" pos="0.005961 0.024151 -0.035195" />
-    <site name="thumb_mcp_abd_ext_18_route" pos="0.005956 0.024046 -0.03477" />
-    <site name="thumb_mcp_abd_ext_19_route" pos="0.005951 0.023935 -0.034344" />
-    <site name="thumb_mcp_abd_ext_20_route" pos="0.005946 0.023819 -0.033919" />
-    <site name="thumb_mcp_abd_ext_21_route" pos="0.00594 0.023699 -0.033494" />
-    <site name="thumb_mcp_abd_ext_22_route" pos="0.005934 0.023573 -0.033068" />
-    <site name="thumb_mcp_abd_ext_23_route" pos="0.005928 0.023443 -0.032643" />
-    <site name="thumb_mcp_abd_ext_24_route" pos="0.005922 0.023308 -0.032218" />
-    <site name="thumb_mcp_abd_ext_25_route" pos="0.005916 0.02317 -0.031792" />
-    <site name="thumb_mcp_abd_ext_26_route" pos="0.005909 0.023027 -0.031367" />
-    <site name="thumb_mcp_abd_ext_27_route" pos="0.005902 0.022881 -0.030942" />
-    <site name="thumb_mcp_abd_ext_28_route" pos="0.005895 0.022731 -0.030516" />
-    <site name="thumb_mcp_abd_ext_29_route" pos="0.005888 0.022577 -0.030091" />
-    <site name="thumb_mcp_abd_ext_30_route" pos="0.005881 0.022421 -0.029666" />
-    <site name="thumb_mcp_abd_ext_31_route" pos="0.005874 0.022262 -0.029241" />
-    <site name="thumb_mcp_abd_ext_32_route" pos="0.005866 0.0221 -0.028815" />
-    <site name="thumb_mcp_abd_ext_33_route" pos="0.005859 0.021937 -0.02839" />
-    <site name="thumb_mcp_abd_ext_34_route" pos="0.005851 0.021771 -0.027965" />
-    <site name="thumb_mcp_abd_ext_35_route" pos="0.005843 0.021603 -0.027539" />
-    <site name="thumb_mcp_abd_ext_36_route" pos="0.005836 0.021434 -0.027114" />
-    <site name="thumb_mcp_abd_ext_37_route" pos="0.005828 0.021264 -0.026689" />
-    <site name="thumb_mcp_abd_ext_38_route" pos="0.00582 0.021092 -0.026263" />
-    <site name="thumb_mcp_abd_ext_39_route" pos="0.005812 0.02092 -0.025838" />
-    <site name="thumb_mcp_abd_ext_40_route" pos="0.005804 0.020748 -0.025413" />
-    <site name="thumb_mcp_abd_ext_41_route" pos="0.005796 0.020576 -0.024987" />
-    <site name="thumb_mcp_abd_ext_42_route" pos="0.005788 0.020403 -0.024562" />
-    <site name="thumb_mcp_abd_ext_43_route" pos="0.00578 0.020231 -0.024137" />
-    <site name="thumb_mcp_abd_ext_44_route" pos="0.005772 0.02006 -0.023711" />
-    <site name="thumb_mcp_abd_ext_45_route" pos="0.005764 0.01989 -0.023286" />
-    <site name="thumb_mcp_abd_ext_46_route" pos="0.005757 0.019721 -0.022861" />
-    <site name="thumb_mcp_abd_ext_47_route" pos="0.005749 0.019553 -0.022435" />
-    <site name="thumb_mcp_abd_ext_48_route" pos="0.005741 0.019387 -0.02201" />
-    <site name="thumb_mcp_abd_ext_49_route" pos="0.005734 0.019223 -0.021585" />
-    <site name="thumb_mcp_abd_ext_50_route" pos="0.005726 0.019062 -0.021159" />
-    <site name="thumb_mcp_abd_ext_51_route" pos="0.005719 0.018903 -0.020734" />
-    <site name="thumb_mcp_abd_ext_52_route" pos="0.005712 0.018746 -0.020309" />
-    <site name="thumb_mcp_abd_ext_53_route" pos="0.005705 0.018593 -0.019884" />
-    <site name="thumb_mcp_abd_ext_54_route" pos="0.005698 0.018443 -0.019458" />
-    <site name="thumb_mcp_abd_ext_55_route" pos="0.005691 0.018297 -0.019033" />
-    <site name="thumb_mcp_abd_ext_56_route" pos="0.005684 0.018154 -0.018608" />
-    <site name="thumb_mcp_abd_ext_57_route" pos="0.005678 0.018015 -0.018182" />
-    <site name="thumb_mcp_abd_ext_58_route" pos="0.005672 0.017881 -0.017757" />
-    <site name="thumb_mcp_abd_ext_59_route" pos="0.005666 0.01775 -0.017332" />
-    <site name="thumb_mcp_abd_ext_60_route" pos="0.00566 0.017625 -0.016906" />
-    <site name="thumb_mcp_abd_ext_61_route" pos="0.005654 0.017504 -0.016481" />
-    <site name="thumb_mcp_abd_ext_62_route" pos="0.005649 0.017388 -0.016056" />
-    <site name="thumb_mcp_abd_ext_63_route" pos="0.005644 0.017278 -0.01563" />
-    <site name="thumb_mcp_abd_ext_64_route" pos="0.005639 0.017173 -0.015205" />
-    <site name="thumb_mcp_abd_ext_65_route" pos="0.005635 0.017073 -0.01478" />
-    <site name="thumb_mcp_abd_ext_66_route" pos="0.00563 0.016979 -0.014354" />
-    <site name="thumb_mcp_abd_ext_67_route" pos="0.005626 0.016891 -0.013929" />
-    <site name="thumb_mcp_abd_ext_68_route" pos="0.005622 0.016808 -0.013504" />
-    <site name="thumb_mcp_abd_ext_69_route" pos="0.005619 0.016732 -0.013078" />
-    <site name="thumb_mcp_abd_ext_70_route" pos="0.005616 0.016662 -0.012653" />
-    <site name="thumb_mcp_abd_ext_71_route" pos="0.005613 0.016598 -0.012228" />
-    <site name="thumb_mcp_abd_ext_72_route" pos="0.005611 0.01656 -0.01195" />
     <site name="middle_dip_flex_0_route" pos="-0.038 0.031 -0.09" />
     <site name="middle_dip_flex_1_route" pos="-0.038 0.031 -0.042" />
     <site name="middle_dip_flex_2_route" pos="-0.03798 0.03098 -0.039987" />
@@ -3051,10 +2885,9 @@
       <site site="thumb_ip_flex_73_cross" />
       <site site="thumb_ip_flex_74_cross" />
       <site site="thumb_ip_flex_75_cross" />
-      <site site="thumb_ip_flex_76_cross" />
-      <site site="thumb_ip_flex_77_guide" />
+      <site site="thumb_ip_flex_76_guide" />
       <geom geom="thumb_ip_drum" sidesite="thumb_ip_flex_side" />
-      <site site="thumb_ip_flex_78_anchor" />
+      <site site="thumb_ip_flex_77_anchor" />
     </spatial>
     <spatial name="thumb_ip_ext" width="0.0004" rgba="0.15 0.35 0.85 1">
       <site site="thumb_ip_ext_0_route" />
@@ -3133,10 +2966,9 @@
       <site site="thumb_ip_ext_73_cross" />
       <site site="thumb_ip_ext_74_cross" />
       <site site="thumb_ip_ext_75_cross" />
-      <site site="thumb_ip_ext_76_cross" />
-      <site site="thumb_ip_ext_77_guide" />
+      <site site="thumb_ip_ext_76_guide" />
       <geom geom="thumb_ip_drum" sidesite="thumb_ip_ext_side" />
-      <site site="thumb_ip_ext_78_anchor" />
+      <site site="thumb_ip_ext_77_anchor" />
     </spatial>
     <spatial name="thumb_mcp_flex_flex" width="0.0004" rgba="0.85 0.2 0.15 1">
       <site site="thumb_mcp_flex_flex_0_route" />
@@ -3579,168 +3411,6 @@
       <site site="thumb_cmc_rot_ext_47_guide" />
       <geom geom="thumb_cmc_rot_drum" sidesite="thumb_cmc_rot_ext_side" />
       <site site="thumb_cmc_rot_ext_48_anchor" />
-    </spatial>
-    <spatial name="thumb_mcp_abd_flex" width="0.0004" rgba="0.85 0.2 0.15 1">
-      <site site="thumb_mcp_abd_flex_0_route" />
-      <site site="thumb_mcp_abd_flex_1_route" />
-      <site site="thumb_mcp_abd_flex_2_route" />
-      <site site="thumb_mcp_abd_flex_3_route" />
-      <site site="thumb_mcp_abd_flex_4_route" />
-      <site site="thumb_mcp_abd_flex_5_route" />
-      <site site="thumb_mcp_abd_flex_6_route" />
-      <site site="thumb_mcp_abd_flex_7_route" />
-      <site site="thumb_mcp_abd_flex_8_route" />
-      <site site="thumb_mcp_abd_flex_9_route" />
-      <site site="thumb_mcp_abd_flex_10_route" />
-      <site site="thumb_mcp_abd_flex_11_route" />
-      <site site="thumb_mcp_abd_flex_12_route" />
-      <site site="thumb_mcp_abd_flex_13_route" />
-      <site site="thumb_mcp_abd_flex_14_route" />
-      <site site="thumb_mcp_abd_flex_15_route" />
-      <site site="thumb_mcp_abd_flex_16_route" />
-      <site site="thumb_mcp_abd_flex_17_route" />
-      <site site="thumb_mcp_abd_flex_18_route" />
-      <site site="thumb_mcp_abd_flex_19_route" />
-      <site site="thumb_mcp_abd_flex_20_route" />
-      <site site="thumb_mcp_abd_flex_21_route" />
-      <site site="thumb_mcp_abd_flex_22_route" />
-      <site site="thumb_mcp_abd_flex_23_route" />
-      <site site="thumb_mcp_abd_flex_24_route" />
-      <site site="thumb_mcp_abd_flex_25_route" />
-      <site site="thumb_mcp_abd_flex_26_route" />
-      <site site="thumb_mcp_abd_flex_27_route" />
-      <site site="thumb_mcp_abd_flex_28_route" />
-      <site site="thumb_mcp_abd_flex_29_route" />
-      <site site="thumb_mcp_abd_flex_30_route" />
-      <site site="thumb_mcp_abd_flex_31_route" />
-      <site site="thumb_mcp_abd_flex_32_route" />
-      <site site="thumb_mcp_abd_flex_33_route" />
-      <site site="thumb_mcp_abd_flex_34_route" />
-      <site site="thumb_mcp_abd_flex_35_route" />
-      <site site="thumb_mcp_abd_flex_36_route" />
-      <site site="thumb_mcp_abd_flex_37_route" />
-      <site site="thumb_mcp_abd_flex_38_route" />
-      <site site="thumb_mcp_abd_flex_39_route" />
-      <site site="thumb_mcp_abd_flex_40_route" />
-      <site site="thumb_mcp_abd_flex_41_route" />
-      <site site="thumb_mcp_abd_flex_42_route" />
-      <site site="thumb_mcp_abd_flex_43_route" />
-      <site site="thumb_mcp_abd_flex_44_route" />
-      <site site="thumb_mcp_abd_flex_45_route" />
-      <site site="thumb_mcp_abd_flex_46_route" />
-      <site site="thumb_mcp_abd_flex_47_route" />
-      <site site="thumb_mcp_abd_flex_48_route" />
-      <site site="thumb_mcp_abd_flex_49_route" />
-      <site site="thumb_mcp_abd_flex_50_route" />
-      <site site="thumb_mcp_abd_flex_51_route" />
-      <site site="thumb_mcp_abd_flex_52_route" />
-      <site site="thumb_mcp_abd_flex_53_route" />
-      <site site="thumb_mcp_abd_flex_54_route" />
-      <site site="thumb_mcp_abd_flex_55_route" />
-      <site site="thumb_mcp_abd_flex_56_route" />
-      <site site="thumb_mcp_abd_flex_57_route" />
-      <site site="thumb_mcp_abd_flex_58_route" />
-      <site site="thumb_mcp_abd_flex_59_route" />
-      <site site="thumb_mcp_abd_flex_60_route" />
-      <site site="thumb_mcp_abd_flex_61_route" />
-      <site site="thumb_mcp_abd_flex_62_route" />
-      <site site="thumb_mcp_abd_flex_63_route" />
-      <site site="thumb_mcp_abd_flex_64_route" />
-      <site site="thumb_mcp_abd_flex_65_route" />
-      <site site="thumb_mcp_abd_flex_66_route" />
-      <site site="thumb_mcp_abd_flex_67_route" />
-      <site site="thumb_mcp_abd_flex_68_route" />
-      <site site="thumb_mcp_abd_flex_69_route" />
-      <site site="thumb_mcp_abd_flex_70_route" />
-      <site site="thumb_mcp_abd_flex_71_route" />
-      <site site="thumb_mcp_abd_flex_72_route" />
-      <site site="thumb_mcp_abd_flex_73_cross" />
-      <site site="thumb_mcp_abd_flex_74_cross" />
-      <site site="thumb_mcp_abd_flex_75_cross" />
-      <site site="thumb_mcp_abd_flex_76_guide" />
-      <geom geom="thumb_mcp_abd_drum" sidesite="thumb_mcp_abd_flex_side" />
-      <site site="thumb_mcp_abd_flex_77_anchor" />
-    </spatial>
-    <spatial name="thumb_mcp_abd_ext" width="0.0004" rgba="0.15 0.35 0.85 1">
-      <site site="thumb_mcp_abd_ext_0_route" />
-      <site site="thumb_mcp_abd_ext_1_route" />
-      <site site="thumb_mcp_abd_ext_2_route" />
-      <site site="thumb_mcp_abd_ext_3_route" />
-      <site site="thumb_mcp_abd_ext_4_route" />
-      <site site="thumb_mcp_abd_ext_5_route" />
-      <site site="thumb_mcp_abd_ext_6_route" />
-      <site site="thumb_mcp_abd_ext_7_route" />
-      <site site="thumb_mcp_abd_ext_8_route" />
-      <site site="thumb_mcp_abd_ext_9_route" />
-      <site site="thumb_mcp_abd_ext_10_route" />
-      <site site="thumb_mcp_abd_ext_11_route" />
-      <site site="thumb_mcp_abd_ext_12_route" />
-      <site site="thumb_mcp_abd_ext_13_route" />
-      <site site="thumb_mcp_abd_ext_14_route" />
-      <site site="thumb_mcp_abd_ext_15_route" />
-      <site site="thumb_mcp_abd_ext_16_route" />
-      <site site="thumb_mcp_abd_ext_17_route" />
-      <site site="thumb_mcp_abd_ext_18_route" />
-      <site site="thumb_mcp_abd_ext_19_route" />
-      <site site="thumb_mcp_abd_ext_20_route" />
-      <site site="thumb_mcp_abd_ext_21_route" />
-      <site site="thumb_mcp_abd_ext_22_route" />
-      <site site="thumb_mcp_abd_ext_23_route" />
-      <site site="thumb_mcp_abd_ext_24_route" />
-      <site site="thumb_mcp_abd_ext_25_route" />
-      <site site="thumb_mcp_abd_ext_26_route" />
-      <site site="thumb_mcp_abd_ext_27_route" />
-      <site site="thumb_mcp_abd_ext_28_route" />
-      <site site="thumb_mcp_abd_ext_29_route" />
-      <site site="thumb_mcp_abd_ext_30_route" />
-      <site site="thumb_mcp_abd_ext_31_route" />
-      <site site="thumb_mcp_abd_ext_32_route" />
-      <site site="thumb_mcp_abd_ext_33_route" />
-      <site site="thumb_mcp_abd_ext_34_route" />
-      <site site="thumb_mcp_abd_ext_35_route" />
-      <site site="thumb_mcp_abd_ext_36_route" />
-      <site site="thumb_mcp_abd_ext_37_route" />
-      <site site="thumb_mcp_abd_ext_38_route" />
-      <site site="thumb_mcp_abd_ext_39_route" />
-      <site site="thumb_mcp_abd_ext_40_route" />
-      <site site="thumb_mcp_abd_ext_41_route" />
-      <site site="thumb_mcp_abd_ext_42_route" />
-      <site site="thumb_mcp_abd_ext_43_route" />
-      <site site="thumb_mcp_abd_ext_44_route" />
-      <site site="thumb_mcp_abd_ext_45_route" />
-      <site site="thumb_mcp_abd_ext_46_route" />
-      <site site="thumb_mcp_abd_ext_47_route" />
-      <site site="thumb_mcp_abd_ext_48_route" />
-      <site site="thumb_mcp_abd_ext_49_route" />
-      <site site="thumb_mcp_abd_ext_50_route" />
-      <site site="thumb_mcp_abd_ext_51_route" />
-      <site site="thumb_mcp_abd_ext_52_route" />
-      <site site="thumb_mcp_abd_ext_53_route" />
-      <site site="thumb_mcp_abd_ext_54_route" />
-      <site site="thumb_mcp_abd_ext_55_route" />
-      <site site="thumb_mcp_abd_ext_56_route" />
-      <site site="thumb_mcp_abd_ext_57_route" />
-      <site site="thumb_mcp_abd_ext_58_route" />
-      <site site="thumb_mcp_abd_ext_59_route" />
-      <site site="thumb_mcp_abd_ext_60_route" />
-      <site site="thumb_mcp_abd_ext_61_route" />
-      <site site="thumb_mcp_abd_ext_62_route" />
-      <site site="thumb_mcp_abd_ext_63_route" />
-      <site site="thumb_mcp_abd_ext_64_route" />
-      <site site="thumb_mcp_abd_ext_65_route" />
-      <site site="thumb_mcp_abd_ext_66_route" />
-      <site site="thumb_mcp_abd_ext_67_route" />
-      <site site="thumb_mcp_abd_ext_68_route" />
-      <site site="thumb_mcp_abd_ext_69_route" />
-      <site site="thumb_mcp_abd_ext_70_route" />
-      <site site="thumb_mcp_abd_ext_71_route" />
-      <site site="thumb_mcp_abd_ext_72_route" />
-      <site site="thumb_mcp_abd_ext_73_cross" />
-      <site site="thumb_mcp_abd_ext_74_cross" />
-      <site site="thumb_mcp_abd_ext_75_cross" />
-      <site site="thumb_mcp_abd_ext_76_guide" />
-      <geom geom="thumb_mcp_abd_drum" sidesite="thumb_mcp_abd_ext_side" />
-      <site site="thumb_mcp_abd_ext_77_anchor" />
     </spatial>
     <spatial name="middle_dip_flex" width="0.0004" rgba="0.85 0.2 0.15 1">
       <site site="middle_dip_flex_0_route" />
@@ -4920,11 +4590,10 @@
     <general name="index_pip" tendon="index_pip_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-75.8170570323 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />
     <general name="index_mcp_flex" tendon="index_mcp_flex_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-50.6663240612 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />
     <general name="index_mcp_abd" tendon="index_mcp_abd_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-44.629680606 -2 -0.012" ctrlrange="-0.261799 0.261799" forcerange="-0.095 0.095" />
-    <general name="thumb_ip" tendon="thumb_ip_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-67.5033008161 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />
-    <general name="thumb_mcp_flex" tendon="thumb_mcp_flex_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-43.5276508556 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />
-    <general name="thumb_cmc_flex" tendon="thumb_cmc_flex_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-42.4208707389 -2 -0.012" ctrlrange="-0.226893 1.39626" forcerange="-0.095 0.095" />
-    <general name="thumb_cmc_rot" tendon="thumb_cmc_rot_flex" gear="-133.3333333" gaintype="fixed" biastype="affine" gainprm="3.125" biasprm="-37.0335597435 -3.125 -0.01875" ctrlrange="-1.74533 0.698132" forcerange="-0.11875 0.11875" />
-    <general name="thumb_mcp_abd" tendon="thumb_mcp_abd_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-70.5226587819 -2 -0.012" ctrlrange="-0.349066 0.349066" forcerange="-0.095 0.095" />
+    <general name="thumb_ip" tendon="thumb_ip_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-67.4076780823 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />
+    <general name="thumb_mcp_flex" tendon="thumb_mcp_flex_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-43.4983997964 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />
+    <general name="thumb_cmc_flex" tendon="thumb_cmc_flex_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-42.4221082285 -2 -0.012" ctrlrange="-0.226893 1.39626" forcerange="-0.095 0.095" />
+    <general name="thumb_cmc_rot" tendon="thumb_cmc_rot_flex" gear="-133.3333333" gaintype="fixed" biastype="affine" gainprm="3.125" biasprm="-36.7377357724 -3.125 -0.01875" ctrlrange="-1.74533 0.698132" forcerange="-0.11875 0.11875" />
     <general name="middle_dip" tendon="middle_dip_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-86.823167703 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />
     <general name="middle_pip" tendon="middle_pip_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-77.6274563508 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />
     <general name="middle_mcp_flex" tendon="middle_mcp_flex_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-51.122206086 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />
@@ -4939,7 +4608,7 @@
     <general name="little_mcp_abd" tendon="little_mcp_abd_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-39.6587685178 -2 -0.012" ctrlrange="-0.349066 0.349066" forcerange="-0.095 0.095" />
   </actuator>
   <keyframe>
-    <key name="open" qpos="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" ctrl="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" />
-    <key name="fist" qpos="1.0472 1.5708 1.39626 0 0.523599 0.349066 0.523599 0 0 1.0472 1.5708 1.39626 0 1.0472 1.5708 1.39626 0 1.0472 1.5708 1.39626 0" ctrl="1.0472 1.5708 1.39626 0 0.523599 0.349066 0.523599 0 0 1.0472 1.5708 1.39626 0 1.0472 1.5708 1.39626 0 1.0472 1.5708 1.39626 0" />
+    <key name="open" qpos="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" ctrl="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" />
+    <key name="fist" qpos="1.0472 1.5708 1.39626 0 0.523599 0.349066 0.523599 0 1.0472 1.5708 1.39626 0 1.0472 1.5708 1.39626 0 1.0472 1.5708 1.39626 0" ctrl="1.0472 1.5708 1.39626 0 0.523599 0.349066 0.523599 0 1.0472 1.5708 1.39626 0 1.0472 1.5708 1.39626 0 1.0472 1.5708 1.39626 0" />
   </keyframe>
 </mujoco>

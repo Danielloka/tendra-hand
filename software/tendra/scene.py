@@ -3,7 +3,7 @@
 This is a stand-in for the future robot arm. An invisible, ideal "arm" moves the wrist: the
 hand's fixed parts (forearm, palm, servos, spools) hang from one free body `hand_root`, which a
 weld constraint pulls toward a mocap body `wrist_target`. So the robot's action is
-"wrist pose + 21 finger joint targets", the same for a human operator (teleoperation) and for a
+"wrist pose + 20 finger joint targets", the same for a human operator (teleoperation) and for a
 learned policy later.
 
 World frame: table top at z = 0, the robot stands across the table (+Y), the "view" camera looks
@@ -12,7 +12,7 @@ at it from the operator's side (-Y), slightly from above. Units m, rad, quaterni
     scene = GraspScene()
     scene.reset(np.random.default_rng(0), obj="cylinder")
     scene.set_wrist_target(pos, quat)       # or set_wrist_from_view(...) for teleoperation
-    scene.set_finger_targets(q)             # 21 joint targets, V1 order
+    scene.set_finger_targets(q)             # 20 joint targets, V1 order
     scene.step(0.02)
     scene.lifted()                          # success check
 
@@ -55,14 +55,21 @@ class SceneConfig:
     lite: bool = True  # simplified meshes (much faster to draw, same physics)
     lite_keep: float = KEEP  # fraction of triangles kept by the simplification
     table_half: tuple[float, float] = (0.30, 0.25)  # table top half size x, y (m)
-    # Home wrist point, world (m). The forearm (servo pack) hangs 12 cm below the wrist, so at
-    # 0.2 m it clears a standing cylinder (9 cm) that spawns in front of it.
-    home: tuple[float, float, float] = (0.0, 0.0, 0.20)
-    # Objects spawn uniformly in this box (x, y, world m), within reach, between the hand and
-    # the view camera: behind the hand they would be hidden by the forearm in the view, and
-    # right under it they would touch the forearm.
-    spawn_lo: tuple[float, float] = (-0.08, -0.20)
-    spawn_hi: tuple[float, float] = (0.08, -0.11)
+    # Home wrist point, world (m): low and close behind the objects, so the operator only needs
+    # a small, comfortable hand motion to reach them (from 0.2 m up, reaching the table meant
+    # moving the real hand out of the webcam image). Measured at this pose: the forearm (servo
+    # pack, on the palm side) reaches down to z 0.022 and forward to y ~-0.078, so the table
+    # and the objects spawned in front (y <= -0.13) stay clear; `test_scene` checks it.
+    home: tuple[float, float, float] = (0.0, 0.02, 0.15)
+    # Objects spawn uniformly in this box (x, y, world m). With `spawn_sides`, x is the distance
+    # to the side and the side (left/right of the hand) is random. Beside the hand, at about its
+    # depth, the operator reaches by moving sideways and down: the directions a webcam tracks
+    # best. (In front of the hand, toward the camera, they had to bring their real hand very
+    # close to the webcam.) The hand at home spans x +-0.046 (measured), so |x| >= 0.09 keeps
+    # even the ball (r 28 mm) clear of it.
+    spawn_lo: tuple[float, float] = (0.09, -0.07)
+    spawn_hi: tuple[float, float] = (0.15, 0.0)
+    spawn_sides: bool = True
     # Weld between hand_root and wrist_target: time constant (s), damping ratio. 0.02 s tracks
     # a hand motion without visible lag and holds hand + object against gravity; MuJoCo's soft
     # constraints scale with mass, so it stays stable on contact with the table.
@@ -78,9 +85,11 @@ class SceneConfig:
     object_condim: int = 4  # 4 = with torsional friction (holds an object from turning)
     impratio: float = 10.0  # >1 makes friction harder than normal force: less slip
     settle: float = 0.2  # seconds simulated at reset so the object comes to rest
-    view_fovy: float = 55.0  # degrees
-    view_pos: tuple[float, float, float] = (0.0, -0.55, 0.45)  # view camera, world (m)
-    view_lookat: tuple[float, float, float] = (0.0, -0.05, 0.17)
+    view_fovy: float = 60.0  # degrees: fingertips at home + the spawn area both in view
+    # View camera, world (m): frames the hand at home and both spawn sides, ~25 deg from above,
+    # ~0.4 m away (closer made the objects on the sides leave the image).
+    view_pos: tuple[float, float, float] = (0.0, -0.38, 0.32)
+    view_lookat: tuple[float, float, float] = (0.0, -0.02, 0.15)
 
 
 def _look_at(pos: np.ndarray, target: np.ndarray, up: np.ndarray) -> np.ndarray:
@@ -165,7 +174,14 @@ class GraspScene:
         # The view camera's basis C = [right, up, backward] as world columns (fixed camera).
         mujoco.mj_kinematics(m, self.data)
         mujoco.mj_camlight(m, self.data)
-        self.view_basis = self.data.cam_xmat[m.camera("view").id].reshape(3, 3).copy()
+        # The mirror mapping uses the view camera's axes *levelled*: right = the camera's right
+        # (horizontal), up = world up, backward = horizontal toward the camera. With the camera's
+        # own (tilted, ~30 deg down) axes, moving the real hand toward the webcam also lifted the
+        # sim hand, so the operator had to hold their hand very low to reach the table.
+        cam_x = self.data.cam_xmat[m.camera("view").id].reshape(3, 3)[:, 0]
+        right = np.array([cam_x[0], cam_x[1], 0.0]) / np.linalg.norm(cam_x[:2])
+        up = np.array([0.0, 0.0, 1.0])
+        self.view_basis = np.column_stack([right, up, np.cross(right, up)])
         self.home_pos = np.array(config.home, dtype=float)
         self.home_quat = mat_to_quat(self.view_basis @ HOME_ROT_VIEW)
 
@@ -237,7 +253,7 @@ class GraspScene:
         model.light_castshadow[:] = 0
         model.mat_reflectance[:] = 0
         mujoco.mj_setConst(model, mujoco.MjData(model))
-        if model.nu != V1.num_joints or model.ntendon != 42:
+        if model.nu != V1.num_joints or model.ntendon != 2 * V1.num_joints:
             raise RuntimeError("scene model lost hand actuators or tendons")
         return model
 
@@ -279,6 +295,8 @@ class GraspScene:
             )
             if active:
                 xy = rng.uniform(self.config.spawn_lo, self.config.spawn_hi)
+                if self.config.spawn_sides and rng.random() < 0.5:
+                    xy[0] = -xy[0]  # the other side of the hand
                 yaw = rng.uniform(-np.pi, np.pi)
                 d.qpos[adr : adr + 3] = [xy[0], xy[1], self._half_height(kind) + 0.001]
                 d.qpos[adr + 3 : adr + 7] = [np.cos(yaw / 2), 0, 0, np.sin(yaw / 2)]
@@ -309,9 +327,10 @@ class GraspScene:
                       ) -> tuple[np.ndarray, np.ndarray]:  # fmt: skip
         """A view-frame wrist pose as a world pose (pos, quat), the view camera as a mirror.
 
-        world_pos = home + C @ pos_view, world_R = C @ rot_view, C = [right, up, backward] of
-        the view camera. `rot_view` columns are the hand model's axes (X thumb side, Y back of
-        the hand, Z fingers) in the view frame; `HOME_ROT_VIEW` = palm facing the camera.
+        world_pos = home + C @ pos_view, world_R = C @ rot_view, C = `view_basis` = [right, up,
+        backward] of the view camera, levelled (up = world up, backward = horizontal toward the
+        camera). `rot_view` columns are the hand model's axes (X thumb side, Y back of the hand,
+        Z fingers) in the view frame; `HOME_ROT_VIEW` = palm facing the camera, fingers up.
         """
         c = self.view_basis
         pos = self.home_pos + c @ np.asarray(pos_view, dtype=float)
@@ -330,7 +349,7 @@ class GraspScene:
     # ----- fingers -----
 
     def set_finger_targets(self, q: np.ndarray) -> None:
-        """21 joint targets in V1 order (rad), clipped to the joint limits."""
+        """20 joint targets in V1 order (rad), clipped to the joint limits."""
         q = np.asarray(q, dtype=float)
         if q.shape != (V1.num_joints,):
             raise ValueError(f"expected {V1.num_joints} targets, got shape {q.shape}")
@@ -340,7 +359,7 @@ class GraspScene:
         return self.data.ctrl[self._act].copy()
 
     def finger_positions(self) -> np.ndarray:
-        """21 measured joint angles in V1 order (rad)."""
+        """20 measured joint angles in V1 order (rad)."""
         return self.data.qpos[self._qadr].copy()
 
     # ----- simulation and checks -----
@@ -388,13 +407,12 @@ POWER_GRASP: dict[str, float] = {
     "thumb_cmc_rot": 0.0,
     "thumb_cmc_flex": 1.2,
     "thumb_mcp_flex": 0.4,
-    "thumb_mcp_abd": 0.0,
     "thumb_ip": 0.4,
 }  # fmt: skip
 
 
 def grasp_targets(grasp: dict[str, float] = POWER_GRASP) -> np.ndarray:
-    """21 finger targets (V1 order) from a {joint name: rad} dict; missing joints = 0."""
+    """20 finger targets (V1 order) from a {joint name: rad} dict; missing joints = 0."""
     return np.array([grasp.get(name, 0.0) for name in V1.joint_names])
 
 

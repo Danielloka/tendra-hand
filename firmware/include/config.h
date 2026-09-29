@@ -46,7 +46,7 @@ struct JointConfig {
 constexpr JointConfig kJoints[kNumJoints] = {
     {"index_dip",      {4, 5, 6, 7},     -5 * kDegToRad,   95 * kDegToRad, false},  // M1
     {"index_pip",      {15, 16, 17, 18}, -5 * kDegToRad,   95 * kDegToRad, false},  // M2
-    {"index_mcp_flex", {8, 3, 14, 9},    -5 * kDegToRad,   95 * kDegToRad, false},  // M3
+    {"index_mcp_flex", {8, 14, 46, 9},   -5 * kDegToRad,   95 * kDegToRad, false},  // M3
     {"index_mcp_abd",  {10, 11, 12, 13}, -15 * kDegToRad,  15 * kDegToRad, false},  // M4
     {"thumb_ip",       {1, 2, 42, 41},   -5 * kDegToRad,   95 * kDegToRad, false},  // M5
     {"thumb_mcp",      {40, 39, 38, 37}, -5 * kDegToRad,   95 * kDegToRad, false},  // M6

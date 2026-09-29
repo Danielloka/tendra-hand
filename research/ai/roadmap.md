@@ -12,6 +12,9 @@ Learn the core ideas and tools while the hand hardware is being built.
 - [x] **Webcam teleop of Tendra V0/V1 in MuJoCo** (`sim/teleop.py`, 2026-09-28; live tuning with a real hand pending): MediaPipe hand tracking → retargeting → `SimHand`. Then the same on the real hand via `RealHand`
 - [ ] Forward kinematics + Jacobian of the Tendra hand from the MJCF, checked against MuJoCo
 
+- [x] **Grasp demos in simulation** (2026-09-29): floating V1 hand + table + objects, wrist and fingers from the webcam, episodes recorded and exportable to LeRobot (`sim/grasp_teleop.py`)
+- [ ] Record ~50 grasp demos and train ACT on them (free cloud GPU); measure the success rate in sim
+
 **Done when:** you can move the simulated (and real) Tendra hand with your own hand in front of a webcam, and you have trained one policy yourself.
 
 ## Stage B: One arm, one gripper, imitation learning (~3–9 months)

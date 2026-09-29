@@ -9,12 +9,15 @@ From the repository root (needs [uv](https://docs.astral.sh/uv/)):
 ```bash
 uv sync                          # create the Python 3.12 environment (first time only)
 uv run python sim/view.py        # open the hand in the MuJoCo viewer
-uv run python sim/view.py --v1   # open the full v1 hand (21 joints, tendon-driven)
+uv run python sim/view.py --v1   # open the full v1 hand (20 joints, tendon-driven)
 uv run python sim/twin.py --fake # digital twin with a software ESP32
 uv run python sim/twin.py --port auto   # digital twin driving the real hand
-uv run python sim/twin.py --fake --hand v1          # v1 (21 joints) with a software ESP32
+uv run python sim/twin.py --fake --hand v1          # v1 (20 joints) with a software ESP32
 uv run python sim/twin.py --port auto --mirror      # v1: the sim follows the real hand
 uv run python sim/teleop.py      # webcam teleop: your hand moves the v1 twin (--hand v0, --fake, --port)
+uv run python sim/grasp_teleop.py                 # pick up objects with the floating hand, record demos
+uv run python sim/export_lerobot.py ~/tendra-data/datasets/grasp-sim --preview   # MP4 previews
+uv run --with "lerobot[dataset]" python sim/export_lerobot.py ~/tendra-data/datasets/grasp-sim --repo-id tendra/grasp-sim --out <dir>
 ```
 
 `--hand auto|v0|v1` picks the hand (auto: whatever the firmware reports, v0 without a hand). `--mirror` reverses the direction (real → sim): the sim shows the servos' measured positions and nothing is sent to the hand, so you can move the limp fingers by hand and watch. It needs position feedback, so v1 only.
@@ -32,7 +35,9 @@ Move the joints with the sliders under **Control** in the right-hand panel.
 | `view.py` | Interactive viewer (`--v1` for the full hand) |
 | `twin.py` | **Digital twin**: slider targets are sent to the real hand (rate-limited, only on change); the terminal shows real-vs-sim difference. v1 adds `--mirror` (real → sim) |
 | `teleop.py` | **Webcam teleoperation**: MediaPipe hand tracking → `tendra.retarget` → the twin (and optionally the real hand). One window: camera image + the hand, drawn only when it moves (≤ 30 fps). Defaults are tuned for a slow laptop: kinematic mode (no servo delay; `--physics` for the tendon sim), simplified meshes, no shadows, tendons hidden (`--tendons`), MuJoCo's viewer only with `--viewer`. Mouse on the hand: drag rotates, wheel zooms. Prints a speed summary on exit. Keys in the camera window: C calibrate (hand open and flat), SPACE pause, M flip palm side, Q quit |
-| `tests/` | Model sanity checks: `uv run pytest` |
+| `grasp_teleop.py` | **Grasp teleoperation + demo recording.** The floating V1 hand (`tendra.scene`) over a table with a cylinder, cube or ball. Your wrist pose (`tendra.wrist`) moves the hand, your fingers (`tendra.retarget`) close it. Records episodes (`tendra.dataset`) to `~/tendra-data/datasets/<name>`; success = object held up for 1 s. Keys: R record/stop, X discard, N new round, W wrist clutch, C calibrate, SPACE pause, M flip, Q quit |
+| `export_lerobot.py` | Renders recorded episodes offline (replaying the saved sim state) and exports them to a Hugging Face **LeRobot** dataset (v3.0 format, lerobot 0.6.1, run with `uv run --with "lerobot[dataset]"`), or only MP4 previews (`--preview`). Successful episodes only unless `--all` |
+| `tests/` | Model sanity checks, twin, grasp pipeline end to end (`test_grasp_teleop.py`): `uv run pytest` |
 
 After a new Fusion export, or a change to `convert.py` / `convert_v1.py`:
 ```bash
@@ -49,9 +54,9 @@ The tests fail if a generated model is out of date.
 
 ## v1 model (full hand, tendon-driven)
 
-- **21 joints**, actuators in **servo-ID order** (same as `firmware/include/config_v1.h`): `index_dip, index_pip, index_mcp_flex, index_mcp_abd, thumb_ip, thumb_mcp_flex, thumb_cmc_flex, thumb_cmc_rot, thumb_mcp_abd`, then middle, ring, little (`dip, pip, mcp_flex, mcp_abd` each). Actuator names = joint names.
-- **Sign convention** (positive = closing), worked out automatically from the geometry, because Fusion's axis signs are arbitrary: finger flexion bends toward the palm (-Y); finger `mcp_abd` moves toward the thumb (+X); `thumb_cmc_rot` swings the thumb across the palm (-X); thumb flexion (`cmc_flex`, `mcp_flex`, `ip`) curls it toward the fingers (+Z); `thumb_mcp_abd` moves the thumb tip toward the index side (-X).
-- **Tendons.** Every joint has one loop of two strands, `<joint>_flex` and `<joint>_ext` (42 strands). The loop wraps a 6 mm drum on the joint's child segment and is tied to it, so the joint changes the strand length by exactly 6 mm per radian: the flex strand shortens and the ext strand lengthens by the same amount, and the loop stays tight. Strands of more distal joints cross every joint they pass **exactly on its axis**, so those joints don't change their length (no coupling). In the palm and forearm the strands follow `tendon_routes.json` down to the spool tangent points. MuJoCo draws flex strands red and ext strands blue; press 3 in the viewer to show the drums.
+- **20 joints**, actuators in **servo-ID order** (same as `firmware/include/config_v1.h`): `index_dip, index_pip, index_mcp_flex, index_mcp_abd, thumb_ip, thumb_mcp_flex, thumb_cmc_flex, thumb_cmc_rot`, then middle, ring, little (`dip, pip, mcp_flex, mcp_abd` each). Actuator names = joint names.
+- **Sign convention** (positive = closing), worked out automatically from the geometry, because Fusion's axis signs are arbitrary: finger flexion bends toward the palm (-Y); finger `mcp_abd` moves toward the thumb (+X); `thumb_cmc_rot` swings the thumb across the palm (-X); thumb flexion (`cmc_flex`, `mcp_flex`, `ip`) curls it toward the fingers (+Z).
+- **Tendons.** Every joint has one loop of two strands, `<joint>_flex` and `<joint>_ext` (40 strands). The loop wraps a 6 mm drum on the joint's child segment and is tied to it, so the joint changes the strand length by exactly 6 mm per radian: the flex strand shortens and the ext strand lengthens by the same amount, and the loop stays tight. Strands of more distal joints cross every joint they pass **exactly on its axis**, so those joints don't change their length (no coupling). In the palm and forearm the strands follow `tendon_routes.json` down to the spool tangent points. MuJoCo draws flex strands red and ext strands blue; press 3 in the viewer to show the drums.
 - **Actuation.** One actuator per servo pulls its joint's flex strand. `ctrl` is the **servo angle in radians** (0 = joint straight). With a 6 mm spool and 6 mm drums the drive is 1:1, so the servo angle equals the joint angle. The gains are SCS0009-like: kp 2 N·m/rad, torque limit 0.095 N·m (half of stall, ≈16 N of tendon force). MuJoCo tendons can push as well as pull, so one actuator on the flex strand stands in for the whole loop. Pretension, friction and line stretch are not modelled.
 - Keyframes `open` and `fist`.
 - **Known limits:** collisions use convex hulls. Palm ↔ thumb_metacarpal is excluded because the palm's hull fills the pocket for the thumb base. The real parts only meet near `thumb_cmc_flex` = 80°, which the sim therefore misses. Toward a straight neighbour, a finger can adduct only about 4–5° before touching it (8 mm gap). That is real geometry.

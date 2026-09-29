@@ -20,7 +20,7 @@
   .story-hero {
     position: relative;
     z-index: 1;
-    padding-block: clamp(3rem, 2rem + 5vw, 6rem) var(--space-7);
+    padding-block: clamp(1rem, 0.5rem + 2vw, 2.5rem) var(--space-7);
     text-align: center;
   }
   .story-hero__inner {
@@ -28,12 +28,13 @@
     justify-items: center;
   }
   .story-hero__title {
-    max-width: 13ch;
-    margin-top: var(--space-5);
+    max-width: 14ch;
+    margin-top: var(--space-4);
+    font-size: clamp(2.25rem, 1.4rem + 4vw, 4.75rem);
   }
   .story-hero__lead {
     max-width: 36rem;
-    margin-top: var(--space-5);
+    margin-top: var(--space-4);
   }
   .story-hero__body {
     display: grid;
@@ -254,7 +255,7 @@
        measureHero() in ScrollStory), so it never sits under text. */
     .motion .story-hero {
       min-height: calc(100svh - var(--nav-h));
-      padding-block: clamp(2rem, 1rem + 3vh, 3.5rem) var(--space-7);
+      padding-block: clamp(0.75rem, 0.25rem + 1.5vh, 1.5rem) var(--space-7);
     }
     .motion .story-hero__lead {
       max-width: 32rem;

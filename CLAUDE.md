@@ -10,7 +10,7 @@
 - **First step:** an open-source, tendon-driven, 3D-printed robotic hand with the same DOF as a human hand. The owner wants to become a robotics entrepreneur; this repo is the main research hub and project-management center.
 - **Everything is open source:** CAD/3D files, firmware, software, AI models, research. It is published in a public GitHub repo and on a project website.
 - **Language:** all docs, code and comments in English.
-- **Hand versions (owner, 2026-09-28):** **V1** = the full 5-finger, 21-DOF hand with SCS0009 servos (the real first version). **V0** = the thumb + index stepper build, "just a start" (prototype). In code: `v0` / `v1` (firmware envs `tendra_s3` = V0, `hand_v1_servo` = V1; `tendra.joints.V0` / `V1`; `--hand v0|v1`).
+- **Hand versions (owner, 2026-09-28):** **V1** = the full 5-finger, 20-DOF hand with SCS0009 servos (the real first version). **V0** = the thumb + index stepper build, "just a start" (prototype). In code: `v0` / `v1` (firmware envs `tendra_s3` = V0, `hand_v1_servo` = V1; `tendra.joints.V0` / `V1`; `--hand v0|v1`).
 - **Current phase:** Phase 1 (V0: make the thumb and index finger move smoothly and cleanly) and Phase 2 (build Tendra Hand V1, the first full hand; designed, not built). See `docs/roadmap.md`. Roadmap order changed 2026-09-28: V1 is Phase 2, right after V0.
 
 ## Working with the owner
@@ -52,13 +52,13 @@ Tidy root: `.git`, `.venv`, `.gitignore` and `.gitattributes` have the Windows *
 
 ## Tendra Hand V1 (designed 2026-09-28, not built yet)
 
-- **21 DOF / 21 SCS0009:** 4 fingers × (`mcp_abd`, `mcp_flex`, `pip`, `dip`) + thumb (`cmc_rot`, `cmc_flex`, `mcp_flex`, `mcp_abd`, `ip`). v0's `thumb_mcp` is `thumb_mcp_flex` in v1. Servo ID = protocol order = MuJoCo actuator order: 1–8 as v0 motors (index dip, pip, mcp_flex, mcp_abd, thumb ip, mcp_flex, cmc_flex, cmc_rot), 9 thumb_mcp_abd, 10–13 middle, 14–17 ring, 18–21 little (each dip, pip, mcp_flex, mcp_abd). Source: `firmware/include/config_v1.h`.
-- **Fusion design "Tendra Hand V1"** (cloud copy of "Hand assebly", which stays untouched), built by `hardware/cad/fusion_scripts/TendraHandV1/` in stages. The fingers are index copies with human length ratios; the thumb's 5th DOF is a hinge in its proximal phalanx (`thumb_mcp_link` + `thumb_proximal`).
-- **Tendon routing:** every joint = one antagonistic loop (flex + ext strand) on a 6 mm drum on the child segment, and a 6 mm spool on its servo (1:1). Each of the 42 strands has its own channel: 1.2 mm bore for 6 mm at the entry, then 2.2 mm for a 1 × 2 mm PTFE tube, S-curves with bend radius ≥ 15 mm, through the palm and a 12 mm wrist plate, then a straight line down to its spool. Single source of truth: `hardware/cad/tendon_router.py` → `v1_export/tendon_routes.json` (tested in `hardware/cad/tests/`); the CAD channels and the MuJoCo tendons both read it.
-- **Forearm** (under the palm, z −153…−30): servo shafts point inward, two levels × front/back plus one servo on a third level; deeper levels sit closer to the centre so no strand is blocked. Room for the ESP32-S3 + FE-URT-1 on level 3.
-- **Power:** 21 servos need a 5–6 V supply of ≥ 15 A (e.g. Mean Well LRS-100-5), split into 3 branches with capacitors; the 5 V / 2 A supply is only for v0. SCS0009 backs off by itself after 2 s above 80% load, so keep loop pretension low.
+- **20 DOF / 20 SCS0009:** 4 fingers × (`mcp_abd`, `mcp_flex`, `pip`, `dip`) + a **4-DOF thumb** (`cmc_rot`, `cmc_flex`, `mcp_flex`, `ip`; the owner had the 5th thumb joint `thumb_mcp_abd` removed on 2026-09-29). v0's `thumb_mcp` is `thumb_mcp_flex` in v1. Servo ID = protocol order = MuJoCo actuator order: 1–8 as v0 motors (index dip, pip, mcp_flex, mcp_abd, thumb ip, mcp_flex, cmc_flex, cmc_rot), 9–12 middle, 13–16 ring, 17–20 little (each dip, pip, mcp_flex, mcp_abd). Firmware 0.3.0. Source: `firmware/include/config_v1.h`.
+- **Fusion design "Tendra Hand V1"** (cloud copy of "Hand assebly", which stays untouched), built by `hardware/cad/fusion_scripts/TendraHandV1/` in stages. The fingers are index copies with human length ratios; the thumb keeps the prototype's one-piece proximal phalanx (stage `thumb_unhinge` removed the 5th-DOF hinge built earlier).
+- **Tendon routing:** every joint = one antagonistic loop (flex + ext strand) on a 6 mm drum on the child segment, and a 6 mm spool on its servo (1:1). Each of the 40 strands has its own channel: 1.2 mm bore for 6 mm at the entry, then 2.2 mm for a 1 × 2 mm PTFE tube, S-curves with bend radius ≥ 15 mm, through the palm and a 12 mm wrist plate, then a straight line down to its spool. Single source of truth: `hardware/cad/tendon_router.py` → `v1_export/tendon_routes.json` (tested in `hardware/cad/tests/`); the CAD channels and the MuJoCo tendons both read it.
+- **Forearm** (under the palm, z −153…−30): servo shafts point inward, two levels × front/back (the third level is now empty); deeper levels sit closer to the centre so no strand is blocked. Room for the ESP32-S3 + FE-URT-1 on level 3.
+- **Power:** 20 servos need a 5–6 V supply of ≥ 15 A (e.g. Mean Well LRS-100-5), split into 3 branches with capacitors; the 5 V / 2 A supply is only for v0. SCS0009 backs off by itself after 2 s above 80% load, so keep loop pretension low.
 - **Firmware:** env `hand_v1_servo` (v0 stays `tendra_s3`, the default). FE-URT-1 on UART1: ESP32 TX GPIO 17 → URT TX, RX GPIO 18 → URT RX (not crossed), 1 Mbps. Torque off at boot, nothing moves before a command. Extra commands `F` (feedback) and `B` (bus scan). PSRAM could be re-enabled for v1 (no motor pins on 35–37), but isn't yet.
-- **Known limits:** fingers adduct only ~4–5° toward a straight neighbour; index strands bend up to 56° entering the palm (they must pass beside the thumb bay); the thumb's routing is being reworked (2026-09-29, concept A: base plate 4 mm lower, hollow journal with PTFE sheaths up the rot axis to a boss on the metacarpal, cmc_rot drum r 7.5 so **`thumb_cmc_rot` servo_per_joint = 1.25**, thumb servos re-slotted; router + tests done, base built in Fusion, palm/forearm rebuild pending; see `research/experiments/2026-09-29-thumb-routing/`).
+- **Known limits:** fingers adduct only ~4–5° toward a straight neighbour; index strands bend up to 56° entering the palm (they must pass beside the thumb bay); the thumb's routing is being reworked (2026-09-29, concept A: base plate 4 mm lower, hollow journal with PTFE sheaths up the rot axis to a boss on the metacarpal, cmc_rot drum r 7.5 so **`thumb_cmc_rot` servo_per_joint = 1.25**, thumb servos re-slotted; router + tests done; base and the metacarpal's cmc_flex drum built in Fusion; palm/forearm need a rebuild for the 20-servo layout; how the sheaths enter the metacarpal is still open (its front half is too thin); see `research/experiments/2026-09-29-thumb-routing/`).
 - **Sensing:** none yet. A camera for vision-based grasping comes later.
 
 ### Motor ↔ joint ↔ pin map
@@ -73,7 +73,7 @@ Sign convention: **positive = closing the hand, negative = opening.** `q = 0` me
 |---|---|---|---|---|
 | 1 | 4, 5, 6, 7 | `index_dip` | Revolute 4 | Index fingertip joint |
 | 2 | 15, 16, 17, 18 | `index_pip` | Revolute 3 | Index middle joint |
-| 3 | 8, 3, 14, 9 | `index_mcp_flex` | Revolute 2 | Index knuckle bend |
+| 3 | 8, 14, **46**, 9 | `index_mcp_flex` | Revolute 2 | Index knuckle bend |
 | 4 | 10, 11, 12, 13 | `index_mcp_abd` | Revolute 1 | Index sideways |
 | 5 | 1, 2, 42, 41 | `thumb_ip` | Revolute 8 | Thumb tip joint |
 | 6 | 40, 39, 38, **37** | `thumb_mcp` | Revolute 7 | Thumb 2nd joint from tip |
@@ -86,7 +86,7 @@ The mapping and the joint directions were confirmed by the owner in the MuJoCo v
 
 - **GPIO 35, 36, 37:** wired to the **octal PSRAM** on N16R8. They only work as motor pins if **PSRAM is disabled** in the firmware build. Never enable PSRAM with this pin map. (Planned fix: servo bus.)
 - **GPIO 0:** strapping pin; LOW at reset means download mode. The ULN2003 input pulls it low, so the board may fail to boot normally with motor 7 connected. Watch for this.
-- **GPIO 3, 45:** strapping pins, but LOW is their default, so they're OK.
+- **GPIO 45, 46:** strapping pins, but LOW is their default, so they're OK (46 = motor 3 IN3 since 2026-09-29; GPIO 3 is no longer used).
 - **GPIO 43:** UART0 TX. The boot ROM prints here, so motor 8 may twitch at reset. Firmware must not log on UART0 (use USB CDC).
 - **GPIO 48:** often the onboard RGB LED. Don't drive the LED in firmware.
 - **GPIO 19/20:** native USB. Never use them for motors.
@@ -149,6 +149,7 @@ Every folder has a README explaining what goes there. Keep them current.
 - **PC side:** Python package `tendra` in `software/tendra` (installed editable by `uv sync`). `Hand` interface with `SimHand` / `RealHand`; `FakeEsp32` emulates the firmware protocol for tests. Joint names and limits live in `tendra/joints.py`; tests check that they match `config.h` and the MJCF.
 - **Digital twin:** `sim/twin.py` (`--fake` / `--port auto`, `--hand auto|v0|v1`). v0: sim → real. v1 also `--mirror` (real → sim from measured positions). `tendra.joints` has `HandSpec` variants `V0` / `V1`; `RealHand` auto-detects the variant from the `I` line.
 - **Webcam teleop:** `sim/teleop.py` (MediaPipe Hand Landmarker, dependency group `teleop`, default in `uv run`; model cached in `~/.cache/tendra/`) → `tendra.retarget` (fingers: Gauss-Newton fit of a finger model to all 4 landmarks, all fingers batched, palm plane by SVD through wrist + knuckles, running bone lengths; thumb: DLS on the MuJoCo model, pinch aims at the index tip; palm side from the joints' bend axis (sum of sin(bend), fist-safe), not MediaPipe's label) → `SimHand`, optionally `RealHand` via `TwinBridge`. Speed on the owner's laptop: the CPU and integrated GPU share power, so drawing slows tracking; MuJoCo's viewer redraws nonstop (tracking 28 → 7 fps) and the 42 tendons' ~2,000 capsules cost ~10× the hand. Teleop therefore draws the hand itself (`tendra.hand_view`, only on change, ≤ 30 fps), in kinematic mode, with lite meshes (`tendra.lite_model`), no shadows, tendons hidden. Tendra can only pinch with a curled index ("O" pinch).
+- **Grasp demos (sim):** `sim/grasp_teleop.py`: V1 hand floating over a table (`tendra.scene`, mocap weld = stand-in for the arm), wrist from the webcam (`tendra.wrist`, view frame = mirror: x right, y up, z toward the camera), fingers from `tendra.retarget`. Records the sim state only (`tendra.dataset`, 30 fps, state/action = 21 fingers + wrist pos + quat = 28) to `~/tendra-data/datasets/<name>` (outside the repo); images are rendered afterwards by replay; `sim/export_lerobot.py` exports to LeRobot v3.0 (`uv run --with "lerobot[dataset]"`). A scripted side power grasp lifts the cylinder with the real servo limits.
 - **Serial link:** native USB CDC. The baud rate setting is ignored for native USB (it always runs at USB speed), but keep it at 921600 for tools that need a value.
 
 ## Website

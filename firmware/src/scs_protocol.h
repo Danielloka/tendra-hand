@@ -64,7 +64,7 @@ constexpr uint8_t kErrAngle = 0x02;
 constexpr uint8_t kErrOverheat = 0x04;
 constexpr uint8_t kErrOverload = 0x20;
 
-// Largest packet we build or accept (sync write of 21 servos x 7 bytes + overhead fits).
+// Largest packet we build or accept (sync write of 20 servos x 7 bytes + overhead fits).
 constexpr size_t kMaxPacket = 200;
 
 inline uint8_t checksum(const uint8_t* body, size_t n) {

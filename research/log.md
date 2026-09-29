@@ -11,7 +11,25 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** what I learned and what to try next
 ```
 
+## 2026-09-29: First real-hand test setup (V0 index)
+**Goal:** drive the printed V0 index finger from sliders and from webcam teleop.
+**Setup:** ESP32-S3 on COM4, 4 × 28BYJ-48 + ULN2003 on the index. Motor 3 (`index_mcp_flex`) is wired to **8, 14, 46, 9** (was 8, 3, 14, 9 in config.h; GPIO 3 is now free). New `software/tendra/calibration_v0.json` + `tendra.calibration`: scales and speed are sent on every connect by `sim/twin.py` / `sim/teleop.py`, because the firmware forgets `K`/`V` on reset. Start values: 389.2 half-steps per joint rad for all 4 index joints (6 mm drum / 10 mm spool estimate), 1 rad/s, 3 rad/s².
+**Result:** firmware built and flashed; the board answers `I`/`S`, nothing moves at boot. Motor directions not checked yet.
+**Update:** at 389.2 the joints moved too little (owner: "about 2× more"), so all 4 index scales are now **778.4** steps/rad (motor turns ~1.2× the joint angle). Either the drum lever arm is larger than 6 mm or line stretch/slack eats part of the motion; measure per joint.
+**Conclusion / next:** check each motor's direction with a small raw move (set `invert` in config.h where needed), then measure real steps/rad per joint and update the JSON.
+
 ---
+
+## 2026-09-29: V1 back to a 4-DOF thumb (20 DOF), thumb tendon lengths checked
+**Goal:** owner: remove the 5th thumb joint that was added (`thumb_mcp_abd`, a hinge in the proximal phalanx), and make sure every thumb tendon keeps the same length at every thumb angle.
+**Setup:** Fusion design "Tendra Hand V1" (stage `thumb_unhinge`), router, sim, firmware, Python.
+**Result:**
+- **CAD:** the prototype's one-piece proximal phalanx was recovered from the timeline (the hidden raw body), moved onto the V1 thumb's axes (135° about Y; its MCP and IP axes land exactly on the V1 axes, same bounding box as the hinged parts) and put back as `thumb_proximal`, with the `thumb_mcp_flex` and `thumb_ip` joints. The hinge parts and the `thumb_mcp_abd` joint are gone. No interference at q = 0; mcp_flex and ip swept clear over their ranges. Export: 64 parts, 20 joints.
+- **Servo IDs renumbered 1–20** (owner's choice): middle 9–12, ring 13–16, little 17–20. Firmware 0.3.0 (`kNumJoints = 20`), both envs build, 333 host checks pass. Python `V1` spec, fake ESP32, scene, tests and the sim updated. The thumb's F3 servo slot is free now.
+- **Tendon lengths:** new test `test_thumb_tendons_keep_their_length_at_every_thumb_angle` (sim/tests/test_v1.py) runs all 8 thumb strands over a 5 × 5 × 5 × 5 grid of the 4 thumb joints: length change from the other joints ≤ 1e-13 mm, loop length constant. This checks the model, where every crossing sits exactly on its joint axis.
+- **Finding (physical routing):** the 2-D voxel map of the metacarpal (0.5 mm, from Fusion) shows its front half is thin (a central channel, top at z ≈ 13). The sheath loop can only arrive at the metacarpal at ~45° up-forward (a flatter entry gives < 10 mm bend radius over the cmc_flex range), and from there the tubes can't turn down to where the strands must run. The routing downstream of the tube stops is clear (ip strands in the central channel, crossing MCP through a 1.2 mm hole on the axis; mcp_flex strands straight to the MCP drum's sides), but getting the tubes there needs a reshaped metacarpal.
+- Full test suite passes.
+**Conclusion / next:** rebuild palm + forearm in Fusion from the 20-servo routes (the owner removes the old features by hand again), then decide how the sheaths enter the metacarpal (reshape it, or end the sheaths on the base).
 
 ## 2026-09-29: Thumb tendon routing, design study (V1)
 **Goal:** close V1's last open routing item: get the 10 thumb strands from the bay floor to their drums.
@@ -24,13 +42,45 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 - Owner chose **A**. A 2D loop search (`sheath_loop_search.py`) sized it: with the base plate and bay floor lowered **4 mm** along the rot axis (no kinematic change), the tubes can rise up the hollow pivot, bow over and enter a boss on the metacarpal's top (just above the cmc_flex axis, 45° up-forward), with a worst-case bend radius of **15.5 mm** over the whole cmc_flex range (11.0 mm without lowering).
 **Conclusion / next:** build in 6 tested stages (router → base → palm → metacarpal → on-axis holes → export + checks), listed in the experiment README.
 - **Stage 1 done (same day):** the router now has the whole thumb base: hollow journal (bore Ø11.6), cmc_rot drum r 7.5 fed horizontally over a Ø3 pin in the palm (**servo_per_joint 1.25**, firmware and sim updated; sim ctrl is now the joint angle for every joint), cmc_flex drum over the rot axis with a Ø3 pin on a hanger, sheaths in 2 × 3 in the bore to a split boss on the metacarpal (loop bend ≥ 14.3 mm, no crossing), bare cmc_flex strands held under their mid-range position (≤ 0.25 mm length change over −100…40°). Thumb servos re-slotted (6 → F1, 7 → F2, 8 → B1). 13 new tests; full suite 191 passed.
-- **Stage 2 started:** `thumb_base` built in Fusion (one solid, checked in section). Rebuilding the palm and forearm needs a bulk delete of their timeline features, which the permission check refused; waiting for the owner.
+- **Stage 2 done:** the owner removed the old palm/forearm features by hand (the bulk delete was refused by the permission check); `thumb_base`, `palm`, `forearm` rebuilt from the new routes. **Stage 3a:** cmc_flex drum on the metacarpal (`thumb_meta`). Checks: 65 parts, 0 interferences at q = 0; cmc_rot −100…40 and cmc_flex −13…80 swept clear. The sweep caught two contacts (hanger corner in the drum flange, metacarpal top at 130…150°), both fixed. Next: metacarpal socket boss + internal sheath channels.
 
 ## 2026-09-29: One place for project media
 **Goal:** a single folder for photos and videos that the website, the READMEs and Claude can all use.
 **Setup:** new top-level `media/` (`photos/`, `videos/`, `screenshots/`, `diagrams/`, `catalog.json`, git-ignored `inbox/`), `media/process_inbox.py` (Pillow), website copy via `scripts/sync-styleguide.mjs`.
 **Result:** tested with a fake 4000×3000 phone photo with GPS, rotation and date in its EXIF data. It came out upright at 1500×2000, with no EXIF, named by the date it was taken and catalogued. The website copy lands in `public/media/`.
 **Conclusion / next:** drop the first real photos of the V0 prototype in `media/inbox/` and replace the gallery placeholders.
+
+## 2026-09-29: Easier reaching in grasp teleop
+**Goal:** the owner's first try: grasping mostly worked, but reaching the object meant moving the real hand out of the webcam image or very close to it.
+**Result:**
+- **Why:** the sim wrist started 20 cm up, with the objects in front of it. The view camera looks down at ~25°, so reaching the table meant moving the real hand ~17 cm down in the image. At 0.5 m that puts the palm at the bottom edge. The start pose was also absolute: the operator had to hold their hand exactly at 0.5 m.
+- **Changes:**
+  - The hand starts lower and nearer the objects (home (0, 0.02, 0.15)).
+  - Wrist gain 1.6× sideways and up/down, 2× toward/away from the camera (per-axis `gain` in `WristTracker`).
+  - The first tracked frame is home wherever the hand is (`WristTracker.recenter()`); **E** re-centres at any time.
+  - A comfort box on the camera image, with warnings near the image edges, closer than 0.30 m or farther than 0.85 m.
+  - View camera closer (fovy 60).
+- **Bug found:** at the lower home, the **forearm reaches ~10 cm in front of the wrist** (the servo pack is on the palm side; measured y -0.128 at home). A cylinder spawned against it was knocked over. Moving home back 5 cm leaves ≥ 1.5 cm clearance. `test_scene` now checks 20 spawns per object: upright, on the table, not touching the hand. The first test only tried one spawn per object and missed it.
+- 222 tests pass.
+**Conclusion / next:** owner re-tests reaching. Still open: the forearm/servo pack is bulky for low grasps, which matters for the real arm-mounted design too.
+- **Follow-up (owner screenshot: real hand low, sim hand still high):**
+  - The mirror mapping used the view camera's tilted axes (~30° down), so moving the real hand toward the webcam also lifted the sim hand, doubled by the depth gain. `view_basis` is now levelled: up = world up, toward the camera = horizontal.
+  - The tracker followed the palm centre while the sim moves `hand_root` at the wrist, so turning the palm down shifted the sim wrist ~5 cm. It now tracks landmark 0, the wrist.
+  - 222 tests pass.
+- **Follow-up 2 (owner: real hand had to come too close to the webcam; the twin looked far away):** objects now spawn **beside** the hand (|x| 0.09–0.15 m, random side, at about the hand's depth) instead of in front of it. Reaching is then sideways + down, which a webcam tracks well, instead of toward the camera. (With the new 4-DOF thumb, the hand reaches forward to y -0.095 at home, so objects could not simply come closer in front.) The view camera is ~0.4 m from the hand instead of 0.48 m. The scripted grasp lifts the cylinder on both sides (6/6).
+
+## 2026-09-29: Grasp demos in simulation: floating hand, wrist tracking, recorder
+**Goal:** let the operator pick objects up in the sim (fingers alone can't: there is no arm yet) and record demonstrations for imitation learning.
+**Setup:** built by three parallel agents with fixed interfaces, then integrated: `tendra/scene.py`, `tendra/wrist.py`, `tendra/dataset.py`, `sim/export_lerobot.py`, `sim/grasp_teleop.py`.
+**Result:**
+- **Floating hand.** `MjSpec.attach` puts the whole V1 hand (fixed parts, 21 joints, 42 tendons, actuators, excludes) into a free body `hand_root` at the wrist point, model (-33.5, 26, -30) mm. It is welded (solref 0.02/1) to a mocap target, an ideal arm that stands in for the real one. Tracking: a 7.8 cm move plus a 45° turn settles within 3 mm and 2° in 0.4 s; the hand sags 0.5 mm at home. Physics: implicitfast, elliptic cones, impratio 10, lite meshes.
+- **Objects:** cylinder r 22 mm × 90 mm (50 g), cube 40 mm (40 g), ball r 28 mm (40 g); friction 1, condim 4. Spawn between the hand and the view camera.
+- **Scripted side power grasp** (fingers 1.4/1.5/1.2 rad, thumb cmc_flex 1.2) lifts the cylinder 10 cm and holds it 2 s, with the **real SCS0009 limits** (actuators saturated at 0.095 N·m; about 30 N of total squeeze on 0.49 N of weight). It worked for all 7 spawn seeds tried. The forearm and servo pack hit the table in low grasps.
+- **Wrist from the webcam:** MediaPipe's 3D landmarks carry the hand's rotation relative to the camera, so only the translation T is unknown. It is found by Gauss-Newton on the pinhole reprojection (42 residuals, 3 unknowns, palm points weighted 1, fingers 0.3), started from a weak-perspective guess. On synthetic hands with 2 px + 3 mm noise: sideways error median 1.8 mm (95 %: 5 mm), depth error 1.2 % (95 %: 3.7 %); depth jitter 2.3 mm after smoothing; 1.8 ms per frame. The view frame is a mirror (reflection); a real left hand matches the right robot exactly, a real right hand drives its mirror image. Clutch (W) like lifting a mouse. Unknowns: webcam FOV (62° assumed) and the user's hand size (MediaPipe assumes an average hand); both only scale absolute depth.
+- **Recorder:** only the sim state is recorded (qpos, qvel, ctrl, mocap, state, action, landmarks, object pose), at 30 fps sim time, 38 µs per frame. Images are rendered afterwards by replay: one render costs ~25 ms here, too slow to do live. The compiled model is saved as `model.mjb` in each dataset (identical across builds, checked). Files are written atomically (temp + rename).
+- **LeRobot export** tested for real: lerobot 0.6.1, dataset v3.0, needs `lerobot[dataset]`, AV1 video, serial encoding (the parallel encoder is ~20 s per episode on Windows). torchcodec DLLs fail on Windows, but PyAV takes over.
+- **End-to-end test** without a webcam: the scripted grasp goes through the teleop recording code, is saved as a success, then replayed and rendered from both cameras into an MP4. 221 tests in total.
+**Conclusion / next:** owner records ~50 demos (`uv run python sim/grasp_teleop.py`), then we export and train ACT on a free cloud GPU. Open: calibrate the webcam FOV, a per-user hand scale, and whether cube and ball are graspable by hand.
 
 ## 2026-09-29: Teleop screenshots: sideways angles, mirrored view
 **Goal:** check the owner's three teleop screenshots (open hand, spread hand, rock sign; the owner used the **left** hand). They are in `media/inbox/` and are not committed: one shows faces (see `media/README.md` rules).

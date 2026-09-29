@@ -1,4 +1,4 @@
-// Tendra Hand V1 configuration: 21 joints on Feetech SCS0009 servos (half-duplex TTL bus via the
+// Tendra Hand V1 configuration: 20 joints on Feetech SCS0009 servos (half-duplex TTL bus via the
 // FE-URT-1). Used only by the `hand_v1_servo` build (TENDRA_HAND_V1). The v0 stepper hand keeps
 // using config.h, unchanged.
 //
@@ -7,10 +7,10 @@
 
 #include <stdint.h>
 
-#define FIRMWARE_VERSION "0.2.0"
+#define FIRMWARE_VERSION "0.3.0"  // 0.3.0: 20 joints (4-DOF thumb), IDs renumbered
 #define HAND_VARIANT "v1-servo"
 
-constexpr int kNumJoints = 21;
+constexpr int kNumJoints = 20;
 constexpr float kDegToRad = 0.017453292519943295f;
 
 // ----- Servo bus (ESP32-S3 UART1 -> FE-URT-1 -> servos) -----
@@ -61,7 +61,8 @@ struct ServoJointConfig {
   int16_t zero_ticks;     // servo reading with the joint straight (q = 0); calibrate, then set here
 };
 
-// Motor order M1..M21 = protocol order = servo ID.
+// Motor order M1..M20 = protocol order = servo ID. (The 4-DOF thumb since 2026-09-29: the
+// 5th thumb joint, thumb_mcp_abd, was removed and IDs 10..21 moved down to 9..20.)
 constexpr ServoJointConfig kJoints[kNumJoints] = {
     {"index_dip",       1, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
     {"index_pip",       2, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
@@ -71,18 +72,17 @@ constexpr ServoJointConfig kJoints[kNumJoints] = {
     {"thumb_mcp_flex",  6, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
     {"thumb_cmc_flex",  7, -13 * kDegToRad,  80 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
     {"thumb_cmc_rot",   8, -100 * kDegToRad, 40 * kDegToRad, false, kDefaultSpoolRadius, 1.25f, 512},  // 7.5 mm drum
-    {"thumb_mcp_abd",   9, -20 * kDegToRad,  20 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"middle_dip",     10, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"middle_pip",     11, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"middle_mcp_flex",12, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"middle_mcp_abd", 13, -15 * kDegToRad,  15 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"ring_dip",       14, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"ring_pip",       15, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"ring_mcp_flex",  16, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"ring_mcp_abd",   17, -15 * kDegToRad,  15 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"little_dip",     18, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"little_pip",     19, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"little_mcp_flex",20, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"little_mcp_abd", 21, -20 * kDegToRad,  20 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
+    {"middle_dip",      9, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
+    {"middle_pip",     10, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
+    {"middle_mcp_flex",11, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
+    {"middle_mcp_abd", 12, -15 * kDegToRad,  15 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
+    {"ring_dip",       13, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
+    {"ring_pip",       14, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
+    {"ring_mcp_flex",  15, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
+    {"ring_mcp_abd",   16, -15 * kDegToRad,  15 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
+    {"little_dip",     17, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
+    {"little_pip",     18, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
+    {"little_mcp_flex",19, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
+    {"little_mcp_abd", 20, -20 * kDegToRad,  20 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
 };
 // mcp_abd: positive = toward the thumb, for every finger.

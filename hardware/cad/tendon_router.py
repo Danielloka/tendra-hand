@@ -3,7 +3,7 @@
 Every joint is driven by one SCS0009 servo in the forearm through an antagonistic loop: two strands
 (`flex` and `ext`) that leave the finger base, run through their own channel in the palm, cross the
 wrist, and go straight down to the two sides of the servo's spool (radius 6 mm, the loop wraps the
-bottom half of the spool). 21 joints, 42 strands, 42 separate routes.
+bottom half of the spool). 20 joints, 40 strands, 40 separate routes.
 
 Layout idea (see research/experiments/2026-09-28-full-hand/):
 - Servo shafts point inward, towards a central "core" where all strands run. Each spool's two strands
@@ -54,7 +54,7 @@ INDEX_BELOW_BAY_Z = -9.5  # index channels stay beside the thumb bay until below
 # --- Thumb base and routing (research/experiments/2026-09-29-thumb-routing) --------------------------
 # The base turns about a vertical axis (cmc_rot); its bottom plate and the bay floor sit BASE_DROP
 # lower than in the prototype (moving along the rotation axis changes no kinematics). The bottom
-# pivot is a hollow journal: 6 PTFE sheaths (mcp_flex, mcp_abd, ip) and the 2 bare cmc_flex strands
+# pivot is a hollow journal: 4 PTFE sheaths (mcp_flex, ip) and the 2 bare cmc_flex strands
 # come up through it on the axis, where turning the base only twists them.
 ROT_AXIS_XY = (1.0, 15.5236)  # thumb_cmc_rot axis (Z), hand_v1.json
 CMC_FLEX_YZ = (10.0236, 11.3764)  # thumb_cmc_flex axis (along X)
@@ -85,16 +85,16 @@ CMC_J = {
 # There each side's 3 sockets sit side by side in x (sized by
 # research/experiments/2026-09-29-thumb-routing/sheath_loop_search.py).
 SHEATH_BORE = {  # (dx, dy) from the rot axis, found by a grid search (min distances in the tests)
-    "flex": {"mcp_flex": (-4.6, -0.8), "mcp_abd": (-4.5, 1.3), "ip": (-2.7, 2.4)},
-    "ext": {"mcp_flex": (3.1, -0.7), "mcp_abd": (4.6, 0.8), "ip": (3.1, 2.3)},
+    "flex": {"mcp_flex": (-4.6, -0.8), "ip": (-2.7, 2.4)},
+    "ext": {"mcp_flex": (3.1, -0.7), "ip": (3.1, 2.3)},
 }
-SHEATH_JOINTS = ("mcp_flex", "mcp_abd", "ip")
+SHEATH_JOINTS = ("mcp_flex", "ip")
 # The bare cmc_flex strands are held by the palm right under the journal, below where they cross
 # the plate at mid cmc_rot (-30 deg): the length change over the whole range is then smallest.
 ROT_MID_DEG = -30.0
 # Metacarpal x -6.8..8.8 (measured): 2 sockets side by side per side plus one above, half a pitch
 # out. SOCKETS[joint] = (steps outward from the inner socket, offset up-back in mm).
-SOCKETS = {"mcp_flex": (0.0, 0.0), "mcp_abd": (1.0, 0.0), "ip": (0.5, 2.0)}
+SOCKETS = {"mcp_flex": (0.0, 0.0), "ip": (1.0, 0.0)}
 SOCKET_INNER_X = {"flex": -1.6, "ext": 4.1}  # beside the gap for the cmc_flex strands and pin
 SOCKET_PITCH = 2.1
 SOCKET_YZ, SOCKET_DIR = (9.0, 23.0), (-math.sqrt(0.5), math.sqrt(0.5))  # q = 0, into the boss
@@ -131,8 +131,8 @@ FINGER_SLOTS = {"mcp_flex": "F1", "pip": "F2", "dip": "B2", "mcp_abd": "B1"}
 # cmc_rot's strands come from the bay's back wall, so it takes the back sheet; the 8 strands that
 # come up the journal take the 4 nearer sheets, in the same front-to-back order as they sit in the
 # journal, so their channels don't cross (re-assigned 2026-09-29).
-THUMB_SLOTS = {"mcp_flex": "F1", "cmc_flex": "F2", "mcp_abd": "F3", "ip": "B2", "cmc_rot": "B1"}
-JOURNAL_JOINTS = ("cmc_flex", "mcp_flex", "mcp_abd", "ip")
+THUMB_SLOTS = {"mcp_flex": "F1", "cmc_flex": "F2", "ip": "B2", "cmc_rot": "B1"}  # F3 left free
+JOURNAL_JOINTS = ("cmc_flex", "mcp_flex", "ip")
 
 # SCS0009 (Feetech datasheet, research.md): body 23.3 (L) x 12.1 (W) x 25.25 (H to case top), tabs
 # 32.5 long, 1.6 thick, underside 16.8 above the bottom, holes 28.5 apart; shaft 5.7 from the body
@@ -146,10 +146,10 @@ SPOOL_PLANE_ABOVE_CASE = 5.0  # groove plane above the case top (spline 3.2 + hu
 # Servo IDs = firmware motor numbers (firmware/include/config_v1.h).
 SERVO_IDS = {
     "index_dip": 1, "index_pip": 2, "index_mcp_flex": 3, "index_mcp_abd": 4,
-    "thumb_ip": 5, "thumb_mcp_flex": 6, "thumb_cmc_flex": 7, "thumb_cmc_rot": 8, "thumb_mcp_abd": 9,
-    "middle_dip": 10, "middle_pip": 11, "middle_mcp_flex": 12, "middle_mcp_abd": 13,
-    "ring_dip": 14, "ring_pip": 15, "ring_mcp_flex": 16, "ring_mcp_abd": 17,
-    "little_dip": 18, "little_pip": 19, "little_mcp_flex": 20, "little_mcp_abd": 21,
+    "thumb_ip": 5, "thumb_mcp_flex": 6, "thumb_cmc_flex": 7, "thumb_cmc_rot": 8,
+    "middle_dip": 9, "middle_pip": 10, "middle_mcp_flex": 11, "middle_mcp_abd": 12,
+    "ring_dip": 13, "ring_pip": 14, "ring_mcp_flex": 15, "ring_mcp_abd": 16,
+    "little_dip": 17, "little_pip": 18, "little_mcp_flex": 19, "little_mcp_abd": 20,
 }  # fmt: skip
 
 
@@ -479,7 +479,7 @@ def _thumb_path(joint: str, side: str, e: np.ndarray, wrist_bottom: np.ndarray):
     - cmc_rot: from its drum groove straight back (+Y) through the bay's back wall, over the pin,
       down 6 mm of bare-line bore, then the usual tube S-curve.
     - journal strands: down through the hollow journal on the rot axis; the S-curve starts at the
-      plate bottom. The sheaths (mcp_flex, mcp_abd, ip) run 2.2 mm all the way and share one
+      plate bottom. The sheaths (mcp_flex, ip) run 2.2 mm all the way and share one
       cavity at first (fan_bottom_z()); the bare cmc_flex strands get the usual 1.2 mm entry, each
       in its own bore."""
     j = joint.removeprefix("thumb_")

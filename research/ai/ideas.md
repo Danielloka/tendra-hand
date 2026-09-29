@@ -52,7 +52,7 @@ Train skills in ladder order (roadmap), reusing each skill as a starting point f
 - **Arm payload:** real weight of V1 → which arm? (weigh V1 once printed)
 - **Servo placement:** forearm (V1 now) vs. remote servos with long tendons through the arm. Measure capstan friction for a Bowden sheath over 0°, 90°, 180° of bend.
 - **Compliance:** tendons + servos are compliant; is that good (safe grasping) or bad (imprecise)? Measure stiffness per joint.
-- **Latency budget:** camera → policy → firmware → motion. What loop rate does the SCS0009 bus allow for 21 servos (sync write/read)?
+- **Latency budget:** camera → policy → firmware → motion. What loop rate does the SCS0009 bus allow for 20 servos (sync write/read)?
 - **Compute on the robot:** which policy sizes run at ≥ 10 Hz on the laptop CPU vs. a Jetson?
 - **Left hand:** mirror the Fusion script, or a single design that works both ways?
 - **Wrist:** is the arm's wrist enough, or does the hand need its own wrist flex (like a human's) close to the palm?

@@ -22,14 +22,14 @@ print(hand.positions())
 | Variant | Joints | Motors | Firmware config | MuJoCo model |
 |---|---|---|---|---|
 | `v0` | 8 (index + thumb) | 28BYJ-48 steppers, open loop | `firmware/include/config.h` | `sim/models/tendra_hand.xml` |
-| `v1` | 21 (all five fingers) | Feetech SCS0009 servos, IDs 1–21 = motor order | `firmware/include/config_v1.h` | `sim/models/tendra_hand_v1.xml` |
+| `v1` | 20 (all five fingers, 4-DOF thumb) | Feetech SCS0009 servos, IDs 1–20 = motor order | `firmware/include/config_v1.h` | `sim/models/tendra_hand_v1.xml` |
 
 Each variant is a `HandSpec` in `tendra/joints.py` (`V0`, `V1`, or `get_hand("v1")`): joint names, limits, model path, servo IDs. Every hand object has a `.spec`, so `hand.joint_names` and `hand.num_joints` always fit the hand in use. The old module constants (`JOINT_NAMES`, `NUM_JOINTS`, `JOINT_LIMITS`, `MODEL_PATH`) still describe v0.
 
 ```python
 from tendra import RealHand, SimHand
 
-sim = SimHand(hand="v1")  # the 21-joint model
+sim = SimHand(hand="v1")  # the 20-joint model
 hand = RealHand()  # the variant is read from the firmware's "I" line
 print(hand.spec.name)  # "v0" or "v1"; RealHand(hand="v1") refuses a v0 board
 
@@ -52,7 +52,10 @@ Offline servos (unplugged, no power) report `nan` in `feedback()` and ignore `se
 | `tendra/sim_hand.py` | `SimHand`: the same API on MuJoCo; `step()`/`wait()` advance the physics; `set_positions()` puts the joints at a measured pose (digital-twin mirror) |
 | `tendra/retarget.py` | **Retargeting**: 21 human hand landmarks → Tendra joint angles. Fingers by direct angle measurement, thumb by damped-least-squares optimisation on the MuJoCo model (with pinch handling), One Euro smoothing, open-hand calibration. Works for v0 and v1 |
 | `tendra/lite_model.py` | `load_lite_model(path)`: the same model with simplified meshes (~15 % of the triangles, masses copied), much faster to draw. `SimHand(..., lite=True)` |
-| `tendra/hand_view.py` | `HandView`: draws the hand into an image on demand (offscreen renderer), mirrored, with mouse rotate/zoom. For OpenCV windows |
+| `tendra/hand_view.py` | `HandView`: draws the hand into an image on demand (offscreen renderer), mirrored, with mouse rotate/zoom, or from a fixed model camera (`camera="view"`). For OpenCV windows |
+| `tendra/scene.py` | `GraspScene`: the V1 hand floating over a table (free body `hand_root` welded to a mocap target, the stand-in for an arm), objects, cameras `view` and `wrist`, `set_wrist_from_view` (the mirror mapping), `lifted()` success check, `scripted_grasp()` |
+| `tendra/wrist.py` | `WristTracker`: the operator's wrist pose from the webcam. Hand translation by Gauss-Newton on the pinhole reprojection of MediaPipe's 3D landmarks, orientation from the palm frame, mirrored into the view frame; One Euro smoothing, clutch, gain |
+| `tendra/dataset.py` | `EpisodeRecorder` (records the sim state per frame, cheap), `Dataset`, `load_episode`, `render_episode` (offline, by replay), `write_preview`. Format: `info.json`, `model.mjb`, `episodes.jsonl`, `episodes/episode_NNNNNN.npz` |
 | `tendra/hand_tracking.py` | Webcam + MediaPipe Hand Landmarker (pretrained network, model downloaded to `~/.cache/tendra/`), drawing helpers |
 | `tendra/fake_esp32.py` | Software stand-in for the ESP32, to test without hardware: `RealHand(connection=FakeEsp32())`. v1: `FakeEsp32(hand="v1", offline={9})` emulates the servo firmware, including offline servos and joints moved by hand while limp (`move_by_hand`) |
 

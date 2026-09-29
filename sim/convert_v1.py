@@ -55,20 +55,19 @@ ACTUATOR_ORDER = [
     "thumb_ip",
     "thumb_mcp_flex",
     "thumb_cmc_flex",
-    "thumb_cmc_rot",
-    "thumb_mcp_abd",  # 5-9
+    "thumb_cmc_rot",  # 5-8 (4-DOF thumb since 2026-09-29)
     "middle_dip",
     "middle_pip",
     "middle_mcp_flex",
-    "middle_mcp_abd",  # 10-13
+    "middle_mcp_abd",  # 9-12
     "ring_dip",
     "ring_pip",
     "ring_mcp_flex",
-    "ring_mcp_abd",  # 14-17
+    "ring_mcp_abd",  # 13-16
     "little_dip",
     "little_pip",
     "little_mcp_flex",
-    "little_mcp_abd",  # 18-21
+    "little_mcp_abd",  # 17-20
 ]
 
 # Joint limits in degrees (positive = closing). Same as config_v1.h.
@@ -82,7 +81,6 @@ LIMITS_DEG = {
     "thumb_mcp_flex": (-5, 95),
     "thumb_cmc_flex": (-13, 80),
     "thumb_cmc_rot": (-100, 40),
-    "thumb_mcp_abd": (-20, 20),
 }
 
 
@@ -92,12 +90,10 @@ LIMITS_DEG = {
 # - finger mcp_abd: toward the thumb side, +X
 # - thumb_cmc_rot: swings the thumb across the palm (opposition), -X
 # - thumb flexion (cmc_flex, mcp_flex, ip): the thumb curls toward the fingers, +Z
-# - thumb_mcp_abd: the thumb tip moves toward the index side, -X. Its axis is diagonal, so the tip
-#   also moves a little toward the wrist (-Z).
 def closing_direction(joint: str) -> np.ndarray:
     finger, motion = joint.split("_", 1)
     if finger == "thumb":
-        if motion in ("cmc_rot", "mcp_abd"):
+        if motion == "cmc_rot":
             return np.array([-1.0, 0.0, 0.0])
         return np.array([0.0, 0.0, 1.0])
     if motion == "mcp_abd":
@@ -175,7 +171,6 @@ FIST_DEG = {
     "thumb_cmc_rot": 0,
     "thumb_cmc_flex": 30,
     "thumb_mcp_flex": 20,
-    "thumb_mcp_abd": 0,
     "thumb_ip": 30,
 }
 

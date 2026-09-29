@@ -2,7 +2,7 @@
 //
 // Two hands, one protocol, chosen at build time (platformio.ini):
 //   v0 (env tendra_s3):       8 joints, 28BYJ-48 steppers on ULN2003 boards  (config.h)
-//   v1 (env hand_v1_servo):  21 joints, Feetech SCS0009 servos on one bus    (config_v1.h)
+//   v1 (env hand_v1_servo):  20 joints, Feetech SCS0009 servos on one bus    (config_v1.h)
 //
 // The PC sends joint targets in radians; this firmware moves the motors there smoothly.
 // Text protocol, one command per line (easy to test by hand in a serial monitor), N = joints:
@@ -54,7 +54,7 @@ Uln2003Stepper g_steppers[kNumJoints] = {
 // Code below only sees the HAL interface.
 MotorDriver* g_joints[kNumJoints];
 
-constexpr size_t kLineMax = 512;  // "P" with 21 values needs ~200 characters
+constexpr size_t kLineMax = 512;  // "P" with 20 values needs ~200 characters
 char g_line[kLineMax];
 size_t g_line_len = 0;
 

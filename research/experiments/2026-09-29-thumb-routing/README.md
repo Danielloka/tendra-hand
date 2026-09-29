@@ -1,6 +1,6 @@
 # Thumb tendon routing (Tendra Hand V1), design study
 
-**Status:** concept A chosen (2026-09-29). Stage 1 (router + tests) done; stage 2: the base is rebuilt in Fusion, the palm and forearm still need a re-run (see "Build status").
+**Status:** concept A chosen (2026-09-29), thumb back to 4 DOF. Stages 1–2 and 3a done; the palm/forearm need a rebuild for the 20-servo layout; the sheath entry into the metacarpal is an open decision (see the last section).
 
 ## What exists (measured in the Fusion design "Tendra Hand V1", world mm)
 
@@ -84,6 +84,26 @@ Build order (each a `TendraHandV1` stage, tested before the next):
 | Palm | the sheath channels share one cavity down to z −25 (room to twist); the sheaths stop at the wrist plate bottom (last 2 mm 1.2 mm) | |
 | Servo slots | thumb sheets F1 mcp_flex, F2 cmc_flex, F3 mcp_abd, B2 ip, B1 cmc_rot (servos 6, 7, 8 move) | channel order = journal order, no crossings |
 
-**Stage 2, Fusion: base done, palm/forearm pending.** The `thumb_base` stage ran on "Tendra Hand V1" (base 4060 mm³, one solid, section checked). The palm and forearm must be rebuilt from the new routes. That means deleting the existing palm/forearm features (timeline item 93 "v1 palm trim tools" onward: the palm, forearm, servos, rigid group and the old-proximal removal) and re-running `palm` and `forearm`. That bulk delete was refused by the Claude Code permission check, so it waits for the owner. Until then the old palm still has the old floor (the new base overlaps it) and the old thumb channels.
+**Stage 2, Fusion: done.** The owner deleted the old palm/forearm features by hand (the bulk delete was refused by Claude Code's permission check). Then `thumb_base`, `palm` and `forearm` were re-run from the new routes: all features healthy, thumb servos in their new slots.
 
-**Still to do:** metacarpal (drum, cut the slab behind it, socket boss, internal channels to mcp_flex), on-axis holes at mcp_flex / mcp_abd / ip, export + sim, interference over the whole range, and the Ø3 pins (2.8 mm long for cmc_flex) in the BOM.
+**Stage 3a, metacarpal drum: done** (`thumb_meta`). Two grooves (x 0 and 2, r 5.8 floor), a tie hole along X at 200°, and the metacarpal cleared outside r 7.5 in the slab x −0.7…3.3 over −100…150° about the cmc_flex axis.
+
+**Checks in Fusion (after stage 3a):**
+- 65 parts, 0 interferences at q = 0.
+- cmc_rot swept −100…40 (every 20°): all clear. The first contact is at +60°, past the limit (the thumb chain on the palm).
+- cmc_flex swept −13…80 (Fusion's sign is opposite: −80…+13): all clear. Two issues found and fixed on the way: the hanger's square bottom reached into the drum flange (now rounded around the pin), and metacarpal material at 130…150° swung into the hanger (sector widened).
+
+**Still to do:** metacarpal socket boss and internal channels to mcp_flex (router first), on-axis holes at mcp_flex / mcp_abd / ip, export + sim, interference over the whole range, and the Ø3 pins (2.8 mm long for cmc_flex) in the BOM.
+
+## Update: 4-DOF thumb (2026-09-29, later)
+
+The owner had the 5th thumb joint (`thumb_mcp_abd`) removed. Now there are 2 sheaths per side (mcp_flex, ip), the ip sheath takes the old middle bore spot, sockets side by side (mcp_flex inner, ip outer), and the thumb's F3 servo slot is free. Servo IDs are 1–20.
+
+**Metacarpal problem.** A voxel map of the metacarpal (0.5 mm) shows its front half is thin: the central channel, with the top at z ≈ 13 for y −7…−23. Downstream of the tube stops the routing is clear:
+- **ip strands:** in the central channel, crossing the MCP axis through a 1.2 mm hole on the axis, then straight to the IP drum. The MCP and IP axes both pass through the thumb's centre line (x 1, z 11.38).
+- **mcp_flex strands:** straight lines parallel to the thumb at (a = 1.5, w = ±6.2) in the MCP drum's frame, arriving in the drum plane. The drum is the prototype's r 6 groove on the proximal phalanx at axis parameter 0.5…2.5.
+
+But a search over sockets on the metacarpal's back (`scratchpad` search, same model as `sheath_loop_search.py`) finds no entry flatter than ~45° up-forward: forward entries give < 10 mm bend radius over cmc_flex −13…80°. From a 45° entry the tubes would need an S-curve dropping 10–18 mm, which doesn't fit before the thin part. Options:
+1. **Reshape the metacarpal (V1 part):** a taller, solid back half with curved 2.2 mm channels from the entry to the tube stops.
+2. **End the sheaths on the base** and let bare strands cross cmc_flex on its axis. That needs a steel axle instead of the metacarpal's printed pin stubs, with a cross hole.
+3. **Run the sheaths outside** along the metacarpal to stops near the MCP (simplest, visible).

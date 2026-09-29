@@ -8,7 +8,7 @@
 
 The path, from the bottom up:
 
-1. **Hand** (Phases 0–3): the V0 prototype, then **Tendra Hand V1**, a human-like 21-DOF hand that moves smoothly and precisely.
+1. **Hand** (Phases 0–3): the V0 prototype, then **Tendra Hand V1**, a human-like 20-DOF hand that moves smoothly and precisely.
 2. **Senses** (Phase 4): touch and vision, so the hand knows what it's holding and how hard.
 3. **Skills** (Phases 5–6): learned dexterous skills — grasping, in-hand manipulation, tool use.
 4. **Understanding** (Phase 7): AI that turns an instruction like "make a sandwich" into a plan and the right skills.
@@ -49,15 +49,15 @@ Just a start: make the 8-joint prototype move cleanly and control it from the PC
 **Done when:** all 8 joints move smoothly (no jerks, no missed steps) through their full range, and the sim and the real hand match within a few degrees.
 
 ## Phase 2: Tendra Hand V1 — the first full hand
-Five fingers, 21 DOF, one Feetech SCS0009 smart servo per joint (position feedback, no manual homing, one shared bus). This is the first real Tendra Hand.
+Five fingers, 20 DOF (4-DOF thumb), one Feetech SCS0009 smart servo per joint (position feedback, no manual homing, one shared bus). This is the first real Tendra Hand.
 
 - [x] Middle, ring and little fingers (reuse the index design, with sizes scaled to human proportions) — designed in Fusion "Tendra Hand V1" (2026-09-28)
-- [x] 5-DOF thumb (MCP sideways hinge)
+- [x] Thumb base reworked for PTFE-sheathed tendons (hollow pivot); 5th thumb DOF tried and removed again (owner, 2026-09-29)
 - [x] Actuator packaging (forearm), tendon routing through the wrist: one channel per strand, tested (`hardware/cad/tendon_router.py`)
-- [x] Full-hand MJCF (21 DOF, 42 tendons): `sim/models/tendra_hand_v1.xml`
+- [x] Full-hand MJCF (20 DOF, 40 tendons): `sim/models/tendra_hand_v1.xml`
 - [x] `Scs0009Servo` driver behind the same HAL (joint code unchanged), firmware env `hand_v1_servo`
 - [ ] Full-hand electronics and power budget on the servo bus (plan in `research/experiments/2026-09-28-full-hand/research.md`)
-- [ ] Wire the servo bus: ESP32 UART → FE-URT-1 → daisy-chained SCS0009s; assign IDs 1–21
+- [ ] Wire the servo bus: ESP32 UART → FE-URT-1 → daisy-chained SCS0009s; assign IDs 1–20
 - [ ] Mechanical adapters: servo mounts and tendon spools
 - [ ] Test channels and PTFE fit on a printed section first, then print and assemble V1
 - [ ] Read back position, load and temperature on the real hand

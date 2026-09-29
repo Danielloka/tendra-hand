@@ -166,10 +166,10 @@ void testPackets() {
                 {0xFF, 0xFF, 0xFE, 0x12, 0x83, 0x2A, 0x06, 0x01, 0x02, 0x00, 0x00, 0x00, 0x02, 0x58,
                  0x02, 0x03, 0x00, 0x00, 0x00, 0x02, 0x58, 0x80}));
 
-  // Sync write of all 21 servos still fits in one packet.
-  uint8_t ids21[21], data21[21 * 6] = {};
-  for (int i = 0; i < 21; ++i) ids21[i] = static_cast<uint8_t>(i + 1);
-  CHECK(scs::buildSyncWrite(b, scs::reg::kGoalPosition, 6, ids21, data21, 21) == 21 * 7 + 8);
+  // Sync write of all 20 servos still fits in one packet.
+  uint8_t ids20[20], data20[20 * 6] = {};
+  for (int i = 0; i < 20; ++i) ids20[i] = static_cast<uint8_t>(i + 1);
+  CHECK(scs::buildSyncWrite(b, scs::reg::kGoalPosition, 6, ids20, data20, 20) == 20 * 7 + 8);
 
   // Big-endian helpers and sign-magnitude feedback.
   uint8_t two[2];
@@ -360,7 +360,7 @@ void testServo() {
 
 void testConfig() {
   std::printf("config_v1\n");
-  CHECK(kNumJoints == 21);
+  CHECK(kNumJoints == 20);
   for (int i = 0; i < kNumJoints; ++i) {
     CHECK(kJoints[i].servo_id == i + 1);
     CHECK(kJoints[i].min_rad < 0.0f && kJoints[i].max_rad > 0.0f);  // q = 0 (straight) reachable

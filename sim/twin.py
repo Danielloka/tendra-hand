@@ -30,7 +30,7 @@ import time
 import mujoco
 import mujoco.viewer
 import numpy as np
-from tendra import Hand, RealHand, SimHand, get_hand
+from tendra import Hand, RealHand, SimHand, calibration, get_hand
 from tendra.fake_esp32 import FakeEsp32
 
 
@@ -79,10 +79,15 @@ class MirrorBridge:
 def connect(args) -> RealHand | None:
     hand = None if args.hand == "auto" else args.hand
     if args.fake:
-        return RealHand(connection=FakeEsp32(hand=hand or "v0"), hand=hand)
-    if args.port:
-        return RealHand(None if args.port == "auto" else args.port, hand=hand)
-    return None
+        real = RealHand(connection=FakeEsp32(hand=hand or "v0"), hand=hand)
+    elif args.port:
+        real = RealHand(None if args.port == "auto" else args.port, hand=hand)
+    else:
+        return None
+    applied = calibration.apply(real)  # scales and speeds from calibration_<hand>.json
+    if applied:
+        print("Calibration: " + ", ".join(applied))
+    return real
 
 
 def main() -> int:

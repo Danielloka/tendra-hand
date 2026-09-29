@@ -92,6 +92,13 @@ def union(a, b):
     return a
 
 
+def _op(a, b, kind):
+    t = {"-": adsk.fusion.BooleanTypes.DifferenceBooleanType, "+": adsk.fusion.BooleanTypes.UnionBooleanType,
+         "&": adsk.fusion.BooleanTypes.IntersectionBooleanType}[kind]
+    tbm().booleanOperation(a, b, t)
+    return a
+
+
 def change_length(body, zc, d, prism):
     """Stretch (d > 0) or shorten (d < 0) a segment by d mm at z = zc, inside a prismatic region.
 
@@ -228,196 +235,67 @@ def stage_fingers(design, log):
 
 
 # ---------------------------------------------------------------------------------------------------
-# Stage: thumb (5th DOF: MCP sideways hinge in the proximal phalanx)
+# Stage: thumb. V1 keeps the prototype's 4-DOF thumb (owner, 2026-09-29): cmc_rot, cmc_flex, mcp_flex,
+# ip, with the one-piece proximal phalanx. A 5th DOF (a sideways hinge in the proximal phalanx,
+# "thumb_mcp_abd") was built on 2026-09-28 and removed again; `thumb_unhinge` migrates a design that
+# still has it.
 # ---------------------------------------------------------------------------------------------------
 
-THUMB_PROX = "Body30 (1) (1) (2):1"  # proximal phalanx, MCP flex at y -32, IP at y -67
+THUMB_PROX_BODY = "Body30 (1) (1) (2)"  # the prototype's proximal phalanx (raw body / component)
 THUMB_META = "Body30 (1) (3):1"
-THUMB_TIP = "Body30 (1) (1) (1) (1):1"
 THUMB_FLEX_AXIS = (0.707107, 0.0, 0.707107)
 THUMB_MCP_PT = (-4.303, -31.976, 6.073)
 THUMB_IP_PT = (-4.303, -66.976, 6.073)
-# The phalanx is a square tube (x -9.6..11.6, z 0.8..22.0, 14.9 mm square hole) for y -58..-41.
-T_ENV = (-9.6, 11.6, 0.8, 22.0)
-T_C = (1.0, -49.5, 11.376)  # hinge centre, on the tube's centre line
-T_R = 6.0  # barrel radius
-T_CL = 0.4  # clearance around the barrel and between barrel and lugs
-T_A = 5.5  # inner barrel (distal part) spans |u| <= T_A; lugs start at T_A + 0.3
-T_SLOT = (1.0, 1.2)  # pass-through tendon slot: width across (v), half-length along the axis (u)
-T_PIN_R, T_PIN_START = 1.0, 2.0  # stub pin holes (for 2 mm pins), from |u| = 2 outwards
-T_GROOVE = (3.0, 1.2, 1.0)  # drum groove for the sideways loop: centre u, width, depth
-T_CONE = 72.0  # half-angle of each part around the finger axis; leaves room for +-20 deg
-
-
-def _frame():
-    u = vec(1, 0, -1)  # hinge axis: perpendicular to the flex axis and to the phalanx
-    v = vec(1, 0, 1)  # = flex axis direction
-    w = vec(0, -1, 0)  # towards the thumb tip
-    return u, v, w
-
-
-def _p(c, *terms):
-    """Point c (mm tuple) + sum of (scale, unit vector) terms, as a Fusion point."""
-    x, y, z = c
-    for s, d in terms:
-        x, y, z = x + s * d.x, y + s * d.y, z + s * d.z
-    return pt(x, y, z)
-
-
-def _halfspace(c, n, other):
-    """Huge box = half-space {p: n . (p - c) >= 0}; `other` is any unit vector perpendicular to n."""
-    big = 40.0
-    third = n.crossProduct(other)
-    obb = adsk.core.OrientedBoundingBox3D.create(_p(c, (big / 2, n)), n, other, big / 10, big / 10, big / 10)
-    del third
-    return tbm().createBox(obb)
-
-
-def _cone(c, towards, v, u, half_angle):
-    """Wedge around direction `towards` (in the v-w plane), apex line = hinge axis."""
-    a = math.radians(half_angle)
-    w = towards
-    n1 = vec(*(math.sin(a) * w.x - math.cos(a) * v.x, math.sin(a) * w.y - math.cos(a) * v.y, math.sin(a) * w.z - math.cos(a) * v.z))
-    n2 = vec(*(math.sin(a) * w.x + math.cos(a) * v.x, math.sin(a) * w.y + math.cos(a) * v.y, math.sin(a) * w.z + math.cos(a) * v.z))
-    wedge = _halfspace(c, n1, u)
-    tbm().booleanOperation(wedge, _halfspace(c, n2, u), adsk.fusion.BooleanTypes.IntersectionBooleanType)
-    return wedge
-
-
-def _cyl(c, u, u0, u1, r):
-    return tbm().createCylinderOrCone(_p(c, (u0, u)), r / 10, _p(c, (u1, u)), r / 10)
-
-
-def _env_box():
-    x0, x1, z0, z1 = T_ENV
-    return box(x0, x1, -80, -20, z0, z1)
-
-
-def _op(a, b, kind):
-    t = {"-": adsk.fusion.BooleanTypes.DifferenceBooleanType, "+": adsk.fusion.BooleanTypes.UnionBooleanType,
-         "&": adsk.fusion.BooleanTypes.IntersectionBooleanType}[kind]
-    tbm().booleanOperation(a, b, t)
-    return a
-
-
-def thumb_hinge_parts(prox_body):
-    """Split the thumb proximal phalanx at the hinge: returns (link, outer) temporary bodies.
-
-    link  = palm side (moves with MCP flex), keeps the outer lugs of the hinge.
-    outer = tip side, carries the inner barrel (drum) and the IP joint.
-    """
-    u, v, w = _frame()
-    c = T_C
-    big = 30.0
-    minus_w = vec(-w.x, -w.y, -w.z)
-    # palm-side and tip-side parts of the tube, trimmed to wedges so they can swing
-    link = _op(tbm().copy(prox_body), _cone(c, minus_w, v, u, T_CONE), "&")
-    outer = _op(tbm().copy(prox_body), _cone(c, w, v, u, T_CONE), "&")
-    # clear the barrel zone
-    _op(link, _cyl(c, u, -T_A - 0.3, T_A + 0.3, T_R + T_CL), "-")
-    _op(outer, _cyl(c, u, -big, -T_A, T_R + T_CL), "-")
-    _op(outer, _cyl(c, u, T_A, big, T_R + T_CL), "-")
-    # barrel: inner part to the outer (tip) piece, lugs to the link
-    inner = _op(_cyl(c, u, -T_A, T_A, T_R), _env_box(), "&")
-    lug1 = _op(_cyl(c, u, T_A + 0.3, big, T_R), _env_box(), "&")
-    lug2 = _op(_cyl(c, u, -big, -T_A - 0.3, T_R), _env_box(), "&")
-    _op(outer, inner, "+")
-    _op(link, lug1, "+")
-    _op(link, lug2, "+")
-    # stub pin holes, both ends, leaving the middle free for the tendons
-    for s in (1, -1):
-        hole = _cyl(c, u, s * T_PIN_START, s * big, T_PIN_R)
-        _op(link, tbm().copy(hole), "-")
-        _op(outer, hole, "-")
-    # pass-through slot on the axis (1 mm wide across, along the finger)
-    sw, sl = T_SLOT
-    slot = tbm().createBox(adsk.core.OrientedBoundingBox3D.create(pt(*c), w, u, 2 * (T_R + 2) / 10, 2 * sl / 10, sw / 10))
-    _op(outer, tbm().copy(slot), "-")
-    _op(link, slot, "-")
-    # drum groove for the sideways tendon loop, and an anchor hole to tie it off (tip side)
-    gu, gw, gd = T_GROOVE
-    ring = _cyl(c, u, gu - gw / 2, gu + gw / 2, T_R + 0.01)
-    _op(ring, _cyl(c, u, gu - gw, gu + gw, T_R - gd), "-")
-    _op(outer, ring, "-")
-    anchor_c = (c[0] + (T_R - gd / 2) * w.x, c[1] + (T_R - gd / 2) * w.y, c[2] + (T_R - gd / 2) * w.z)
-    _op(outer, _cyl(anchor_c, u, gu, big, 0.6), "-")
-    return link, outer
-
-
-def bake_broken_moves(design, comp, log):
-    """The prototype's thumb tip was placed with Move features that snapped to edges of the old proximal
-    phalanx. After deleting it those references are missing (cached geometry still holds). Replace the
-    trailing broken moves with one free move of the same total transform, measured on the vertices."""
-    healthy = adsk.fusion.FeatureHealthStates.HealthyFeatureHealthState
-    feats = [comp.features.item(i) for i in range(comp.features.count)]
-    broken = [f for f in feats if adsk.fusion.MoveFeature.cast(f) and f.healthState != healthy]
-    if not broken:
-        return
-    if feats[-len(broken):] != broken:
-        raise RuntimeError(f"{comp.name}: broken moves are not the last features; fix them by hand")
-    tl = design.timeline
-
-    def verts():
-        b = comp.bRepBodies.item(0)
-        return [b.vertices.item(i).geometry for i in range(b.vertices.count)]
-
-    end = verts()
-    broken[0].timelineObject.rollTo(True)
-    start = verts()
-    i0 = 0
-    i1 = max(range(len(start)), key=lambda k: start[k].distanceTo(start[i0]))
-    i2 = max(range(len(start)), key=lambda k: start[i0].vectorTo(start[i1]).crossProduct(start[i0].vectorTo(start[k])).length)
-
-    def frame(p):
-        x = p[i0].vectorTo(p[i1])
-        x.normalize()
-        z = x.crossProduct(p[i0].vectorTo(p[i2]))
-        z.normalize()
-        m = adsk.core.Matrix3D.create()
-        m.setWithCoordinateSystem(p[i0], x, z.crossProduct(x), z)
-        return m
-
-    t = frame(start)
-    t.invert()
-    t.transformBy(frame(end))
-    tl.moveToEnd()
-    names = [f.name for f in broken]
-    for f in broken[1:]:
-        f.deleteMe()
-    first = comp.features.itemByName(names[0])
-    first.timelineObject.rollTo(True)
-    first.redefineAsFreeMove(t)
-    tl.moveToEnd()
-    dev = max(a.distanceTo(b) for a, b in zip(verts(), end)) * 10
-    if dev > 1e-3:
-        raise RuntimeError(f"{comp.name}: baking the moves shifted the part by {dev:.4f} mm")
-    log(f"{comp.name}: moves {names} baked into one free move (shift {dev:.1e} mm)")
+# Where the old raw body (left at its pre-move position when the hinged version replaced it) goes:
+# its MCP / IP axes are the lines (x, 22.5, 1.5) / (x, -12.5, 1.5), its centre x = 83.5. Turning it
+# 135 deg about Y and moving the centre to (1.0, ., 11.3764) and y by -54.4764 puts both axes on the
+# V1 thumb's (checked: same bounding box as the hinged parts, best overlap of the two turns).
+PROX_TURN_DEG, PROX_OLD_CENTRE, PROX_NEW_CENTRE, PROX_DY = 135.0, (83.5, 1.5), (1.0, 11.3764), -54.4764
 
 
 def stage_thumb(design, log):
+    log("thumb: 4-DOF thumb, nothing to add")
+
+
+def _placed_old_proximal(design):
+    """The prototype's proximal phalanx body, moved onto the V1 thumb's axes (temporary body)."""
     root = design.rootComponent
-    if find_comp_occ(root, "thumb_mcp_link"):
-        log("thumb: already split, skipped")
+    f = next(f for f in root.features.removeFeatures if f.name == "v1 remove old thumb proximal")
+    tl = design.timeline
+    try:
+        f.timelineObject.rollTo(True)
+        body = tbm().copy(adsk.fusion.BRepBody.cast(f.itemToRemove))
+    finally:
+        tl.moveToEnd()
+    t = math.radians(PROX_TURN_DEG)
+    c, s = math.cos(t), math.sin(t)
+    (ox, oz), (nx, nz) = PROX_OLD_CENTRE, PROX_NEW_CENTRE
+    xp, zp = ox * c + oz * s, -ox * s + oz * c
+    m = adsk.core.Matrix3D.create()
+    m.setWithArray([c, 0, s, (nx - xp) / 10, 0, 1, 0, PROX_DY / 10, -s, 0, c, (nz - zp) / 10, 0, 0, 0, 1])
+    tbm().transform(body, m)
+    return body
+
+
+def stage_thumb_unhinge(design, log):
+    """Replace the hinged proximal (thumb_mcp_link + thumb_proximal, joint thumb_mcp_abd) by the
+    prototype's one-piece phalanx, and re-add the thumb_mcp_flex / thumb_ip joints to it."""
+    root = design.rootComponent
+    link = find_comp_occ(root, "thumb_mcp_link")
+    if link is None:
+        log("thumb_unhinge: no hinge, skipped")
         return
-    prox = find_occ(root, THUMB_PROX)
-    meta, tip = find_occ(root, THUMB_META), find_occ(root, THUMB_TIP)
-    if not (prox and meta and tip):
-        raise RuntimeError("thumb parts not found")
-    link, outer = thumb_hinge_parts(prox.bRepBodies.item(0))
-    lo = new_part(root, "thumb_mcp_link", link)
-    oo = new_part(root, "thumb_proximal", outer)
-    prox.deleteMe()  # also removes the MCP (Revolute 7) and IP (Revolute 8) joints that used it
-    bake_broken_moves(design, find_occ(root, THUMB_TIP).component, log)
-    # The prototype made this part with "Body -> Component"; deleting the component brings the raw
-    # body back into the root (at its pre-move position). Remove it: the hinge parts replace it.
-    for b in list(root.bRepBodies):
-        if b.name == "Body30 (1) (1) (2)":
-            root.features.removeFeatures.add(b).name = "v1 remove old thumb proximal"
-    u, _v, _w = _frame()
-    add_revolute(root, "thumb_mcp_flex", lo, meta, THUMB_FLEX_AXIS, THUMB_MCP_PT)
-    add_revolute(root, "thumb_mcp_abd", oo, lo, (u.x, u.y, u.z), T_C)
-    add_revolute(root, "thumb_ip", tip, oo, THUMB_FLEX_AXIS, THUMB_IP_PT)
-    log(f"thumb: hinge added (link {link.volume * 1000:.0f} mm3, proximal {outer.volume * 1000:.0f} mm3)")
+    body = _placed_old_proximal(design)
+    for j in list(root.asBuiltJoints):
+        if j.name in ("thumb_mcp_flex", "thumb_mcp_abd", "thumb_ip"):
+            j.deleteMe()
+    find_comp_occ(root, "thumb_proximal").deleteMe()
+    link.deleteMe()
+    prox = new_part(root, "thumb_proximal", body)
+    meta, tip = find_comp_occ(root, "thumb_metacarpal"), find_comp_occ(root, "thumb_distal")
+    add_revolute(root, "thumb_mcp_flex", prox, meta, THUMB_FLEX_AXIS, THUMB_MCP_PT)
+    add_revolute(root, "thumb_ip", tip, prox, THUMB_FLEX_AXIS, THUMB_IP_PT)
+    log(f"thumb_unhinge: one-piece proximal ({prox.bRepBodies.item(0).volume * 1000:.0f} mm3), joints re-added")
 
 
 # ---------------------------------------------------------------------------------------------------
@@ -433,6 +311,7 @@ RENAME_COMPONENTS = {
     "Body21": "thumb_base",
     "Body30 (1) (3)": "thumb_metacarpal",
     "Body30 (1) (1) (1) (1)": "thumb_distal",
+    THUMB_PROX_BODY: "thumb_proximal",
 }
 RENAME_JOINTS = {
     "Revolute 1": "index_mcp_abd",
@@ -441,6 +320,8 @@ RENAME_JOINTS = {
     "Revolute 4": "index_dip",
     "Revolute 5": "thumb_cmc_rot",
     "Revolute 6": "thumb_cmc_flex",
+    "Revolute 7": "thumb_mcp_flex",
+    "Revolute 8": "thumb_ip",
 }
 
 
@@ -548,8 +429,14 @@ def _sk_line(sk, a, b):
 
 
 def _sk_spline(sk, pts):
+    """Fitted spline; points closer than 0.3 mm to the previous one are dropped (they kink it)."""
+    keep = [pts[0]]
+    for q in pts[1:-1]:
+        if math.dist(q, keep[-1]) >= 0.3 and math.dist(q, pts[-1]) >= 0.3:
+            keep.append(q)
+    keep.append(pts[-1])
     coll = adsk.core.ObjectCollection.create()
-    for q in pts:
+    for q in keep:
         coll.add(sk.modelToSketchSpace(pt(*q)))
     return sk.sketchCurves.sketchFittedSplines.add(coll)
 
@@ -627,7 +514,10 @@ def cut_channels(comp, body, strands, name, curves_only=False):
         pi = pipes.createInput(comp.features.createPath(curve, False), adsk.fusion.FeatureOperations.CutFeatureOperation)
         pi.sectionSize = adsk.core.ValueInput.createByReal(dia)
         pi.participantBodies = [body]
-        f = pipes.add(pi)
+        try:
+            f = pipes.add(pi)
+        except RuntimeError as exc:
+            raise RuntimeError(f"pipe '{name} {sname}' failed: {exc}") from None
         f.name = f"{name} {sname}"
     # entry chamfers: small cones at the top of every finger channel
     cones = []
@@ -901,6 +791,7 @@ def stage_thumb_base(design, log):
     occ = find_comp_occ(root, "thumb_base")
     comp = occ.component
     if comp.features.itemByName("v1 base rework"):
+        hanger_round(occ, load_routes()["thumb"], log)
         log("thumb_base: already reworked, skipped")
         return
     th = load_routes()["thumb"]
@@ -911,10 +802,93 @@ def stage_thumb_base(design, log):
     body = _feature_with_tools(comp, body, [to_comp(occ, t) for t in join], ops.JoinFeatureOperation, "v1 base new plate")
     _feature_with_tools(comp, body, [to_comp(occ, t) for t in after], ops.CutFeatureOperation, "v1 base rework")
     log(f"thumb_base: reworked, volume {comp.bRepBodies.item(0).volume * 1000:.0f} mm3")
+    hanger_round(occ, th, log)
+
+
+def hanger_round(occ, th, log):
+    """Round the hanger's bottom around the pin (2.3 mm boss), so it stays > 8 mm from the cmc_flex
+    axis, clear of the drum's flange (found by the interference sweep)."""
+    comp = occ.component
+    if comp.features.itemByName("v1 base hanger round"):
+        return
+    py, pz = th["cmc_pin_yz"]
+    tool = box(HANGER_X[0] - 0.1, HANGER_X[1] + 0.1, py - 2.4, py + 2.4, pz - 2.4, pz)
+    _op(tool, _cyl_pts((HANGER_X[0] - 1, py, pz), (HANGER_X[1] + 1, py, pz), 2.3), "-")
+    _feature_with_tools(comp, comp.bRepBodies.item(0), [to_comp(occ, tool)], adsk.fusion.FeatureOperations.CutFeatureOperation, "v1 base hanger round")
+    log("thumb_base: hanger bottom rounded")
+
+
+# ---------------------------------------------------------------------------------------------------
+# Stage: thumb_meta (metacarpal side of cmc_flex, research/experiments/2026-09-29-thumb-routing)
+# Two drum grooves over the rot axis (one per strand, the loop crosses between them through a tie
+# hole), and the metacarpal cleared around them behind and above the axis so it swings past the
+# strands, the pin and its hanger.
+# ---------------------------------------------------------------------------------------------------
+
+META_CLEAR_X = (-0.7, 3.3)  # slab kept to the drum (flanges included)
+META_CLEAR_DEG = (-100.0, 130.0)  # sector (from +Y toward +Z, about the cmc_flex axis) cleared...
+META_CLEAR_EXTRA_DEG = (130.0, 150.0)  # ...plus this (found by the interference sweep at 80 deg)
+CMC_ANCHOR_DEG = 200.0  # tie hole: >= 120 deg of wrap left on both strands over -13..80
+
+
+def _halfspace_yz(x0, x1, c, n):
+    """Box = {p : n . (p - c) >= 0} in the y-z plane (n unit, (ny, nz)), limited to x0..x1."""
+    big = 200.0
+    ny, nz = n
+    obb = adsk.core.OrientedBoundingBox3D.create(
+        pt((x0 + x1) / 2, c[0] + ny * big / 2, c[1] + nz * big / 2), vec(1, 0, 0), vec(0, ny, nz),
+        (x1 - x0) / 10, big / 10, big / 10)
+    return tbm().createBox(obb)
+
+
+def _sector_yz(x0, x1, c, a0, a1):
+    """Wedge a0..a1 (deg, < 180 wide) about the X-parallel line through c = (y, z)."""
+    r0, r1 = math.radians(a0), math.radians(a1)
+    w = _halfspace_yz(x0, x1, c, (-math.sin(r0), math.cos(r0)))
+    return _op(w, _halfspace_yz(x0, x1, c, (math.sin(r1), -math.cos(r1))), "&")
+
+
+def thumb_meta_tools(th):
+    cy, cz = th["cmc_flex_axis_yz"]
+    d = th["cmc_drum"]
+    x0, x1 = META_CLEAR_X
+    a0, a1 = META_CLEAR_DEG
+    mid = (a0 + a1) / 2
+    clear = union(_sector_yz(x0, x1, (cy, cz), a0, mid), _sector_yz(x0, x1, (cy, cz), mid, a1))
+    _op(clear, _cyl_pts((x0 - 1, cy, cz), (x1 + 1, cy, cz), d["flange_r"]), "-")
+    tools = [clear]
+    for gx in d["groove_x"].values():
+        ring = _cyl_pts((gx - d["groove_w"] / 2, cy, cz), (gx + d["groove_w"] / 2, cy, cz), d["flange_r"] + 0.1)
+        tools.append(_op(ring, _cyl_pts((gx - 1, cy, cz), (gx + 1, cy, cz), d["r"] - th["line_r"]), "-"))
+    a = math.radians(CMC_ANCHOR_DEG)
+    ry = d["r"] - th["line_r"] - 0.2
+    gxs = sorted(d["groove_x"].values())
+    tools.append(_cyl_pts((gxs[0], cy + ry * math.cos(a), cz + ry * math.sin(a)),
+                          (gxs[-1], cy + ry * math.cos(a), cz + ry * math.sin(a)), 0.5))
+    return tools
+
+
+def stage_thumb_meta(design, log):
+    root = design.rootComponent
+    occ = find_comp_occ(root, "thumb_metacarpal")
+    comp = occ.component
+    th = load_routes()["thumb"]
+    cut = adsk.fusion.FeatureOperations.CutFeatureOperation
+    if not comp.features.itemByName("v1 meta cmc drum"):
+        tools = [to_comp(occ, t) for t in thumb_meta_tools(th)]
+        _feature_with_tools(comp, comp.bRepBodies.item(0), tools, cut, "v1 meta cmc drum")
+        log(f"thumb_meta: drum cut, volume {comp.bRepBodies.item(0).volume * 1000:.0f} mm3")
+    if not comp.features.itemByName("v1 meta clear top"):
+        cy, cz = th["cmc_flex_axis_yz"]
+        tool = _sector_yz(*META_CLEAR_X, (cy, cz), *META_CLEAR_EXTRA_DEG)
+        _op(tool, _cyl_pts((META_CLEAR_X[0] - 1, cy, cz), (META_CLEAR_X[1] + 1, cy, cz), th["cmc_drum"]["flange_r"]), "-")
+        _feature_with_tools(comp, comp.bRepBodies.item(0), [to_comp(occ, tool)], cut, "v1 meta clear top")
+        log(f"thumb_meta: top cleared, volume {comp.bRepBodies.item(0).volume * 1000:.0f} mm3")
 
 
 STAGES = {"fingers": stage_fingers, "thumb": stage_thumb, "names": stage_names, "thumb_base": stage_thumb_base,
-          "palm": stage_palm, "forearm": stage_forearm}
+          "thumb_meta": stage_thumb_meta, "palm": stage_palm, "forearm": stage_forearm}
+EXTRA_STAGES_MIGRATE = {"thumb_unhinge": stage_thumb_unhinge}  # one-off, for designs built before
 EXTRA_STAGES = {"export": stage_export}  # run on demand, not by run()
 
 
@@ -926,7 +900,7 @@ def run_stage(name):
     if doc_name != "Tendra Hand V1":
         raise RuntimeError("open the 'Tendra Hand V1' design first (not the original prototype)")
     lines = []
-    {**STAGES, **EXTRA_STAGES}[name](design, lines.append)
+    {**STAGES, **EXTRA_STAGES, **EXTRA_STAGES_MIGRATE}[name](design, lines.append)
     return lines
 
 

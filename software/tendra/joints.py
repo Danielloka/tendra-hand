@@ -3,7 +3,7 @@
 There are two hands ("variants"), each described by a `HandSpec`:
 
 - `V0`: the 8-joint prototype (index + thumb) on 28BYJ-48 steppers, firmware config.h.
-- `V1`: the full 21-joint hand on Feetech SCS0009 servos, firmware config_v1.h.
+- `V1`: the full 20-joint hand (4-DOF thumb) on Feetech SCS0009 servos, firmware config_v1.h.
 
 Order = motor order M1..MN = firmware protocol order = MuJoCo actuator order (v1: = servo ID).
 Sign convention: positive = closing the hand, 0 = straight. Units: radians.
@@ -112,19 +112,18 @@ _V1_JOINTS_DEG: tuple[tuple[str, tuple[int, int]], ...] = (
     ("thumb_mcp_flex", _FLEX),     # ID 6
     ("thumb_cmc_flex", (-13, 80)), # ID 7
     ("thumb_cmc_rot", (-100, 40)), # ID 8
-    ("thumb_mcp_abd", (-20, 20)),  # ID 9
-    ("middle_dip", _FLEX),         # ID 10
-    ("middle_pip", _FLEX),         # ID 11
-    ("middle_mcp_flex", _FLEX),    # ID 12
-    ("middle_mcp_abd", (-15, 15)), # ID 13
-    ("ring_dip", _FLEX),           # ID 14
-    ("ring_pip", _FLEX),           # ID 15
-    ("ring_mcp_flex", _FLEX),      # ID 16
-    ("ring_mcp_abd", (-15, 15)),   # ID 17
-    ("little_dip", _FLEX),         # ID 18
-    ("little_pip", _FLEX),         # ID 19
-    ("little_mcp_flex", _FLEX),    # ID 20
-    ("little_mcp_abd", (-20, 20)), # ID 21
+    ("middle_dip", _FLEX),         # ID 9
+    ("middle_pip", _FLEX),         # ID 10
+    ("middle_mcp_flex", _FLEX),    # ID 11
+    ("middle_mcp_abd", (-15, 15)), # ID 12
+    ("ring_dip", _FLEX),           # ID 13
+    ("ring_pip", _FLEX),           # ID 14
+    ("ring_mcp_flex", _FLEX),      # ID 15
+    ("ring_mcp_abd", (-15, 15)),   # ID 16
+    ("little_dip", _FLEX),         # ID 17
+    ("little_pip", _FLEX),         # ID 18
+    ("little_mcp_flex", _FLEX),    # ID 19
+    ("little_mcp_abd", (-20, 20)), # ID 20
 )  # mcp_abd: positive = toward the thumb, for every finger
 # fmt: on
 

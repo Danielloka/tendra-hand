@@ -6,7 +6,7 @@
     {
       "name": "forearm",
       "mesh": "meshes/forearm.stl",
-      "volume_mm3": 196351.6
+      "volume_mm3": 196378.6
     },
     {
       "name": "index_base",
@@ -71,7 +71,7 @@
     {
       "name": "palm",
       "mesh": "meshes/palm.stl",
-      "volume_mm3": 151174.3
+      "volume_mm3": 149275.2
     },
     {
       "name": "ring_base",
@@ -306,7 +306,7 @@
     {
       "name": "thumb_base",
       "mesh": "meshes/thumb_base.stl",
-      "volume_mm3": 4707.0
+      "volume_mm3": 4057.1
     },
     {
       "name": "thumb_distal",
@@ -314,19 +314,14 @@
       "volume_mm3": 4416.0
     },
     {
-      "name": "thumb_mcp_link",
-      "mesh": "meshes/thumb_mcp_link.stl",
-      "volume_mm3": 4120.5
-    },
-    {
       "name": "thumb_metacarpal",
       "mesh": "meshes/thumb_metacarpal.stl",
-      "volume_mm3": 6706.0
+      "volume_mm3": 6564.2
     },
     {
       "name": "thumb_proximal",
       "mesh": "meshes/thumb_proximal.stl",
-      "volume_mm3": 2903.9
+      "volume_mm3": 6360.0
     }
   ],
   "joints": [
@@ -623,28 +618,12 @@
       "child": "thumb_distal",
       "parent": "thumb_proximal",
       "point_mm": [
-        5.2779,
+        5.278,
         -66.9764,
         15.6544
       ],
       "axis": [
         -0.707107,
-        -0.0,
-        -0.707107
-      ],
-      "angle_rad": 0.0
-    },
-    {
-      "name": "thumb_mcp_abd",
-      "child": "thumb_proximal",
-      "parent": "thumb_mcp_link",
-      "point_mm": [
-        -0.096,
-        -49.5,
-        12.472
-      ],
-      "axis": [
-        0.707107,
         0.0,
         -0.707107
       ],
@@ -652,16 +631,16 @@
     },
     {
       "name": "thumb_mcp_flex",
-      "child": "thumb_mcp_link",
+      "child": "thumb_proximal",
       "parent": "thumb_metacarpal",
       "point_mm": [
-        -0.4143,
+        -0.4142,
         -31.9764,
         9.9622
       ],
       "axis": [
         0.707107,
-        0.0,
+        -0.0,
         0.707107
       ],
       "angle_rad": 0.0

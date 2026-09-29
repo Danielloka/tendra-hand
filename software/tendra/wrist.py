@@ -18,8 +18,9 @@ projected world landmarks land on the image landmarks. It starts from a weak-per
 so a tilted palm doesn't read as "farther away" the way hand size in pixels would.
 
 Output frame (the "view frame", shared with the simulation scene): x right on the mirrored
-screen, y up on screen, z toward the viewer (the camera); metres; origin = the palm centre at the
-image centre at `nominal_distance` from the camera. The screen is a mirror, so for a camera point
+screen, y up on screen, z toward the viewer (the camera); metres; the position is the WRIST
+(landmark 0, like the sim hand's `hand_root`); origin = the wrist at the image centre at
+`nominal_distance` from the camera. The screen is a mirror, so for a camera point
 view = (-x, -y, -(z - nominal_distance)), and for a direction view = -cam: a reflection. A real
 LEFT hand therefore appears with right-hand geometry and matches the (right) robot hand exactly;
 a real right hand drives it as its mirror image, like the finger retargeting does.
@@ -166,7 +167,7 @@ def hand_axes_view(world: np.ndarray, chirality: float) -> np.ndarray:
 class WristPose:
     pos: np.ndarray  # (3,) view frame, m
     rot: np.ndarray  # (3, 3) columns = robot hand axes (X thumb, Y back, Z fingers) in the view
-    distance: float  # camera -> palm centre, m (for display/debug)
+    distance: float  # camera -> wrist, m (for display/debug)
 
 
 @dataclass
@@ -181,20 +182,23 @@ class WristTracker:
 
     Clutch: while disengaged, `update` keeps returning the last pose. On re-engaging, position
     continues from there (an offset between the raw and the output position is stored, like
-    lifting a mouse off its pad); orientation is always absolute. `gain` scales position motion.
+    lifting a mouse off its pad); orientation is always absolute. `recenter()` does both in one
+    go: the output stays where it is and the hand's current spot becomes the new reference.
+    `gain` scales position motion: one number, or (x, y, z) per view axis (depth is the awkward
+    direction in front of a webcam, so it often gets more).
     """
 
     CUE_THRESHOLD = Retargeter.CUE_THRESHOLD
 
     def __init__(
         self, image_size=(640, 480), hfov_deg: float = 62.0, nominal_distance: float = 0.5,
-        gain: float = 1.0, smoothing: bool = True,
+        gain: float | tuple[float, float, float] = 1.0, smoothing: bool = True,
     ) -> None:  # fmt: skip
         self.image_size = image_size
         self.focal = focal_length(image_size[0], hfov_deg)
         self.center = np.array(image_size, dtype=float) / 2
         self.nominal_distance = nominal_distance
-        self.gain = gain
+        self.gain = np.broadcast_to(np.asarray(gain, dtype=float), (3,)).copy()
         self.smoothing = smoothing
         # Position in m (beta in 1/(m/s)): x/y are precise, depth is noisier, so filter it more.
         self._f_xy = OneEuroFilter(min_cutoff=1.5, beta=10.0)
@@ -213,6 +217,14 @@ class WristTracker:
             self._f_xy.reset()  # the hand has moved meanwhile: don't smooth across the gap
             self._f_z.reset()
         self._engaged = engaged
+
+    def recenter(self) -> None:
+        """Keep the output where it is; the hand's position at the next frame becomes the new
+        reference (the same as clutch off + on, in one step)."""
+        self._engaged = True
+        self._rebase = True
+        self._f_xy.reset()
+        self._f_z.reset()
 
     def reset(self) -> None:
         """Forget everything: output back to the home pose, filters and chirality cleared."""
@@ -241,7 +253,10 @@ class WristTracker:
             return None
         T, self.last_rms_px = solved
         self._T = T
-        c = world[list(PALM_POINTS)].mean(axis=0) + T  # palm centre, camera frame
+        # The wrist point (landmark 0), camera frame: the sim hand is moved by its wrist too
+        # (`GraspScene.hand_root`). Tracking the palm centre instead made the sim wrist jump
+        # ~5 cm whenever the hand turned, e.g. palm down to grasp.
+        c = world[0] + T
         distance = float(np.linalg.norm(c))
         c[2] = min(max(c[2], MIN_DEPTH), MAX_DEPTH)
         pos = np.array([-c[0], -c[1], self.nominal_distance - c[2]])

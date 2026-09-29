@@ -1,7 +1,7 @@
 """Open the Tendra Hand model in the interactive MuJoCo viewer.
 
     uv run python sim/view.py          # v0: thumb + index, 8 joints
-    uv run python sim/view.py --v1     # v1: full hand, 21 joints, tendon-driven
+    uv run python sim/view.py --v1     # v1: full hand, 20 joints, tendon-driven
 
 Move the joints with the sliders in the right-hand panel under "Control" (one per motor/servo, in
 ID order). In v1 each slider is a servo angle (rad); the servo pulls the joint's tendon loop.
@@ -25,7 +25,7 @@ MODEL_V1_PATH = MODELS / "tendra_hand_v1.xml"
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--v1", action="store_true", help="open the 21-joint v1 hand")
+    parser.add_argument("--v1", action="store_true", help="open the 20-joint v1 hand")
     args = parser.parse_args()
     path = MODEL_V1_PATH if args.v1 else MODEL_PATH
     model = mujoco.MjModel.from_xml_path(str(path))

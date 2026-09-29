@@ -4,7 +4,7 @@ Code written against `Hand` (teleoperation, grasp scripts, AI policies) runs unc
 `SimHand` (MuJoCo) or `RealHand` (ESP32 over USB). This is the PC-side counterpart of the
 firmware's MotorDriver HAL.
 
-Each hand object has a `spec` (a `HandSpec`: v0 with 8 joints, or v1 with 21), which fixes the
+Each hand object has a `spec` (a `HandSpec`: v0 with 8 joints, or v1 with 20), which fixes the
 number, order, names and limits of its joints.
 """
 

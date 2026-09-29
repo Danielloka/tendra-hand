@@ -20,7 +20,7 @@ SIDES = ("flex", "ext")
 
 def test_every_thumb_strand_has_a_kind():
     kinds = {n: r["kind"] for n, r in ROUTES.items() if n.startswith("thumb")}
-    assert len(kinds) == 10
+    assert len(kinds) == 8
     assert {n for n, k in kinds.items() if k == "rot"} == {
         "thumb_cmc_rot_flex",
         "thumb_cmc_rot_ext",

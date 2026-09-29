@@ -86,7 +86,7 @@
     "title": "Small today. Built to grow.",
     "items": [
       { "value": 8, "unit": "", "label": "joints in the prototype, each with its own motor" },
-      { "value": 21, "unit": "", "label": "joints in the full hand design" },
+      { "value": 20, "unit": "", "label": "joints in the full hand design" },
       { "value": 100, "unit": "%", "label": "open source: design, code and research" },
       { "value": 131, "unit": "g", "label": "of printed plastic, calculated from the 3D model" }
     ]

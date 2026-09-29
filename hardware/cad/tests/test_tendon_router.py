@@ -46,9 +46,9 @@ def in_box(p, box, margin=0.0):
     return all(lo - margin <= p[i] <= hi + margin for i, (lo, hi) in enumerate(box))
 
 
-def test_42_strands_21_servos_ids_match_firmware():
-    assert len(ROUTES) == 42 and len({r["name"] for r in ROUTES}) == 42
-    assert sorted(s.id for s in SERVOS) == list(range(1, 22))
+def test_40_strands_20_servos_ids_match_firmware():
+    assert len(ROUTES) == 40 and len({r["name"] for r in ROUTES}) == 40
+    assert sorted(s.id for s in SERVOS) == list(range(1, 21))
     cfg = (Path(__file__).resolve().parents[3] / "firmware" / "include" / "config_v1.h").read_text()
     rows = {n: int(i) for n, i in re.findall(r'\{"(\w+)",\s*(\d+),', cfg)}
     assert rows == {s.joint: s.id for s in SERVOS}
@@ -57,7 +57,7 @@ def test_42_strands_21_servos_ids_match_firmware():
 def test_every_strand_has_its_own_entry_wrist_hole_and_tangent():
     for key in ("entry_mm", "wrist_bottom_mm", "tangent_mm"):
         pts = [tuple(np.round(r[key], 3)) for r in ROUTES]
-        assert len(set(pts)) == 42, key
+        assert len(set(pts)) == 40, key
 
 
 def test_channels_keep_a_wall_between_each_other():

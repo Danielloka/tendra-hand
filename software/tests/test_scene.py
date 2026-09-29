@@ -29,7 +29,7 @@ def angle_between(q1: np.ndarray, q2: np.ndarray) -> float:
 
 def test_structure(scene):
     m = scene.model
-    assert m.nu == 21 and m.ntendon == 42
+    assert m.nu == 20 and m.ntendon == 40
     assert [m.actuator(i).name for i in range(m.nu)] == list(V1.joint_names)
     for cam in GraspScene.CAMERAS:
         assert m.camera(cam).id >= 0
@@ -52,26 +52,23 @@ def test_view_mapping(scene):
     cam_pos = scene.data.cam_xpos[cam]
     to_cam = cam_pos - scene.home_pos
 
-    # Home: at the home point, palm (model -Y) facing the camera, fingers (model +Z) up.
+    # Home: at the home point, palm (model -Y) facing the camera, fingers (model +Z) straight up.
     pos, quat = scene.view_to_world(np.zeros(3), HOME_ROT_VIEW)
     assert np.allclose(pos, scene.home_pos)
     r = quat_to_mat(quat)
-    assert np.dot(-r[:, 1], to_cam / np.linalg.norm(to_cam)) > 0.95
-    assert r[2, 2] > 0.8  # fingers point up in the world
+    assert np.dot(-r[:, 1], to_cam / np.linalg.norm(to_cam)) > 0.8  # camera is ~30 deg above
+    assert r[2, 2] > 0.999  # fingers point straight up in the world
 
-    # Moving right / up / toward the viewer in the view frame moves the hand right / up /
-    # toward the view camera in its image.
-    def in_camera(p):  # camera coordinates: x right, y up, -z forward
-        return c.T @ (p - cam_pos)
-
-    home_cam = in_camera(scene.home_pos)
-    for axis in range(3):
-        step = np.zeros(3)
-        step[axis] = 0.05
-        moved = in_camera(scene.view_to_world(step, HOME_ROT_VIEW)[0]) - home_cam
-        assert np.allclose(moved, step, atol=1e-9)
-    closer = scene.view_to_world(np.array([0, 0, 0.05]), HOME_ROT_VIEW)[0]
-    assert np.linalg.norm(cam_pos - closer) < np.linalg.norm(to_cam)
+    # The mapping is levelled: view up = world up, toward the viewer = horizontal toward the
+    # camera (moving toward the webcam must not lift the sim hand), right = the camera's right.
+    cam_x = scene.data.cam_xmat[cam].reshape(3, 3)[:, 0]
+    right, up, toward = (scene.view_to_world(s, HOME_ROT_VIEW)[0] - scene.home_pos
+                         for s in 0.05 * np.eye(3))  # fmt: skip
+    assert np.allclose(up, [0, 0, 0.05], atol=1e-9)
+    assert abs(toward[2]) < 1e-9 and abs(right[2]) < 1e-9
+    assert np.dot(right, cam_x) > 0.049
+    horizontal_to_cam = np.array([to_cam[0], to_cam[1], 0.0])
+    assert np.dot(toward, horizontal_to_cam / np.linalg.norm(horizontal_to_cam)) > 0.0499
 
     # A rotation in the view frame is the same rotation about the camera's axes.
     tilt = np.array([[1, 0, 0], [0, 0, -1], [0, 1, 0]], dtype=float)  # 90 deg about view x
@@ -100,17 +97,30 @@ def test_wrist_tracking(scene):
 
 
 def test_reset_places_one_object(scene):
+    """Every spawn: object at rest on the table, upright, clear of the hand (the forearm reaches
+    ~10 cm in front of the wrist; a spawn against it once knocked the cylinder over)."""
+    from tendra.scene import quat_to_mat
+
     rng = np.random.default_rng(3)
+    sides = set()
     for kind in scene.config.objects:
-        scene.reset(rng, obj=kind)
-        assert scene.active_object == kind
-        pos, _ = scene.object_pose()
-        lo, hi = scene.config.spawn_lo, scene.config.spawn_hi
-        assert lo[0] - 0.01 <= pos[0] <= hi[0] + 0.01 and lo[1] - 0.01 <= pos[1] <= hi[1] + 0.01
-        table, hand = scene.object_contacts()
-        assert table and not hand
-        assert not scene.lifted()
-        assert np.allclose(scene.finger_positions(), 0, atol=0.05)
+        for _ in range(20):
+            scene.reset(rng, obj=kind)
+            assert scene.active_object == kind
+            pos, quat = scene.object_pose()
+            lo, hi = scene.config.spawn_lo, scene.config.spawn_hi
+            x = abs(pos[0]) if scene.config.spawn_sides else pos[0]
+            sides.add(np.sign(pos[0]))
+            assert lo[0] - 0.01 <= x <= hi[0] + 0.01
+            assert lo[1] - 0.01 <= pos[1] <= hi[1] + 0.01
+            table, hand = scene.object_contacts()
+            assert table and not hand, (kind, pos)
+            if kind != "ball":
+                assert quat_to_mat(quat)[2, 2] > 0.98, (kind, pos)  # still upright
+            assert not scene.lifted()
+            assert np.allclose(scene.finger_positions(), 0, atol=0.05)
+    if scene.config.spawn_sides:
+        assert sides == {-1.0, 1.0}  # both sides of the hand get used
 
 
 # ----- grasping -----

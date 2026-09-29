@@ -8,7 +8,7 @@ One code base builds firmware for two hands:
 | Build env | Hand | Joints | Motors | Config |
 |---|---|---|---|---|
 | `tendra_s3` (default) | **v0** prototype (thumb + index) | 8 | 28BYJ-48 steppers + ULN2003 boards | `include/config.h` |
-| `hand_v1_servo` | **v1** full hand | 21 | Feetech **SCS0009** smart servos on one bus, via the **FE-URT-1** | `include/config_v1.h` |
+| `hand_v1_servo` | **v1** full hand | 20 | Feetech **SCS0009** smart servos on one bus, via the **FE-URT-1** | `include/config_v1.h` |
 
 ## Build, flash, talk to it
 
@@ -42,7 +42,7 @@ If the upload can't connect: hold **BOOT**, tap **RESET**, release BOOT, and try
 
 ## Serial protocol (text, one command per line)
 
-The same protocol for both hands; only the number of joints *N* changes (v0: 8, v1: 21).
+The same protocol for both hands; only the number of joints *N* changes (v0: 8, v1: 20).
 Joints are numbered **1–N = motors M1–MN** (v1: motor number = servo ID). Angles are in **radians**, and **positive = closing the hand**.
 
 - v0 joints: `index_dip, index_pip, index_mcp_flex, index_mcp_abd, thumb_ip, thumb_mcp, thumb_cmc_flex, thumb_cmc_rot`
@@ -61,7 +61,7 @@ Joints are numbered **1–N = motors M1–MN** (v1: motor number = servo ID). An
 | `K i s` | set joint *i* scale in native units per joint radian (v0 steps/rad, v1 ticks/rad) | `OK` |
 | `V i v a` | max velocity (rad/s) and acceleration (rad/s²) of joint *i* (`0` = all) | `OK` |
 | `B` | **v1 only:** scan the bus (IDs 0–253, ~0.4 s) | `B 1 2 3 …` (IDs that answered) |
-| `I` | firmware info + scales | v0: `I tendra-hand fw 0.1.0 joints=8 name:scale …`; v1: `I tendra-hand fw 0.2.0 hand=v1-servo joints=21 name:ticks_per_rad:zero_ticks:online …` |
+| `I` | firmware info + scales | v0: `I tendra-hand fw 0.1.0 joints=8 name:scale …`; v1: `I tendra-hand fw 0.3.0 hand=v1-servo joints=20 name:ticks_per_rad:zero_ticks:online …` |
 
 Targets are clamped to the joint limits. v0: coils switch off after 1 s without motion. v1: servos keep holding (torque on) until `R`.
 
@@ -78,15 +78,15 @@ Targets are clamped to the joint limits. v0: coils switch off after 1 s without 
 GPIO 17/18 are ordinary pins: not strapping pins (0, 3, 45, 46), not native USB (19/20), not UART0 (43/44), not flash/PSRAM (26–37), not the RGB LED (48). Change them in `config_v1.h`.
 Some FE-URT-1 boards have TX/RX **silk-screened the wrong way round**: if `B` finds nothing, swap the two wires.
 The FE-URT-1 switches the half-duplex bus direction by itself. If it echoes our own bytes back to RX, `ScsBus` skips the echo automatically.
-Bus: **1,000,000 baud**, 8N1 (the SCS0009 default). Every servo needs a unique ID = its motor number (1–21); set IDs one servo at a time with Feetech's FD software over the FE-URT-1's USB port.
-Power the servos from their own supply (SCS0009: 4–7.4 V). 21 servos under load draw several amps: size the supply and wiring for it, and keep the ESP32 on USB.
+Bus: **1,000,000 baud**, 8N1 (the SCS0009 default). Every servo needs a unique ID = its motor number (1–20); set IDs one servo at a time with Feetech's FD software over the FE-URT-1's USB port.
+Power the servos from their own supply (SCS0009: 4–7.4 V). 20 servos under load draw several amps: size the supply and wiring for it, and keep the ESP32 on USB.
 
 ### How it moves
 
 - Each servo has an **absolute position sensor** (0–1023 ticks over ~300°, ≈195.6 ticks/rad, centre 512). No homing is needed; the firmware always knows where each joint is.
 - The firmware ramps each goal with the same trapezoidal profile as v0 (one tick at a time, ≤ 400 ticks/s) and streams the goals of all moving servos every **20 ms** in one **SYNC WRITE** packet. So even a big target jump becomes a smooth, speed-limited move.
 - As a second limit, every goal carries the servo's **goal speed** register (`kServoGoalSpeed`, never 0, because 0 means "full speed").
-- Feedback (position, load, voltage, temperature) is read from one servo every 2 ms, round robin (all 21 in ~45 ms). A servo that misses 3 replies counts as **offline** and is only retried once per second.
+- Feedback (position, load, voltage, temperature) is read from one servo every 2 ms, round robin (all 20 in ~40 ms). A servo that misses 3 replies counts as **offline** and is only retried once per second.
 
 ### Calibration: joint angle ↔ servo ticks
 
@@ -106,7 +106,7 @@ Power the servos from their own supply (SCS0009: 4–7.4 V). 21 servos under loa
 
 ### v1 first power-on checklist
 
-1. Flash `hand_v1_servo` with **only USB connected**. Send `I`: 21 joints, all `:0` (offline).
+1. Flash `hand_v1_servo` with **only USB connected**. Send `I`: 20 joints, all `:0` (offline).
 2. Power the servos. Send `B`: it should list the IDs you connected. Send `I` again (online joints end in `:1`) and `F` to see positions, voltage and temperature.
 3. Straighten the joints by hand (they are limp), then send `Z`, then `I`; copy the `zero_ticks` values into `config_v1.h`.
 4. One joint at a time: `M i 30` (≈9° at the servo), then `M i -30`. Check that the right joint moves and **positive closes** it; otherwise set `invert = true` in `config_v1.h`.

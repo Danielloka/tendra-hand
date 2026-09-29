@@ -1,0 +1,11 @@
+{
+  "_comment": "Tendra Hand v0 calibration, sent to the ESP32 on every connect (K and V commands; the firmware forgets them on reset). steps_per_rad = half-steps per JOINT radian = 648.7 * r_drum / r_spool. First estimate 389.2 (6 mm drum, 10 mm spool) moved the joints too little; doubled to 778.4 on 2026-09-29. Replace with measured values (research/log.md). Joints not listed keep the firmware default (648.7). Speeds are joint rad/s and rad/s^2.",
+  "steps_per_rad": {
+    "index_dip": 778.4,
+    "index_pip": 778.4,
+    "index_mcp_flex": 778.4,
+    "index_mcp_abd": 778.4
+  },
+  "max_vel": 1.0,
+  "max_acc": 3.0
+}

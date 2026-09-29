@@ -4,7 +4,7 @@
     uv run python sim/teleop.py --hand v0          # v0: thumb + index
     uv run python sim/teleop.py --camera 1         # another webcam
     uv run python sim/teleop.py --physics          # simulate the servos pulling the tendons
-    uv run python sim/teleop.py --tendons          # draw the 42 tendon strands (slower)
+    uv run python sim/teleop.py --tendons          # draw the 40 tendon strands (slower)
     uv run python sim/teleop.py --viewer           # MuJoCo's interactive viewer (slower)
     uv run python sim/teleop.py --fake             # also drive a software ESP32
     uv run python sim/teleop.py --port auto        # also drive the real hand (careful!)

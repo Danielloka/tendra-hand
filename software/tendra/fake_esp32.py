@@ -5,8 +5,8 @@ be passed to `RealHand(connection=FakeEsp32())`. Motion is simplified: each join
 its target at constant maximum speed (the real firmware also ramps the acceleration).
 
     FakeEsp32()                              # v0: 8 steppers
-    FakeEsp32(hand="v1")                     # v1: 21 servos, all online
-    FakeEsp32(hand="v1", offline={9, 21})    # v1 with servos 9 and 21 not answering
+    FakeEsp32(hand="v1")                     # v1: 20 servos, all online
+    FakeEsp32(hand="v1", offline={9, 20})    # v1 with servos 9 and 20 not answering
 
 v1 emulates the servo firmware (firmware/src/main.cpp, scs0009_servo.cpp): servos start limp
 (torque off) and switch on with the first target; offline servos ignore `P`, refuse `J`/`M`
@@ -151,7 +151,7 @@ class FakeEsp32:
     def _info(self) -> str:
         n = self.spec.num_joints
         if self.servo:
-            head = f"I tendra-hand fw 0.2.0 hand={self.spec.firmware_variant} joints={n}"
+            head = f"I tendra-hand fw 0.3.0 hand={self.spec.firmware_variant} joints={n}"
             joints = (
                 f"{name}:{self.scale[i]:.2f}:{self.zero_ticks[i]}:{int(self.online[i])}"
                 for i, name in enumerate(self.spec.joint_names)

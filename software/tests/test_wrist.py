@@ -6,7 +6,7 @@ import time
 import numpy as np
 import pytest
 from tendra.hand_tracking import TrackedHand
-from tendra.retarget import FINGERS, PALM_POINTS
+from tendra.retarget import FINGERS
 from tendra.wrist import WristTracker, focal_length, solve_translation
 
 # Canonical hand (as in test_retarget): wrist at the origin, +X thumb side, +Z along the fingers,
@@ -48,7 +48,8 @@ def random_rotation(rng) -> np.ndarray:
 
 def camera_hand(R: np.ndarray, palm_centre: np.ndarray, left: bool = False,
                 world_noise: float = 0.0, px_noise: float = 0.0, rng=None):  # fmt: skip
-    """A TrackedHand whose palm centre sits at `palm_centre` (camera frame) with rotation R.
+    """A TrackedHand whose WRIST (landmark 0, the tracked point) sits at `palm_centre` (camera
+    frame) with rotation R. (The name is historical: it used to be the palm centre.)
 
     Returns the hand and the true translation T (world landmarks are centred on their mean, as
     MediaPipe centres them roughly on the hand).
@@ -57,7 +58,7 @@ def camera_hand(R: np.ndarray, palm_centre: np.ndarray, left: bool = False,
     if left:
         lm = lm * np.array([-1.0, 1, 1])  # mirror image of a right hand = a left hand
     pts = lm @ R.T
-    pts += palm_centre - pts[list(PALM_POINTS)].mean(axis=0)  # true positions, camera frame
+    pts += palm_centre - pts[0]  # true positions, camera frame
     image = F * pts[:, :2] / pts[:, 2:] + C
     world = pts - pts.mean(axis=0)
     T = pts.mean(axis=0)
@@ -181,6 +182,24 @@ def test_clutch_freezes_and_resumes_without_a_jump():
     assert p3 - p2 == pytest.approx([-0.1, 0, 0], abs=1e-6)  # relative motion, times gain
 
 
+def test_recenter_and_per_axis_gain():
+    """Start anywhere = home; re-centre keeps the output; depth can have its own gain."""
+    tr = WristTracker(smoothing=False, gain=(1.5, 1.5, 2.0))
+    tr.recenter()  # as grasp_teleop does at start
+    at = lambda x, y=0.0, z=0.4: camera_hand(FACING, np.array([x, y, z]))[0]
+    p0 = tr.update(at(0.08, 0.05, 0.62), 0.0).pos  # far off-centre, not at nominal distance
+    assert np.allclose(p0, 0.0, atol=1e-9)  # ... is still home
+    p1 = tr.update(at(0.04, 0.05, 0.57), 0.1).pos  # 4 cm to camera-left, 5 cm closer
+    assert p1 == pytest.approx([0.04 * 1.5, 0, 0.05 * 2.0], abs=1e-6)
+
+    tr.recenter()  # hand jumps back to a comfortable spot: output must not move
+    p2 = tr.update(at(0.0, 0.0, 0.5), 0.2).pos
+    assert np.allclose(p2, p1, atol=1e-9)
+    assert tr.engaged
+    p3 = tr.update(at(0.0, -0.02, 0.5), 0.3).pos  # 2 cm up in the camera (y down) = +y view
+    assert p3 - p2 == pytest.approx([0, 0.03, 0], abs=1e-6)
+
+
 def test_orientation_is_absolute_after_the_clutch():
     tr = WristTracker(smoothing=False)
     tr.update(camera_hand(FACING, np.array([0, 0, 0.5]))[0], 0.0)
@@ -234,10 +253,13 @@ def test_update_is_fast():
     hands = [camera_hand(tilted(rng), random_centre(rng), False, 0.003, 2.0, rng)[0]
              for _ in range(200)]  # fmt: skip
     for h in hands[:10]:  # warm-up
-        tr.update(h, 0.0)
-    t0 = time.perf_counter()
-    for k, h in enumerate(hands):
-        tr.update(h, k / 25)
-    per = (time.perf_counter() - t0) / len(hands)
+        tr.update(h, 0.0, chirality=1.0)
+    runs = []
+    for _ in range(3):  # best of three: other programs on the laptop only ever slow it down
+        t0 = time.perf_counter()
+        for k, h in enumerate(hands):
+            tr.update(h, k / 25, chirality=1.0)  # as in the teleop loop (Retargeter's chirality)
+        runs.append((time.perf_counter() - t0) / len(hands))
+    per = min(runs)
     print(f"\nWristTracker.update: {per * 1e6:.0f} us per frame")
     assert per < 0.003  # target < 1 ms; loose bound for a busy laptop

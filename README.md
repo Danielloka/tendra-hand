@@ -6,7 +6,7 @@
 
 Tendra Hand starts there: a hardware + software project to build a humanoid robotic hand with the same degrees of freedom as a human hand, then the senses and AI to use it for real tasks, and to share *everything* openly: CAD files, printable parts, firmware, control software, simulation, AI models and research notes.
 
-> 🚧 **Status: early prototype.** Phase 1: the V0 thumb and index finger are built (8 independently driven joints); focus is smooth, clean motion and a MuJoCo digital twin. Phase 2: **Tendra Hand V1**, the first full hand (5 fingers, 21 joints, smart servos), is designed and simulated, not built yet. See the [roadmap](docs/roadmap.md).
+> 🚧 **Status: early prototype.** Phase 1: the V0 thumb and index finger are built (8 independently driven joints); focus is smooth, clean motion and a MuJoCo digital twin. Phase 2: **Tendra Hand V1**, the first full hand (5 fingers, 20 joints, smart servos), is designed and simulated, not built yet. See the [roadmap](docs/roadmap.md).
 
 ## How it works
 

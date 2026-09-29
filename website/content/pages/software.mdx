@@ -2,7 +2,7 @@
 title: Software
 kicker: Brain and reflexes
 lead: "A computer plans the motion, a microcontroller makes it smooth. The same Python code drives the simulated hand and the real one."
-description: "Tendra Hand software: ESP32-S3 firmware, the tendra Python library, the MuJoCo digital twin and the plans for AI control."
+description: "Tendra Hand software: ESP32-S3 firmware, the tendra Python library, the MuJoCo digital twin, webcam control and the plans for AI control."
 ---
 
 ## How it fits together
@@ -114,11 +114,24 @@ uv run python sim/twin.py --port auto   # digital twin driving the real hand
 
 For now, information flows one way: from the simulation to the real hand. Once the smart servos can report their positions, the simulation will also follow what the real hand is actually doing.
 
-## AI control (planned)
+## Webcam control
 
-None of this is built yet, but the software is being shaped for it from the start. The plan, step by step:
+Hold your hand up to an ordinary webcam and the simulated hand copies it, finger by finger. An AI model from Google's [MediaPipe](https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker) finds 21 points on your hand in every camera image. The software then works out the angle of each of your joints and turns them into joint angles for the robot. This step is called *retargeting*, because a robot hand is not built exactly like yours. It runs on an ordinary laptop, at about 20 camera images per second.
 
-1. **Teleoperation.** Move your own hand in front of a webcam and the robot hand copies it. Great for demos, and a way to record examples.
+```sh title="Terminal"
+uv run python sim/teleop.py              # your hand moves the five-finger simulated hand
+uv run python sim/teleop.py --hand v0    # the thumb and index prototype
+```
+
+<Figure src="/media/screenshots/2026-09-29-teleop-i-love-you-sign.png" alt="Webcam teleop: a hand making the 'I love you' sign, and the simulated hand making the same sign." caption="Each finger follows on its own: the simulated hand copies an 'I love you' sign." width={1113} height={468} />
+
+So far this drives the simulation. The same commands can go to the real hand once it has been powered on and calibrated.
+
+## AI control (next steps)
+
+The software is being shaped for AI from the start. The plan, step by step:
+
+1. **Teleoperation.** Move your own hand in front of a webcam and the robot hand copies it. This already works in the simulation (see above). Next, it will drive the real hand and record examples.
 2. **Learning from examples.** Train a neural network on those recordings.
 3. **Learning by practice.** Train in the simulation, with lots of variation, then transfer what it learned to the real hand. This needs a strong graphics card, so it will run on rented cloud GPUs. NVIDIA Isaac Sim or Isaac Lab may be added for larger-scale training.
 4. **Seeing and grasping.** Use a camera to find objects and decide how to pick them up.

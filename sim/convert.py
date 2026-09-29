@@ -95,20 +95,32 @@ def _fmt(values) -> str:
 def rpy_to_quat(rpy: np.ndarray) -> np.ndarray:
     """URDF roll-pitch-yaw (fixed-axis XYZ) to a MuJoCo quaternion (w, x, y, z)."""
     r, p, y = rpy / 2.0
-    cr, sr, cp, sp, cy, sy = math.cos(r), math.sin(r), math.cos(p), math.sin(p), math.cos(y), math.sin(y)
-    return np.array([
-        cr * cp * cy + sr * sp * sy,
-        sr * cp * cy - cr * sp * sy,
-        cr * sp * cy + sr * cp * sy,
-        cr * cp * sy - sr * sp * cy,
-    ])
+    cr, sr, cp, sp, cy, sy = (
+        math.cos(r),
+        math.sin(r),
+        math.cos(p),
+        math.sin(p),
+        math.cos(y),
+        math.sin(y),
+    )
+    return np.array(
+        [
+            cr * cp * cy + sr * sp * sy,
+            sr * cp * cy - cr * sp * sy,
+            cr * sp * cy + sr * cp * sy,
+            cr * cp * sy - sr * sp * cy,
+        ]
+    )
 
 
 def stl_vertices(path: Path, scale: np.ndarray) -> np.ndarray:
     """Vertices (N x 3, metres) of a binary STL."""
     data = path.read_bytes()
     n = struct.unpack("<I", data[80:84])[0]
-    tris = np.frombuffer(data[84:84 + n * 50], dtype=np.dtype([("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")]))
+    tris = np.frombuffer(
+        data[84 : 84 + n * 50],
+        dtype=np.dtype([("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")]),
+    )
     return tris["v"].reshape(-1, 3).astype(float) * scale
 
 
@@ -127,7 +139,9 @@ def parse_urdf(path: Path):
     joints = {}
     for joint in root.findall("joint"):
         if joint.get("type") != "revolute":
-            raise ValueError(f"Unsupported joint type {joint.get('type')!r} for {joint.get('name')!r}")
+            raise ValueError(
+                f"Unsupported joint type {joint.get('type')!r} for {joint.get('name')!r}"
+            )
         origin = joint.find("origin")
         limit = joint.find("limit")
         joints[joint.get("name")] = {
@@ -148,15 +162,31 @@ def build_mjcf(links: dict, joints: dict) -> ET.Element:
         raise ValueError(f"Joint map and URDF disagree on: {sorted(missing)}")
 
     mujoco = ET.Element("mujoco", model="tendra_hand")
-    ET.SubElement(mujoco, "compiler", angle="radian", meshdir=_relpath(MESH_DIR, OUT_PATH.parent), autolimits="true")
+    ET.SubElement(
+        mujoco,
+        "compiler",
+        angle="radian",
+        meshdir=_relpath(MESH_DIR, OUT_PATH.parent),
+        autolimits="true",
+    )
     ET.SubElement(mujoco, "option", timestep="0.002", integrator="implicitfast")
 
     default = ET.SubElement(mujoco, "default")
     ET.SubElement(default, "joint", damping=_fmt([JOINT_DAMPING]), armature=_fmt([JOINT_ARMATURE]))
-    ET.SubElement(default, "geom", type="mesh", density=_fmt([DENSITY]), material="pla", friction="0.8 0.02 0.001")
     ET.SubElement(
-        default, "position",
-        kp=_fmt([ACTUATOR_KP]), forcerange=_fmt([-ACTUATOR_FORCE_LIMIT, ACTUATOR_FORCE_LIMIT]), inheritrange="1",
+        default,
+        "geom",
+        type="mesh",
+        density=_fmt([DENSITY]),
+        material="pla",
+        friction="0.8 0.02 0.001",
+    )
+    ET.SubElement(
+        default,
+        "position",
+        kp=_fmt([ACTUATOR_KP]),
+        forcerange=_fmt([-ACTUATOR_FORCE_LIMIT, ACTUATOR_FORCE_LIMIT]),
+        inheritrange="1",
     )
 
     visual = ET.SubElement(mujoco, "visual")
@@ -165,20 +195,49 @@ def build_mjcf(links: dict, joints: dict) -> ET.Element:
 
     asset = ET.SubElement(mujoco, "asset")
     ET.SubElement(asset, "material", name="pla", rgba="0.85 0.85 0.82 1", specular="0.2")
-    ET.SubElement(asset, "texture", name="grid", type="2d", builtin="checker", rgb1="0.2 0.25 0.3",
-                  rgb2="0.3 0.35 0.4", width="512", height="512")
-    ET.SubElement(asset, "material", name="floor", texture="grid", texrepeat="8 8", reflectance="0.1")
+    ET.SubElement(
+        asset,
+        "texture",
+        name="grid",
+        type="2d",
+        builtin="checker",
+        rgb1="0.2 0.25 0.3",
+        rgb2="0.3 0.35 0.4",
+        width="512",
+        height="512",
+    )
+    ET.SubElement(
+        asset, "material", name="floor", texture="grid", texrepeat="8 8", reflectance="0.1"
+    )
     for link in links.values():
         mesh_name = Path(link["mesh"]).stem
-        ET.SubElement(asset, "mesh", name=mesh_name, file=link["mesh"], scale=_fmt(link["scale"]),
-                      inertia="legacy" if mesh_name in LEGACY_INERTIA_MESHES else "exact")
+        ET.SubElement(
+            asset,
+            "mesh",
+            name=mesh_name,
+            file=link["mesh"],
+            scale=_fmt(link["scale"]),
+            inertia="legacy" if mesh_name in LEGACY_INERTIA_MESHES else "exact",
+        )
 
     world = ET.SubElement(mujoco, "worldbody")
     palm = links["base_link"]
-    floor_z = stl_vertices(MESH_DIR / palm["mesh"], palm["scale"])[:, 2].min() + palm["pos"][2] - 0.005
+    floor_z = (
+        stl_vertices(MESH_DIR / palm["mesh"], palm["scale"])[:, 2].min() + palm["pos"][2] - 0.005
+    )
     ET.SubElement(world, "light", pos="0 -0.5 0.8", dir="0 0.5 -0.8")
-    ET.SubElement(world, "geom", name="floor", type="plane", size="0.3 0.3 0.01", pos=f"0 0 {floor_z:.4f}",
-                  material="floor", contype="0", conaffinity="0", density="0")
+    ET.SubElement(
+        world,
+        "geom",
+        name="floor",
+        type="plane",
+        size="0.3 0.3 0.01",
+        pos=f"0 0 {floor_z:.4f}",
+        material="floor",
+        contype="0",
+        conaffinity="0",
+        density="0",
+    )
 
     children: dict[str, list[str]] = {}
     for jname, j in joints.items():
@@ -207,8 +266,14 @@ def build_mjcf(links: dict, joints: dict) -> ET.Element:
             # Fingertip = mesh point farthest from the joint (visual meshes have no rotation here).
             verts = stl_vertices(MESH_DIR / link["mesh"], link["scale"]) + link["pos"]
             tip = verts[np.argmax(np.linalg.norm(verts, axis=1))]
-            ET.SubElement(body, "site", name=f"{attrs['name'].split('_')[0]}_tip", pos=_fmt(tip),
-                          size="0.003", rgba="1 0.3 0.1 1")
+            ET.SubElement(
+                body,
+                "site",
+                name=f"{attrs['name'].split('_')[0]}_tip",
+                pos=_fmt(tip),
+                size="0.003",
+                rgba="1 0.3 0.1 1",
+            )
         for child_joint in children.get(link_name, []):
             add_body(body, joints[child_joint]["child"], child_joint)
 
@@ -219,7 +284,9 @@ def build_mjcf(links: dict, joints: dict) -> ET.Element:
     contact = ET.SubElement(mujoco, "contact")
     for jname, j in joints.items():
         if j["parent"] == "base_link":
-            ET.SubElement(contact, "exclude", body1=LINK_NAMES["base_link"], body2=LINK_NAMES[j["child"]])
+            ET.SubElement(
+                contact, "exclude", body1=LINK_NAMES["base_link"], body2=LINK_NAMES[j["child"]]
+            )
     # MuJoCo collides meshes as convex hulls; the palm hull fills the space around the thumb base
     # and "hits" the metacarpal at any rotation. Remove once the palm is split into convex parts.
     for body1, body2 in HULL_ARTIFACT_EXCLUDES:
@@ -234,6 +301,7 @@ def build_mjcf(links: dict, joints: dict) -> ET.Element:
 
 def _relpath(target: Path, start: Path) -> str:
     import os
+
     return Path(os.path.relpath(target, start)).as_posix()
 
 
@@ -246,7 +314,9 @@ def main() -> None:
         "Do not edit by hand: change convert.py and re-run it. -->\n"
     )
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUT_PATH.write_text(header + ET.tostring(mjcf, encoding="unicode") + "\n", encoding="utf-8", newline="\n")
+    OUT_PATH.write_text(
+        header + ET.tostring(mjcf, encoding="unicode") + "\n", encoding="utf-8", newline="\n"
+    )
     print(f"Wrote {OUT_PATH.relative_to(ROOT)}")
 
 

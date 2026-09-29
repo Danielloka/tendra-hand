@@ -5,10 +5,13 @@
 ## Project
 
 - **Name:** **Tendra Hand** (chosen 2026-09-26). Note: an unrelated open-source project "Tendra H1" (github.com/aymankhayat/tendra-h1-robotic-hand) already uses the name. The owner chose to keep it; revisit before registering a company or trademark.
-- **Goal:** an open-source, tendon-driven, 3D-printed robotic hand with the same DOF as a human hand, able to do complex tasks. The owner wants to become a robotics entrepreneur; this repo is the main research hub and project-management center.
+- **Ultimate goal (owner, 2026-09-28):** a robot that can do what humans do (cook, do chores, use tools) **as well as a human**, with the **hand as the focus**. Not just picking things up, but understanding and carrying out complex, multi-step tasks. Path: hand → senses → learned skills → task understanding (VLA models, planning) → arm and body in real homes (`docs/roadmap.md`).
+- **First body (owner, 2026-09-28):** two arms with two Tendra hands on a fixed pole (bimanual station). AI research hub: `research/ai/` (vision + layered AI architecture, staged roadmap, maths, resources, ideas). Keep it current.
+- **First step:** an open-source, tendon-driven, 3D-printed robotic hand with the same DOF as a human hand. The owner wants to become a robotics entrepreneur; this repo is the main research hub and project-management center.
 - **Everything is open source:** CAD/3D files, firmware, software, AI models, research. It is published in a public GitHub repo and on a project website.
 - **Language:** all docs, code and comments in English.
-- **Current phase:** Phase 1 — make the thumb and index finger move smoothly and cleanly (see `docs/roadmap.md`).
+- **Hand versions (owner, 2026-09-28):** **V1** = the full 5-finger, 21-DOF hand with SCS0009 servos (the real first version). **V0** = the thumb + index stepper build, "just a start" (prototype). In code: `v0` / `v1` (firmware envs `tendra_s3` = V0, `hand_v1_servo` = V1; `tendra.joints.V0` / `V1`; `--hand v0|v1`).
+- **Current phase:** Phase 1 (V0: make the thumb and index finger move smoothly and cleanly) and Phase 2 (build Tendra Hand V1, the first full hand; designed, not built). See `docs/roadmap.md`. Roadmap order changed 2026-09-28: V1 is Phase 2, right after V0.
 
 ## Working with the owner
 
@@ -17,6 +20,7 @@
 - Work **step by step**. After each step, say what you did, what you verified, and what's next.
 - Hardware safety: never write firmware that moves motors on boot without a command. Keep coil current and power limits in mind.
 - Log findings, experiments and decisions in `research/log.md` (dated entries).
+- **Agents and subagents are allowed** (owner, 2026-09-29): Claude may spawn agents/subagents (e.g. Explore, Plan, general-purpose, forks, and the project agents in `.claude/agents/`) whenever they help, such as parallel research, broad codebase searches, or reviews, without asking first. The rules above still apply to their work.
 
 ## Owner's machine
 
@@ -33,7 +37,7 @@
 Shell notes: use forward slashes / Git Bash syntax in the Bash tool. The project path has no spaces.
 Tidy root: `.git`, `.venv`, `.gitignore` and `.gitattributes` have the Windows *hidden* attribute. pytest/ruff caches live in `.venv/` (set in `pyproject.toml`). Keep new tool caches out of the root too.
 
-## Hardware (current prototype: thumb + index)
+## Hardware (V0 prototype: thumb + index)
 
 - 3D-printed rigid skeleton, PLA/PETG. TPU fingertip pads are planned.
 - **Tendon-driven.** Each joint is driven independently by **one motor that both flexes and extends** it (an antagonistic tendon loop on one spool).
@@ -45,6 +49,16 @@ Tidy root: `.git`, `.venv`, `.gitignore` and `.gitattributes` have the Windows *
 - **Power:** separate **5 V / 2 A** supply for the motors. Each energised 28BYJ-48 draws ~200–250 mA per phase, so 8 motors is close to the limit. Firmware should **release coils of idle motors** and avoid 2-phase-on for all 8 at once.
 - **Controller:** **ESP32-S3-N16R8** (16 MB quad flash, **8 MB octal PSRAM**), connected to the PC over **USB-C (native USB CDC)**.
 - **Planned upgrade:** **Feetech SCS0009** smart servos (half-duplex TTL bus, daisy-chained, addressable IDs, 5 V, position feedback), via the **FE-URT-1** signal converter (owner has it). This fixes homing, feedback and the pin-count problem.
+
+## Tendra Hand V1 (designed 2026-09-28, not built yet)
+
+- **21 DOF / 21 SCS0009:** 4 fingers × (`mcp_abd`, `mcp_flex`, `pip`, `dip`) + thumb (`cmc_rot`, `cmc_flex`, `mcp_flex`, `mcp_abd`, `ip`). v0's `thumb_mcp` is `thumb_mcp_flex` in v1. Servo ID = protocol order = MuJoCo actuator order: 1–8 as v0 motors (index dip, pip, mcp_flex, mcp_abd, thumb ip, mcp_flex, cmc_flex, cmc_rot), 9 thumb_mcp_abd, 10–13 middle, 14–17 ring, 18–21 little (each dip, pip, mcp_flex, mcp_abd). Source: `firmware/include/config_v1.h`.
+- **Fusion design "Tendra Hand V1"** (cloud copy of "Hand assebly", which stays untouched), built by `hardware/cad/fusion_scripts/TendraHandV1/` in stages. The fingers are index copies with human length ratios; the thumb's 5th DOF is a hinge in its proximal phalanx (`thumb_mcp_link` + `thumb_proximal`).
+- **Tendon routing:** every joint = one antagonistic loop (flex + ext strand) on a 6 mm drum on the child segment, and a 6 mm spool on its servo (1:1). Each of the 42 strands has its own channel: 1.2 mm bore for 6 mm at the entry, then 2.2 mm for a 1 × 2 mm PTFE tube, S-curves with bend radius ≥ 15 mm, through the palm and a 12 mm wrist plate, then a straight line down to its spool. Single source of truth: `hardware/cad/tendon_router.py` → `v1_export/tendon_routes.json` (tested in `hardware/cad/tests/`); the CAD channels and the MuJoCo tendons both read it.
+- **Forearm** (under the palm, z −153…−30): servo shafts point inward, two levels × front/back plus one servo on a third level; deeper levels sit closer to the centre so no strand is blocked. Room for the ESP32-S3 + FE-URT-1 on level 3.
+- **Power:** 21 servos need a 5–6 V supply of ≥ 15 A (e.g. Mean Well LRS-100-5), split into 3 branches with capacitors; the 5 V / 2 A supply is only for v0. SCS0009 backs off by itself after 2 s above 80% load, so keep loop pretension low.
+- **Firmware:** env `hand_v1_servo` (v0 stays `tendra_s3`, the default). FE-URT-1 on UART1: ESP32 TX GPIO 17 → URT TX, RX GPIO 18 → URT RX (not crossed), 1 Mbps. Torque off at boot, nothing moves before a command. Extra commands `F` (feedback) and `B` (bus scan). PSRAM could be re-enabled for v1 (no motor pins on 35–37), but isn't yet.
+- **Known limits:** fingers adduct only ~4–5° toward a straight neighbour; index strands bend up to 56° entering the palm (they must pass beside the thumb bay); the thumb's routing is being reworked (2026-09-29, concept A: base plate 4 mm lower, hollow journal with PTFE sheaths up the rot axis to a boss on the metacarpal, cmc_rot drum r 7.5 so **`thumb_cmc_rot` servo_per_joint = 1.25**, thumb servos re-slotted; router + tests done, base built in Fusion, palm/forearm rebuild pending; see `research/experiments/2026-09-29-thumb-routing/`).
 - **Sensing:** none yet. A camera for vision-based grasping comes later.
 
 ### Motor ↔ joint ↔ pin map
@@ -81,16 +95,25 @@ The mapping and the joint directions were confirmed by the owner in the MuJoCo v
 ## Repository layout
 
 ```
-hardware/   cad/ (f3d, STEP, fusion_scripts/ = Fusion API scripts) · print/ (STL) · electronics/ · robot_description/fusion_export/ (raw Fusion URDF export)
+hardware/   cad/ (f3d, STEP, fusion_scripts/ = Fusion API scripts, tendon_router.py + tests/) · print/ (STL) · electronics/ · robot_description/fusion_export/ (raw Fusion URDF export), v1_export/ (v1 STLs, joints, tendon routes)
 firmware/   PlatformIO project for the ESP32-S3
 sim/        MuJoCo models, URDF→MJCF converter, digital twin
 software/   PC-side Python: Hand API, control, calibration, AI
 docs/       roadmap and guides
 research/   log.md, experiments, references
 website/    project website (Next.js app + design system)
+media/      photos, videos, screenshots, diagrams + catalog.json (the one place for project pictures)
 ```
 
 Every folder has a README explaining what goes there. Keep them current.
+
+## Media (photos, videos, screenshots)
+
+- **All project pictures live in `media/`** (added 2026-09-29): `photos/`, `videos/`, `screenshots/`, `diagrams/`, described in `media/catalog.json`. Rules and fields: `media/README.md`.
+- The owner drops raw files in `media/inbox/` (git-ignored). "Process the media inbox" means: run `uv run python media/process_inbox.py` (upright, ≤ 2000 px, **EXIF/GPS stripped**, date-named, catalog entry with `todo`), then **look at each file** with Read, rename it to `YYYY-MM-DD-short-subject.ext`, fill in `description`, `alt`, `caption`, `tags`, `hand`, remove `todo`, and suggest where to use it (e.g. which `gallery.json` placeholder it replaces).
+- To find a picture, search `catalog.json` (descriptions, tags) rather than opening files. When a picture is used somewhere, add that file to its `used_in`.
+- The website gets a copy in `website/public/media/` (git-ignored, copied by `scripts/sync-styleguide.mjs` on `npm run dev`/`build`), served at `/media/<folder>/<file>`. Repo Markdown links use relative paths to `media/`.
+- Never commit media with GPS data; no faces or private homes without permission. Media is CC BY 4.0.
 
 ## Robot model
 
@@ -111,6 +134,7 @@ Every folder has a README explaining what goes there. Keep them current.
   - Position actuators in motor order, kp 0.5 N·m/rad, ±0.05 N·m (placeholders until system identification).
   - Contact excludes: palm ↔ direct children (the palm is welded to the world, so MuJoCo's parent filter doesn't apply), and palm ↔ thumb_metacarpal (a convex-hull artifact). Proper fix: convex decomposition of the palm.
 - DOF now: 8 (index 4, thumb 4). A human thumb has 5, so the thumb design needs a revisit before the full hand.
+- **v1 model:** `sim/models/tendra_hand_v1.xml`, generated by `uv run python sim/convert_v1.py` from `hardware/robot_description/v1_export/` (STL per part + `hand_v1.json` + `tendon_routes.json`, all exported by the Fusion script). 42 spatial tendons; one actuator per servo on its flex strand (ctrl = joint angle; the servo angle is `servo_per_joint` × that, 1.0 except `thumb_cmc_rot` 1.25). Parts that are not joint children (palm, forearm, servos, spools) are welded to the world. `sim/tests/test_v1.py` checks coupling, moment arms, tracking, signs, limits vs `config_v1.h`.
 
 ## Software architecture
 
@@ -123,7 +147,8 @@ Every folder has a README explaining what goes there. Keep them current.
 - **Firmware v0.1** (`firmware/`, see its README): `MotorDriver` HAL, `Uln2003Stepper` (half-step, 4076 steps/rev), trapezoidal `MotionProfile` (defaults 800 steps/s, 1600 steps/s², hard cap 1000 steps/s), coils released after 1 s idle, text protocol (`P/J/S/X/R/Z/M/K/V/I`), joint targets clamped to limits. Scale defaults to 1:1 (648.7 steps/rad) until calibrated per joint.
 - Build: `pio run` in `firmware/`. Motion-profile unit tests run on the PC with `uvx --from ziglang` (command in `firmware/test/host/test_motion_profile.cpp`).
 - **PC side:** Python package `tendra` in `software/tendra` (installed editable by `uv sync`). `Hand` interface with `SimHand` / `RealHand`; `FakeEsp32` emulates the firmware protocol for tests. Joint names and limits live in `tendra/joints.py`; tests check that they match `config.h` and the MJCF.
-- **Digital twin v1:** `sim/twin.py` (`--fake` / `--port auto`). Sim → real only; real → sim (measured positions) comes with the servos.
+- **Digital twin:** `sim/twin.py` (`--fake` / `--port auto`, `--hand auto|v0|v1`). v0: sim → real. v1 also `--mirror` (real → sim from measured positions). `tendra.joints` has `HandSpec` variants `V0` / `V1`; `RealHand` auto-detects the variant from the `I` line.
+- **Webcam teleop:** `sim/teleop.py` (MediaPipe Hand Landmarker, dependency group `teleop`, default in `uv run`; model cached in `~/.cache/tendra/`) → `tendra.retarget` (fingers: Gauss-Newton fit of a finger model to all 4 landmarks, all fingers batched, palm plane by SVD through wrist + knuckles, running bone lengths; thumb: DLS on the MuJoCo model, pinch aims at the index tip; palm side from the joints' bend axis (sum of sin(bend), fist-safe), not MediaPipe's label) → `SimHand`, optionally `RealHand` via `TwinBridge`. Speed on the owner's laptop: the CPU and integrated GPU share power, so drawing slows tracking; MuJoCo's viewer redraws nonstop (tracking 28 → 7 fps) and the 42 tendons' ~2,000 capsules cost ~10× the hand. Teleop therefore draws the hand itself (`tendra.hand_view`, only on change, ≤ 30 fps), in kinematic mode, with lite meshes (`tendra.lite_model`), no shadows, tendons hidden. Tendra can only pinch with a curled index ("O" pinch).
 - **Serial link:** native USB CDC. The baud rate setting is ignored for native USB (it always runs at USB speed), but keep it at 921600 for tools that need a value.
 
 ## Website
@@ -131,7 +156,7 @@ Every folder has a README explaining what goes there. Keep them current.
 - **Stack (chosen 2026-09-27):** Next.js 16 (App Router) + TypeScript + Tailwind v4, React Three Fiber + drei (3D hand), GSAP ScrollTrigger + Lenis (scroll story), MDX content. The app lives in `website/`; plan, file ownership and the scroll timeline are in `website/PLAN.md`. Hosting not chosen yet.
 - **Design system v0.2** in `website/assets/css` is the source of truth (imported into Tailwind layers; tokens map to utilities). Style guide: `website/styleguide/index.html`, served at `/styleguide/`. Its grid helper is `.auto-grid` (not `.grid`, which clashes with Tailwind).
 - **All text lives in `website/content/`** (JSON + MDX); components don't hard-code copy. Placeholders are marked `TODO`.
-- **3D hand:** `src/lib/handState.ts` is the scroll ↔ 3D contract (plain numbers GSAP tweens, R3F reads per frame). The real model is `public/models/hand.glb`, made from the STEP by `website/scripts/step-to-glb.py` (OpenCascade, one mesh per part; run `uv run --with cadquery-ocp --with pygltflib python website/scripts/step-to-glb.py`) and set in `HAND_MODEL_URL` (`src/components/three/model.ts`). The script also rigs it: parts are matched to MuJoCo bodies by bounding box, and joint nodes sit at the URDF pivots with the sim's signs, so bending, labels, tendons and explode work (naming rules in `public/models/README.md`). Re-run it after a new STEP export. On desktop all hero text is centred; the hand starts small, under the headline and to the right of the text (measured in `ScrollStory` `measureHero()`, fitted via `HandState.shiftY`/`zoom` in `heroFit()`), then glides into and fills the right column for the rest of the story (text on the left, never over the hand) and turns 2 full turns over the story, driven by the scroll (`storyTimeline.ts`). The canvas loads on first interaction to keep mobile Lighthouse ≥ 90. `/dev/hand` is the hand lab.
+- **3D hand:** `src/lib/handState.ts` is the scroll ↔ 3D contract (plain numbers GSAP tweens, R3F reads per frame). The real model is `public/models/hand.glb`, made from the STEP by `website/scripts/step-to-glb.py` (OpenCascade, one mesh per part; run `uv run --with cadquery-ocp --with pygltflib python website/scripts/step-to-glb.py`) and set in `HAND_MODEL_URL` (`src/components/three/model.ts`). The script also rigs it: parts are matched to MuJoCo bodies by bounding box, and joint nodes sit at the URDF pivots with the sim's signs, so bending, labels, tendons and explode work (naming rules in `public/models/README.md`). Re-run it after a new STEP export. On desktop all hero text is centred; the hand starts small, under the headline and to the right of the text (measured in `ScrollStory` `measureHero()`, fitted via `HandState.shiftY`/`zoom` in `heroFit()`), then glides into and fills the right column for the rest of the story (text on the left, never over the hand) and turns 2 full turns over the story, driven by the scroll (`storyTimeline.ts`). The canvas loads on first interaction to keep mobile Lighthouse ≥ 90. `/dev/hand` is the hand lab. The **project page** hero shows the full 5-finger V1 as a static model (`public/models/hand-v1.glb`, from `website/scripts/v1-to-glb.py`) that spins by itself and can be dragged (`SpinHand.tsx`); it follows the same motion switch (`html.motion`), as does the page's CSS animation.
 - Commands (in `website/`): `npm run dev`, `npm run build`, `npm run lint`, `npm run typecheck`. Review agents for new pages: `.claude/agents/{design-reviewer,accessibility-checker,performance-checker,code-reviewer}.md`.
 - Style: **clean, open, friendly, Apple-like** (owner rejected a dark "robotic/nerdy" look on 2026-09-27). **Light default**, dark opt-in (`data-theme="dark"`). One calm **blue accent `#0066CC`**, only for clickable things. No orange. Font: Inter (JetBrains Mono only for code). Pill buttons, rounded cards, soft shadows. Plain words for a general audience.
 - Colours only through tokens; motion must respect `prefers-reduced-motion` and work without JS. The homepage story keys on `html.motion` (`src/lib/scroll/motion.ts`): on unless the system asks for reduced motion, and those visitors can opt back in with the "Play animation" button (it disappears once the story plays). The Hand lab (`/dev/hand`, linked in the nav) always animates.

@@ -1,11 +1,20 @@
 // Hardware abstraction layer (HAL) for one joint actuator.
 //
 // Everything above this interface works in joint radians and never touches pins. Each motor
-// type implements it: Uln2003Stepper today, an SCS0009 servo driver later. Swapping motors then
+// type implements it: Uln2003Stepper (v0 hand) and Scs0009Servo (v1 hand). Swapping motors then
 // means swapping the driver, nothing else.
 #pragma once
 
 #include <stdint.h>
+
+// Measured state, for motors that can report it (servos). Steppers have none.
+struct MotorFeedback {
+  float position_rad = 0.0f;   // measured joint position
+  float load_pct = 0.0f;       // signed, % of maximum torque
+  float temperature_c = 0.0f;
+  float voltage_v = 0.0f;
+  uint8_t error = 0;           // driver-specific error bits (0 = fine)
+};
 
 class MotorDriver {
  public:
@@ -34,4 +43,12 @@ class MotorDriver {
   virtual float scale() const = 0;
   // Move by a raw amount of native units, bypassing joint limits (calibration only).
   virtual void moveRaw(long native_units) = 0;
+
+  // Optional feedback. online(): the motor answers and can accept targets (steppers: always).
+  virtual bool online() const { return true; }
+  // Fills `out` and returns true if measured data is available.
+  virtual bool feedback(MotorFeedback& out) const {
+    (void)out;
+    return false;
+  }
 };

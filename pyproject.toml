@@ -16,6 +16,14 @@ dev = [
     "pytest>=8",
     "ruff>=0.6",
 ]
+teleop = [
+    "fast-simplification>=0.2.0",
+    "mediapipe>=1.0.1",
+]
+
+[tool.uv]
+# `uv run` / `uv sync` install these groups by default (teleop: webcam hand tracking).
+default-groups = ["dev", "teleop"]
 
 [build-system]
 requires = ["hatchling"]
@@ -26,7 +34,7 @@ build-backend = "hatchling.build"
 packages = ["software/tendra"]
 
 [tool.pytest.ini_options]
-testpaths = ["sim/tests", "software/tests"]
+testpaths = ["sim/tests", "software/tests", "hardware/cad/tests"]
 cache_dir = ".venv/.pytest_cache"  # keep the repo root tidy
 
 [tool.ruff]

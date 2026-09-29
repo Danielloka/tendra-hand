@@ -2,7 +2,7 @@
   "hero": {
     "kicker": "Open-source robotic hand",
     "title": "A human hand, rebuilt in the open.",
-    "lead": "Tendra Hand is a 3D-printed robotic hand that aims to move like yours, one joint at a time. Every file, every line of code and every lesson learned is free to use.",
+    "lead": "A 3D-printed robotic hand that aims to move like yours: the first step toward a robot that can cook, clean and use tools as well as you. Every file is free to use.",
     "primaryCta": { "label": "Explore the project", "href": "/project" },
     "secondaryCta": { "label": "View on GitHub", "href": "https://github.com/Danielloka/tendra-hand" }
   },
@@ -86,7 +86,7 @@
     "title": "Small today. Built to grow.",
     "items": [
       { "value": 8, "unit": "", "label": "joints in the prototype, each with its own motor" },
-      { "value": 20, "unit": "", "label": "joints targeted for the full hand" },
+      { "value": 21, "unit": "", "label": "joints in the full hand design" },
       { "value": 100, "unit": "%", "label": "open source: design, code and research" },
       { "value": 131, "unit": "g", "label": "of printed plastic, calculated from the 3D model" }
     ]

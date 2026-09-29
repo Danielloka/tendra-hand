@@ -13,6 +13,120 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 
 ---
 
+## 2026-09-29: Thumb tendon routing, design study (V1)
+**Goal:** close V1's last open routing item: get the 10 thumb strands from the bay floor to their drums.
+**Setup:** Fusion design "Tendra Hand V1" via the Fusion MCP (read-only sections, 1 mm grid). Owner's choice: PTFE sheaths through the 2-axis thumb base, on-axis crossings further out. Details: `research/experiments/2026-09-29-thumb-routing/`.
+**Result:**
+- The thumb base is a frame (bottom plate, side walls, top arm, 4 mm pins top and bottom). The metacarpal sits right on the plate; the only free space is inside the frame, behind the metacarpal. The cmc_flex axis is 5.5 mm in front of the cmc_rot axis.
+- **No path for sheaths** in the current base: anything crossing from the palm into the rotating frame is cut, except along the rot axis, and that's blocked by the solid bottom pin.
+- **Bug:** the two `cmc_rot` strands rise vertically from the floor, parallel to the rot axis, so they can't turn the base. They must reach the drum groove horizontally. The MuJoCo model hides this with a virtual guide point on the palm.
+- Two concepts: **A** rework the base (hollow bottom journal, tubes up the rot axis, room to loop them into the metacarpal, horizontal feed for cmc_rot); **B** an outside tube loop from the palm edge to the metacarpal (ORCA style, needs ~100 mm slack).
+- Owner chose **A**. A 2D loop search (`sheath_loop_search.py`) sized it: with the base plate and bay floor lowered **4 mm** along the rot axis (no kinematic change), the tubes can rise up the hollow pivot, bow over and enter a boss on the metacarpal's top (just above the cmc_flex axis, 45° up-forward), with a worst-case bend radius of **15.5 mm** over the whole cmc_flex range (11.0 mm without lowering).
+**Conclusion / next:** build in 6 tested stages (router → base → palm → metacarpal → on-axis holes → export + checks), listed in the experiment README.
+- **Stage 1 done (same day):** the router now has the whole thumb base: hollow journal (bore Ø11.6), cmc_rot drum r 7.5 fed horizontally over a Ø3 pin in the palm (**servo_per_joint 1.25**, firmware and sim updated; sim ctrl is now the joint angle for every joint), cmc_flex drum over the rot axis with a Ø3 pin on a hanger, sheaths in 2 × 3 in the bore to a split boss on the metacarpal (loop bend ≥ 14.3 mm, no crossing), bare cmc_flex strands held under their mid-range position (≤ 0.25 mm length change over −100…40°). Thumb servos re-slotted (6 → F1, 7 → F2, 8 → B1). 13 new tests; full suite 191 passed.
+- **Stage 2 started:** `thumb_base` built in Fusion (one solid, checked in section). Rebuilding the palm and forearm needs a bulk delete of their timeline features, which the permission check refused; waiting for the owner.
+
+## 2026-09-29: One place for project media
+**Goal:** a single folder for photos and videos that the website, the READMEs and Claude can all use.
+**Setup:** new top-level `media/` (`photos/`, `videos/`, `screenshots/`, `diagrams/`, `catalog.json`, git-ignored `inbox/`), `media/process_inbox.py` (Pillow), website copy via `scripts/sync-styleguide.mjs`.
+**Result:** tested with a fake 4000×3000 phone photo with GPS, rotation and date in its EXIF data. It came out upright at 1500×2000, with no EXIF, named by the date it was taken and catalogued. The website copy lands in `public/media/`.
+**Conclusion / next:** drop the first real photos of the V0 prototype in `media/inbox/` and replace the gallery placeholders.
+
+## 2026-09-29: Teleop screenshots: sideways angles, mirrored view
+**Goal:** check the owner's three teleop screenshots (open hand, spread hand, rock sign; the owner used the **left** hand). They are in `media/inbox/` and are not committed: one shows faces (see `media/README.md` rules).
+**Result:**
+- Tracking looked solid (20–23 fps, 57–72 ms delay), and the rock sign came out roughly right.
+- **Abduction reference was wrong.** Sideways angles were measured from each finger's wrist → knuckle line. On a human hand those lines fan out (index ≈ 37° in screenshot 2), so a spread index read ≈ 0° and fingers held together read as bent toward the middle. The robot showed the index and middle converging while the human's spread. Now every finger is measured from the palm's up axis, which matches Tendra (fingers parallel at `mcp_abd` = 0).
+- **Abduction fades with flexion:** robot `mcp_abd` = human abduction × cos(MCP flexion), because the collateral ligaments stop sideways motion near 90° of knuckle bend. This also keeps curled fingers from converging into each other.
+- **View:** the robot (a right hand) is shown mirrored only when a right hand is tracked, so it always looks like the hand in the mirrored camera image. Status text now sits on a dark bar; **D** shows every joint target in degrees.
+**Conclusion / next:** owner re-tests: spread vs together, fist, and compares the D readout with their own hand.
+
+## 2026-09-29: Fist bug fixed, more precise finger maths
+**Goal:** the owner's test: closing the hand into a fist made every finger go straight, as if they bent backwards. Also make the joint angles more precise.
+**Setup:** `software/tendra/retarget.py`; synthetic hands with known angles, random rotations, left and right hands, 2–3 mm Gaussian landmark noise (webcam-like).
+**Result:**
+- **Cause:** the palm side was found each frame from `sum(dir(DIP-PIP) - dir(PIP-MCP))`, the direction the PIP joints bend toward. In a fist the fingertips point back at the wrist, so that sum flips and the palm is taken to face the other way. Every angle becomes negative and is clipped to -5 deg ("straight"). Reproduced by a new test first (4/4 failing).
+- **Fix: bend-axis cue.** For successive bones a, b: (a x b) . x = +sin(bend) on a right hand (x = thumb-side axis) for any bend from 0 to 180 deg, and negative on a mirrored hand. Summed over all 12 finger joints, it keeps its sign in a fist.
+- **Palm plane:** least-squares plane (SVD) through the wrist and all four knuckles, instead of three points.
+- **Finger model fit:** each finger is a small model (MCP = sideways, then flexion; PIP/DIP hinges; one bending plane). Gauss-Newton with light Levenberg-Marquardt damping fits (abd, mcp, pip, dip) to the PIP, DIP and tip landmarks, starting from the closed-form estimate or last frame's fit, whichever fits better. Analytic Jacobian, checked against finite differences. All four fingers are fitted in one batched NumPy computation. PIP/DIP in the closed form are now signed angles about the hinge axis, with the bones projected onto the bending plane.
+- **Bone lengths:** running average (rate 0.05), since bones don't change length. Known lengths cut the error by a further 0.5–1 deg in simulation.
+- **Precision** (3 mm noise, mean abs error, deg, [abd, mcp, pip, dip]): relaxed hand, direct [7.0 6.0 10.7 14.4] vs fit [5.9 6.1 11.2 15.2] (about equal); **fist, direct [13.6 6.5 9.8 13.8] vs fit [5.6 4.8 8.7 12.0]** (sideways error more than halved). The remaining error is noise on short bones (22 mm fingertip bone); the One Euro filter smooths it over time.
+- **Speed:** a 1e-3 rad stop tolerance (far below the noise) and the batched fit give ~7.5 ms per frame for v1 (was 6 ms with the less precise method). Measurements earlier that day were distorted: Bambu Studio and Fusion 360 held the CPU at 100 %.
+- Tests: 25 retargeting tests (fist regression, Jacobian vs finite differences, fit beats the direct estimate in a noisy fist, bend cue sign), 178 total.
+**Conclusion / next:** owner re-tests the fist. Remaining limit: the robot's PIP stops at 95 deg, while a human fist reaches ~100–110 deg (clipped). Next precision step would be a temporal model (e.g. a Kalman filter on the joint angles with a motion model) instead of per-frame fits + One Euro.
+
+## 2026-09-29: Faster hand model in teleop (drawing, not maths, was the bottleneck)
+**Goal:** tracking now felt fast and accurate, but the MuJoCo hand lagged behind.
+**Setup:** benchmarks on the i3-1125G4 with Intel UHD: MuJoCo 3.14 offscreen renderer and the passive viewer, v1 model.
+**Result:**
+- Cheap parts: kinematic pose update (`mj_forward`) 0.19 ms, physics 1.2 ms per 60 Hz frame, retargeting 6 ms.
+- **Drawing was the problem.** One v1 frame (offscreen, 640×480): 2,050 ms with shadows and reflections, 770 ms without. Of that, the **42 tendons** are ~2,000 capsule segments at 28×16 slices each: hiding them gives 70 ms. The meshes have 238k triangles (palm 71k from the channels, forearm 56k, spools 34k). Simplified to 15 % (43k, `tendra.lite_model`, fast-simplification) plus tendons hidden: **21 ms**.
+- **The CPU and integrated GPU share one power budget.** The hand network alone runs at 28 fps. With MuJoCo's viewer open and idle: 17 fps. Viewer + lite meshes + pose updates: **7 fps**. The cheaper each frame, the more frames the viewer draws (it redraws nonstop, with no rate cap in the API), and the more it throttles the CPU.
+- Fix: teleop draws the hand itself next to the camera image (`tendra.hand_view`), only when the pose changed and at most 30 fps. Network speed with this view: 23–26 fps. Kinematic mode (joints set straight from tracking) by default, so the servo simulation adds no lag; `--physics` keeps it. The in-between gliding was removed: with readings at 20–28/s and drawing at ≤ 30 fps it only added ~25–50 ms of delay.
+- A render costs ~20 ms no matter the size (240 px: 15 ms, 480 px: 20 ms), so it's a fixed GPU round trip, not pixels.
+- Tests: `software/tests/test_lite_model.py` (same structure, masses and kinematics, < 30 % of the triangles). 170 passed.
+**Conclusion / next:** measurements without a hand in view vary run to run (palm detection on every frame). Owner to re-test with their hand. If more speed is needed: a lighter hand-tracking model, or rendering in its own thread.
+
+## 2026-09-29: Smoother webcam teleop
+**Goal:** the owner's first live test worked (the twin follows their hand) but felt slow and laggy.
+**Setup:** profiled each stage on the i3-1125G4 (v1 model).
+**Result:**
+- Everything ran one after another in one loop: waiting for a camera frame ~34 ms, network 20–45 ms, retargeting 6 ms, physics (v1: 0.25–0.65 ms per 2 ms step). So the whole loop, including the MuJoCo view, updated only ~10 times per second.
+- Not the cause: the simulated servos (v1 reaches 90 % of a 60° step in 70 ms), the 1,966 hidden routing sites (not drawn), and the GIL (MediaPipe releases it; the main thread still gets ~600 turns/s while it runs).
+- Fix: three threads. The camera grabs frames (`CameraStream`), a tracking thread runs the network and retargeting on the newest frame, and the main loop steps physics and syncs the viewer at up to 60 Hz with the latest targets, keeping sim time in step with wall time.
+- One Euro filter 1.5 Hz / β 0.4 → 2.0 Hz / β 0.8: lag on a 1 Hz motion 67 → 33 ms, jitter at rest 0.34 → 0.35° (simulated noise).
+- Measured (no hand in view, so the palm detector runs on every frame, the slowest case): main loop 41–46 Hz (was ~10), hand updates 18–21/s (was ~10), camera-to-targets delay ~65 ms. The app prints these numbers when it closes.
+**Conclusion / next:** owner re-tests. If it's still not smooth: interpolate targets between hand updates, and check whether the webcam drops to 15 fps in dim light (auto exposure).
+
+## 2026-09-28: Webcam teleoperation of the digital twin
+**Goal:** move the MuJoCo Tendra hand with your own hand in front of a webcam (Stage A in `research/ai/roadmap.md`).
+**Setup:** MediaPipe 1.0.1 Hand Landmarker (pretrained, float16 model, CPU) + OpenCV 5; `software/tendra/retarget.py`, `software/tendra/hand_tracking.py`, `sim/teleop.py`.
+**Result:**
+- **Fingers:** joint angles measured straight from the 3D landmarks. MCP flexion is the bone's elevation out of the palm plane; abduction is its direction within that plane; PIP/DIP are signed bends about the finger's hinge axis. Synthetic hands with known angles, in random rotations and as left or right hands, come back exact (1e-6 rad).
+- **Thumb:** the Tendra thumb points straight out of the palm at q = 0, so it can't copy human angles. Damped least squares on the MuJoCo Jacobians matches the thumb's MCP, IP and tip (weights 0.3/0.6/1.0) to the human ones, scaled by MCP→IP→tip length. Scaling from the base was wrong: the two thumb-base axes don't meet, so base→MCP changes with the pose. A robot thumb pose fed back in is recovered within 1 mm.
+- **Pinch:** when the human thumb and index tips are closer than 5 cm, the tip target blends toward the robot's index tip. From a cold start it reaches 1–4.5 mm in one frame. **Finding:** Tendra can only pinch with a curled index (an "O" pinch). With the index at (34°, 34°, 17°) the thumb gets no closer than 24 mm (v0 and v1), so the thumb's reach is worth a look in the next thumb revision.
+- **Palm side:** MediaPipe's left/right label assumes a mirrored image, so it's the opposite on a normal webcam. We only use it as a first guess; the palm side comes from the direction the PIP joints bend.
+- **Smoothing:** One Euro filter (min cutoff 1.5 Hz, beta 0.4). Calibration: press C with the hand open and flat.
+- **Speed (i3-1125G4):** retargeting 3.7 ms (v0) / 6.1 ms (v1) per frame. The network takes 42 ms per frame while looking for a hand (~10 fps incl. camera). The first run's camera frame was dark (mean 11/255), so no live hand has been tracked yet.
+- Tests: 17 new tests in `software/tests/test_retarget.py`.
+**Conclusion / next:** owner's live test: check that the palm side is detected, that the MCP-flex zero is right after calibrating, and how the filter feels. Then record teleop sessions to the LeRobot dataset format (the first data for imitation learning) and try `--fake` / the real v0 hand.
+
+## 2026-09-28: Embodied-AI research hub and the bimanual pole robot
+**Goal:** start long-term research on the AI system that will control two arms with two Tendra hands on a pole, and gather resources and ideas.
+**Setup:** new folder `research/ai/` (desk research, no experiments yet).
+**Result:**
+- **Body:** fixed pole (aluminium extrusion) with an optional linear lift, 2 × 7-DOF arms, 2 × Tendra V1 hands (left one mirrored), a head camera and one wrist camera per hand. About 59 DOF in total.
+- **Brain:** four layers, like Helix / GR00T / π0.5: L3 language planner (~1 Hz) → L2 visuomotor policy (10–50 Hz, ACT / Diffusion Policy / VLA) plus RL skills trained in sim → L1 whole-body controller (IK, safety, 100–500 Hz) → L0 firmware (exists).
+- **Main conclusion:** data is the bottleneck, not algorithms. Record everything in LeRobot format.
+- **Stages A–E**, plus a benchmark ladder of 9 tasks. Start the AI stack now on a cheap SO-101 arm with a gripper, separate from the hand hardware.
+- **Creative bets** (`ideas.md`): a kinematic-twin data glove, robot-free data collection, pretraining on your own egocentric video, fingertip force estimated from servo load through the tendon Jacobian, self-reset for overnight practice, an LLM that calls skills as tools, and co-design of the hand's shape in sim.
+**Conclusion / next:** Stage A: maths block 1, LeRobot + ACT on a simulated task (free cloud GPU), and webcam (MediaPipe) teleop of the Tendra hand in MuJoCo. Open question: V1 weight vs. arm payload (weigh V1 once it's printed).
+
+## 2026-09-28: New ultimate goal — a robot that does what humans do
+**Goal:** widen the project's goal beyond a dexterous hand.
+**Result:** the ultimate goal is now a robot that can do what humans do (cook, do chores, use tools) as well as a human, and that *understands* complex tasks instead of only picking things up. The hand stays the focus, since it's the hardest and most important part.
+**Conclusion / next:** `docs/roadmap.md` now opens with this goal and gains two new phases: task understanding (VLA models, planning, recovery, learning from demos) and arm, body and real kitchen and household chores. Later the same day the phases were renumbered (owner): **Tendra Hand V1 is now Phase 2**, right after the V0 prototype (Phase 1), since V1 is the first real hand. The old "servo upgrade" and "full hand" phases merged into it; the V0 servo upgrade is dropped (V1 goes straight to servos). New order: 0 Foundation, 1 V0, 2 V1, 3 Mechanics + system ID, 4 Sensing, 5 AI control, 6 Vision + grasping, 7 Task understanding, 8 Arm, body and chores. The website says the same: roadmap title and new phases (`website/content/roadmap.json`), the goal on `/project`, the homepage lead, the site description, Getting started, and a new FAQ "What is the end goal?".
+
+## 2026-09-28: Tendra Hand V1 — 5 fingers, 21 DOF, forearm servos, one channel per tendon
+**Goal:** a full hand in the prototype's style: 4 fingers + a 5-DOF thumb, each joint on its own Feetech SCS0009, with every tendon strand in its own route through the palm and wrist to a servo in the forearm.
+
+**Setup:** Fusion design "Tendra Hand V1" (a cloud copy of "Hand assebly"; the original is untouched), built in stages by `hardware/cad/fusion_scripts/TendraHandV1/`. Routes and servo layout from `hardware/cad/tendon_router.py` → `hardware/robot_description/v1_export/tendon_routes.json`. Research: `research/experiments/2026-09-28-full-hand/research.md`.
+
+**Result:**
+- **Fingers:** middle, ring and little are copies of the index. Only the plain, prismatic middle of the proximal/middle phalanx is lengthened or shortened, so joints, holes and tendon slots keep their size. Proximal/middle length vs index: middle +4/+3 mm, ring +1/+2, little −8/−4 (human ratios, Buryanov & Kotiuk 2010). Knuckles 19 mm apart, knuckle arc: middle +4 mm, ring +1, little −7.
+- **Thumb 5th DOF:** `thumb_mcp_abd`, a hinge in the proximal phalanx in the index-knuckle style: two stub pins at the ends of the axis, a 1 mm slot on the axis for the pass-through tendons, a groove on the barrel as the drum. No interference at 0 and ±20°.
+- **Palm:** full width (x −79…12, y 12.5…40, z −30…knuckles), knuckle posts copied from the index post. 42 channels: 6 mm of 1.2 mm bore at the entry (bare line, the step stops the tube), then 2.2 mm for a 1 × 2 mm PTFE tube along an S-curve (bend radius ≥ 15.7 mm) to the wrist. Index strands must go sideways beside the thumb bay (like the prototype).
+- **Forearm:** 21 SCS0009 in two levels × front/back + one on a third level; shafts point inward, each deeper level sits closer to the centre, so every strand is a straight, unblocked line from the wrist to its spool (radius 6 mm, 1:1 with the 6 mm joint drums). Room on the third level for the ESP32-S3 and FE-URT-1.
+- **Checks in Fusion:** 0 interferences among the 44 static parts; no interference of finger bases (±15°) or the thumb (whole −100…40° rotation) with the palm; all 42 strand centre lines clear from entry to spool (sampled every 0.5 mm). Two issues found and fixed: thumb spools hit the forearm wall (column pitch now 16 mm, flange radius 7.5 mm), and a leftover old thumb body.
+- **Tests:** router 12 tests (wall ≥ 0.8 mm between channels, bends, clear lines, servo fit); MuJoCo v1 (`sim/convert_v1.py`): coupling between joints 5.6e-10 mm/rad, own-joint moment arm exactly ±6.000 mm, loop length constant to 2e-13 mm, tracking ≤ 0.31° with gravity, no contacts open/fist. Full suite: 148 passed. Firmware: both envs build, 356 SCS host checks pass. Nothing tried on real servos yet.
+
+**Conclusion / next:**
+- Known limits: fingers can only adduct ~4–5° toward a straight neighbour (8 mm gap); index strands bend up to 56° entering the palm (friction; consider a metal pin or PTFE guide there); thumb internal routing (on-axis crossings) is still open; the thumb-metacarpal/palm contact is excluded in the sim (convex hull), so the real contact at cmc_flex ≈ 80° is missed.
+- Forearm is 85 mm thick (servos front and back); a slimmer layout would need idler pulleys or Bowden tubes.
+- Next: print a test finger + palm section to check the 1.2/2.2 mm channels and PTFE fit, buy SCS0009 + hub board + 5 V ≥ 15 A supply, measure the real spline/tab sizes, pretension study.
+
+---
+
 ## 2026-09-28: Real hand model on the website
 **Goal:** replace the placeholder hand on the homepage with the real CAD, spinning with the scroll.
 **Setup:** `hardware/cad/Hand assebly.step` → `website/scripts/step-to-glb.py` (OpenCascade via `cadquery-ocp`, `RWGltf_CafWriter`) → `website/public/models/hand.glb`.

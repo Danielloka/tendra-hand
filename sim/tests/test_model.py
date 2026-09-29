@@ -11,8 +11,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import convert
 
 MOTOR_ORDER = [
-    "index_dip", "index_pip", "index_mcp_flex", "index_mcp_abd",
-    "thumb_ip", "thumb_mcp", "thumb_cmc_flex", "thumb_cmc_rot",
+    "index_dip",
+    "index_pip",
+    "index_mcp_flex",
+    "index_mcp_abd",
+    "thumb_ip",
+    "thumb_mcp",
+    "thumb_cmc_flex",
+    "thumb_cmc_rot",
 ]
 
 
@@ -24,6 +30,7 @@ def model():
 def test_generated_model_is_up_to_date():
     links, joints = convert.parse_urdf(convert.URDF_PATH)
     import xml.etree.ElementTree as ET
+
     fresh = convert.build_mjcf(links, joints)
     ET.indent(fresh)
     on_disk = convert.OUT_PATH.read_text(encoding="utf-8")
@@ -52,7 +59,9 @@ def test_flexion_moves_tip_toward_palm(model, finger):
     mujoco.mj_kinematics(model, data)
     start = data.site(f"{finger}_tip").xpos.copy()
     for name in MOTOR_ORDER:
-        if name.startswith(finger) and ("flex" in name or name.endswith(("dip", "pip", "ip", "mcp"))):
+        if name.startswith(finger) and (
+            "flex" in name or name.endswith(("dip", "pip", "ip", "mcp"))
+        ):
             data.joint(name).qpos = np.radians(30)
     mujoco.mj_kinematics(model, data)
     moved = data.site(f"{finger}_tip").xpos - start

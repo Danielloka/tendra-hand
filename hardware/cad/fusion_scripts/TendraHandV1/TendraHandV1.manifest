@@ -1,0 +1,10 @@
+{
+  "autodeskProduct": "Fusion",
+  "type": "script",
+  "author": "Tendra Hand",
+  "description": {
+    "": "Builds the Tendra Hand V1 (5 fingers, 21 DOF, forearm with 21 SCS0009 servos, one channel per tendon) in the 'Tendra Hand V1' design, stage by stage. Refuses to run on any other design."
+  },
+  "supportedOS": "windows|mac",
+  "editEnabled": true
+}

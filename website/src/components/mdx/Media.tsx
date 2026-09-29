@@ -5,12 +5,20 @@ type FigureProps = { src: string; alt: string; caption?: React.ReactNode; width?
 
 /**
  * Image with an optional caption. Pass the real pixel size when you know it so
- * the page doesn't jump while loading; otherwise 16:10 is assumed.
+ * the page doesn't jump while loading; otherwise 16:10 is assumed. Tall
+ * (portrait) photos are capped in height and centred instead of filling the width.
  */
 export function Figure({ src, alt, caption, width = 1600, height = 1000 }: FigureProps) {
   return (
     <figure className="prose-figure">
-      <Image src={src} alt={alt} width={width} height={height} sizes="(min-width: 1024px) 720px, 100vw" style={{ width: "100%", height: "auto" }} />
+      <Image
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        sizes="(min-width: 1024px) 720px, 100vw"
+        style={{ width: "100%", height: "auto", maxHeight: "min(80vh, 40rem)", objectFit: "contain" }}
+      />
       {caption && <figcaption className="caption">{caption}</figcaption>}
     </figure>
   );

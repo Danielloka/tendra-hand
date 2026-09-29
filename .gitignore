@@ -51,6 +51,11 @@ firmware/**/build/
 *.bgcode
 hardware/cad/fusion_scripts/**/*_output.txt
 
+# ---------- Media ----------
+# Raw drops (may contain GPS data); media/process_inbox.py files them into media/
+media/inbox/*
+!media/inbox/.gitkeep
+
 # ---------- Editors ----------
 .vscode/*
 !.vscode/extensions.json

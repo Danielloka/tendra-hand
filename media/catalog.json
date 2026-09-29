@@ -1,0 +1,232 @@
+{
+  "items": [
+    {
+      "file": "photos/2026-09-29-v0-electronics-overview.jpg",
+      "type": "photo",
+      "date": "2026-09-29",
+      "hand": "v0",
+      "description": "Overview of the V0 electronics on a wooden table: several ULN2003 stepper driver boards spread around a white breadboard with the ESP32-S3 in the middle, connected by many coloured jumper wires. Parts of printed pieces are visible at the bottom.",
+      "alt": "The ESP32-S3 on a breadboard, wired to the ULN2003 stepper driver boards.",
+      "caption": "The ESP32-S3 and the ULN2003 driver boards, wired on a breadboard.",
+      "tags": [
+        "electronics",
+        "esp32",
+        "uln2003",
+        "wiring"
+      ],
+      "width": 1125,
+      "height": 2000,
+      "used_in": [
+        "website/content/data/gallery.json",
+        "website/content/log/2026-09-26-firmware-v0-1.mdx"
+      ]
+    },
+    {
+      "file": "photos/2026-09-29-v0-esp32-s3-breadboard.jpg",
+      "type": "photo",
+      "date": "2026-09-29",
+      "hand": "v0",
+      "description": "Close-up of the ESP32-S3-N16R8 development board plugged into a white breadboard, with many coloured jumper wires on both sides leading to the motor drivers. The USB-C port is at the bottom.",
+      "alt": "Close-up of the ESP32-S3 board on a breadboard with jumper wires on both sides.",
+      "caption": "The ESP32-S3 controller, the brain of the prototype.",
+      "tags": [
+        "electronics",
+        "esp32",
+        "wiring"
+      ],
+      "width": 1125,
+      "height": 2000,
+      "used_in": [
+        "website/content/data/gallery.json"
+      ]
+    },
+    {
+      "file": "photos/2026-09-29-v0-fingers-three-quarter.jpg",
+      "type": "photo",
+      "date": "2026-09-29",
+      "hand": "v0",
+      "description": "Three-quarter close-up of the V0 fingers: the blue index finger standing up and the blue thumb reaching to the right, both joined to the white palm frame with visible screws at each joint. The black forearm is at the bottom left. Soft daylight, light wooden table.",
+      "alt": "The blue index finger and thumb of the prototype seen from a three-quarter angle.",
+      "caption": "The index finger and thumb, with a screw at every joint.",
+      "tags": [
+        "prototype",
+        "index",
+        "thumb",
+        "joints"
+      ],
+      "width": 1125,
+      "height": 2000,
+      "used_in": [
+        "website/content/data/gallery.json",
+        "website/content/pages/project.mdx"
+      ]
+    },
+    {
+      "file": "photos/2026-09-29-v0-forearm-motors-spools.jpg",
+      "type": "photo",
+      "date": "2026-09-29",
+      "hand": "v0",
+      "description": "The V0 forearm column seen from the side: 28BYJ-48 stepper motors stacked on a black printed column, each with a blue tendon spool. Thin tendon lines run from the spools up to the white palm, where the blue index finger and thumb sit. Motor cables in orange, red and purple come off the left.",
+      "alt": "The forearm column with stepper motors and blue tendon spools, with the fingers on top.",
+      "caption": "Each joint has its own motor and spool; the tendons run up to the fingers.",
+      "tags": [
+        "prototype",
+        "motors",
+        "spools",
+        "tendons",
+        "28byj-48"
+      ],
+      "width": 1125,
+      "height": 2000,
+      "used_in": [
+        "website/content/data/gallery.json"
+      ]
+    },
+    {
+      "file": "photos/2026-09-29-v0-palm-frame-printed.jpg",
+      "type": "photo",
+      "date": "2026-09-29",
+      "hand": "v0",
+      "description": "The white 3D-printed V0 palm frame on its own, lying on a dark wooden table before assembly. Two tall upright posts at the back, a flat angled palm plate, and at the front-left the finger mount with small tendon slots.",
+      "alt": "The white 3D-printed palm frame of the V0 prototype on a wooden table.",
+      "caption": "The printed palm frame, before assembly.",
+      "tags": [
+        "palm",
+        "printing",
+        "parts"
+      ],
+      "width": 1125,
+      "height": 2000,
+      "used_in": [
+        "website/content/data/gallery.json"
+      ]
+    },
+    {
+      "file": "photos/2026-09-29-v0-printed-parts-box.jpg",
+      "type": "photo",
+      "date": "2026-09-29",
+      "hand": "v0",
+      "description": "A cardboard box of 3D-printed finger parts: many blue finger segments, a few white and black parts, loops of white tubing or line, and small bags of ball bearings and parts at the bottom.",
+      "alt": "A box of blue 3D-printed finger segments, white tubing and bags of small bearings.",
+      "caption": "Printed finger parts and hardware, ready for assembly.",
+      "tags": [
+        "printing",
+        "parts",
+        "fingers"
+      ],
+      "width": 1125,
+      "height": 2000,
+      "used_in": [
+        "website/content/data/gallery.json"
+      ]
+    },
+    {
+      "file": "photos/2026-09-29-v0-prototype-full-length.jpg",
+      "type": "photo",
+      "date": "2026-09-29",
+      "hand": "v0",
+      "description": "Full-length top view of the whole V0 prototype on a light wooden table: the blue index finger pointing up and the blue thumb reaching right from the white palm frame, thin tendon lines running down between the palm's posts to the black forearm column, four 28BYJ-48 steppers with blue spools on this side of the column, and the motors' coloured cables coiled at the bottom.",
+      "alt": "The whole thumb and index prototype from above, from fingertips to the motor column and its cables.",
+      "caption": "The whole V0 prototype: fingers, palm, tendons and the motor column.",
+      "tags": [
+        "prototype",
+        "index",
+        "thumb",
+        "tendons",
+        "spools",
+        "motors",
+        "assembly"
+      ],
+      "width": 1125,
+      "height": 2000,
+      "used_in": [
+        "website/content/data/gallery.json"
+      ]
+    },
+    {
+      "file": "photos/2026-09-29-v0-prototype-top-view.jpg",
+      "type": "photo",
+      "date": "2026-09-29",
+      "hand": "v0",
+      "description": "Top view of the assembled V0 prototype on a light wooden table. The blue index finger points straight up, the blue thumb lies to the right, both mounted on the white palm frame. Below it, the black forearm column with blue tendon spools on 28BYJ-48 stepper motors; thin tendon lines run from the palm down to the spools, and colourful motor wires come off the bottom.",
+      "alt": "The thumb and index finger prototype seen from above, with the motor column and tendon spools below the palm.",
+      "caption": "The V0 prototype from above: fingers on the palm, motors and spools below.",
+      "tags": [
+        "prototype",
+        "index",
+        "thumb",
+        "tendons",
+        "spools",
+        "assembly"
+      ],
+      "width": 1125,
+      "height": 2000,
+      "used_in": [
+        "website/content/data/gallery.json"
+      ]
+    },
+    {
+      "file": "screenshots/2026-09-29-teleop-i-love-you-sign.png",
+      "type": "screenshot",
+      "date": "2026-09-29",
+      "hand": "v1",
+      "description": "Webcam teleop (sim/teleop.py, older on-screen text) side by side. Left: a left hand making the 'I love you' sign (thumb, index and little finger out; middle and ring finger curled down) with the green MediaPipe skeleton. Right: the white V1 MuJoCo hand making the same sign: index and little finger up, middle and ring curled, thumb out to the side.",
+      "alt": "Webcam teleop: a hand making the 'I love you' sign, and the simulated hand making the same sign.",
+      "caption": "Each finger follows on its own: the simulated hand copies an 'I love you' sign.",
+      "tags": [
+        "teleop",
+        "webcam",
+        "mediapipe",
+        "sim",
+        "mujoco"
+      ],
+      "width": 1113,
+      "height": 468,
+      "used_in": [
+        "website/content/data/gallery.json",
+        "website/content/pages/software.mdx"
+      ]
+    },
+    {
+      "file": "screenshots/2026-09-29-teleop-open-hand-with-people.png",
+      "type": "screenshot",
+      "date": "2026-09-29",
+      "hand": "v1",
+      "description": "Webcam teleop (sim/teleop.py, older on-screen text) side by side. Left: the mirrored webcam image with an open left hand and the MediaPipe hand skeleton drawn over it in green; two people are visible behind the hand, with their faces showing. Right: the white V1 MuJoCo hand copying the open pose, all five fingers spread, orange fingertip markers, dark background and checkered floor.",
+      "alt": "Webcam teleop: an open hand tracked by the camera on the left, copied by the simulated five-finger hand on the right.",
+      "caption": "Webcam teleop: the simulated hand copies an open hand.",
+      "tags": [
+        "teleop",
+        "webcam",
+        "mediapipe",
+        "sim",
+        "mujoco"
+      ],
+      "width": 1108,
+      "height": 477,
+      "used_in": [],
+      "todo": "Shows two people's faces: don't publish without their permission, or crop/blur the faces first."
+    },
+    {
+      "file": "screenshots/2026-09-29-teleop-open-hand.png",
+      "type": "screenshot",
+      "date": "2026-09-29",
+      "hand": "v1",
+      "description": "Webcam teleop (sim/teleop.py, older on-screen text) side by side. Left: the mirrored webcam image of an open, spread left hand with the green MediaPipe skeleton, a window and framed pictures behind it; status line reads about 22 fps, 57 ms delay. Right: the white V1 MuJoCo hand copying the pose with all five fingers spread and the thumb out to the side.",
+      "alt": "Webcam teleop: an open, spread hand on the left, copied by the simulated five-finger hand on the right.",
+      "caption": "Open your hand in front of the webcam and the simulated hand opens too.",
+      "tags": [
+        "teleop",
+        "webcam",
+        "mediapipe",
+        "sim",
+        "mujoco"
+      ],
+      "width": 1105,
+      "height": 469,
+      "used_in": [
+        "website/content/data/gallery.json"
+      ]
+    }
+  ]
+}

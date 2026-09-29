@@ -1,31 +1,35 @@
 ---
 title: The project
 kicker: About Tendra Hand
-lead: "An open-source robotic hand with the same joints as a human hand, where every joint moves on its own. Built step by step, and shared completely."
+lead: "An open-source robotic hand with the same joints as a human hand, as the first step toward a robot that can do what people do. Built step by step, and shared completely."
 description: "Why Tendra Hand exists, the design decisions behind it, where the project stands today and where it is going next."
 ---
 
 ## The goal
 
-Tendra Hand aims to be a robotic hand that can do what your hand does: pinch a coin, turn a key, hold a pen. To get there, it needs the same joints as a human hand, and every one of them has to move on its own.
+The big goal is a robot that can do what people do, just as well: cook a meal, fold the laundry, load the dishwasher, use everyday tools. Not only pick things up, but understand a task and carry it out, step by step.
 
-A human hand can make more than 20 separate motions. Each one is called a degree of freedom (DOF). The target for Tendra Hand is around 20 of them, with one motor for each. The current prototype is the first step: a thumb and an index finger with 8 joints.
+The hand is where it starts. Almost everything useful we do goes through our hands, and a hand that is as skilled as a human one is still the hardest part of building a helpful robot. So Tendra Hand first aims to do what your hand does: pinch a coin, turn a key, hold a pen. To get there, it needs the same joints as a human hand, and every one of them has to move on its own. Then come touch and vision, AI that learns skills and understands tasks, and finally an arm and a body to use it in a real home.
+
+A human hand can make more than 20 separate motions. Each one is called a degree of freedom (DOF). The full Tendra Hand has 21 of them, with one motor for each. The current prototype is the first step: a thumb and an index finger with 8 joints.
+
+<Figure src="/media/photos/2026-09-29-v0-fingers-three-quarter.jpg" alt="The blue index finger and thumb of the prototype seen from a three-quarter angle." caption="The current prototype: a thumb and an index finger, mounted on a printed palm." width={1125} height={2000} />
 
 And all of it is open source. The 3D design, the printable parts, the firmware, the control software, the simulation, future AI models and the research notes are free to use, change and build on.
 
 ## Design decisions
 
 <CardGrid>
-  <Card title="Why tendons?" kicker="Mechanics">
+  <Card icon="tendon" title="Why tendons?" kicker="Mechanics">
     Motors are heavy and bulky. Putting them inside the fingers makes the fingers thick and clumsy. With tendons (thin cords that pull on the joints, like the ones in your arm), the motors can sit further back and the fingers stay slim.
   </Card>
-  <Card title="Why one motor per joint?" kicker="Control">
+  <Card icon="motor" title="Why one motor per joint?" kicker="Control">
     Many hands use one motor to curl a whole finger. That is simpler, but every joint then moves in a fixed pattern. Giving each joint its own motor makes the hand harder to build, but it can do much more: bend just the fingertip, hold a pinch, or roll an object between fingers.
   </Card>
-  <Card title="Why steppers now, servos next?" kicker="Motors">
+  <Card icon="servo" title="Why steppers now, servos next?" kicker="Motors">
     The 28BYJ-48 stepper motors are cheap and easy to get, which makes them good for a first prototype. But they can't tell where they are, so every joint has to be straightened by hand before power-up. Feetech SCS0009 smart servos report their own position and share one data cable, so they are the next step.
   </Card>
-  <Card title="Why a computer and a microcontroller?" kicker="Electronics">
+  <Card icon="chip" title="Why a computer and a microcontroller?" kicker="Electronics">
     The computer is the brain: it plans the motions and will later run the AI. The ESP32-S3 microcontroller is the spinal cord: it only turns joint angles into smooth motor motion. This split keeps the fast, time-critical work on the ESP32 and the heavy thinking on the computer.
   </Card>
 </CardGrid>
@@ -48,9 +52,9 @@ The project is early. Here is an honest snapshot.
 | Firmware with smooth motion, tested on the computer | <StatusBadge status="done" /> |
 | Python control library and digital twin software | <StatusBadge status="done" /> |
 | Finishing the physical prototype, first power-on and calibration of each joint | <StatusBadge status="in-progress" /> |
-| Smart servo upgrade | <StatusBadge status="planned" /> |
-| Middle, ring and little fingers | <StatusBadge status="planned" /> |
+| Tendra Hand V1: five fingers, 21 joints, smart servos. Designed and simulated, not built yet | <StatusBadge status="in-progress" /> |
 | Touch sensing, camera and AI control | <StatusBadge status="planned" /> |
+| Understanding tasks, an arm and real chores | <StatusBadge status="planned" /> |
 
 <Callout type="note" title="Not tested on the real hand yet">
   The firmware and the control software have been tested against a software stand-in for the hand, not the real motors. Hardware bring-up comes next, and we will share how it goes in the build log.
@@ -64,8 +68,8 @@ The project is early. Here is an honest snapshot.
 
 Everything is published under open licenses that allow commercial use:
 
-- **Code** (firmware, Python, simulation, AI code and models): Apache-2.0
-- **Hardware** (CAD, print files, electronics, robot model): CERN-OHL-S-2.0. If you share a changed hardware design, share its files under the same license.
-- **Docs and research**: CC BY 4.0. Use them freely, just credit the project.
+- **Apache-2.0** for code (firmware, Python, simulation, AI code and models)
+- **CERN-OHL-S-2.0** for hardware (CAD, print files, electronics, robot model). If you share a changed hardware design, share its files under the same license.
+- **CC BY 4.0** for docs and research. Use them freely, just credit the project.
 
 Want to help? See [how to contribute](/contribute).

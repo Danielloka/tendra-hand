@@ -7,3 +7,5 @@ next-env.d.ts
 # Copied from ../styleguide and ../assets by scripts/sync-styleguide.mjs
 public/styleguide/
 public/assets/
+# Copied from ../media by scripts/sync-styleguide.mjs
+public/media/

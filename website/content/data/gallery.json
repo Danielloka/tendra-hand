@@ -2,12 +2,19 @@
   "items": [
     {
       "type": "image",
-      "src": "/images/placeholders/gallery-prototype-three-quarter.svg",
-      "alt": "The thumb and index finger prototype seen from a three-quarter angle",
+      "src": "/media/photos/2026-09-29-v0-prototype-full-length.jpg",
+      "alt": "The whole thumb and index prototype from above, from fingertips to the motor column and its cables.",
+      "caption": "The whole V0 prototype: fingers, palm, tendons and the motor column.",
+      "width": 1125,
+      "height": 2000
+    },
+    {
+      "type": "image",
+      "src": "/media/photos/2026-09-29-v0-fingers-three-quarter.jpg",
+      "alt": "The blue index finger and thumb of the prototype seen from a three-quarter angle.",
       "caption": "The current prototype: a thumb and an index finger with 8 joints.",
-      "width": 1200,
-      "height": 1500,
-      "todo": "Photo of the assembled thumb + index prototype from a three-quarter front angle, on a plain light background, portrait 4:5."
+      "width": 1125,
+      "height": 2000
     },
     {
       "type": "image",
@@ -30,30 +37,51 @@
     },
     {
       "type": "image",
-      "src": "/images/placeholders/gallery-electronics.svg",
-      "alt": "The ESP32-S3 board wired to eight ULN2003 stepper driver boards",
+      "src": "/media/photos/2026-09-29-v0-forearm-motors-spools.jpg",
+      "alt": "The forearm column with stepper motors and blue tendon spools, with the fingers on top.",
+      "caption": "One motor and one spool per joint: each tendon loop bends the joint one way and straightens it the other.",
+      "width": 1125,
+      "height": 2000
+    },
+    {
+      "type": "image",
+      "src": "/media/photos/2026-09-29-v0-prototype-top-view.jpg",
+      "alt": "The thumb and index finger prototype seen from above, with the motor column and tendon spools below the palm.",
+      "caption": "The V0 prototype from above: fingers on the palm, motors and spools below.",
+      "width": 1125,
+      "height": 2000
+    },
+    {
+      "type": "image",
+      "src": "/media/photos/2026-09-29-v0-electronics-overview.jpg",
+      "alt": "The ESP32-S3 on a breadboard, wired to the ULN2003 stepper driver boards.",
       "caption": "The electronics: one ESP32-S3 and a driver board for each of the 8 motors.",
-      "width": 1500,
-      "height": 1000,
-      "todo": "Top-down photo of the ESP32-S3 wired to the 8 ULN2003 boards and the 5 V supply, landscape 3:2."
+      "width": 1125,
+      "height": 2000
     },
     {
       "type": "image",
-      "src": "/images/placeholders/gallery-spool.svg",
-      "alt": "Close-up of a 2 cm tendon spool on a 28BYJ-48 motor",
-      "caption": "One spool, one tendon loop: it bends the joint one way and straightens it the other.",
-      "width": 1000,
-      "height": 1000,
-      "todo": "Macro photo of one 28BYJ-48 motor with its 2 cm spool and tendon loop wound on it, square 1:1."
+      "src": "/media/photos/2026-09-29-v0-esp32-s3-breadboard.jpg",
+      "alt": "Close-up of the ESP32-S3 board on a breadboard with jumper wires on both sides.",
+      "caption": "The ESP32-S3 controller, the brain of the prototype.",
+      "width": 1125,
+      "height": 2000
     },
     {
       "type": "image",
-      "src": "/images/placeholders/gallery-printed-parts.svg",
-      "alt": "All printed parts of the thumb and index finger laid out on a table",
+      "src": "/media/photos/2026-09-29-v0-printed-parts-box.jpg",
+      "alt": "A box of blue 3D-printed finger segments, white tubing and bags of small bearings.",
       "caption": "Every part of the skeleton comes off an ordinary 3D printer.",
-      "width": 1600,
-      "height": 900,
-      "todo": "Flat-lay photo of all printed PLA/PETG parts of the thumb + index, neatly arranged on a light surface, landscape 16:9."
+      "width": 1125,
+      "height": 2000
+    },
+    {
+      "type": "image",
+      "src": "/media/photos/2026-09-29-v0-palm-frame-printed.jpg",
+      "alt": "The white 3D-printed palm frame of the V0 prototype on a wooden table.",
+      "caption": "The printed palm frame, before assembly.",
+      "width": 1125,
+      "height": 2000
     },
     {
       "type": "image",
@@ -63,6 +91,22 @@
       "width": 1600,
       "height": 1000,
       "todo": "Screenshot of `uv run python sim/view.py` with the hand in a pinch pose and the Control sliders visible, landscape 16:10."
+    },
+    {
+      "type": "image",
+      "src": "/media/screenshots/2026-09-29-teleop-i-love-you-sign.png",
+      "alt": "Webcam teleop: a hand making the 'I love you' sign, and the simulated hand making the same sign.",
+      "caption": "Each finger follows on its own: the simulated hand copies an 'I love you' sign.",
+      "width": 1113,
+      "height": 468
+    },
+    {
+      "type": "image",
+      "src": "/media/screenshots/2026-09-29-teleop-open-hand.png",
+      "alt": "Webcam teleop: an open, spread hand on the left, copied by the simulated five-finger hand on the right.",
+      "caption": "Open your hand in front of the webcam and the simulated hand opens too.",
+      "width": 1105,
+      "height": 469
     },
     {
       "type": "video",

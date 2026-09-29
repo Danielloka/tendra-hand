@@ -13,6 +13,8 @@ type Props = {
   toc?: boolean;
   /** Buttons in the hero. */
   actions?: ReactNode;
+  /** Extra hero content under the intro (e.g. a stats row). */
+  heroExtra?: ReactNode;
   /** Rendered after the MDX sections, in its own white band (gallery grid, log list). */
   children?: ReactNode;
 };
@@ -56,7 +58,7 @@ function splitSections(Content: (props: object) => ReactNode): { intro: ReactNod
  * the frontmatter, any text before the first `##` as the hero's intro, then one
  * band per section, alternating grey and white.
  */
-export async function ContentPage({ slug, toc = false, actions, children }: Props) {
+export async function ContentPage({ slug, toc = false, actions, heroExtra, children }: Props) {
   const { default: Content, frontmatter: fm } = await getPage(slug);
   const { intro, bands } = splitSections(Content as (props: object) => ReactNode);
   const tocItems: TocItem[] = toc ? bands.filter((b) => b.id).map((b) => ({ id: b.id!, text: b.title, depth: 2 })) : [];
@@ -70,12 +72,13 @@ export async function ContentPage({ slug, toc = false, actions, children }: Prop
             <DocsToc items={tocItems} variant="inline" />
           </div>
         )}
+        {heroExtra}
       </PageHero>
 
       {bands.length > 0 && (
         <div className={`page-body${toc ? " page-body--toc" : ""}`}>
           {bands.map((band, i) => (
-            <section key={band.id ?? i} className={`page-band${i % 2 === 0 ? " section--alt" : ""}`} aria-labelledby={band.id}>
+            <section key={band.id ?? i} data-band={band.id} className={`page-band${i % 2 === 0 ? " section--alt" : ""}`} aria-labelledby={band.id}>
               <div className="container">
                 <div className="prose page-prose">{band.nodes}</div>
               </div>

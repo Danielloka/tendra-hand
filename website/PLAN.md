@@ -82,6 +82,7 @@ website/
 - `content/roadmap.json`: `{ "kicker", "title", "lead", "phases": [ { "id", "title", "summary", "status": "done" | "in-progress" | "planned", "items": [string] } ] }`
 - `content/data/bom.json`: `{ "updated": "YYYY-MM-DD", "groups": [ { "name", "items": [ { "part", "qty", "spec", "notes", "link"? , "status": "have" | "planned" } ] } ] }`
 - `content/data/gallery.json`: `{ "items": [ { "type": "image" | "video", "src", "poster"?, "alt", "caption", "width", "height", "todo" } ] }` — `todo` says what real photo/video should replace the placeholder.
+- Real media: files in the repo's `media/` folder (see `media/README.md`, described in `media/catalog.json`), copied to `public/media/` by `scripts/sync-styleguide.mjs` and referenced as `/media/photos/…`. Replace a placeholder by pointing `src` there and removing its `todo`.
 - Placeholders: SVGs in `public/images/placeholders/` with the subject written on them. Every placeholder in MDX/JSON/components has a `TODO:` marker (JSX comment, MDX comment `{/* TODO: … */}`, or a `todo` field).
 
 ### MDX components (available in every .mdx without import)

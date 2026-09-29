@@ -127,3 +127,10 @@ if a sim body has no matching part.
 
 `index_mcp_abd` and `thumb_cmc_rot` have sideways axes, so the tendon line
 skips them and runs through the next joint (see `gltfRig.ts`).
+
+## `hand-v1.glb` (project page)
+
+A **static, unrigged** model of the full 5-finger Tendra Hand V1 (palm, fingers and thumb, no servos
+or forearm), shown spinning in the project page's hero (`components/three/SpinHand.tsx`). Made from
+the Fusion export by `website/scripts/v1-to-glb.py` (command in its docstring); re-run it after a new
+V1 export. About 1.6 MB.

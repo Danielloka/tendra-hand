@@ -21,6 +21,28 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 - **Bearings are already on both sides of every joint** (the research's best option for smoothness).
 **Next:** implementation plan (firmware, Python, sim, router, CAD), then step-by-step changes with tests.
 
+**Implemented the same day (commit c430c67), everything except the Fusion CAD:**
+- **Router:** 32 strands and 16 servos. The finger `mcp_abd` servos moved to the free deeper back slot (`B2`): from the shallow slot, the index abd strand bent at r 14.7 mm, under the 15 mm rule. Min bend is now 17.0 mm.
+- **Firmware 0.4.0:** 16 servos, new IDs, `servo_per_joint` 1.4 / 1.5 / 1.2. `thumb_cmc_rot` needs 210 servo degrees, so its `zero_ticks` is 665, not 512. A new host test checks that every joint's range fits inside 0…1023 ticks. 298 checks pass; both builds pass.
+- **Sim:**
+  - **Physics:** a joint equality (`dip = 0.75 pip`).
+  - **Geometry:** passive coupling strands. Their length stays constant along DIP = 0.75 × PIP, to 0.0000 mm at 200 random poses, which proves the hub/drum geometry gives the ratio. Driving the PIP to 80° moves the DIP to 60°.
+  - **MuJoCo note:** wrapping a 4.5 mm hub over a 100° range is fragile. With the side site at 45°, the wrap flipped sides at large bends. A sweep found that a side site straight out on the strand's own side, with the crossing point 8 mm along the middle phalanx, works at every angle.
+  - **Fixed:** an old bug in the `fist` keyframe. Its qpos was in actuator order, so `index_mcp_abd` got 60°.
+- **tendra:**
+  - `HandSpec.couplings` / `all_joint_names` / `expand()`. `SimHand.set_positions` also sets the DIPs.
+  - `RealHand` refuses firmware that reports 20 joints.
+  - Retargeting fits each finger with the coupling. It puts the robot tip closer than a free fit with the DIP dropped (tested).
+- **Scene, synergies, RL:** 16 finger values; dataset frames are 23 (was 27). Old datasets and synergy files are refused with a clear error. Old `runs/` checkpoints and GPU export bundles don't fit any more.
+- **Tests:** all 245 pass. The `test_grasp_env` reward test picked "fingers closing" from control column 2, which is now `index_mcp_abd`; it now looks the joint up by name.
+- **Still to do (Fusion, with the owner):**
+  - 5 mm spools (tie hole inside the 4.8 mm groove floor)
+  - 7 mm groove on each finger's MCP drum
+  - 4.5 mm hub + tie holes on each proximal phalanx
+  - crossing holes in the middle phalanx
+  - forearm with 16 servos
+  - re-export, then re-run `convert_v1.py` and remove the converter's skip of the old DIP servo parts
+
 ## 2026-10-01: STS3032 datasheet check
 **Goal:** does the Feetech STS3032 sense current/force, as a candidate next to the HLS3606M?
 **Setup:** official datasheet STS3032 A/0 (2020-06-08, via Switch Science), shop listings.

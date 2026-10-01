@@ -61,7 +61,7 @@ Joints are numbered **1–N = motors M1–MN** (v1: motor number = servo ID). An
 | `K i s` | set joint *i* scale in native units per joint radian (v0 steps/rad, v1 ticks/rad) | `OK` |
 | `V i v a` | max velocity (rad/s) and acceleration (rad/s²) of joint *i* (`0` = all) | `OK` |
 | `B` | **v1 only:** scan the bus (IDs 0–253, ~0.4 s) | `B 1 2 3 …` (IDs that answered) |
-| `I` | firmware info + scales | v0: `I tendra-hand fw 0.1.0 joints=8 name:scale …`; v1: `I tendra-hand fw 0.3.0 hand=v1-servo joints=20 name:ticks_per_rad:zero_ticks:online …` |
+| `I` | firmware info + scales | v0: `I tendra-hand fw 0.1.0 joints=8 name:scale …`; v1: `I tendra-hand fw 0.4.0 hand=v1-servo joints=16 name:ticks_per_rad:zero_ticks:online …` |
 
 Targets are clamped to the joint limits. v0: coils switch off after 1 s without motion. v1: servos keep holding (torque on) until `R`.
 
@@ -79,7 +79,7 @@ GPIO 17/18 are ordinary pins: not strapping pins (0, 3, 45, 46), not native USB 
 Some FE-URT-1 boards have TX/RX **silk-screened the wrong way round**: if `B` finds nothing, swap the two wires.
 The FE-URT-1 switches the half-duplex bus direction by itself. If it echoes our own bytes back to RX, `ScsBus` skips the echo automatically.
 Bus: **1,000,000 baud**, 8N1 (the SCS0009 default). Every servo needs a unique ID = its motor number (1–20); set IDs one servo at a time with Feetech's FD software over the FE-URT-1's USB port.
-Power the servos from their own supply (SCS0009: 4–7.4 V). 20 servos under load draw several amps: size the supply and wiring for it, and keep the ESP32 on USB.
+Power the servos from their own supply (SCS0009: 4–7.4 V). 16 servos under load draw several amps: size the supply and wiring for it, and keep the ESP32 on USB.
 
 ### How it moves
 
@@ -92,7 +92,7 @@ Power the servos from their own supply (SCS0009: 4–7.4 V). 20 servos under loa
 
 `ticks = zero_ticks + (invert ? -1 : 1) · ticks_per_rad · q`, with `ticks_per_rad = servo_per_joint · 195.57`.
 
-- `servo_per_joint` = servo radians per joint radian = *r*<sub>joint drum</sub> / *r*<sub>spool</sub> (same tendon length both sides). Default **1.0** until measured; spool radius default 6 mm (`spool_radius_m`), equal to the 6 mm joint drums, so 1:1.
+- `servo_per_joint` = servo radians per joint radian = *r*<sub>joint drum</sub> / *r*<sub>spool</sub> (same tendon length both sides). Set from the design (since 0.4.0): 5 mm spools on every servo, so **1.4** for finger `mcp_flex` (7 mm drum), **1.5** for `thumb_cmc_rot` (7.5 mm) and **1.2** for the rest (6 mm); calibrate per joint once built. The finger DIPs have no servo (coupled to the PIP), so V1 has 16 servos for 20 joints.
 - `zero_ticks` = servo reading with the joint straight. Default 512 (servo centred when the tendon is tied).
 - `invert` if more ticks opens the joint.
 

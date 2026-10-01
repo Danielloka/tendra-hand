@@ -33,16 +33,16 @@
     {
       "id": "phase-2",
       "title": "Phase 2: Tendra Hand V1, the first full hand",
-      "summary": "Five fingers and 20 joints, each driven by a smart servo that reports its own position. This is the first real Tendra Hand.",
+      "summary": "Five fingers and 20 joints, moved by 16 smart servos that report their own position (each fingertip joint follows its middle joint, like in a human finger). This is the first real Tendra Hand.",
       "status": "in-progress",
       "items": [
         "Middle, ring and little fingers, copied from the index and sized like a human hand (designed in Fusion 360)",
         "A thumb with 5 joints, like a human thumb",
         "All 20 motors in the forearm, with every tendon in its own channel through the palm and wrist",
         "Full-hand simulation model: 20 joints and 40 tendons",
-        "Firmware for the servo bus, ready for all 20 servos, with the same Python code as V0",
-        "Still to do: electronics and a power supply big enough for 20 servos",
-        "Still to do: wire all 20 servos on one shared data cable, through an FE-URT-1 adapter",
+        "Firmware for the servo bus, ready for all 16 servos, with the same Python code as V0",
+        "Still to do: electronics and a power supply big enough for 16 servos",
+        "Still to do: wire all 16 servos on one shared data cable, through an FE-URT-1 adapter",
         "Still to do: print a test section of the tendon channels, then print and assemble the whole hand",
         "Still to do: read back position, load and temperature, and show the measured positions live in the digital twin",
         "Still to do: compare the V0 steppers with the V1 servos for speed, precision, force and noise"

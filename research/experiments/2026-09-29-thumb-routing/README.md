@@ -1,6 +1,6 @@
 # Thumb tendon routing (Tendra Hand V1), design study
 
-**Status:** concept A chosen (2026-09-29), thumb back to 4 DOF. Stages 1–2 and 3a done; the palm/forearm need a rebuild for the 20-servo layout; the sheath entry into the metacarpal is an open decision (see the last section).
+**Status:** concept A chosen (2026-09-29), thumb back to 4 DOF. Stages 1–2 and 3a done; the palm/forearm need a rebuild for the 16-servo layout (2026-10-01); the sheath entry into the metacarpal is an open decision (see the last section).
 
 ## What exists (measured in the Fusion design "Tendra Hand V1", world mm)
 
@@ -76,7 +76,7 @@ Build order (each a `TendraHandV1` stage, tested before the next):
 |---|---|---|
 | Plate / bay floor | 4 mm lower (plate z −8.4…−1.5, floor −8.7) | tube loop bend ≥ 14.3 mm |
 | Hollow journal | Ø14 outside, bore Ø11.6, bearing 3 mm deep in the floor (U-slot to the front) | 6 sheaths + 2 bare strands |
-| cmc_rot drum | r 7.5 in the plate (z −4.7), flange r 9, tie hole at 240° (20° wrap left at both limits) | the bore takes the middle, so **servo_per_joint = 1.25** (`config_v1.h`, sim) |
+| cmc_rot drum | r 7.5 in the plate (z −4.7), flange r 9, tie hole at 240° (20° wrap left at both limits) | the bore takes the middle, so **servo_per_joint = 1.25** (1.5 since the 5 mm spools of 2026-10-01; `config_v1.h`, sim) |
 | cmc_rot feed | horizontal to +Y, through the bay's back wall, over a Ø3 steel pin (y 30.8, z −6.4, blind hole from the thumb side), then down | a strand parallel to Z can't turn it |
 | cmc_flex drum | on the metacarpal over the rot axis, grooves at x 0 (flex) and 2 (ext); both strands leave its back; ext goes up over a Ø3 pin (y 17.7, z 18.5) on a hanger from the top arm, then down | lands both within 1.1 mm of the rot axis |
 | cmc_flex hold | palm entry under the strand's plate crossing at cmc_rot = −30° (mid-range) | length change ≤ 0.25 mm over the whole rot range |

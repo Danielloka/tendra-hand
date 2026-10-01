@@ -68,6 +68,12 @@ def parse_info(line: str) -> tuple[HandSpec, list[JointInfo]]:
         spec = next((s for s in HANDS.values() if s.firmware_variant == fields["hand"]), None)
         if spec is None:
             raise HandError(f"unknown hand variant {fields['hand']!r} in {line!r}")
+        if "joints" in fields and int(fields["joints"]) != spec.num_joints:
+            # e.g. a board still on the 20-servo V1 firmware (0.3.x): its IDs mean other joints now
+            raise HandError(
+                f"the firmware reports {fields['joints']} joints, this software expects "
+                f"{spec.num_joints} for {spec.name}: flash the current firmware ({line!r})"
+            )
     elif "joints" in fields:
         n = int(fields["joints"])
         spec = next((s for s in HANDS.values() if s.num_joints == n), None)

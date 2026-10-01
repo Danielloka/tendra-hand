@@ -46,18 +46,39 @@ def in_box(p, box, margin=0.0):
     return all(lo - margin <= p[i] <= hi + margin for i, (lo, hi) in enumerate(box))
 
 
-def test_40_strands_20_servos_ids_match_firmware():
-    assert len(ROUTES) == 40 and len({r["name"] for r in ROUTES}) == 40
-    assert sorted(s.id for s in SERVOS) == list(range(1, 21))
-    cfg = (Path(__file__).resolve().parents[3] / "firmware" / "include" / "config_v1.h").read_text()
-    rows = {n: int(i) for n, i in re.findall(r'\{"(\w+)",\s*(\d+),', cfg)}
+FIRMWARE_CFG = (
+    Path(__file__).resolve().parents[3] / "firmware" / "include" / "config_v1.h"
+).read_text()
+
+
+def test_32_strands_16_servos_ids_match_firmware():
+    assert len(ROUTES) == 32 and len({r["name"] for r in ROUTES}) == 32
+    assert sorted(s.id for s in SERVOS) == list(range(1, 17))
+    rows = {n: int(i) for n, i in re.findall(r'\{"(\w+)",\s*(\d+),', FIRMWARE_CFG)}
     assert rows == {s.joint: s.id for s in SERVOS}
+
+
+def test_firmware_servo_per_joint_is_drum_over_spool():
+    rows = dict(re.findall(r'\{"(\w+)",\s*\d+,[^}]*?,\s*([\d.]+)f,\s*-?\d+\}', FIRMWARE_CFG))
+    assert rows.keys() == {s.joint for s in SERVOS}
+    for joint, spj in rows.items():
+        assert float(spj) == pytest.approx(tr.servo_per_joint(joint), abs=1e-6), joint
+
+
+def test_dips_are_coupled_not_routed():
+    assert not any("_dip" in r["joint"] for r in ROUTES)
+    assert tr.COUPLED == {f"{f}_dip": f"{f}_pip" for f in tr.FINGERS}
+    assert (
+        tr.COUPLING_RATIO == pytest.approx(tr.COUPLING_HUB_R / tr.DIP_DRUM_R) == pytest.approx(0.75)
+    )
+    c = tr.layout()["coupling"]
+    assert c["ratio"] == tr.COUPLING_RATIO and c["joints"] == tr.COUPLED
 
 
 def test_every_strand_has_its_own_entry_wrist_hole_and_tangent():
     for key in ("entry_mm", "wrist_bottom_mm", "tangent_mm"):
         pts = [tuple(np.round(r[key], 3)) for r in ROUTES]
-        assert len(set(pts)) == 40, key
+        assert len(set(pts)) == len(ROUTES), key
 
 
 def test_channels_keep_a_wall_between_each_other():
@@ -172,8 +193,15 @@ def test_servos_do_not_collide():
 
 def test_loop_fits_the_servo_range():
     """Tendon travel = drum radius x joint range must fit in 300 deg of spool rotation."""
-    worst_deg = 140 * tr.ROT_DRUM_R / tr.SPOOL_R  # thumb_cmc_rot: -100..40 on the larger drum
-    assert worst_deg < 300 * 0.9
+    lims = {
+        n: (float(lo), float(hi))
+        for n, lo, hi in re.findall(
+            r'\{"(\w+)",\s*\d+,\s*(-?\d+) \* kDegToRad,\s*(-?\d+) \* kDegToRad', FIRMWARE_CFG
+        )
+    }
+    assert lims.keys() == {s.joint for s in SERVOS}
+    for joint, (lo, hi) in lims.items():
+        assert (hi - lo) * tr.servo_per_joint(joint) < 300 * 0.9, joint
 
 
 @pytest.mark.skipif(not tr.OUT.exists(), reason="run tendon_router.py first")

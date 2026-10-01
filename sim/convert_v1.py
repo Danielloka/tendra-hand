@@ -18,8 +18,13 @@ What the converter does:
   given by CLOSING_DIRECTION below.
 - Mass and inertia from the meshes at PLA density (meshes with open edges fall back to MuJoCo's
   "legacy" inertia, which tolerates them).
-- Tendons: two strands per joint (<joint>_flex, <joint>_ext) that model the real routing rule,
-  see build_strand(). Each joint is driven by a position actuator on its flex strand.
+- Tendons: two strands per servo-driven joint (<joint>_flex, <joint>_ext) that model the real
+  routing rule, see build_strand(). Each of the 16 servos is a position actuator on its flex strand.
+- DIP coupling (2026-10-01): the four finger DIPs have no servo. Their two strands are tied in the
+  proximal phalanx, wrap a hub on the PIP axis and the DIP drum, crossed in the middle phalanx, so the
+  DIP turns COUPLING_RATIO x the PIP (see build_coupling_strand()). The physics uses a joint equality
+  (dip = ratio * pip, the same force law as an inextensible coupling loop); the passive strands give
+  the real geometry, and the tests check that their lengths stay constant along the coupling.
 """
 
 from __future__ import annotations
@@ -27,6 +32,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import re
 import struct
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
@@ -47,28 +53,28 @@ DEG = math.pi / 180.0
 DENSITY = 1240.0
 
 # Actuator (= servo bus ID) order. Must match firmware/include/config_v1.h and software/tendra.
+# 16 servos since 2026-10-01: the finger DIPs are coupled to their PIPs.
 ACTUATOR_ORDER = [
-    "index_dip",
     "index_pip",
     "index_mcp_flex",
-    "index_mcp_abd",  # 1-4
+    "index_mcp_abd",  # 1-3
     "thumb_ip",
     "thumb_mcp_flex",
     "thumb_cmc_flex",
-    "thumb_cmc_rot",  # 5-8 (4-DOF thumb since 2026-09-29)
-    "middle_dip",
+    "thumb_cmc_rot",  # 4-7
     "middle_pip",
     "middle_mcp_flex",
-    "middle_mcp_abd",  # 9-12
-    "ring_dip",
+    "middle_mcp_abd",  # 8-10
     "ring_pip",
     "ring_mcp_flex",
-    "ring_mcp_abd",  # 13-16
-    "little_dip",
+    "ring_mcp_abd",  # 11-13
     "little_pip",
     "little_mcp_flex",
-    "little_mcp_abd",  # 17-20
+    "little_mcp_abd",  # 14-16
 ]
+FINGERS = ("index", "middle", "ring", "little")
+COUPLED = {f"{f}_dip": f"{f}_pip" for f in FINGERS}  # passive joint -> the joint that drives it
+JOINT_ORDER = ACTUATOR_ORDER + list(COUPLED)  # every joint of the export (20)
 
 # Joint limits in degrees (positive = closing). Same as config_v1.h.
 LIMITS_DEG = {
@@ -108,25 +114,27 @@ def joint_limits_deg(joint: str) -> tuple[float, float]:
 
 
 # ----- Tendons and actuation -----------------------------------------------------------------
-DRUM_RADIUS = 6.0 * MM  # joint drum on the child segment (tendon centreline)
-SPOOL_RADIUS = 6.0 * MM  # servo spool, so the drive is 1:1 (servo angle = joint angle)...
-
-
-def _rot_drum_radius() -> float:
-    """...except thumb_cmc_rot: its drum is larger because the hollow journal takes the middle of
-    the base (tendon_routes.json, "thumb" section; research/experiments/2026-09-29-thumb-routing)."""
-    if ROUTES_PATH.exists():
-        thumb = json.loads(ROUTES_PATH.read_text(encoding="utf-8")).get("thumb")
-        if thumb:
-            return thumb["rot_drum"]["r"] * MM
-    return DRUM_RADIUS
-
-
-THUMB_ROT_DRUM_RADIUS = _rot_drum_radius()
+# Drum, spool and coupling sizes come from tendon_routes.json (hardware/cad/tendon_router.py, the
+# single source of truth); the fallbacks are the same numbers, for a model without routes.
+_ROUTES_JSON = json.loads(ROUTES_PATH.read_text(encoding="utf-8")) if ROUTES_PATH.exists() else {}
+SPOOL_RADIUS = _ROUTES_JSON.get("spool_radius_mm", 5.0) * MM  # every servo spool
+_DRUMS_MM = _ROUTES_JSON.get("drums_mm") or {}
+_COUPLING = _ROUTES_JSON.get("coupling") or {}
+COUPLING_HUB_RADIUS = _COUPLING.get("hub_r_mm", 4.5) * MM  # hub on the PIP axis (proximal)
+COUPLING_RATIO = _COUPLING.get("ratio", 0.75)  # DIP angle per PIP angle
+COUPLING_SOLREF = (0.01, 1.0)  # stiff, critically damped (>= 2 x the 4 ms RL timestep)
 
 
 def drum_radius(joint: str) -> float:
-    return THUMB_ROT_DRUM_RADIUS if joint == "thumb_cmc_rot" else DRUM_RADIUS
+    """Tendon centreline radius on a joint's drum (m): finger mcp_flex 7 mm, thumb_cmc_rot 7.5 mm
+    (the hollow journal takes the base's middle), every other drum 6 mm."""
+    if joint in _DRUMS_MM:
+        return _DRUMS_MM[joint] * MM
+    if joint == "thumb_cmc_rot":
+        return 7.5 * MM
+    if joint.endswith("_mcp_flex") and not joint.startswith("thumb"):
+        return 7.0 * MM
+    return 6.0 * MM
 
 
 def servo_per_joint(joint: str) -> float:
@@ -143,17 +151,17 @@ GUIDE_DISTANCE = (
     8.0 * MM
 )  # the strand runs tangent to the drum for this far before it (parent side)
 START_DISTANCE = 10.0 * MM  # without tendon_routes.json, strands start this far into the palm
+HUB_CROSS = 8.0 * MM  # coupling strand: crossing point along the middle phalanx (<= 40 % of it)
 
-# SCS0009: 0.19 N*m stall at 5 V. Use half of it as the continuous limit (~16 N tendon force at the
-# 6 mm spool). The servo's P controller saturates after roughly 0.1 rad of error, so kp ~ 2 N*m/rad;
-# kv = force limit / no-load speed (~8 rad/s). All in servo units (N*m, rad); 1:1 to the joint.
+# SCS0009: 0.19 N*m stall at 5 V. Use half of it as the continuous limit (19 N tendon force at the
+# 5 mm spool). The servo's P controller saturates after roughly 0.1 rad of error, so kp ~ 2 N*m/rad;
+# kv = force limit / no-load speed (~8 rad/s). All in servo units (N*m, rad); the actuators scale
+# them to the joint by n = servo_per_joint.
 SERVO_KP = 2.0  # N*m per rad of servo error
 SERVO_KV = 0.012  # N*m*s/rad
-SERVO_FORCE_LIMIT = 0.095  # N*m at the servo = 15.8 N tendon force at r = 6 mm
+SERVO_FORCE_LIMIT = 0.095  # N*m at the servo = 19 N tendon force at r = 5 mm
 JOINT_DAMPING = 0.005  # N*m*s/rad (joint friction)
-JOINT_ARMATURE = (
-    1e-4  # kg*m^2, reflected servo/gearbox inertia (1:1), also keeps small links stable
-)
+JOINT_ARMATURE = 1e-4  # kg*m^2, reflected servo/gearbox inertia, also keeps small links stable
 
 # Body pairs that only collide because MuJoCo collides meshes as convex hulls. The palm has a pocket
 # for the thumb base that its hull fills, so the hull "hits" the metacarpal at almost any thumb pose
@@ -162,11 +170,11 @@ JOINT_ARMATURE = (
 # decomposition of the palm. Pairs whose parts don't exist are skipped.
 HULL_ARTIFACT_EXCLUDES = [("palm", "thumb_metacarpal")]
 
-# Named poses (degrees) for keyframes and tests. Joints not listed are 0.
+# Named poses (degrees) for keyframes and tests, servo-driven joints only (each DIP follows its
+# PIP). Joints not listed are 0.
 FIST_DEG = {
     "mcp_flex": 80,
     "pip": 90,
-    "dip": 60,
     "mcp_abd": 0,
     "thumb_cmc_rot": 0,
     "thumb_cmc_flex": 30,
@@ -233,10 +241,16 @@ class Joint:
 @dataclass
 class Hand:
     parts: dict[str, dict]  # name -> {"mesh": relative path, "tris": (N,3,3) m}
-    joints: dict[str, Joint]  # in ACTUATOR_ORDER
+    joints: dict[str, Joint]  # in JOINT_ORDER (servo-driven, then the coupled DIPs)
     parent_joint: dict[str, str]  # child part -> joint
     fixed: list[str]  # parts fixed to the world
     body_pos: dict[str, np.ndarray]  # world position of each body frame (m)
+
+
+# Servo and spool parts of joints that no longer have a servo. Until the Fusion design is
+# re-exported with 16 servos, the export still holds the 20-servo forearm: its DIP servos are left
+# out (the others are welded to the world, so their old names and places are only cosmetic).
+_STALE_PART = re.compile(r"^(servo|spool)_\d\d_(\w+)$")
 
 
 def load_hand(spec_path: Path = SPEC_PATH) -> Hand:
@@ -244,12 +258,15 @@ def load_hand(spec_path: Path = SPEC_PATH) -> Hand:
     base = spec_path.parent
     parts = {}
     for p in spec["parts"]:
+        m = _STALE_PART.match(p["name"])
+        if m and m.group(2) in COUPLED:
+            continue
         parts[p["name"]] = {"mesh": p["mesh"], "tris": read_stl(base / p["mesh"]) * MM}
 
     raw = {j["name"]: j for j in spec["joints"]}
-    if set(raw) != set(ACTUATOR_ORDER):
+    if set(raw) != set(JOINT_ORDER):
         raise ValueError(
-            f"Joints in the export and ACTUATOR_ORDER disagree: {sorted(set(raw) ^ set(ACTUATOR_ORDER))}"
+            f"Joints in the export and JOINT_ORDER disagree: {sorted(set(raw) ^ set(JOINT_ORDER))}"
         )
     for j in raw.values():
         if abs(j.get("angle_rad", 0.0)) > 1e-9:
@@ -272,7 +289,7 @@ def load_hand(spec_path: Path = SPEC_PATH) -> Hand:
         return out
 
     joints = {}
-    for name in ACTUATOR_ORDER:
+    for name in JOINT_ORDER:
         j = raw[name]
         point = np.array(j["point_mm"], dtype=float) * MM
         a0 = _unit(np.array(j["axis"], dtype=float))
@@ -444,6 +461,60 @@ def build_strand(hand: Hand, joint: str, side: str, routes: dict | None) -> list
     return points[::-1]
 
 
+def build_coupling_strand(hand: Hand, joint: str, side: str) -> list[PathPoint]:
+    """Path of one strand of a DIP's coupling loop, proximal (tie in the proximal phalanx) to distal
+    (anchor on the DIP drum). `joint` is the DIP, p = its PIP.
+
+    - DIP end: as in build_strand(): the flex strand is tangent to the DIP drum's closing side (+w),
+      the ext strand to its opening side, so dL_flex/dq_dip = -r_dip.
+    - PIP end: the strand wraps a hub of radius r_hub that is fixed to the PROXIMAL phalanx, on the
+      PIP axis, on the opposite side: flex on the hub's back (-w), ext on its palm side. A strand on
+      the outside of a bend gets longer as the joint closes: dL_flex/dq_pip = +r_hub.
+    - The loop's length is fixed, so r_hub * dq_pip = r_dip * dq_dip: DIP = (r_hub / r_dip) x PIP.
+      The two strands cross inside the middle phalanx (crossing site -> DIP guide).
+    """
+    d, p = hand.joints[joint], hand.joints[COUPLED[joint]]
+    sgn = 1.0 if side == "flex" else -1.0
+    r_dip, r_hub = drum_radius(joint), COUPLING_HUB_RADIUS
+    # DIP drum: anchor and guide as in build_strand().
+    anchor_r = r_dip + ANCHOR_OFFSET
+    phi = (d.hi if side == "flex" else -d.lo) + WRAP_MARGIN + math.acos(r_dip / anchor_r)
+    anchor = d.center + anchor_r * (sgn * math.cos(phi) * d.w + math.sin(phi) * d.u)
+    middle_len = abs(np.dot(d.center - p.center, p.u))
+    guide = min(GUIDE_DISTANCE, 0.6 * middle_len)
+    side_dir = sgn * math.cos(math.pi / 4) * d.w + math.sin(math.pi / 4) * d.u
+    # Hub: the strand leaves the hub tangent at -sgn * w, runs along the middle phalanx to a crossing
+    # point, and wraps back toward the palm to its tie. The wrap at q = 0 leaves WRAP_MARGIN where it
+    # is smallest (flex: PIP fully open, ext: PIP fully closed). The side site sits straight out
+    # from the hub on the strand's side (-sgn * w): a parameter sweep (crossing distance, side site
+    # angle and distance, tie offset) found this keeps MuJoCo's wrap on the right side over the
+    # whole PIP range; other side-site angles flip it at large bends.
+    tie_r = r_hub + ANCHOR_OFFSET
+    psi = (-p.lo if side == "flex" else p.hi) + WRAP_MARGIN + math.acos(r_hub / tie_r)
+    tie = p.center + tie_r * (-sgn * math.cos(psi) * p.w - math.sin(psi) * p.u)
+    cross = p.center + min(HUB_CROSS, 0.4 * middle_len) * p.u - sgn * r_hub * p.w
+    return [
+        PathPoint(p.parent, tie, "tie"),
+        PathPoint(
+            p.child,
+            cross,
+            "cross",
+            drum=f"{joint}_hub",
+            side_body=p.parent,
+            side_pos=p.center - sgn * 2 * r_hub * p.w,
+        ),
+        PathPoint(d.parent, d.center - guide * d.u + sgn * r_dip * d.w, "guide"),
+        PathPoint(
+            d.child,
+            anchor,
+            "anchor",
+            drum=f"{joint}_drum",
+            side_body=d.parent,
+            side_pos=d.center + 2 * r_dip * side_dir,
+        ),
+    ]
+
+
 # ----- MJCF ----------------------------------------------------------------------------------
 
 
@@ -452,9 +523,11 @@ def build_mjcf(
     routes: dict | None,
     lengths0: dict[str, float] | None = None,
     meshdir: str | None = None,
+    qpos_order: list[str] | None = None,
 ) -> ET.Element:
     """MJCF tree. `lengths0` are the flex strand lengths at q = 0 (from a first compile); they set the
-    actuator offset so that ctrl = 0 means a straight joint."""
+    actuator offset so that ctrl = 0 means a straight joint. `qpos_order` is MuJoCo's joint order
+    (body tree order, from that compile); the keyframes are only written when it is given."""
     mujoco = ET.Element("mujoco", model="tendra_hand_v1")
     ET.SubElement(
         mujoco,
@@ -557,6 +630,25 @@ def build_mjcf(
                     "size": _fmt([drum_radius(j.name)]),
                 },
             )
+        # Coupling hubs: fixed to this part, on the axis of the PIP whose parent it is.
+        for dip, pip in COUPLED.items():
+            pj = hand.joints[pip]
+            if pj.parent == part:
+                c = pj.center - pos
+                ET.SubElement(
+                    body,
+                    "geom",
+                    {
+                        "name": f"{dip}_hub",
+                        "class": "drum",
+                        "fromto": _fmt(
+                            np.concatenate(
+                                [c - DRUM_HALF_WIDTH * pj.axis, c + DRUM_HALF_WIDTH * pj.axis]
+                            )
+                        ),
+                        "size": _fmt([COUPLING_HUB_RADIUS]),
+                    },
+                )
         geom = {"name": part, "mesh": part}
         if np.any(pos):
             geom["pos"] = _fmt(-pos)
@@ -588,29 +680,33 @@ def build_mjcf(
     def local(body: str | None, p: np.ndarray) -> np.ndarray:
         return p - (hand.body_pos[body] if body else 0.0)
 
+    # Servo strands in actuator order, then the passive DIP coupling strands.
     tendon = ET.SubElement(mujoco, "tendon")
-    for joint in ACTUATOR_ORDER:
-        for side in ("flex", "ext"):
-            strand = f"{joint}_{side}"
-            rgba = "0.85 0.2 0.15 1" if side == "flex" else "0.15 0.35 0.85 1"
-            spatial = ET.SubElement(tendon, "spatial", name=strand, width="0.0004", rgba=rgba)
-            for i, p in enumerate(build_strand(hand, joint, side, routes)):
-                site = f"{strand}_{i}_{p.kind}"
-                attrs = {"name": site, "pos": _fmt(local(p.body, p.pos))}
-                if p.drum:
-                    side_site = f"{strand}_side"
-                    ET.SubElement(
-                        body_el[p.side_body],
-                        "site",
-                        {
-                            "name": side_site,
-                            "class": "drum",
-                            "pos": _fmt(local(p.side_body, p.side_pos)),
-                        },
-                    )
-                    ET.SubElement(spatial, "geom", geom=p.drum, sidesite=side_site)
-                ET.SubElement(body_el[p.body], "site", attrs)
-                ET.SubElement(spatial, "site", site=site)
+    strands = [
+        (j, s, build_strand(hand, j, s, routes)) for j in ACTUATOR_ORDER for s in ("flex", "ext")
+    ]
+    strands += [(j, s, build_coupling_strand(hand, j, s)) for j in COUPLED for s in ("flex", "ext")]
+    for joint, side, path in strands:
+        strand = f"{joint}_{side}"
+        rgba = "0.85 0.2 0.15 1" if side == "flex" else "0.15 0.35 0.85 1"
+        spatial = ET.SubElement(tendon, "spatial", name=strand, width="0.0004", rgba=rgba)
+        for i, p in enumerate(path):
+            site = f"{strand}_{i}_{p.kind}"
+            attrs = {"name": site, "pos": _fmt(local(p.body, p.pos))}
+            if p.drum:
+                side_site = f"{strand}_hub_side" if p.drum.endswith("_hub") else f"{strand}_side"
+                ET.SubElement(
+                    body_el[p.side_body],
+                    "site",
+                    {
+                        "name": side_site,
+                        "class": "drum",
+                        "pos": _fmt(local(p.side_body, p.side_pos)),
+                    },
+                )
+                ET.SubElement(spatial, "geom", geom=p.drum, sidesite=side_site)
+            ET.SubElement(body_el[p.body], "site", attrs)
+            ET.SubElement(spatial, "site", site=site)
 
     # The fixed parts are welded to the world, so MuJoCo's parent-child contact filter does not
     # apply to them; their convex hulls overlap the first moving part at the joint.
@@ -621,6 +717,20 @@ def build_mjcf(
     for body1, body2 in HULL_ARTIFACT_EXCLUDES:
         if body1 in hand.parts and body2 in hand.parts:
             ET.SubElement(contact, "exclude", body1=body1, body2=body2)
+
+    # DIP coupling: dip = COUPLING_RATIO * pip. An inextensible coupling loop applies exactly this
+    # constraint's force law (lambda * [1, -ratio] on dip, pip); the strands above are passive.
+    equality = ET.SubElement(mujoco, "equality")
+    for dip, pip in COUPLED.items():
+        ET.SubElement(
+            equality,
+            "joint",
+            name=f"{dip}_coupling",
+            joint1=dip,
+            joint2=pip,
+            polycoef=_fmt([0, COUPLING_RATIO, 0, 0, 0]),
+            solref=_fmt(COUPLING_SOLREF),
+        )
 
     # Actuation. Each servo turns a spool (radius SPOOL_RADIUS) that pulls the flex strand and pays
     # out the ext strand by the same amount. Approximation: MuJoCo tendon actuators can push as
@@ -654,16 +764,28 @@ def build_mjcf(
             },
         )
 
-    keyframe = ET.SubElement(mujoco, "keyframe")
-    fist = np.array([pose_deg(FIST_DEG, n) * DEG for n in ACTUATOR_ORDER])
-    ET.SubElement(
-        keyframe,
-        "key",
-        name="open",
-        qpos=_fmt(np.zeros(len(ACTUATOR_ORDER))),
-        ctrl=_fmt(np.zeros(len(ACTUATOR_ORDER))),
-    )
-    ET.SubElement(keyframe, "key", name="fist", qpos=_fmt(fist), ctrl=_fmt(fist))
+    if qpos_order is not None:
+        # ctrl is in actuator order; qpos in MuJoCo's joint order, each DIP on its coupling.
+        def fist_q(n: str) -> float:
+            if n in COUPLED:
+                return COUPLING_RATIO * fist_q(COUPLED[n])
+            return pose_deg(FIST_DEG, n) * DEG
+
+        keyframe = ET.SubElement(mujoco, "keyframe")
+        ET.SubElement(
+            keyframe,
+            "key",
+            name="open",
+            qpos=_fmt(np.zeros(len(qpos_order))),
+            ctrl=_fmt(np.zeros(len(ACTUATOR_ORDER))),
+        )
+        ET.SubElement(
+            keyframe,
+            "key",
+            name="fist",
+            qpos=_fmt([fist_q(n) for n in qpos_order]),
+            ctrl=_fmt([fist_q(n) for n in ACTUATOR_ORDER]),
+        )
     return mujoco
 
 
@@ -683,7 +805,8 @@ def build(
     data = mujoco.MjData(model)
     mujoco.mj_forward(model, data)
     lengths0 = {model.tendon(i).name: float(data.ten_length[i]) for i in range(model.ntendon)}
-    mjcf = build_mjcf(hand, routes, lengths0, meshdir)
+    qpos_order = [model.joint(i).name for i in range(model.njnt)]
+    mjcf = build_mjcf(hand, routes, lengths0, meshdir, qpos_order)
     ET.indent(mjcf)
     return mjcf
 

@@ -6,7 +6,7 @@
     uv run python sim/grasp_teleop.py --object cylinder   # always the same object
 
 Your hand drives everything: the wrist pose comes from `tendra.wrist.WristTracker` (where your
-palm is and how it's turned, from the webcam), the 20 finger joints from `tendra.retarget`.
+palm is and how it's turned, from the webcam), the 16 finger servo joints from `tendra.retarget`.
 The hand floats in `tendra.scene.GraspScene`: an invisible, ideal "arm" (a mocap weld) moves the
 wrist, standing in for the real arm to come. The screen works like a mirror: move your hand
 toward the webcam and the sim hand moves toward its camera.
@@ -19,8 +19,8 @@ your hand in, with a warning near the edges.
 Recording (`tendra.dataset.EpisodeRecorder`): only the simulation state is saved, 30 times per
 simulated second (cheap); camera images are rendered afterwards by replaying it
 (`uv run python sim/export_lerobot.py <dataset>`). Each frame stores
-observation.state = 20 finger angles + wrist position (3) + wrist quaternion (4) and
-action = 20 finger targets + wrist target position (3) + quaternion (4), plus your hand's
+observation.state = 16 finger angles + wrist position (3) + wrist quaternion (4) and
+action = 16 finger targets + wrist target position (3) + quaternion (4), plus your hand's
 landmarks. An episode ends as a success once the object has been held up for `--hold` seconds.
 
 Keys:

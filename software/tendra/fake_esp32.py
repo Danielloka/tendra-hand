@@ -5,8 +5,8 @@ be passed to `RealHand(connection=FakeEsp32())`. Motion is simplified: each join
 its target at constant maximum speed (the real firmware also ramps the acceleration).
 
     FakeEsp32()                              # v0: 8 steppers
-    FakeEsp32(hand="v1")                     # v1: 20 servos, all online
-    FakeEsp32(hand="v1", offline={9, 20})    # v1 with servos 9 and 20 not answering
+    FakeEsp32(hand="v1")                     # v1: 16 servos, all online
+    FakeEsp32(hand="v1", offline={9, 16})    # v1 with servos 9 and 16 not answering
 
 v1 emulates the servo firmware (firmware/src/main.cpp, scs0009_servo.cpp): servos start limp
 (torque off) and switch on with the first target; offline servos ignore `P`, refuse `J`/`M`
@@ -28,6 +28,7 @@ MAX_RAW_MOVE = 4096
 
 # v1: SCS0009 (config_v1.h, scs_protocol.h)
 SERVO_TICKS_PER_RAD = 1024 / np.radians(300)  # ~195.57
+FIRMWARE_VERSION_V1 = "0.4.0"  # firmware/include/config_v1.h
 SERVO_TICKS_MIN, SERVO_TICKS_MAX = 0, 1023
 SERVO_ZERO_TICKS = 512
 SERVO_DEFAULT_MAX_VEL = 1.2  # rad/s
@@ -51,7 +52,8 @@ class FakeEsp32:
         self.pos = np.zeros(n)  # v1: the measured (servo) position
         self.target = np.zeros(n)
         if self.servo:
-            self.scale = np.full(n, SERVO_TICKS_PER_RAD)
+            # ticks per joint radian = servo_per_joint (drum / spool) x ticks per servo radian
+            self.scale = SERVO_TICKS_PER_RAD * np.array(self.spec.servo_per_joint or [1.0] * n)
             self.max_vel = np.full(n, SERVO_DEFAULT_MAX_VEL)
             self.zero_ticks = np.full(n, SERVO_ZERO_TICKS, dtype=int)
         else:
@@ -151,7 +153,7 @@ class FakeEsp32:
     def _info(self) -> str:
         n = self.spec.num_joints
         if self.servo:
-            head = f"I tendra-hand fw 0.3.0 hand={self.spec.firmware_variant} joints={n}"
+            head = f"I tendra-hand fw {FIRMWARE_VERSION_V1} hand={self.spec.firmware_variant} joints={n}"
             joints = (
                 f"{name}:{self.scale[i]:.2f}:{self.zero_ticks[i]}:{int(self.online[i])}"
                 for i, name in enumerate(self.spec.joint_names)

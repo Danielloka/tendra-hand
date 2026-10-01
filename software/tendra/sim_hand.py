@@ -4,7 +4,7 @@ Physics advances only when `step()` (or `wait()`) is called, so it can run faste
 than real time, which is useful for AI training.
 
     SimHand()                  # v0 model (8 joints)
-    SimHand(hand="v1")         # v1 model (20 joints), sim/models/tendra_hand_v1.xml
+    SimHand(hand="v1")         # v1 model (16 servos, 20 joints), sim/models/tendra_hand_v1.xml
     SimHand("my_model.xml")    # the variant is recognised from the model's actuators
     SimHand(hand="v1", lite=True)  # simplified meshes: much faster to draw (tendra.lite_model)
 """
@@ -41,6 +41,12 @@ class SimHand(Hand):
         self.spec = spec
         self._qpos_adr = np.array([self.model.joint(n).qposadr[0] for n in spec.joint_names])
         self._dof_adr = np.array([self.model.joint(n).dofadr[0] for n in spec.joint_names])
+        # Coupled joints (v1 DIPs): driven by the model's equality constraints in the physics; set
+        # by hand in set_positions().
+        self._all_qpos_adr = np.array(
+            [self.model.joint(n).qposadr[0] for n in spec.all_joint_names]
+        )
+        self._all_dof_adr = np.array([self.model.joint(n).dofadr[0] for n in spec.all_joint_names])
         mujoco.mj_forward(self.model, self.data)
 
     def set_targets(self, q: Sequence[float]) -> None:
@@ -49,6 +55,10 @@ class SimHand(Hand):
 
     def positions(self) -> np.ndarray:
         return self.data.qpos[self._qpos_adr].copy()
+
+    def all_positions(self) -> np.ndarray:
+        """Every joint angle, coupled ones included (`spec.all_joint_names` order)."""
+        return self.data.qpos[self._all_qpos_adr].copy()
 
     def targets(self) -> np.ndarray:
         return self.data.ctrl.copy()
@@ -63,14 +73,17 @@ class SimHand(Hand):
         """Put the joints at `q` directly (no physics), and hold them there.
 
         Used to mirror the real hand (digital twin, real -> sim). NaN entries (joints with no
-        measurement, e.g. an offline servo) are left where they are.
+        measurement, e.g. an offline servo) are left where they are. Coupled joints follow their
+        driver (v1: DIP = 0.75 x PIP).
         """
         q = np.asarray(q, dtype=float)
         if q.shape != (self.num_joints,):
             raise ValueError(f"expected {self.num_joints} joint values, got shape {q.shape}")
-        known = np.isfinite(q)
-        self.data.qpos[self._qpos_adr[known]] = q[known]
-        self.data.qvel[self._dof_adr[known]] = 0.0
+        q_all = self.spec.expand(q)  # NaN drivers give NaN coupled joints, left alone too
+        known = np.isfinite(q_all)
+        self.data.qpos[self._all_qpos_adr[known]] = q_all[known]
+        self.data.qvel[self._all_dof_adr[known]] = 0.0
+        known = known[: self.num_joints]
         self.data.ctrl[known] = q[known]
         mujoco.mj_forward(self.model, self.data)
 

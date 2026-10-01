@@ -3,6 +3,7 @@
 import numpy as np
 import pytest
 from tendra.grasp_env import GraspEnv, GraspEnvConfig, config_dict, config_from_dict
+from tendra.joints import V1
 
 pytest.importorskip("fast_simplification")
 
@@ -26,7 +27,7 @@ def hold_action(env: GraspEnv) -> np.ndarray:
 
 def test_dimensions_and_finite_obs(env):
     obs, critic = env.reset(seed=1)
-    assert env.action_dim == 6 + env.syn.k + 20
+    assert env.action_dim == 6 + env.syn.k + V1.num_joints
     assert obs.shape == (env.obs_dim,) and critic.shape == (env.critic_dim,)
     assert critic.size > obs.size  # privileged extras
     rng = np.random.default_rng(0)
@@ -104,7 +105,8 @@ def test_scripted_demos_and_demo_resets(env, demos):
 def test_reward_prefers_a_grasp_over_idling(env, demos):
     """At the scripted pre-grasp (hand around the object), closing earns more than opening."""
     demo = demos[0]
-    k = int(np.argmax(demo.ctrl[:, 2] > 0.5))  # first frame where the fingers close
+    flex = V1.joint_index("index_mcp_flex")
+    k = int(np.argmax(demo.ctrl[:, flex] > 0.5))  # first frame where the fingers close
     returns = []
     for close in (1.0, -1.0):
         env.demos = [type(demo)(demo.obj, demo.rest_z, *(x[k : k + 1] for x in (

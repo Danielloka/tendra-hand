@@ -48,11 +48,12 @@ def pose(lm, rng, mirror=False):
     return (lm - lm[0]) @ random_rotation(rng).T + rng.normal(size=3)
 
 
+# The DIPs are 0.75 x the PIPs, like the v1 robot's coupling, so the v1 fit can recover them exactly.
 ANGLES = {
-    "index": (0.5, 0.8, 0.4, 0.10),
-    "middle": (0.3, 1.0, 0.6, 0.0),
-    "ring": (0.7, 0.4, 0.2, -0.08),
-    "little": (0.2, 0.6, 0.3, -0.12),
+    "index": (0.5, 0.8, 0.6, 0.10),
+    "middle": (0.3, 1.0, 0.75, 0.0),
+    "ring": (0.7, 0.4, 0.3, -0.08),
+    "little": (0.2, 0.6, 0.45, -0.12),
 }
 
 
@@ -70,6 +71,8 @@ def test_finger_angles_recovered(v1, mirror, label):
         q = v1.raw(pose(synthetic_hand(ANGLES), rng, mirror), label)
         for finger, values in ANGLES.items():
             for joint, value in zip(("mcp_flex", "pip", "dip", "mcp_abd"), values):
+                if f"{finger}_{joint}" not in names:  # v1 DIPs: coupled, no servo
+                    continue
                 if joint == "mcp_abd":
                     value *= math.cos(values[0])  # faded with MCP flexion (anatomy)
                 assert q[names.index(f"{finger}_{joint}")] == pytest.approx(value, abs=1e-6)
@@ -159,12 +162,12 @@ def test_one_euro_filter_smooths_jitter_but_follows_steps():
     assert out[-1] == pytest.approx(1.5, abs=0.05)  # a jump is reached within 0.5 s
 
 
-# A tight fist: every finger curls far past 90 degrees in total.
+# A tight fist: every finger curls far past 90 degrees in total (DIP = 0.75 x PIP, as on v1).
 FIST = {
-    "index": (1.45, 1.6, 1.1, 0.05),
-    "middle": (1.5, 1.7, 1.0, 0.0),
-    "ring": (1.4, 1.65, 1.05, -0.05),
-    "little": (1.3, 1.5, 1.0, -0.1),
+    "index": (1.45, 1.6, 1.2, 0.05),
+    "middle": (1.5, 1.7, 1.275, 0.0),
+    "ring": (1.4, 1.65, 1.2375, -0.05),
+    "little": (1.3, 1.5, 1.125, -0.1),
 }
 
 
@@ -181,6 +184,8 @@ def test_fist_is_a_fist(mirror, label):
             expected = {"mcp_flex": flex, "pip": pip, "dip": dip,
                         "mcp_abd": abd * math.cos(flex)}  # fmt: skip
             for joint, value in expected.items():
+                if f"{finger}_{joint}" not in names:  # v1 DIPs: coupled, no servo
+                    continue
                 i = names.index(f"{finger}_{joint}")
                 want = np.clip(value, rt.spec.lower[i], rt.spec.upper[i])
                 assert q[i] == pytest.approx(want, abs=1e-6), (finger, joint)
@@ -228,3 +233,24 @@ def test_bend_cue_keeps_its_sign_in_a_fist(mirror):
         cue = bend_cue(lm, palm_frame(lm, 1.0).x)
         assert abs(cue) > Retargeter.CUE_THRESHOLD
         assert (cue > 0) == (not mirror)
+
+
+def test_coupled_fit_puts_the_robot_fingertip_closest():
+    """A human DIP that doesn't follow the robot's 0.75 coupling: fitting with the coupling puts
+    the robot fingertip nearer the human one than fitting freely and then dropping the DIP."""
+    from tendra.retarget import FINGERS, _finger_axes, _finger_model, bone_lengths, finger_angles
+
+    lm = synthetic_hand({"index": (0.5, 1.2, 0.2, 0.0)})  # DIP much straighter than 0.75 x PIP
+    frame = palm_frame(lm, 1.0)
+    f, side = _finger_axes(lm, frame, "index")
+    args = (lm[FINGERS["index"][0]], bone_lengths(lm, "index"), f, side, frame.palm)
+
+    def tip_error(x):
+        return np.linalg.norm(_finger_model(x, *args)[0][6:9] - lm[FINGERS["index"][3]])
+
+    coupled = finger_angles(lm, frame, "index", ratio=0.75)[1]
+    assert coupled[3] == pytest.approx(0.75 * coupled[2])
+    free = finger_angles(lm, frame, "index")[1]
+    dropped = free.copy()
+    dropped[3] = 0.75 * free[2]  # what the robot does with the free fit's PIP
+    assert tip_error(coupled) < 0.8 * tip_error(dropped)

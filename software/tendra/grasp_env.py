@@ -3,7 +3,7 @@
 Built on `tendra.scene.GraspScene` (the same scene as webcam grasp teleop), so learned policies,
 human demos and the future real arm all share one action: "move the wrist, shape the fingers".
 
-**Action** (all in [-1, 1], `action_dim` = 6 + k + 20):
+**Action** (all in [-1, 1], `action_dim` = 6 + k + 16):
 
     [0:3]    wrist velocity, world frame (x `wrist_speed` m/s)
     [3:6]    wrist turn rate about the world axes (x `wrist_turn_speed` rad/s)

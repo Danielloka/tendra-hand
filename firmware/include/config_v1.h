@@ -1,5 +1,6 @@
-// Tendra Hand V1 configuration: 20 joints on Feetech SCS0009 servos (half-duplex TTL bus via the
-// FE-URT-1). Used only by the `hand_v1_servo` build (TENDRA_HAND_V1). The v0 stepper hand keeps
+// Tendra Hand V1 configuration: 16 Feetech SCS0009 servos (half-duplex TTL bus via the FE-URT-1)
+// for 20 joints: the four finger DIPs are coupled passively to their PIPs, so the firmware never
+// sees them. Used only by the `hand_v1_servo` build (TENDRA_HAND_V1). The v0 stepper hand keeps
 // using config.h, unchanged.
 //
 // Keep in sync with the PC side (v1 joint table in software/tendra) and the v1 sim model.
@@ -7,10 +8,10 @@
 
 #include <stdint.h>
 
-#define FIRMWARE_VERSION "0.3.0"  // 0.3.0: 20 joints (4-DOF thumb), IDs renumbered
+#define FIRMWARE_VERSION "0.4.0"  // 0.4.0: 16 servos (DIP coupled to PIP), 5 mm spools, IDs renumbered
 #define HAND_VARIANT "v1-servo"
 
-constexpr int kNumJoints = 20;
+constexpr int kNumJoints = 16;
 constexpr float kDegToRad = 0.017453292519943295f;
 
 // ----- Servo bus (ESP32-S3 UART1 -> FE-URT-1 -> servos) -----
@@ -46,9 +47,9 @@ constexpr uint8_t kMaxMissedReplies = 3;   // consecutive timeouts before a serv
 // Largest raw (uncalibrated, unclamped) move accepted by the M command, in servo ticks (~88 deg).
 constexpr long kMaxRawMove = 300;
 
-// Default spool radius on the servo horn (m). Informational until the joint drum radii are
-// measured: servo_per_joint = r_joint_drum / r_spool (see servo_calibration.h).
-constexpr float kDefaultSpoolRadius = 0.006f;  // 6 mm = joint drum radius (research.md), so 1:1
+// Spool radius on the servo horn (m), the same on every servo. Informational: the scale that
+// matters is servo_per_joint = r_joint_drum / r_spool (see servo_calibration.h).
+constexpr float kDefaultSpoolRadius = 0.005f;  // 5 mm (2026-10-01, was 6 mm)
 
 struct ServoJointConfig {
   const char* name;
@@ -61,28 +62,28 @@ struct ServoJointConfig {
   int16_t zero_ticks;     // servo reading with the joint straight (q = 0); calibrate, then set here
 };
 
-// Motor order M1..M20 = protocol order = servo ID. (The 4-DOF thumb since 2026-09-29: the
-// 5th thumb joint, thumb_mcp_abd, was removed and IDs 10..21 moved down to 9..20.)
+// Motor order M1..M16 = protocol order = servo ID (since 0.4.0, 2026-10-01). The four finger DIPs
+// have no servo: a passive coupling tendon bends each DIP by 0.75 x its PIP (see tendon_router.py).
+// servo_per_joint = drum radius / 5 mm spool: finger mcp_flex 7 mm -> 1.4, thumb_cmc_rot 7.5 mm ->
+// 1.5, every other drum 6 mm -> 1.2.
+// zero_ticks: thumb_cmc_rot needs 140 deg x 1.5 = 210 servo degrees, so its zero sits off-centre
+// (665: -100..40 deg -> ticks 153..870). If its invert flag turns out true, use ~359 instead.
 constexpr ServoJointConfig kJoints[kNumJoints] = {
-    {"index_dip",       1, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"index_pip",       2, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"index_mcp_flex",  3, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"index_mcp_abd",   4, -15 * kDegToRad,  15 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"thumb_ip",        5, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"thumb_mcp_flex",  6, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"thumb_cmc_flex",  7, -13 * kDegToRad,  45 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"thumb_cmc_rot",   8, -100 * kDegToRad, 40 * kDegToRad, false, kDefaultSpoolRadius, 1.25f, 512},  // 7.5 mm drum
-    {"middle_dip",      9, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"middle_pip",     10, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"middle_mcp_flex",11, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"middle_mcp_abd", 12, -15 * kDegToRad,  15 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"ring_dip",       13, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"ring_pip",       14, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"ring_mcp_flex",  15, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"ring_mcp_abd",   16, -15 * kDegToRad,  15 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"little_dip",     17, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"little_pip",     18, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"little_mcp_flex",19, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"little_mcp_abd", 20, -20 * kDegToRad,  20 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
+    {"index_pip",       1, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.2f, 512},
+    {"index_mcp_flex",  2, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.4f, 512},
+    {"index_mcp_abd",   3, -15 * kDegToRad,  15 * kDegToRad, false, kDefaultSpoolRadius, 1.2f, 512},
+    {"thumb_ip",        4, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.2f, 512},
+    {"thumb_mcp_flex",  5, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.2f, 512},
+    {"thumb_cmc_flex",  6, -13 * kDegToRad,  45 * kDegToRad, false, kDefaultSpoolRadius, 1.2f, 512},
+    {"thumb_cmc_rot",   7, -100 * kDegToRad, 40 * kDegToRad, false, kDefaultSpoolRadius, 1.5f, 665},  // 7.5 mm drum
+    {"middle_pip",      8, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.2f, 512},
+    {"middle_mcp_flex", 9, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.4f, 512},
+    {"middle_mcp_abd", 10, -15 * kDegToRad,  15 * kDegToRad, false, kDefaultSpoolRadius, 1.2f, 512},
+    {"ring_pip",       11, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.2f, 512},
+    {"ring_mcp_flex",  12, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.4f, 512},
+    {"ring_mcp_abd",   13, -15 * kDegToRad,  15 * kDegToRad, false, kDefaultSpoolRadius, 1.2f, 512},
+    {"little_pip",     14, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.2f, 512},
+    {"little_mcp_flex",15, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.4f, 512},
+    {"little_mcp_abd", 16, -20 * kDegToRad,  20 * kDegToRad, false, kDefaultSpoolRadius, 1.2f, 512},
 };
 // mcp_abd: positive = toward the thumb, for every finger.

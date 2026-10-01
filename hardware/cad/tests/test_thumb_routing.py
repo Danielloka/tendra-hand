@@ -156,7 +156,7 @@ def test_journal_channels_share_a_cavity_only_near_the_top():
 def test_firmware_uses_the_cmc_rot_drum_ratio():
     cfg = (Path(__file__).resolve().parents[3] / "firmware" / "include" / "config_v1.h").read_text()
     row = re.search(r'\{"thumb_cmc_rot",[^}]*\}', cfg).group(0)
-    ratio = float(row.split(",")[-2].strip().rstrip("f"))
+    ratio = float(row.split(",")[-2].strip().rstrip("f"))  # second-last field = servo_per_joint
     assert ratio == tr.ROT_DRUM_R / tr.SPOOL_R
 
 

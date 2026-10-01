@@ -3,7 +3,7 @@
 This is a stand-in for the future robot arm. An invisible, ideal "arm" moves the wrist: the
 hand's fixed parts (forearm, palm, servos, spools) hang from one free body `hand_root`, which a
 weld constraint pulls toward a mocap body `wrist_target`. So the robot's action is
-"wrist pose + 20 finger joint targets", the same for a human operator (teleoperation) and for a
+"wrist pose + 16 finger joint targets", the same for a human operator (teleoperation) and for a
 learned policy later.
 
 World frame: table top at z = 0, the robot stands across the table (+Y), the "view" camera looks
@@ -12,7 +12,7 @@ at it from the operator's side (-Y), slightly from above. Units m, rad, quaterni
     scene = GraspScene()
     scene.reset(np.random.default_rng(0), obj="cylinder")
     scene.set_wrist_target(pos, quat)       # or set_wrist_from_view(...) for teleoperation
-    scene.set_finger_targets(q)             # 20 joint targets, V1 order
+    scene.set_finger_targets(q)             # 16 joint targets (servos), V1 order
     scene.step(0.02)
     scene.lifted()                          # success check
 
@@ -292,8 +292,9 @@ class GraspScene:
         model.light_castshadow[:] = 0
         model.mat_reflectance[:] = 0
         mujoco.mj_setConst(model, mujoco.MjData(model))
-        if model.nu != V1.num_joints or model.ntendon != 2 * V1.num_joints:
-            raise RuntimeError("scene model lost hand actuators or tendons")
+        strands = 2 * (V1.num_joints + len(V1.couplings))  # servo loops + DIP coupling loops
+        if model.nu != V1.num_joints or model.ntendon != strands or model.neq < len(V1.couplings):
+            raise RuntimeError("scene model lost hand actuators, tendons or DIP couplings")
         return model
 
     @staticmethod
@@ -394,7 +395,7 @@ class GraspScene:
     # ----- fingers -----
 
     def set_finger_targets(self, q: np.ndarray) -> None:
-        """20 joint targets in V1 order (rad), clipped to the joint limits."""
+        """16 joint targets in V1 order (rad), clipped to the joint limits."""
         q = np.asarray(q, dtype=float)
         if q.shape != (V1.num_joints,):
             raise ValueError(f"expected {V1.num_joints} targets, got shape {q.shape}")
@@ -404,8 +405,14 @@ class GraspScene:
         return self.data.ctrl[self._act].copy()
 
     def finger_positions(self) -> np.ndarray:
-        """20 measured joint angles in V1 order (rad)."""
+        """16 measured joint angles in V1 order (rad)."""
         return self.data.qpos[self._qadr].copy()
+
+    def all_finger_positions(self) -> np.ndarray:
+        """All 20 joint angles, the coupled DIPs last (`V1.all_joint_names` order, rad)."""
+        m = self.model
+        adr = [m.joint(n).qposadr[0] for n in V1.all_joint_names]
+        return self.data.qpos[adr].copy()
 
     # ----- simulation and checks -----
 
@@ -448,7 +455,7 @@ SIDE_GRASP_OFFSET = np.array([-0.040, 0.085, 0.0065])
 
 POWER_GRASP: dict[str, float] = {
     **{f"{f}_{j}": q for f in ("index", "middle", "ring", "little")
-       for j, q in (("mcp_flex", 1.4), ("pip", 1.5), ("dip", 1.2), ("mcp_abd", 0.0))},
+       for j, q in (("mcp_flex", 1.4), ("pip", 1.5), ("mcp_abd", 0.0))},  # DIP: 0.75 x PIP
     "thumb_cmc_rot": 0.0,
     "thumb_cmc_flex": 0.75,  # V1 limit is 45 deg (0.785)
     "thumb_mcp_flex": 0.4,
@@ -457,7 +464,7 @@ POWER_GRASP: dict[str, float] = {
 
 
 def grasp_targets(grasp: dict[str, float] = POWER_GRASP) -> np.ndarray:
-    """20 finger targets (V1 order) from a {joint name: rad} dict; missing joints = 0."""
+    """16 finger targets (V1 order) from a {joint name: rad} dict; missing joints = 0."""
     return np.array([grasp.get(name, 0.0) for name in V1.joint_names])
 
 

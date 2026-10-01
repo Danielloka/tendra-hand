@@ -1,8 +1,9 @@
-"""Checks for the v1 (20-DOF, tendon-driven) model. Run: uv run pytest sim/tests/test_v1.py -s
+"""Checks for the v1 model (20 joints, 16 servos, tendon-driven). Run: uv run pytest sim/tests/test_v1.py -s
 
 The tendon tests prove the routing rule of the real hand (see sim/convert_v1.py, build_strand):
-each joint's loop changes length only when its own joint moves (6 mm per rad on the drum), and
-every other joint leaves it alone.
+each servo loop changes length only when its own joint moves (drum radius per rad), and every other
+joint leaves it alone. Each finger DIP has a passive coupling loop (build_coupling_strand) that
+changes with the DIP (-r_dip) and the PIP (+r_hub) only, and keeps its length when DIP = ratio x PIP.
 """
 
 import json
@@ -23,7 +24,6 @@ CONFIG_V1 = ROOT / "firmware" / "include" / "config_v1.h"
 
 # Servo ID order (ID = index + 1), the contract with firmware/include/config_v1.h and software/.
 SERVO_ORDER = [
-    "index_dip",
     "index_pip",
     "index_mcp_flex",
     "index_mcp_abd",
@@ -31,19 +31,20 @@ SERVO_ORDER = [
     "thumb_mcp_flex",
     "thumb_cmc_flex",
     "thumb_cmc_rot",
-    "middle_dip",
     "middle_pip",
     "middle_mcp_flex",
     "middle_mcp_abd",
-    "ring_dip",
     "ring_pip",
     "ring_mcp_flex",
     "ring_mcp_abd",
-    "little_dip",
     "little_pip",
     "little_mcp_flex",
     "little_mcp_abd",
 ]
+FINGERS = ("index", "middle", "ring", "little")
+COUPLED = {f"{f}_dip": f"{f}_pip" for f in FINGERS}  # passive DIP -> the PIP that drives it
+RATIO = 0.75  # DIP angle per PIP angle (hub r 4.5 / DIP drum r 6), = tendra.joints.DIP_PIP_RATIO
+ALL_JOINTS = SERVO_ORDER + list(COUPLED)
 
 # Where the fingertip must move for a small positive (closing) rotation, world frame at q = 0.
 X, Y, Z = np.eye(3)
@@ -63,6 +64,17 @@ EXPECTED_TIP_MOTION = {
 
 def drum_mm(joint):
     return cv.drum_radius(joint) * 1000
+
+
+def expected_arms(model, strand: str) -> dict[int, float]:
+    """d(length)/dq (mm/rad) of a strand for every joint it should depend on (qpos address ->
+    value); it must not depend on any other joint."""
+    joint, side = strand.rsplit("_", 1)
+    sgn = -1.0 if side == "flex" else 1.0
+    arms = {qadr(model, joint): sgn * drum_mm(joint)}
+    if joint in COUPLED:  # the coupling loop wraps the PIP hub on the opposite side
+        arms[qadr(model, COUPLED[joint])] = -sgn * cv.COUPLING_HUB_RADIUS * 1000
+    return arms
 
 
 COUPLING_LIMIT_MM_PER_RAD = 0.3
@@ -142,16 +154,16 @@ def test_generated_model_is_up_to_date():
 
 
 def test_counts_and_names(model):
-    assert model.njnt == 20 and model.nu == 20 and model.ntendon == 40
-    assert sorted(model.joint(i).name for i in range(model.njnt)) == sorted(SERVO_ORDER)
+    assert model.njnt == 20 and model.nu == 16 and model.ntendon == 40 and model.neq == 4
+    assert sorted(model.joint(i).name for i in range(model.njnt)) == sorted(ALL_JOINTS)
     strands = [model.tendon(i).name for i in range(model.ntendon)]
-    assert strands == [f"{j}_{s}" for j in SERVO_ORDER for s in ("flex", "ext")]
+    assert strands == [f"{j}_{s}" for j in SERVO_ORDER + list(COUPLED) for s in ("flex", "ext")]
 
 
 def test_actuators_follow_servo_ids_in_config_v1(model):
     fw = firmware_joints()
     assert [n for n, _, _, _ in fw] == SERVO_ORDER == cv.ACTUATOR_ORDER
-    assert [i for _, i, _, _ in fw] == list(range(1, 21))
+    assert [i for _, i, _, _ in fw] == list(range(1, 17))
     assert [model.actuator(i).name for i in range(model.nu)] == SERVO_ORDER
     for i, name in enumerate(SERVO_ORDER):  # each servo pulls its own joint's flex strand
         assert model.actuator_trntype[i] == mujoco.mjtTrn.mjTRN_TENDON
@@ -187,7 +199,7 @@ def test_no_contacts_when_straight(model):
 # ----- Sign convention ----------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("joint", SERVO_ORDER)
+@pytest.mark.parametrize("joint", ALL_JOINTS)
 def test_positive_closes(model, joint):
     data = mujoco.MjData(model)
     tip = f"{joint.split('_')[0]}_tip"
@@ -203,22 +215,61 @@ def test_positive_closes(model, joint):
 # ----- Tendon routing -----------------------------------------------------------------------
 
 
-def test_no_coupling(model):
-    """Each strand's length depends only on its own joint, at any pose."""
+def test_no_unwanted_coupling(model):
+    """Each strand's length depends only on its own joint (and a coupling loop also on its PIP), at
+    any pose, with the expected moment arms."""
     data = mujoco.MjData(model)
-    own = np.array(
-        [model.joint(model.tendon(t).name.rsplit("_", 1)[0]).id for t in range(model.ntendon)]
-    )
-    own_col = model.jnt_qposadr[own]
+    expected = np.zeros((model.ntendon, model.nq))
+    for t in range(model.ntendon):
+        for k, arm in expected_arms(model, model.tendon(t).name).items():
+            expected[t, k] = arm
     worst, where = 0.0, None
     for q in random_poses(model, 30):
-        jac = length_jacobian(model, data, q) * 1000  # mm/rad
-        jac[np.arange(model.ntendon), own_col] = 0
-        t, k = np.unravel_index(np.abs(jac).argmax(), jac.shape)
-        if abs(jac[t, k]) > worst:
-            worst, where = abs(jac[t, k]), (model.tendon(t).name, k)
-    print(f"\nworst coupling: {worst:.2e} mm/rad ({where})")
+        err = np.abs(length_jacobian(model, data, q) * 1000 - expected)  # mm/rad
+        t, k = np.unravel_index(err.argmax(), err.shape)
+        if err[t, k] > worst:
+            worst, where = err[t, k], (model.tendon(t).name, k)
+    print(f"\nworst moment-arm error: {worst:.2e} mm/rad ({where})")
     assert worst < COUPLING_LIMIT_MM_PER_RAD, where
+
+
+@pytest.mark.parametrize("dip", list(COUPLED))
+def test_coupling_loop_keeps_its_length_when_dip_follows_pip(model, dip):
+    """The geometry proof of the coupling: with DIP = ratio x PIP, both strands of the coupling loop
+    keep their length at any pose (so the hub / drum radii really give that ratio)."""
+    data = mujoco.MjData(model)
+    flex, ext = model.tendon(f"{dip}_flex").id, model.tendon(f"{dip}_ext").id
+    lengths = []
+    for q in random_poses(model, 40, seed=3):
+        q[qadr(model, dip)] = RATIO * q[qadr(model, COUPLED[dip])]
+        lengths.append(tendon_lengths(model, data, q)[[flex, ext]] * 1000)
+    spread = np.ptp(np.array(lengths), axis=0)
+    print(f"\n{dip} coupling loop: length spread flex {spread[0]:.2e}, ext {spread[1]:.2e} mm")
+    assert spread.max() < LOOP_TOL_MM / 10
+
+
+def test_equality_couples_dip_to_pip(model):
+    assert cv.COUPLING_RATIO == pytest.approx(RATIO)
+    assert cv.COUPLING_HUB_RADIUS / cv.drum_radius("index_dip") == pytest.approx(RATIO)
+    pairs = {}
+    for i in range(model.neq):
+        assert model.eq_type[i] == mujoco.mjtEq.mjEQ_JOINT
+        pairs[model.joint(model.eq_obj1id[i]).name] = model.joint(model.eq_obj2id[i]).name
+        assert np.allclose(model.eq_data[i, :5], [0, RATIO, 0, 0, 0])
+    assert pairs == COUPLED
+    for dip, pip in COUPLED.items():  # the coupled range fits in the DIP's own range
+        lo, hi = RATIO * model.jnt_range[model.joint(pip).id]
+        dlo, dhi = model.jnt_range[model.joint(dip).id]
+        assert dlo <= lo and hi <= dhi
+
+
+def test_keyframes_put_each_angle_on_its_joint(model):
+    fist = model.key("fist")
+    q = {n: fist.qpos[qadr(model, n)] for n in ALL_JOINTS}
+    assert all(abs(q[f"{f}_mcp_abd"]) < 1e-9 for f in FINGERS)
+    for dip, pip in COUPLED.items():
+        assert q[dip] == pytest.approx(RATIO * q[pip])
+    assert np.allclose([q[n] for n in SERVO_ORDER], fist.ctrl)
 
 
 @pytest.mark.parametrize("joint", SERVO_ORDER)
@@ -277,7 +328,7 @@ def test_routes_file_is_followed(tmp_path):
     """With tendon_routes.json, strands run through its points; the routing rule still holds."""
     hand = cv.load_hand()
     strands = []
-    for j in cv.ACTUATOR_ORDER:
+    for j in cv.ACTUATOR_ORDER:  # servo strands only (the coupling loops stay in the finger)
         for side in ("flex", "ext"):
             start = cv.build_strand(hand, j, side, None)[0].pos * 1000  # finger-base start point
             spool = [start[0], start[1] + 5, -150.0]
@@ -298,16 +349,15 @@ def test_routes_file_is_followed(tmp_path):
     model = mujoco.MjModel.from_xml_string(ET.tostring(mjcf, encoding="unicode"))
     data = mujoco.MjData(model)
     mujoco.mj_kinematics(model, data)
-    last = data.site("index_dip_flex_0_route").xpos * 1000
+    last = data.site("index_pip_flex_0_route").xpos * 1000
     assert np.allclose(last, strands[0]["points_mm"][-1], atol=1e-3)  # proximal end = spool point
     for q in random_poses(model, 3):
         jac = length_jacobian(model, data, q) * 1000
         for t in range(model.ntendon):
-            joint = model.tendon(t).name.rsplit("_", 1)[0]
-            own = qadr(model, joint)
-            sign = -1 if model.tendon(t).name.endswith("_flex") else 1
-            assert abs(jac[t, own] - sign * drum_mm(joint)) < MOMENT_ARM_TOL_MM_PER_RAD
-            assert np.abs(np.delete(jac[t], own)).max() < COUPLING_LIMIT_MM_PER_RAD
+            expected = np.zeros(model.nq)
+            for k, arm in expected_arms(model, model.tendon(t).name).items():
+                expected[k] = arm
+            assert np.abs(jac[t] - expected).max() < COUPLING_LIMIT_MM_PER_RAD, model.tendon(t).name
 
 
 # ----- Actuation ----------------------------------------------------------------------------
@@ -334,7 +384,10 @@ def test_servo_angle_drives_its_joint(model, joint, fraction):
     i = SERVO_ORDER.index(joint)
     assert data.ncon == 0, contact_report(model, data)
     assert abs(err[i]) < TRACKING_TOL_DEG, (joint, target, err[i])
-    assert np.abs(np.delete(err, i)).max() < 1.0  # the other joints hold still
+    assert np.abs(np.delete(err, i)).max() < 1.0  # the other servo joints hold still
+    for dip, pip in COUPLED.items():  # every DIP sits on its coupling (it moves only with its PIP)
+        q_dip, q_pip = data.qpos[qadr(model, dip)], data.qpos[qadr(model, pip)]
+        assert abs(np.degrees(q_dip - RATIO * q_pip)) < 1.0, (dip, np.degrees(q_dip))
 
 
 def test_finger_abduction_fan(model):
@@ -357,6 +410,9 @@ def test_fist_then_open_settle(model):
     assert np.isfinite(data.qpos).all()
     assert np.abs(data.qvel).max() < 0.05
     assert np.abs(err).max() < 3.0
+    for dip, pip in COUPLED.items():
+        q_dip, q_pip = data.qpos[qadr(model, dip)], data.qpos[qadr(model, pip)]
+        assert abs(np.degrees(q_dip - RATIO * q_pip)) < 1.5, (dip, np.degrees(q_dip))
     settle(model, data, np.zeros(model.nu), 1500)
     err = np.degrees(actuated_q(model, data))
     print(

@@ -1,13 +1,20 @@
 """Tendon routes and forearm servo layout for the Tendra Hand V1 (single source of truth).
 
-Every joint is driven by one SCS0009 servo in the forearm through an antagonistic loop: two strands
-(`flex` and `ext`) that leave the finger base, run through their own channel in the palm, cross the
-wrist, and go straight down to the two sides of the servo's spool (radius 6 mm, the loop wraps the
-bottom half of the spool). 20 joints, 40 strands, 40 separate routes.
+Every actuated joint is driven by one SCS0009 servo in the forearm through an antagonistic loop: two
+strands (`flex` and `ext`) that leave the finger base, run through their own channel in the palm,
+cross the wrist, and go straight down to the two sides of the servo's spool (radius 5 mm, the loop
+wraps the bottom half of the spool). 16 servos, 32 strands, 32 separate routes.
+
+Each finger's DIP has no servo (2026-10-01): its two strands stay inside the finger. They are
+anchored in the proximal phalanx, wrap a fixed hub on the PIP axis (radius COUPLING_HUB_R) and the
+DIP drum (DIP_DRUM_R), crossed in the middle phalanx (the DIP flex strand wraps the hub's back
+side). Bending the PIP then bends the DIP by COUPLING_RATIO = COUPLING_HUB_R / DIP_DRUM_R. This file
+only records those numbers ("coupling" in the JSON); the strand paths are built by sim/convert_v1.py
+and the Fusion script.
 
 Layout idea (see research/experiments/2026-09-28-full-hand/):
 - Servo shafts point inward, towards a central "core" where all strands run. Each spool's two strands
-  are tangent at x_s -/+ 6 mm, in the spool's plane (a constant y, called a sheet).
+  are tangent at x_s -/+ 5 mm, in the spool's plane (a constant y, called a sheet).
 - Servos sit in levels along the forearm. Deeper levels sit closer to the core (a staircase), so a
   strand going to a deeper spool always passes inside the upper spools and servos: no strand is ever
   blocked, and every strand is a straight line from the wrist to its spool.
@@ -36,8 +43,13 @@ import numpy as np
 OUT = Path(__file__).resolve().parents[1] / "robot_description" / "v1_export" / "tendon_routes.json"
 
 # --- Tendon and channel sizes (research.md) --------------------------------------------------------
-SPOOL_R = 6.0  # tendon centreline radius on the spool = joint drum radius (1:1)
-SPOOL_FLANGE_R = 7.5
+SPOOL_R = 5.0  # tendon centreline radius on every servo spool (2026-10-01, was 6)
+SPOOL_FLANGE_R = 6.5
+# Tendon centreline radius of each joint's drum; servo_per_joint = drum / SPOOL_R.
+FINGER_DRUM_R = {"mcp_flex": 7.0, "pip": 6.0, "mcp_abd": 6.0}  # mcp_flex: 14 mm, the most that fits
+DIP_DRUM_R = 6.0
+COUPLING_HUB_R = 4.5  # fixed hub on the PIP axis (on the proximal phalanx)
+COUPLING_RATIO = COUPLING_HUB_R / DIP_DRUM_R  # DIP angle per PIP angle (0.75)
 SPOOL_HALF_T = 2.5  # spool half-thickness along its axis, around the groove plane
 BORE_SMALL, SMALL_LEN = 1.2, 6.0  # bare-line entry section
 BORE_TUBE = 2.2  # hole for a 1 x 2 mm PTFE tube
@@ -65,8 +77,8 @@ PLATE_Z = (-4.4 - BASE_DROP, 2.5 - BASE_DROP)  # base bottom plate (bottom, top)
 BORE_R = 5.8  # through the plate and the journal
 JOURNAL_R, JOURNAL_BOTTOM_Z = 7.0, BAY_FLOOR_Z - 3.0  # 3 mm deep bearing in the bay floor
 BEARING_CLEAR = 0.25  # per side
-# cmc_rot drum: groove in the plate, r 7.5 (larger than the spool: servo_per_joint = 7.5 / 6 = 1.25,
-# needed because the bore takes the middle). Its strands leave the groove horizontally toward +Y.
+# cmc_rot drum: groove in the plate, r 7.5 (servo_per_joint = 7.5 / 5 = 1.5; it is large because
+# the bore takes the middle). Its strands leave the groove horizontally toward +Y.
 ROT_DRUM_R, ROT_DRUM_Z, ROT_FLANGE_R, GROOVE_W = 7.5, -4.7, 9.0, 1.0
 PIN_R, LINE_R = 1.5, 0.2  # 3 mm steel dowels as deflection pins; 0.4 mm line
 ROT_PIN_YZ = (30.8, ROT_DRUM_Z - PIN_R - LINE_R)  # in the palm behind the bay's back wall, along X
@@ -160,7 +172,11 @@ SHEETS = {
     "B2": (31.0, 2, -1),
     "B1": (36.0, 1, -1),
 }
-FINGER_SLOTS = {"mcp_flex": "F1", "pip": "F2", "dip": "B2", "mcp_abd": "B1"}
+FINGER_SLOTS = {
+    "mcp_flex": "F1",
+    "pip": "F2",
+    "mcp_abd": "B2",
+}  # DIP: no servo (coupled); abd took its deeper slot (gentler S-curve)
 # cmc_rot's strands come from the bay's back wall, so it takes the back sheet; the 8 strands that
 # come up the journal take the 4 nearer sheets, in the same front-to-back order as they sit in the
 # journal, so their channels don't cross (re-assigned 2026-09-29).
@@ -178,12 +194,27 @@ SPOOL_PLANE_ABOVE_CASE = 5.0  # groove plane above the case top (spline 3.2 + hu
 
 # Servo IDs = firmware motor numbers (firmware/include/config_v1.h).
 SERVO_IDS = {
-    "index_dip": 1, "index_pip": 2, "index_mcp_flex": 3, "index_mcp_abd": 4,
-    "thumb_ip": 5, "thumb_mcp_flex": 6, "thumb_cmc_flex": 7, "thumb_cmc_rot": 8,
-    "middle_dip": 9, "middle_pip": 10, "middle_mcp_flex": 11, "middle_mcp_abd": 12,
-    "ring_dip": 13, "ring_pip": 14, "ring_mcp_flex": 15, "ring_mcp_abd": 16,
-    "little_dip": 17, "little_pip": 18, "little_mcp_flex": 19, "little_mcp_abd": 20,
+    "index_pip": 1, "index_mcp_flex": 2, "index_mcp_abd": 3,
+    "thumb_ip": 4, "thumb_mcp_flex": 5, "thumb_cmc_flex": 6, "thumb_cmc_rot": 7,
+    "middle_pip": 8, "middle_mcp_flex": 9, "middle_mcp_abd": 10,
+    "ring_pip": 11, "ring_mcp_flex": 12, "ring_mcp_abd": 13,
+    "little_pip": 14, "little_mcp_flex": 15, "little_mcp_abd": 16,
 }  # fmt: skip
+FINGERS = ("index", "middle", "ring", "little")
+COUPLED = {f"{f}_dip": f"{f}_pip" for f in FINGERS}  # passive joint -> the joint that drives it
+
+
+def drum_r(joint: str) -> float:
+    """Tendon centreline radius on a joint's drum (mm)."""
+    finger, _, j = joint.partition("_")
+    if finger == "thumb":
+        return {"cmc_rot": ROT_DRUM_R, "cmc_flex": CMC_DRUM_R}.get(j, THUMB_DRUM_R)
+    return DIP_DRUM_R if j == "dip" else FINGER_DRUM_R[j]
+
+
+def servo_per_joint(joint: str) -> float:
+    """Servo radians per joint radian (= firmware servo_per_joint)."""
+    return drum_r(joint) / SPOOL_R
 
 
 @dataclass
@@ -852,6 +883,11 @@ def layout() -> dict:
         "source": "hardware/cad/tendon_router.py",
         "units": "mm, world frame of the Fusion design 'Tendra Hand V1', all joints at 0",
         "spool_radius_mm": SPOOL_R,
+        "drums_mm": {j: drum_r(j) for j in [*SERVO_IDS, *COUPLED]},
+        "coupling": {"hub_r_mm": COUPLING_HUB_R, "dip_drum_r_mm": DIP_DRUM_R, "ratio": COUPLING_RATIO,
+                     "joints": COUPLED,
+                     "routing": "DIP flex strand wraps the hub's back (dorsal) side, ext the palm side; "
+                                "they cross in the middle phalanx"},
         "bores_mm": {"entry": BORE_SMALL, "entry_length": SMALL_LEN, "tube": BORE_TUBE},
         "palm": {"x": PALM_X, "y": PALM_Y, "z_wrist": Z_WRIST, "z_wrist_plate_bottom": Z_WRIST_PLATE_BOTTOM,
                  "inserts_xy": INSERTS, "insert_r": INSERT_R, "insert_depth": INSERT_DEPTH},
@@ -860,7 +896,8 @@ def layout() -> dict:
                   "shaft_offset": SERVO_SHAFT_OFFSET, "spool_plane_above_case": SPOOL_PLANE_ABOVE_CASE,
                   "spool_flange_r": SPOOL_FLANGE_R, "spool_half_t": SPOOL_HALF_T},
         "servos": [
-            {"id": s.id, "joint": s.joint, "sheet": s.sheet, "spool_center_mm": [s.x, s.y, s.z],
+            {"id": s.id, "joint": s.joint, "sheet": s.sheet, "servo_per_joint": servo_per_joint(s.joint),
+             "spool_center_mm": [s.x, s.y, s.z],
              "shaft_dir": [0, s.shaft, 0], "case_box_mm": s.case_box(), "tab_box_mm": s.tab_box()}
             for s in servos()
         ],

@@ -71,7 +71,7 @@ def test_scripted_grasp_is_recorded_as_a_success(recorded):
     ep = ds.load(0)
     n = len(ep["qpos"])
     assert n > 60  # a few seconds at 30 fps
-    assert ep["observation.state"].shape == (n, 27) and ep["action"].shape == (n, 27)
+    assert ep["observation.state"].shape == (n, 23) and ep["action"].shape == (n, 23)  # 16 + 7
     assert ep["human.landmarks"].shape == (n, 21, 3)
     # The object ends up higher than it started.
     assert ep["object.pos"][-1, 2] > ep["object.pos"][0, 2] + 0.04

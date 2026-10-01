@@ -205,7 +205,7 @@ def _hinge_angle(a: np.ndarray, b: np.ndarray, hinge: np.ndarray) -> float:
 
 def fit_fingers(
     lm: np.ndarray, frame: PalmFrame, fingers, starts: dict | None = None,
-    lengths: dict | None = None, iterations: int = 8,
+    lengths: dict | None = None, iterations: int = 8, ratios: dict[str, float] | None = None,
 ) -> dict[str, np.ndarray]:  # fmt: skip
     """Joint angles of several fingers, each fitted to all its landmarks at once.
 
@@ -217,10 +217,15 @@ def fit_fingers(
     (last frame's result), whichever fits better. `lengths[finger]` (three bone lengths)
     default to this frame's; an average over many frames is less noisy.
 
-    Returns {finger: params (rad)}; pass it back as `starts` next frame.
+    `ratios[finger]` = k fits that finger with its DIP coupled to its PIP (dip = k * pip, the
+    robot's coupling tendon): 3 free parameters, so the robot finger's PIP, DIP and tip land as
+    close as they can to the human ones. Dropping the DIP instead would leave the tip short.
+
+    Returns {finger: params (rad)} (4 values; coupled fingers have dip = k * pip); pass it back
+    as `starts` next frame.
     """
     fingers = list(fingers)
-    starts, lengths = starts or {}, lengths or {}
+    starts, lengths, ratios = starts or {}, lengths or {}, ratios or {}
     idx = np.array([FINGERS[name] for name in fingers])
     base, observed = lm[idx[:, 0]], lm[idx[:, 1:]].reshape(len(fingers), 9)
     L = np.array([lengths.get(name, bone_lengths(lm, name)) for name in fingers])
@@ -231,33 +236,56 @@ def fit_fingers(
         pts, jac = _finger_model(x, base, L, f, side, n)
         return pts - observed, jac
 
-    x = np.array([_closed_form(lm, frame, name) for name in fingers])
-    warm = np.array([starts.get(name, x[k]) for k, name in enumerate(fingers)], dtype=float)
-    better = (residual(warm)[0] ** 2).sum(axis=1) < (residual(x)[0] ** 2).sum(axis=1)
-    x[better] = warm[better]
+    # Free parameters y, angles x = M y. Coupled fingers: y = (abd, flex, pip, -), dip = k * pip.
+    k = np.array([ratios.get(name, np.nan) for name in fingers], dtype=float)
+    coupled = np.isfinite(k)
+    eye = np.eye(4)
+    M = np.tile(eye, (len(fingers), 1, 1))
+    M[coupled, 3, 3] = 0.0
+    M[coupled, 3, 2] = k[coupled]
+
+    def free(x):  # angles -> free parameters, keeping the total PIP + DIP curl
+        y = x.copy()
+        y[coupled, 2] = (x[coupled, 2] + x[coupled, 3]) / (1 + k[coupled])
+        y[coupled, 3] = 0.0
+        return y
+
+    def angles(y):
+        return np.einsum("bij,bj->bi", M, y)
+
+    y = free(np.array([_closed_form(lm, frame, name) for name in fingers]))
+    warm = free(
+        np.array([starts.get(name, angles(y)[i]) for i, name in enumerate(fingers)], dtype=float)
+    )
+    better = (residual(angles(warm))[0] ** 2).sum(axis=1) < (residual(angles(y))[0] ** 2).sum(
+        axis=1
+    )
+    y[better] = warm[better]
 
     damping = 1e-6 * L.sum(axis=1) ** 2  # scaled to the finger size
-    eye = np.eye(4)
     for _ in range(iterations):
-        r, J = residual(x)
+        r, J = residual(angles(y))
+        J = J @ M  # d(points)/d(free parameters)
         JtJ = np.einsum("bki,bkj->bij", J, J) + damping[:, None, None] * eye
         step = np.linalg.solve(JtJ, -np.einsum("bki,bk->bi", J, r)[..., None])[..., 0]
-        x = x + step
+        y = y + step
         if np.abs(step).max() < ANGLE_TOLERANCE:
             break
+    x = angles(y)
     x = (x + math.pi) % (2 * math.pi) - math.pi  # keep angles in (-pi, pi]
     return dict(zip(fingers, x, strict=True))
 
 
 def finger_angles(
     lm: np.ndarray, frame: PalmFrame, finger: str, start: np.ndarray | None = None,
-    lengths: np.ndarray | None = None,
+    lengths: np.ndarray | None = None, ratio: float | None = None,
 ) -> tuple[dict[str, float], np.ndarray]:  # fmt: skip
     """One finger's angles, {mcp_flex, pip, dip, mcp_abd} (rad), and its params (see
-    `fit_fingers`)."""
+    `fit_fingers`; `ratio` couples the DIP to the PIP)."""
     starts = {finger: start} if start is not None else None
     lens = {finger: lengths} if lengths is not None else None
-    x = fit_fingers(lm, frame, [finger], starts, lens)[finger]
+    ratios = {finger: ratio} if ratio is not None else None
+    x = fit_fingers(lm, frame, [finger], starts, lens, ratios=ratios)[finger]
     return {"mcp_abd": x[0], "mcp_flex": x[1], "pip": x[2], "dip": x[3]}, x
 
 
@@ -278,7 +306,8 @@ class ThumbSolver:
         self.data = mujoco.MjData(self.model)
         m = self.model
         names = spec.joint_names
-        self._qadr = np.array([m.joint(n).qposadr[0] for n in names])
+        # q is in spec order; coupled joints (v1 DIPs) are set from their drivers (spec.expand)
+        self._qadr = np.array([m.joint(n).qposadr[0] for n in spec.all_joint_names])
         self.thumb = np.array([i for i, n in enumerate(names) if n.startswith("thumb_")])
         self._dof = np.array([m.joint(names[i]).dofadr[0] for i in self.thumb])
         mcp = "thumb_mcp_flex" if "thumb_mcp_flex" in names else "thumb_mcp"
@@ -297,7 +326,7 @@ class ThumbSolver:
     def points(self, q: np.ndarray) -> dict[str, np.ndarray]:
         """Robot keypoints (m, palm frame) for joint angles `q` (spec order)."""
         d = self.data
-        d.qpos[self._qadr] = q
+        d.qpos[self._qadr] = self.spec.expand(q)
         mujoco.mj_kinematics(self.model, d)
         pts = {k: d.xanchor[j].copy() for k, j in self._joints.items()}
         pts["tip"] = d.site_xpos[self._tip].copy()
@@ -415,6 +444,8 @@ class Retargeter:
             if not name.startswith("thumb_")
         ]
         self._finger_names = list(dict.fromkeys(f for _, f, _ in self._fingers))
+        # Fingers whose DIP is coupled to the PIP (v1): fitted with that coupling.
+        self._ratios = {c.driver.split("_", 1)[0]: c.ratio for c in self.spec.couplings}
 
     def __call__(self, lm: np.ndarray, t: float, label: str | None = None) -> np.ndarray:
         q = self.raw(lm, label)
@@ -438,7 +469,7 @@ class Retargeter:
                 measured if avg is None else avg + self.LENGTH_RATE * (measured - avg)
             )
         self._finger_fit = fit_fingers(
-            lm, frame, self._finger_names, self._finger_fit, self._lengths
+            lm, frame, self._finger_names, self._finger_fit, self._lengths, ratios=self._ratios
         )
         for i, finger, joint in self._fingers:
             params = self._finger_fit[finger]

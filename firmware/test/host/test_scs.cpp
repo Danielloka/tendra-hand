@@ -166,7 +166,7 @@ void testPackets() {
                 {0xFF, 0xFF, 0xFE, 0x12, 0x83, 0x2A, 0x06, 0x01, 0x02, 0x00, 0x00, 0x00, 0x02, 0x58,
                  0x02, 0x03, 0x00, 0x00, 0x00, 0x02, 0x58, 0x80}));
 
-  // Sync write of all 20 servos still fits in one packet.
+  // Sync write of 20 servos (more than V1's 16) still fits in one packet.
   uint8_t ids20[20], data20[20 * 6] = {};
   for (int i = 0; i < 20; ++i) ids20[i] = static_cast<uint8_t>(i + 1);
   CHECK(scs::buildSyncWrite(b, scs::reg::kGoalPosition, 6, ids20, data20, 20) == 20 * 7 + 8);
@@ -291,7 +291,10 @@ void testServo() {
   setPresent(port.servos[1], 600);        // joint was left bent at boot
   port.servos[1].mem[scs::reg::kTorqueEnable] = 1;  // and (hypothetically) powered up with torque
   ScsBus bus(port, 2000);
-  const ServoJointConfig& cfg = kJoints[0];  // index_dip, ID 1, -5..95 deg
+  // index_pip (ID 1, -5..95 deg), with a 1:1 scale so the tick numbers below stay simple. A
+  // copy: Scs0009Servo keeps a reference, and this outlives it.
+  ServoJointConfig cfg = kJoints[0];
+  cfg.servo_per_joint = 1.0f;
   Scs0009Servo s(cfg, bus);
 
   // Boot: torque switched off, position read, no goal written.
@@ -360,11 +363,23 @@ void testServo() {
 
 void testConfig() {
   std::printf("config_v1\n");
-  CHECK(kNumJoints == 20);
+  CHECK(kNumJoints == 16);  // 16 servos; the finger DIPs are coupled passively to their PIPs
   for (int i = 0; i < kNumJoints; ++i) {
-    CHECK(kJoints[i].servo_id == i + 1);
-    CHECK(kJoints[i].min_rad < 0.0f && kJoints[i].max_rad > 0.0f);  // q = 0 (straight) reachable
-    CHECK(kJoints[i].servo_per_joint > 0.0f);
+    const ServoJointConfig& j = kJoints[i];
+    CHECK(j.servo_id == i + 1);
+    CHECK(j.min_rad < 0.0f && j.max_rad > 0.0f);  // q = 0 (straight) reachable
+    CHECK(std::strstr(j.name, "_dip") == nullptr);
+    // drum / 5 mm spool: 7 mm finger mcp_flex, 7.5 mm thumb_cmc_rot, 6 mm everywhere else
+    const bool mcp = std::strstr(j.name, "_mcp_flex") && std::strncmp(j.name, "thumb", 5) != 0;
+    const float spj = mcp ? 1.4f : std::strcmp(j.name, "thumb_cmc_rot") == 0 ? 1.5f : 1.2f;
+    CHECK(std::fabs(j.servo_per_joint - spj) < 1e-6f);
+    // The whole joint range must map inside the servo's 0..1023 ticks, for either invert setting.
+    for (bool inv : {false, true}) {
+      const ServoCalibration cal{j.servo_per_joint * scs::kTicksPerRad, j.zero_ticks, inv};
+      const long a = cal.jointToTicks(j.min_rad), b = cal.jointToTicks(j.max_rad);
+      if (!inv || std::strcmp(j.name, "thumb_cmc_rot") != 0)  // cmc_rot: zero_ticks set for one sign
+        CHECK(a >= scs::kTicksMin && a <= scs::kTicksMax && b >= scs::kTicksMin && b <= scs::kTicksMax);
+    }
     for (int k = 0; k < i; ++k) CHECK(std::strcmp(kJoints[i].name, kJoints[k].name) != 0);
   }
 }

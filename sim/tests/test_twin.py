@@ -44,23 +44,23 @@ def test_final_value_is_sent():
     assert np.allclose(bridge.sent, 0.4)
 
 
-# ----- v1: sim -> real with 20 joints, and real -> sim mirroring -----
+# ----- v1: sim -> real with 16 servo joints, and real -> sim mirroring -----
 
 
 def test_v1_targets_are_sent():
     esp = FakeEsp32(clock=lambda: 0.0, hand="v1")
     bridge = TwinBridge(RealHand(connection=esp))
-    assert bridge.update(np.full(20, 0.2), 0.0)
-    assert len(sent_commands(esp)[0].split()) == 21
+    assert bridge.update(np.full(16, 0.2), 0.0)
+    assert len(sent_commands(esp)[0].split()) == 17
 
 
 def test_mirror_reads_measured_positions_and_never_commands():
-    esp = FakeEsp32(clock=lambda: 0.0, hand="v1", offline={"ring_dip"})
+    esp = FakeEsp32(clock=lambda: 0.0, hand="v1", offline={"ring_pip"})
     mirror = MirrorBridge(RealHand(connection=esp), rate_hz=10)
     esp.move_by_hand("index_pip", 0.7)
     q = mirror.update(0.0)
-    assert q[1] == pytest.approx(0.7)
-    assert np.isnan(q[12])  # offline servo (ring_dip): the sim keeps its last pose
+    assert q[0] == pytest.approx(0.7)
+    assert np.isnan(q[10])  # offline servo (ring_pip): the sim keeps its last pose
     assert mirror.update(0.05) is None  # rate-limited
     assert mirror.update(0.1) is not None
     assert {c.split()[0] for c in esp.log} == {"I", "F"}  # only reads

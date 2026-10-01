@@ -70,7 +70,7 @@ def test_vec_env_in_worker_processes():
         venv.call("configure", episode_seconds=0.15)  # 3 steps: forces auto-resets
         ends = 0
         for _ in range(8):
-            obs, critic, _, term, trunc, infos = venv.step(np.zeros((3, 32)))  # 6 + 6 + 20
+            obs, critic, _, term, trunc, infos = venv.step(np.zeros((3, 28)))  # 6 + 6 + 16
             ends += int(np.sum(term | trunc))
             for i in np.flatnonzero(term | trunc):
                 assert "episode" in infos[i] and infos[i]["final_critic"].shape == critic[i].shape

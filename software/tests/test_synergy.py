@@ -28,7 +28,7 @@ def test_project_and_residual():
     assert np.allclose(syn.project(q), a, atol=1e-9)
     assert np.allclose(syn.residual(q), 0, atol=1e-9)
     odd = q.copy()
-    odd[V1.joint_names.index("ring_dip")] += 0.5  # one joint alone: not a human pattern
+    odd[V1.joint_names.index("ring_pip")] += 0.5  # one joint alone: not a human pattern
     assert np.linalg.norm(syn.residual(odd)) > 0.3
 
 
@@ -36,7 +36,7 @@ def test_fit_recovers_a_low_dimensional_hand(tmp_path):
     rng = np.random.default_rng(0)
     true = default_synergies()
     coeffs = rng.normal(0, 0.4, (500, 3))
-    postures = true.rest + coeffs @ true.basis[:, :3].T + rng.normal(0, 0.005, (500, 20))
+    postures = true.rest + coeffs @ true.basis[:, :3].T + rng.normal(0, 0.005, (500, V1.num_joints))
     assert explained_variance(postures, 3) > 0.99
     syn = fit_synergies(postures, k=3)
     assert np.allclose(syn.rest, postures.mean(axis=0))

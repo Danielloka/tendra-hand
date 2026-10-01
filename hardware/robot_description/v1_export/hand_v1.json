@@ -6,7 +6,7 @@
     {
       "name": "forearm",
       "mesh": "meshes/forearm.stl",
-      "volume_mm3": 196378.6
+      "volume_mm3": 188053.5
     },
     {
       "name": "index_base",
@@ -71,7 +71,7 @@
     {
       "name": "palm",
       "mesh": "meshes/palm.stl",
-      "volume_mm3": 149275.2
+      "volume_mm3": 149419.8
     },
     {
       "name": "ring_base",
@@ -134,68 +134,63 @@
       "volume_mm3": 7309.8
     },
     {
-      "name": "servo_09_thumb_mcp_abd",
-      "mesh": "meshes/servo_09_thumb_mcp_abd.stl",
+      "name": "servo_09_middle_dip",
+      "mesh": "meshes/servo_09_middle_dip.stl",
       "volume_mm3": 7309.8
     },
     {
-      "name": "servo_10_middle_dip",
-      "mesh": "meshes/servo_10_middle_dip.stl",
+      "name": "servo_10_middle_pip",
+      "mesh": "meshes/servo_10_middle_pip.stl",
       "volume_mm3": 7309.8
     },
     {
-      "name": "servo_11_middle_pip",
-      "mesh": "meshes/servo_11_middle_pip.stl",
+      "name": "servo_11_middle_mcp_flex",
+      "mesh": "meshes/servo_11_middle_mcp_flex.stl",
       "volume_mm3": 7309.8
     },
     {
-      "name": "servo_12_middle_mcp_flex",
-      "mesh": "meshes/servo_12_middle_mcp_flex.stl",
+      "name": "servo_12_middle_mcp_abd",
+      "mesh": "meshes/servo_12_middle_mcp_abd.stl",
       "volume_mm3": 7309.8
     },
     {
-      "name": "servo_13_middle_mcp_abd",
-      "mesh": "meshes/servo_13_middle_mcp_abd.stl",
+      "name": "servo_13_ring_dip",
+      "mesh": "meshes/servo_13_ring_dip.stl",
       "volume_mm3": 7309.8
     },
     {
-      "name": "servo_14_ring_dip",
-      "mesh": "meshes/servo_14_ring_dip.stl",
+      "name": "servo_14_ring_pip",
+      "mesh": "meshes/servo_14_ring_pip.stl",
       "volume_mm3": 7309.8
     },
     {
-      "name": "servo_15_ring_pip",
-      "mesh": "meshes/servo_15_ring_pip.stl",
+      "name": "servo_15_ring_mcp_flex",
+      "mesh": "meshes/servo_15_ring_mcp_flex.stl",
       "volume_mm3": 7309.8
     },
     {
-      "name": "servo_16_ring_mcp_flex",
-      "mesh": "meshes/servo_16_ring_mcp_flex.stl",
+      "name": "servo_16_ring_mcp_abd",
+      "mesh": "meshes/servo_16_ring_mcp_abd.stl",
       "volume_mm3": 7309.8
     },
     {
-      "name": "servo_17_ring_mcp_abd",
-      "mesh": "meshes/servo_17_ring_mcp_abd.stl",
+      "name": "servo_17_little_dip",
+      "mesh": "meshes/servo_17_little_dip.stl",
       "volume_mm3": 7309.8
     },
     {
-      "name": "servo_18_little_dip",
-      "mesh": "meshes/servo_18_little_dip.stl",
+      "name": "servo_18_little_pip",
+      "mesh": "meshes/servo_18_little_pip.stl",
       "volume_mm3": 7309.8
     },
     {
-      "name": "servo_19_little_pip",
-      "mesh": "meshes/servo_19_little_pip.stl",
+      "name": "servo_19_little_mcp_flex",
+      "mesh": "meshes/servo_19_little_mcp_flex.stl",
       "volume_mm3": 7309.8
     },
     {
-      "name": "servo_20_little_mcp_flex",
-      "mesh": "meshes/servo_20_little_mcp_flex.stl",
-      "volume_mm3": 7309.8
-    },
-    {
-      "name": "servo_21_little_mcp_abd",
-      "mesh": "meshes/servo_21_little_mcp_abd.stl",
+      "name": "servo_20_little_mcp_abd",
+      "mesh": "meshes/servo_20_little_mcp_abd.stl",
       "volume_mm3": 7309.8
     },
     {
@@ -239,68 +234,63 @@
       "volume_mm3": 728.8
     },
     {
-      "name": "spool_09_thumb_mcp_abd",
-      "mesh": "meshes/spool_09_thumb_mcp_abd.stl",
+      "name": "spool_09_middle_dip",
+      "mesh": "meshes/spool_09_middle_dip.stl",
       "volume_mm3": 728.8
     },
     {
-      "name": "spool_10_middle_dip",
-      "mesh": "meshes/spool_10_middle_dip.stl",
+      "name": "spool_10_middle_pip",
+      "mesh": "meshes/spool_10_middle_pip.stl",
       "volume_mm3": 728.8
     },
     {
-      "name": "spool_11_middle_pip",
-      "mesh": "meshes/spool_11_middle_pip.stl",
+      "name": "spool_11_middle_mcp_flex",
+      "mesh": "meshes/spool_11_middle_mcp_flex.stl",
       "volume_mm3": 728.8
     },
     {
-      "name": "spool_12_middle_mcp_flex",
-      "mesh": "meshes/spool_12_middle_mcp_flex.stl",
+      "name": "spool_12_middle_mcp_abd",
+      "mesh": "meshes/spool_12_middle_mcp_abd.stl",
       "volume_mm3": 728.8
     },
     {
-      "name": "spool_13_middle_mcp_abd",
-      "mesh": "meshes/spool_13_middle_mcp_abd.stl",
+      "name": "spool_13_ring_dip",
+      "mesh": "meshes/spool_13_ring_dip.stl",
       "volume_mm3": 728.8
     },
     {
-      "name": "spool_14_ring_dip",
-      "mesh": "meshes/spool_14_ring_dip.stl",
+      "name": "spool_14_ring_pip",
+      "mesh": "meshes/spool_14_ring_pip.stl",
       "volume_mm3": 728.8
     },
     {
-      "name": "spool_15_ring_pip",
-      "mesh": "meshes/spool_15_ring_pip.stl",
+      "name": "spool_15_ring_mcp_flex",
+      "mesh": "meshes/spool_15_ring_mcp_flex.stl",
       "volume_mm3": 728.8
     },
     {
-      "name": "spool_16_ring_mcp_flex",
-      "mesh": "meshes/spool_16_ring_mcp_flex.stl",
+      "name": "spool_16_ring_mcp_abd",
+      "mesh": "meshes/spool_16_ring_mcp_abd.stl",
       "volume_mm3": 728.8
     },
     {
-      "name": "spool_17_ring_mcp_abd",
-      "mesh": "meshes/spool_17_ring_mcp_abd.stl",
+      "name": "spool_17_little_dip",
+      "mesh": "meshes/spool_17_little_dip.stl",
       "volume_mm3": 728.8
     },
     {
-      "name": "spool_18_little_dip",
-      "mesh": "meshes/spool_18_little_dip.stl",
+      "name": "spool_18_little_pip",
+      "mesh": "meshes/spool_18_little_pip.stl",
       "volume_mm3": 728.8
     },
     {
-      "name": "spool_19_little_pip",
-      "mesh": "meshes/spool_19_little_pip.stl",
+      "name": "spool_19_little_mcp_flex",
+      "mesh": "meshes/spool_19_little_mcp_flex.stl",
       "volume_mm3": 728.8
     },
     {
-      "name": "spool_20_little_mcp_flex",
-      "mesh": "meshes/spool_20_little_mcp_flex.stl",
-      "volume_mm3": 728.8
-    },
-    {
-      "name": "spool_21_little_mcp_abd",
-      "mesh": "meshes/spool_21_little_mcp_abd.stl",
+      "name": "spool_20_little_mcp_abd",
+      "mesh": "meshes/spool_20_little_mcp_abd.stl",
       "volume_mm3": 728.8
     },
     {
@@ -311,17 +301,17 @@
     {
       "name": "thumb_distal",
       "mesh": "meshes/thumb_distal.stl",
-      "volume_mm3": 4416.0
+      "volume_mm3": 4328.7
     },
     {
       "name": "thumb_metacarpal",
       "mesh": "meshes/thumb_metacarpal.stl",
-      "volume_mm3": 6564.2
+      "volume_mm3": 10579.7
     },
     {
       "name": "thumb_proximal",
       "mesh": "meshes/thumb_proximal.stl",
-      "volume_mm3": 6360.0
+      "volume_mm3": 6126.3
     }
   ],
   "joints": [

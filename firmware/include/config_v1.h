@@ -70,7 +70,7 @@ constexpr ServoJointConfig kJoints[kNumJoints] = {
     {"index_mcp_abd",   4, -15 * kDegToRad,  15 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
     {"thumb_ip",        5, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
     {"thumb_mcp_flex",  6, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
-    {"thumb_cmc_flex",  7, -13 * kDegToRad,  80 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
+    {"thumb_cmc_flex",  7, -13 * kDegToRad,  45 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
     {"thumb_cmc_rot",   8, -100 * kDegToRad, 40 * kDegToRad, false, kDefaultSpoolRadius, 1.25f, 512},  // 7.5 mm drum
     {"middle_dip",      9, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},
     {"middle_pip",     10, -5 * kDegToRad,   95 * kDegToRad, false, kDefaultSpoolRadius, 1.0f, 512},

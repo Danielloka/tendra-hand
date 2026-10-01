@@ -11,6 +11,71 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** what I learned and what to try next
 ```
 
+## 2026-10-01: Decision: V1 goes to 16 servos (DIP coupled to PIP), 5 mm spools, 7 mm knuckle drums
+**Goal:** act on the state-of-the-art research (`research/references/hands/README.md` §5).
+**Decisions (owner):**
+- **Each finger's DIP is coupled to its PIP by a passive coupling tendon.** The DIP drum and its two strands stay, but they are anchored in the proximal phalanx and wrap a fixed hub on the PIP axis. DIP angle = (r_hub / r_dip) × PIP angle. Start at 0.75 (hub r 4.5 mm, DIP drum r 6 mm), human-like; it's one number to change. Shadow, ORCA, LEAP and Tesla all couple the DIP.
+- **The thumb IP stays independent.** V1 = **16 servos** (4 fingers × pip, mcp_flex, mcp_abd + 4 thumb), still 20 joints.
+- **Spool radius 5 mm on every servo** (one spool part). Finger knuckle (mcp_flex) drum groove at **14 mm diameter (r 7)**, the most that fits. Servo/joint ratio: mcp_flex 1.4, cmc_rot 1.5, others 1.2.
+- **Keep the SCS0009** for now (cheap). Expected fingertip force ≈ 4.7 N at stall (was 3.4 N); silicone pads cut the needed force ~3×.
+- **Bearings are already on both sides of every joint** (the research's best option for smoothness).
+**Next:** implementation plan (firmware, Python, sim, router, CAD), then step-by-step changes with tests.
+
+## 2026-10-01: STS3032 datasheet check
+**Goal:** does the Feetech STS3032 sense current/force, as a candidate next to the HLS3606M?
+**Setup:** official datasheet STS3032 A/0 (2020-06-08, via Switch Science), shop listings.
+**Result:**
+- Feedback per datasheet: load, position, speed, voltage, temperature. Current is **not** listed; shops claim a current reading (6.5 mA/unit), unverified.
+- Modes: position, closed-loop speed, open-loop speed, step. **No constant-current (force) mode.**
+- Gear 1:205, 20.6 g, 25T / 4.95 mm horn: the same mechanical numbers as the HLS3606M (likely the same hardware with different control firmware; not confirmed).
+**Conclusion / next:** the HLS3606M stays the pick for the MCP and thumb joints, since only it has the constant-current mode. If an STS3032 is bought, read its present-current register on the bench to settle the current question.
+
+## 2026-09-30: State-of-the-art hands research (1X NEO, humanoids, open-source hands)
+**Goal:** find out how the leading hands (1X NEO, Tesla, Figure, ORCA, LEAP, Aero Hand, Shadow…) work, and what makes Tendra smoother, stronger and better.
+**Setup:** six parallel research agents (1X, humanoid companies, dexterous/open-source hands, tendon mechanics, sensing, actuators/control) and a fact-check pass against datasheets, papers and repos. Web tools failed for part of the run; unverified claims are tagged in each report. Overview and plan: `research/references/hands/README.md`.
+**Result:**
+- Tendra V1's layout (forearm motors, one antagonistic loop per joint, tendons on the joint axes) matches 1X NEO and Tesla V3. Halodi/1X's patent WO2018149499A1 uses the same two-cable-per-joint scheme.
+- Strength is the main gap: ~3.4 N fingertip (stall) vs ~80 N human tip pinch, 45 N for NEO, ~12 N for Aero Hand Open.
+- Feetech HLS3606M: 0.59 N·m at 6 V, current feedback and a constant-current mode, 23 × 12 mm like the SCS0009 (+2.25 mm tall, 25T spline, own memory table). Aero Hand Open already uses it in a tendon hand.
+- Firmware check: goals go out at 50 Hz with a fixed goal speed of 600, and each servo's feedback is read only every 40 ms. This likely causes stop–go motion; fixable for free.
+- 0.4 mm nylon mono stretches roughly 15× more than 50 lb UHMWPE braid (0.36 mm).
+- Printed-edge friction can cost ~70 % of DIP force in a fist.
+- The SCS0009 pot is rated for only 100 k cycles.
+**Conclusion / next:**
+- Do now: firmware smoothness (100 Hz, per-servo goal speed, jerk filter, register tuning), braid tendon on V0, bench tests (friction, stretch, fingertip force, cycles).
+- Owner decisions: test 1–2 HLS3606M on the V0 index MCP; DIP–PIP coupling (sim first); MCP drum 7.5 mm / spool 5 mm.
+- Commercial hands checked: Shadow = 20 forearm motors + 40 Spectra tendons, one agonist–antagonist pair per spool (Tendra's scheme), DIP–PIP coupled. Fingertip force: Inspire 10 N, PSYONIC 9.3 N pinch, Wuji 15 N, Sharpa Wave 20 N. Allegro, Tesollo and Schunk are still unverified.
+
+## 2026-09-30: GPU physics check: MuJoCo Warp runs the grasp scene
+**Goal:** can the grasp scene run on a GPU (for 10–100× faster RL), before porting anything?
+**Setup:** mujoco-mjx 3.14 with both backends, tested on the laptop CPU (no NVIDIA here): `uv run --with "mujoco-mjx==3.14.*" --with "jax[cpu]" --with warp-lang --with mujoco-warp ...`; nothing added to the project's dependencies.
+**Result:**
+- **MJX (JAX backend): not usable as is.** The model loads, but stepping fails: cylinder–box collisions are not implemented (the cylinder on the table box). A plane table would fix that one; there may be more gaps.
+- **MuJoCo Warp (NVIDIA Warp backend): works.** Same result as CPU MuJoCo within 0.0001 rad over 100 steps, and replaying the scripted grasp lifts the cylinder 10 cm like on the CPU; 4 parallel worlds all lift. Needs bigger contact buffers than the default: `naconmax` is for *all* worlds together (96 per world), `njmax` 600 per world.
+- Speed is unknown until it runs on an NVIDIA GPU: `sim/colab/make_bench_file.py` writes `runs/colab/tendra_warp_bench.npz` (compiled scene + one grasp, 3.7 MB) and a Colab notebook that measures control steps/s for 256/1024/4096 hands on a free T4.
+- **Colab T4 benchmark (free GPU, 2026-10-01)**, the whole run is the contact-heavy grasp-and-lift phase, 12 substeps per control step:
+
+  | Parallel hands | Control steps/s | Compile | Lifted |
+  |---|---|---|---|
+  | 256 | 2,966 | 291 s (first, incl. Warp kernels) | 100% |
+  | 1,024 | 6,146 | 14 s | 100% |
+  | 4,096 | 7,055 | 45 s | 100% |
+
+  The laptop trains at ~270 steps/s on average and manages ~150–200 per core while holding an object, so the T4 is **~25× faster**. It saturates around 4,096 hands; physics for 5 M steps ≈ 12 min instead of ~5 h.
+**Conclusion / next:** worth it. Port `GraspEnv` (reward, observations, resets in JAX) and PPO to a JAX + MuJoCo Warp version that trains on Colab, checked against the CPU env.
+
+## 2026-09-29: Grasp RL: the hand learns to grasp by itself (system built)
+**Goal:** a robust training system in which the simulated V1 hand learns to pick up objects on its own, in a human-like way, as the next AI step after teleop demos.
+**Setup:** `tendra.grasp_env.GraspEnv` on the grasp scene (20 Hz control, 4 ms physics) → PPO (`tendra.rl`, PyTorch 2.14 CPU, added as the default `train` group) with 32 envs in worker processes. Design, research basis and sources: `research/ai/grasp-rl.md`.
+- Action = wrist velocity + 6 hand synergies (close, oppose, spread, hook, roll, thumb curl; "close" = the scripted power grasp) + a penalised per-joint residual. `sim/fit_synergies.py` fits synergies to teleop demos instead (PCA).
+- Reward: object into the power-grasp zone with the palm facing it, fingertips to its surface, thumb + fingers touching, opposition (contacts on opposite sides), lift, hold 0.5 s at 6 cm = success. Penalties: action change, residual, servo force, pushing/tilting the object, hand on the table; knocked over / pushed away = fail.
+- Asymmetric critic (contact forces, clean pose, mass, friction), domain randomisation (size, mass, friction, servo stiffness, pose noise), demo-state starts from scripted grasps (43/60 succeed: cylinder 20, ball 20, cube 3) or teleop datasets, curriculum over objects, demo help and penalty strength.
+**Result:**
+- Physics sets the speed: a free hand ~2 ms per control step, a held object ~5–7 ms (MuJoCo timers: ~⅓ collision narrow phase, ~⅓ kinematics incl. 40 spatial tendons, ~⅕ solver). Fewer solver iterations (≤ 20) or pyramidal cones make the grip slip, and disabling finger self-collision loses the grasp, so full fidelity stays. 4 workers use only ~50% of the CPU (4 cores / 8 threads); 7 workers use the hyperthreads.
+- Run try1 (full penalties from the start, 0.13 M steps): it learned to *hold* from demo starts (17–50% success), but from a normal start it lifted the hand up and away. Touching nothing was the safest score (a toppled cylinder cost −1 every step for the rest of the episode). Fixes: penalties start at 30% and grow with success, a wide + narrow reach term (pulls from 20 cm away), knocked over = one-time fail.
+- Run try2 (with the fixes, 7 workers, ~270 steps/s): after 0.09 M steps it holds from demo starts 60–68% of the time; from normal starts it now goes down toward the object (closest 0.9 cm from the grasp zone) instead of fleeing, no grasp yet. Update: stopped at 0.55 M steps (laptop low on memory). At 0.27 M it grasped from normal starts 7% of the time, then fell to 1% by **reward hacking**: success ended the episode and with it the per-step holding reward, so hovering just below the success height scored more. Also one physics blow-up launched an object kilometres. Fixed: success no longer ends the episode, a blow-up guard, and workers no longer import PyTorch (~630 → ~410 MB each). Lesson: every way an episode can end changes what the policy wants.
+**Conclusion / next:** the system works end to end (22 new tests: env, synergies, PPO bandit, GAE, curriculum, workers, train + resume). Grasping from scratch needs long runs (10–50 M steps ≈ overnight on the laptop, or a many-core cloud machine). Next: long run on the cylinder, then teleop demos as demo starts, then RL teacher → vision student.
+
 ## 2026-09-29: First real-hand test setup (V0 index)
 **Goal:** drive the printed V0 index finger from sliders and from webcam teleop.
 **Setup:** ESP32-S3 on COM4, 4 × 28BYJ-48 + ULN2003 on the index. Motor 3 (`index_mcp_flex`) is wired to **8, 14, 46, 9** (was 8, 3, 14, 9 in config.h; GPIO 3 is now free). New `software/tendra/calibration_v0.json` + `tendra.calibration`: scales and speed are sent on every connect by `sim/twin.py` / `sim/teleop.py`, because the firmware forgets `K`/`V` on reset. Start values: 389.2 half-steps per joint rad for all 4 index joints (6 mm drum / 10 mm spool estimate), 1 rad/s, 3 rad/s².
@@ -19,6 +84,16 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** check each motor's direction with a small raw move (set `invert` in config.h where needed), then measure real steps/rad per joint and update the JSON.
 
 ---
+
+## 2026-09-29: V0 index knuckle bends easily but extends hard; 5 mm spool
+**Goal:** owner: on the real V0 prototype, the index MCP (3rd joint from the tip) is hard to drag: it bends easily but extends hardly. Make it easier and able to pull harder and grab things.
+**Setup:** the printed geometry (the joint-zero STEP from commit 8a004b5, before the pinch-point changes), sliced at the MCP drum with `research/experiments/2026-09-27-index-pinch/mapper.py`; firmware `include/config.h`.
+**Result:**
+- The printed index still has the old knuckle routing. The MCP's own loop runs on a drum of r ≈ 5.7 mm, and below it the strands squeeze through a ~4.5 mm funnel in the knuckle base; the PIP/DIP strands cross the knuckle in a slot open to the palm, not on the axis. So moving the knuckle changes their length (coupling) and drags them over funnel edges. That's the likely reason extension is hard; the on-axis version (TendraIndexPinch / TendraPipPinch) is designed but not printed.
+- The motor side is weak too: 800 half-steps/s default (near the 28BYJ-48's top speed, where its torque collapses), coils released after 1 s (a grasp isn't held), 10 mm spool (~3 N of tendon pull).
+- Suggested test: `R`, loosen the PIP and DIP loops at their spools, move the knuckle by hand. Easy now → the pass-through tendons (print the updated index). Still hard → the knuckle's own loop (tension, funnel friction).
+- **Made (owner's pick):** `hardware/cad/spool_v0.py` → `hardware/print/v0/spool_r5.stl`, a 5 mm spool (2× the pull, half the speed): two grooves, tie holes, double-D bore; watertight, sections checked. Not changed (offered): slower default speed, a hold command, exporting the updated index STLs.
+**Conclusion / next:** print the spool, re-calibrate the knuckle (about 2× steps per radian), and run the test above to see whether the updated index parts are needed too.
 
 ## 2026-09-29: V1 back to a 4-DOF thumb (20 DOF), thumb tendon lengths checked
 **Goal:** owner: remove the 5th thumb joint that was added (`thumb_mcp_abd`, a hinge in the proximal phalanx), and make sure every thumb tendon keeps the same length at every thumb angle.

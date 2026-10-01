@@ -92,16 +92,49 @@ SHEATH_JOINTS = ("mcp_flex", "ip")
 # The bare cmc_flex strands are held by the palm right under the journal, below where they cross
 # the plate at mid cmc_rot (-30 deg): the length change over the whole range is then smallest.
 ROT_MID_DEG = -30.0
-# Metacarpal x -6.8..8.8 (measured): 2 sockets side by side per side plus one above, half a pitch
-# out. SOCKETS[joint] = (steps outward from the inner socket, offset up-back in mm).
-SOCKETS = {"mcp_flex": (0.0, 0.0), "ip": (1.0, 0.0)}
-SOCKET_INNER_X = {"flex": -1.6, "ext": 4.1}  # beside the gap for the cmc_flex strands and pin
-SOCKET_PITCH = 2.1
+# Sockets: each sheath ends in the metacarpal's top block, 2 per side of the cmc_flex gap, 2.1 mm
+# apart. The ip lines start on the inside (they head for the thumb's centre line), the mcp_flex
+# lines on the outside (they reach their drum's sides). Metacarpal x -6.8..8.8 (measured).
+SOCKET_X = {("ip", "flex"): -1.6, ("mcp_flex", "flex"): -4.8,
+            ("ip", "ext"): 4.2, ("mcp_flex", "ext"): 7.0}  # fmt: skip
 SOCKET_YZ, SOCKET_DIR = (9.0, 23.0), (-math.sqrt(0.5), math.sqrt(0.5))  # q = 0, into the boss
 TUBE_OD, TUBE_MIN_BEND_R = 2.0, 12.0  # free PTFE tube (1 x 2 mm) in the loop
-CMC_FLEX_RANGE_DEG = (-13.0, 80.0)
+CMC_FLEX_RANGE_DEG = (-13.0, 45.0)  # V1 limit since the metacarpal got its tendon block
 BASE_ENVELOPE = {"y_max": 24.0, "z_max": 30.0}  # loop stays inside the turning frame
 FAN_Z = -25.0  # the sheath channels share one cavity from the journal down to here (fan_bottom_z())
+
+# --- Inside the thumb, past the base (research/experiments/2026-09-29-thumb-routing, "Inside the
+# thumb") ------------------------------------------------------------------------------------------
+# The sheaths end in sockets on the metacarpal's top block; from there each bare line turns over a
+# 2 mm steel pin ("pin A", along X) and runs straight on. The two mcp_flex lines pass under a second
+# pin ("pin B") that levels them out, so they reach the MCP drum parallel to the thumb and in its
+# plane. The ip lines cross the MCP axis through a 1.2 mm hole each (exactly on the axis) and run
+# straight on, each in its own plane (a = const), to its own groove on the IP drum. A line only
+# ever bends over steel, in a drum groove, or on a joint axis.
+# Thumb frame: the MCP and IP axes are along A_AX = (1, 0, 1)/sqrt2 and both pass through the
+# thumb's centre line (x 1.0, z 11.3764). a = position along the axis, w = across it (+w = the
+# closing side of both drums, toward -x +z).
+THUMB_CL_XZ = (1.0, 11.3764)
+MCP_Y, IP_Y = -31.9764, -66.9764
+THUMB_DRUM_R = 6.0  # tendon centreline on the MCP and IP drums (grooves deepened to r 5.8)
+# Positions along the axes (searched for the most room between bores, see the experiment README):
+# a new MCP drum groove on the proximal's barrel (solid at a -4.5..0.5; its bearing bosses start at
+# |a| 4.5), the ip crossing holes on the MCP axis, and the matching IP drum grooves on the distal.
+MCP_GROOVE_A = -2.0
+IP_GROOVE_A = {"flex": 0.0, "ext": 3.0}
+TUBE_IN = 3.0  # tube length inside its socket (the socket's step is the tube stop)
+PIN_A_GAP = 1.5  # bare line from the tube end to pin A
+PIN2_R = 1.0  # 2 mm steel dowels
+PIN_B_Y = {"flex": -15.0, "ext": -19.5}  # the mcp_flex lines level out under these
+GROOVE_HALF_W = 0.5  # thumb drum grooves are 1 mm wide, floor at THUMB_DRUM_R - LINE_R
+PIN_A_X = {"flex": (-5.9, -0.5), "ext": (3.1, 8.0)}  # pin A, split around the cmc_flex gap
+META_FILL = {
+    "x": (-6.8, 8.8),
+    "y": (-21.0, 6.0),
+    "z": (3.0, 25.0),
+    "front": (-6.0, 23.0),  # in front of y -6 the block is only 23 high (room when the thumb folds)
+}  # solid block added to the metacarpal
+CROSS_HOLE_D = 1.2
 INSERTS = [
     (-64.0, 28.0),
     (-48.0, 28.0),
@@ -316,8 +349,7 @@ def cmc_flex_hold(side: str) -> np.ndarray:
 
 
 def socket_x(joint: str, side: str) -> float:
-    k = SOCKETS[joint][0]
-    return SOCKET_INNER_X[side] + (-1 if side == "flex" else 1) * k * SOCKET_PITCH
+    return SOCKET_X[(joint, side)]
 
 
 def wrist_bottom_of(joint: str, side: str) -> np.ndarray:
@@ -343,8 +375,7 @@ def _rot(v, q):
 def socket_yz(joint: str, q: float = 0.0):
     """Sheath socket on the metacarpal boss (position, direction into the boss) at cmc_flex = q."""
     ax = np.array(CMC_FLEX_YZ)
-    p = np.array(SOCKET_YZ) + SOCKETS[joint][1] * np.array((math.sqrt(0.5), math.sqrt(0.5)))
-    return ax + _rot(p - ax, q), _rot(np.array(SOCKET_DIR), q)
+    return ax + _rot(np.array(SOCKET_YZ) - ax, q), _rot(np.array(SOCKET_DIR), q)
 
 
 _S = np.linspace(0.0, 1.0, 121)[:, None]
@@ -365,12 +396,14 @@ def _hermite(p0, t0, p1, t1, k0, k1):
 
 
 def _hits_metacarpal(pts, q, sock):
-    """Tube (radius TUBE_OD/2) inside the metacarpal's proximal block? The block is y <= 11,
-    4 <= z <= 18 in its q = 0 pose (measured); points within 2 mm of the socket are skipped."""
+    """Tube (radius TUBE_OD/2) inside the metacarpal? Its proximal block is y <= 11, 4 <= z <= 18
+    (measured) and the reshaped part in front of it is y <= META_FILL["y"][1], z <= META_FILL["z"][1]
+    (q = 0 pose); points within 2 mm of the socket are skipped."""
     ax = np.array(CMC_FLEX_YZ)
     back = np.array([_rot(p - ax, -q) for p in pts]) + ax
     r = TUBE_OD / 2
     inside = (back[:, 0] <= 11 + r) & (back[:, 1] >= 4 - r) & (back[:, 1] <= 18 + r)
+    inside |= (back[:, 0] <= META_FILL["y"][1] + r) & (back[:, 1] <= META_FILL["z"][1] + r)
     return bool((inside & (np.linalg.norm(pts - sock, axis=1) > 2.0)).any())
 
 
@@ -424,6 +457,240 @@ def fan_bottom_z(rts=None) -> float:
     return round(float(z), 2)
 
 
+A_AX = np.array((math.sqrt(0.5), 0.0, math.sqrt(0.5)))
+W_AX = np.array((-math.sqrt(0.5), 0.0, math.sqrt(0.5)))
+
+
+def thumb_pt(a: float, w: float, y: float) -> np.ndarray:
+    """World point from thumb-frame coordinates (a along the MCP/IP axes, w across, y)."""
+    cx, cz = THUMB_CL_XZ
+    return np.array((cx, y, cz)) + a * A_AX + w * W_AX
+
+
+def _tangent_from(c, r, q, left: bool):
+    """2-D (y, z): tangent point on circle (c, r) for a line leaving the circle toward point q, with
+    the circle centre on the left (left=True) or right of the direction of travel."""
+    v = q - c
+    d = np.linalg.norm(v)
+    base = math.atan2(v[1], v[0])
+    for sgn in (1, -1):
+        ang = base + sgn * math.acos(r / d)
+        t = c + r * np.array((math.cos(ang), math.sin(ang)))
+        dirn = (q - t) / np.linalg.norm(q - t)
+        lnorm = np.array((-dirn[1], dirn[0]))
+        if ((c - t) @ lnorm > 0) == left:
+            return t
+    raise ValueError("no tangent")
+
+
+def _cross_tangent(ca, cb, r):
+    """2-D internal tangent from circle A (centre on the left of travel) to circle B (centre on the
+    right), both radius r, travelling from A to B. Returns the two tangent points."""
+    d = cb - ca
+    base = math.atan2(d[1], d[0])
+    th = base - math.asin(2 * r / np.linalg.norm(d))
+    n = np.array((-math.sin(th), math.cos(th)))  # left normal of the travel direction
+    return ca - r * n, cb + r * n
+
+
+def thumb_inner(joint: str, side: str) -> dict:
+    """Path of a sheathed thumb strand inside the thumb (q = 0, world mm), from its tube end to its
+    drum. `points` lists (body, point) from the tube end outward; a crossing point on a joint axis
+    belongs to both parts."""
+    x = SOCKET_X[(joint, side)]
+    sd = np.array(SOCKET_DIR)
+    socket = np.array(SOCKET_YZ)
+    tube_end = socket + TUBE_IN * sd
+    rho = PIN2_R + LINE_R
+    pa = tube_end + PIN_A_GAP * sd
+    ca = pa + rho * np.array((-math.sqrt(0.5), -math.sqrt(0.5)))  # pin A below the line
+    out = {"x": x, "socket": socket, "tube_end": tube_end, "pin_a": ca, "pin_a_in": pa}
+    yz = [tube_end, pa]
+    if joint == "mcp_flex":
+        w = THUMB_DRUM_R if side == "flex" else -THUMB_DRUM_R
+        tangent = thumb_pt(MCP_GROOVE_A, w, MCP_Y)  # on the drum, +w top / -w bottom
+        cb = np.array((PIN_B_Y[side], tangent[2] + rho))  # pin B above the line
+        p_out, p_in = _cross_tangent(ca, cb, rho)
+        p_lvl = np.array((cb[0], tangent[2]))
+        lx = float(tangent[0])  # from pin B on, the line runs at the drum's x (in its plane)
+        out.update(
+            pin_b=cb,
+            pin_a_out=p_out,
+            pin_b_in=p_in,
+            pin_b_out=p_lvl,
+            line_z=float(tangent[2]),
+            line_x=lx,
+            drum_tangent=tangent,
+        )
+        a3 = [np.array((x, *p)) for p in yz + [p_out]]
+        b3 = [np.array((lx, *p)) for p in (p_in, p_lvl)]
+        out["points"] = [("thumb_metacarpal", p) for p in a3 + b3]
+        out["bores3"] = [(a3[1], a3[2]), (a3[2], b3[0]), (b3[0], b3[1]), (b3[1], tangent)]
+    else:
+        a = IP_GROOVE_A[side]
+        cross = thumb_pt(a, 0.0, MCP_Y)  # on the MCP axis
+        p_out = _tangent_from(ca, rho, np.array((cross[1], cross[2])), left=True)
+        yz.append(p_out)
+        c_ip = thumb_pt(a, 0.0, IP_Y)
+        v = cross - c_ip
+        d = np.linalg.norm(v)
+        sgn = 1 if side == "flex" else -1
+        ang = sgn * math.acos(THUMB_DRUM_R / d)
+        tan_pt = c_ip + THUMB_DRUM_R * (math.cos(ang) * v / d + math.sin(ang) * W_AX)
+        out.update(pin_a_out=p_out, cross=cross, cross_a=a, ip_tangent=tan_pt)
+        a3 = [np.array((x, *p)) for p in yz]
+        out["points"] = [("thumb_metacarpal", p) for p in a3] + [("thumb_proximal", cross)]
+        out["bores3"] = [(a3[1], a3[2]), (a3[2], cross), (cross, tan_pt)]
+    return out
+
+
+def thumb_bores() -> dict:
+    """Straight 1.2 mm bore segments (world mm, q = 0) of every sheathed strand inside the thumb."""
+    return {
+        f"thumb_{j}_{s}": thumb_inner(j, s)["bores3"]
+        for j in SHEATH_JOINTS
+        for s in ("flex", "ext")
+    }
+
+
+def _seg_dist(p0, p1, q0, q1, n=80) -> float:
+    a, b = np.linspace(p0, p1, n), np.linspace(q0, q1, n)
+    return float(np.linalg.norm(a[:, None] - b[None], axis=2).min())
+
+
+def thumb_bore_clearance() -> list[tuple[float, str, str]]:
+    """Closest approach between the bores of different strands (centre lines, mm), smallest first."""
+    bores = thumb_bores()
+    out = []
+    for (ka, sa), (kb, sb) in itertools.combinations(bores.items(), 2):
+        out.append((min(_seg_dist(*a, *b) for a in sa for b in sb), ka, kb))
+    return sorted(out)
+
+
+def _axis_point(p, axis_pt, axis_dir):
+    d = np.asarray(axis_dir, float)
+    return axis_pt + d * ((p - axis_pt) @ d)
+
+
+def thumb_sim() -> dict:
+    """The thumb's real tendon paths for the simulation (q = 0, world mm).
+
+    For each strand: `points` from the drum outward (part name, point), `side_mm` (a point on the
+    side the strand wraps the drum) and `anchor_dir` (unit vector from the drum centre to where the
+    loop is tied, chosen so >= 20 deg of wrap is left at both joint limits). The sheaths are
+    modelled by points on the two base axes: a point on a joint's axis doesn't move when it turns,
+    which is what a sheath of fixed length does. `drums`: centre and half width per joint."""
+    flex_c = np.array((0.0, *CMC_FLEX_YZ))
+    x_ = np.array((1.0, 0.0, 0.0))
+    strands, drums = {}, {}
+    # MCP and IP: drums on the proximal / distal, centred on their grooves
+    gm = thumb_pt(MCP_GROOVE_A, 0.0, MCP_Y)
+    drums["thumb_mcp_flex"] = {"center_mm": gm.tolist(), "half_width_mm": GROOVE_HALF_W + 0.5}
+    a0, a1 = sorted(IP_GROOVE_A.values())
+    gi = thumb_pt((a0 + a1) / 2, 0.0, IP_Y)
+    drums["thumb_ip"] = {
+        "center_mm": gi.tolist(),
+        "half_width_mm": (a1 - a0) / 2 + GROOVE_HALF_W + 0.5,
+    }
+    drums["thumb_cmc_flex"] = {"center_mm": [ROT_AXIS_XY[0], *CMC_FLEX_YZ], "half_width_mm": 1.8}
+    drums["thumb_cmc_rot"] = {"center_mm": [*ROT_AXIS_XY, ROT_DRUM_Z], "half_width_mm": GROOVE_W}
+    for j in SHEATH_JOINTS:
+        for side in ("flex", "ext"):
+            t = thumb_inner(j, side)
+            sgn = 1 if side == "flex" else -1
+            pts = [(b, p) for b, p in t["points"]][::-1]  # outward from the drum -> inward
+            tube_end = t["points"][0][1]
+            # sheath: through the cmc_flex axis and the rot axis, to the palm entry
+            p_flex = _axis_point(tube_end, flex_c, x_)
+            jx, jy = journal_xy(j, side)
+            p_rot = np.array((*ROT_AXIS_XY, PLATE_Z[1]))
+            pts += [("thumb_metacarpal", p_flex), ("thumb_base", p_rot)]
+            if j == "ip":
+                pts = [("thumb_proximal", t["cross"])] + [
+                    pp for pp in pts if pp[0] != "thumb_proximal"
+                ]
+            strands[f"thumb_{j}_{side}"] = {
+                "points": [(b, np.round(p, 4).tolist()) for b, p in pts],
+                "side_mm": None,  # the simulation's usual drum rule (strand on the +w / -w side)
+                "anchor_dir": None,
+            }
+    # cmc_flex: bare strands from the back of the drum, flex straight down, ext up over the pin
+    cfc = np.array((ROT_AXIS_XY[0], *CMC_FLEX_YZ))
+    for side in ("flex", "ext"):
+        gx = CMC_GROOVE_X[side]
+        jx, jy = CMC_J[side]
+        jpt = np.array((jx, jy, PLATE_Z[1]))
+        pts = []
+        if side == "ext":
+            py, pz = CMC_PIN_YZ
+            rho = PIN_R + LINE_R
+            pts.append(("thumb_base", np.array((gx, py - rho, pz))))  # up the pin's front
+            pts.append(("thumb_base", np.array((gx, py, pz + rho))))  # over its top
+            pts.append(("thumb_base", np.array((gx, py + rho, pz))))  # down its back
+        pts.append(("thumb_base", jpt))
+        # The real loop is tied once, at the front (200 deg), so the two wraps add up to 360 deg.
+        # MuJoCo can't wrap a cylinder by more than 180 deg, so the model ties each strand on its
+        # own: flex 120 deg over the top, ext 55 deg under the back (angles from +Y toward +Z;
+        # closing turns them down). Both stay 20..160 deg over the range, with the same arms.
+        a_anchor, a_side = (120.0, 60.0) if side == "flex" else (-55.0, -27.0)
+        strands[f"thumb_cmc_flex_{side}"] = {
+            "points": [(b, np.round(p, 4).tolist()) for b, p in pts],
+            "side_mm": (
+                cfc
+                + 2
+                * CMC_DRUM_R
+                * np.array((0.0, math.cos(math.radians(a_side)), math.sin(math.radians(a_side))))
+            ).tolist(),
+            "anchor_dir": [0.0, math.cos(math.radians(a_anchor)), math.sin(math.radians(a_anchor))],
+        }
+    # cmc_rot: from the drum straight back (+Y) to the bay wall
+    rc = np.array((*ROT_AXIS_XY, ROT_DRUM_Z))
+    for side in ("flex", "ext"):
+        sgn = -1 if side == "flex" else 1
+        strands[f"thumb_cmc_rot_{side}"] = {
+            "points": [],  # straight from the drum to the bay wall (MuJoCo finds the tangent)
+            "side_mm": (rc + np.array((sgn * ROT_DRUM_R, -ROT_DRUM_R, 0.0))).tolist(),  # front side
+            "anchor_dir": [math.cos(math.radians(240)), math.sin(math.radians(240)), 0.0],
+        }
+    return {"strands": strands, "drums": drums}
+
+
+def _unit(v):
+    return v / np.linalg.norm(v)
+
+
+def thumb_inner_check() -> dict:
+    """Numbers the tests look at: how far each line bends over its pins, and the ip lines' skew on
+    pin A (they drift sideways from their socket to their crossing hole)."""
+    res = {}
+    sd = np.array(SOCKET_DIR)
+    for j in SHEATH_JOINTS:
+        for side in ("flex", "ext"):
+            t = thumb_inner(j, side)
+            if j == "mcp_flex":
+                d3 = t["bores3"][1][1] - t["bores3"][1][0]
+                d1 = d3[1:] / np.linalg.norm(d3[1:])
+                r = {
+                    "pin_a_wrap_deg": math.degrees(math.acos(np.clip(sd @ d1, -1, 1))),
+                    "pin_b_wrap_deg": math.degrees(
+                        math.acos(np.clip(d1 @ np.array((-1.0, 0.0)), -1, 1))
+                    ),
+                    "skew_a_to_b_deg": math.degrees(math.asin(abs(d3[0]) / np.linalg.norm(d3))),
+                }
+            else:
+                start = np.array((t["x"], *t["pin_a_out"]))
+                d1 = t["cross"] - start
+                d1 = d1 / np.linalg.norm(d1)
+                r = {
+                    "pin_a_wrap_deg": math.degrees(
+                        math.acos(np.clip(sd @ d1[1:] / np.linalg.norm(d1[1:]), -1, 1))
+                    ),
+                    "skew_on_pin_a_deg": math.degrees(math.asin(abs(d1[0]))),
+                }
+            res[f"thumb_{j}_{side}"] = {k: round(v, 1) for k, v in r.items()}
+    return res
+
+
 def thumb_layout() -> dict:
     qs = np.radians(np.linspace(*CMC_FLEX_RANGE_DEG, 7))
     loops = {}
@@ -454,6 +721,29 @@ def thumb_layout() -> dict:
         "socket_dir_yz": SOCKET_DIR,
         "loop_min_bend_mm": {k: round(float(v), 2) for k, v in loops.items()},
         "fan_bottom_z": fan_bottom_z(),
+        "inner": {k: {kk: (np.round(vv, 4).tolist() if isinstance(vv, np.ndarray) else vv)
+                      for kk, vv in thumb_inner(*k.removeprefix("thumb_").rsplit("_", 1)).items()
+                      if kk in ("x", "socket", "tube_end", "pin_a", "pin_b", "line_x", "line_z", "cross", "cross_a", "ip_tangent", "drum_tangent")}
+                  for k in [f"thumb_{j}_{s}" for j in SHEATH_JOINTS for s in ("flex", "ext")]},
+        "pin_a_x": PIN_A_X,
+        "pin_b_y": PIN_B_Y,
+        "pin2_r": PIN2_R,
+        "tube_in": TUBE_IN,
+        "meta_fill": META_FILL,
+        "mcp_groove_a": MCP_GROOVE_A,
+        "ip_groove_a": IP_GROOVE_A,
+        "groove_half_w": GROOVE_HALF_W,
+        "thumb_drum_r": THUMB_DRUM_R,
+        "sim": thumb_sim(),
+        "cl_xz": THUMB_CL_XZ,
+        "mcp_y": MCP_Y,
+        "ip_y": IP_Y,
+        "cross_hole_d": CROSS_HOLE_D,
+        "bore_tube": BORE_TUBE,
+        "bore_small": BORE_SMALL,
+        "bores": {k: [[np.round(p, 4).tolist() for p in seg] for seg in v] for k, v in thumb_bores().items()},
+        "pin_a_out": {f"thumb_{j}_{s}": np.round(thumb_inner(j, s)["pin_a_out"], 4).tolist()
+                      for j in SHEATH_JOINTS for s in ("flex", "ext")},
     }  # fmt: skip
 
 

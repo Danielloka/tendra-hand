@@ -130,7 +130,7 @@ def test_sockets_fit_on_the_metacarpal_beside_the_cmc_flex_gap():
     slab_lo = tr.CMC_GROOVE_X["flex"] - 0.5
     slab_hi = tr.CMC_GROOVE_X["ext"] + tr.GROOVE_W / 2 + 0.3 + 0.3  # pin end + clearance
     for side in SIDES:
-        pos = {j: (tr.socket_x(j, side), tr.SOCKETS[j][1]) for j in tr.SHEATH_JOINTS}
+        pos = {j: (tr.socket_x(j, side), 0.0) for j in tr.SHEATH_JOINTS}
         for (ja, a), (jb, b) in itertools.combinations(pos.items(), 2):
             assert math.dist(a, b) >= tr.TUBE_OD + 0.1 - 1e-9, (side, ja, jb)
         for x, _ in pos.values():
@@ -158,3 +158,112 @@ def test_firmware_uses_the_cmc_rot_drum_ratio():
     row = re.search(r'\{"thumb_cmc_rot",[^}]*\}', cfg).group(0)
     ratio = float(row.split(",")[-2].strip().rstrip("f"))
     assert ratio == tr.ROT_DRUM_R / tr.SPOOL_R
+
+
+# ----- Inside the thumb (sockets -> pins -> crossing holes -> drums) ------------------------------
+
+INNER = {f"{j}_{s}": tr.thumb_inner(j, s) for j in tr.SHEATH_JOINTS for s in SIDES}
+CL = np.array((tr.THUMB_CL_XZ[0], 0.0, tr.THUMB_CL_XZ[1]))
+
+
+def _dist_to_line(p, point, direction):
+    v = p - point
+    return float(np.linalg.norm(v - direction * (v @ direction)))
+
+
+def test_bores_keep_a_wall_between_each_other():
+    """Different strands' 1.2 mm bores inside the thumb keep >= 0.8 mm of wall (centre lines >= 2 mm
+    apart), so the strands never touch each other."""
+    closest, a, b = tr.thumb_bore_clearance()[0]
+    assert closest >= tr.BORE_SMALL + tr.MIN_WALL, (a, b, closest)
+
+
+def test_ip_lines_cross_the_mcp_axis_exactly():
+    """The ip strands pass the MCP joint at a point on its axis, so turning it doesn't change
+    their length."""
+    mcp = np.array((tr.THUMB_CL_XZ[0], tr.MCP_Y, tr.THUMB_CL_XZ[1]))
+    for side in SIDES:
+        assert _dist_to_line(INNER[f"ip_{side}"]["cross"], mcp, tr.A_AX) < 1e-9
+
+
+def test_crossing_holes_and_grooves_leave_walls_on_the_mcp_barrel():
+    """On the proximal's MCP barrel (solid at a -4.5..4.5, bearing bosses beyond): the two ip holes
+    and the mcp_flex groove keep >= 0.8 mm between each other and to the bosses."""
+    r = tr.CROSS_HOLE_D / 2
+    feats = [(a, r) for a in tr.IP_GROOVE_A.values()] + [(tr.MCP_GROOVE_A, tr.GROOVE_HALF_W)]
+    for (a0, h0), (a1, h1) in itertools.combinations(feats, 2):
+        assert abs(a0 - a1) - h0 - h1 >= 0.8 - 1e-9, (a0, a1)
+    for a0, h0 in feats:
+        assert abs(a0) + h0 <= 4.5 - 0.8, a0
+
+
+def test_mcp_flex_lines_reach_the_drum_in_its_plane():
+    """After pin B the mcp_flex lines run parallel to the thumb at the drum's groove position, tangent
+    to the drum on the closing (flex, +w) and opening (ext, -w) side: no rubbing on the flanges."""
+    for side, sgn in (("flex", 1), ("ext", -1)):
+        t = INNER[f"mcp_flex_{side}"]
+        seg = t["bores3"][-1]
+        d = (seg[1] - seg[0]) / np.linalg.norm(seg[1] - seg[0])
+        assert abs(d @ tr.A_AX) < 1e-9 and abs(d[1] + 1) < 1e-9  # along -Y, in the plane
+        expected = tr.thumb_pt(tr.MCP_GROOVE_A, sgn * tr.THUMB_DRUM_R, tr.MCP_Y)
+        assert np.allclose(seg[1], expected)
+
+
+def test_ip_lines_stay_in_their_groove_plane_in_the_proximal():
+    for side in SIDES:
+        t = INNER[f"ip_{side}"]
+        seg = t["bores3"][-1]
+        d = seg[1] - seg[0]
+        assert abs(d @ tr.A_AX) < 1e-9  # a = const: straight into its IP groove
+
+
+def test_pins_wrap_gently_and_lines_barely_skew():
+    """Steel pins only: pin A turns each line out of its tube, pin B levels the mcp_flex lines. Keep
+    the total steel wrap <= 130 deg (capstan friction ~ e^(0.15*2.3) = 1.4) and the sideways skew
+    of a line over a pin <= 8 deg."""
+    for name, chk in tr.thumb_inner_check().items():
+        assert chk["pin_a_wrap_deg"] + chk.get("pin_b_wrap_deg", 0) <= 130, (name, chk)
+        assert max(chk.get("skew_on_pin_a_deg", 0), chk.get("skew_a_to_b_deg", 0)) <= 8, (name, chk)
+
+
+def test_pins_clear_the_other_bores():
+    """A pin (2 mm) only touches its own strands: every other bore passes >= 0.8 mm of wall away."""
+    bores = tr.thumb_bores()
+    rho = tr.PIN2_R + tr.BORE_SMALL / 2 + tr.MIN_WALL
+    for name, t in INNER.items():
+        side = name.rsplit("_", 1)[1]
+        pins = [("A", t["pin_a"], tr.PIN_A_X[side])]
+        if "pin_b" in t:
+            x0 = t["line_x"] - 1.2 if side == "ext" else tr.META_FILL["x"][0]
+            x1 = tr.META_FILL["x"][1] if side == "ext" else t["line_x"] + 1.2
+            pins.append(("B", t["pin_b"], (x0, x1)))
+        for label, (py, pz), (x0, x1) in pins:
+            for other, segs in bores.items():
+                if other == f"thumb_{name}":
+                    continue
+                for s0, s1 in segs:
+                    for p in np.linspace(s0, s1, 60):
+                        if x0 - rho <= p[0] <= x1 + rho:
+                            if label == "A" and other.rsplit("_", 1)[1] == side:
+                                continue  # same pin A carries both strands of a side
+                            assert math.hypot(p[1] - py, p[2] - pz) >= rho - 1e-6, (
+                                name,
+                                label,
+                                other,
+                                p,
+                            )
+
+
+def test_mcp_flex_lines_stay_inside_the_metacarpal_block():
+    """In front of the socket block (y <= 0) the mcp_flex lines run inside the added solid block
+    with 0.8 mm of wall; behind it they are in the socket block (checked in the CAD)."""
+    for side in SIDES:
+        t = INNER[f"mcp_flex_{side}"]
+        x0, x1 = tr.META_FILL["x"]
+        z0, z1 = tr.META_FILL["z"]
+        r = tr.BORE_SMALL / 2 + tr.MIN_WALL
+        for s0, s1 in t["bores3"][1:3]:
+            for p in np.linspace(s0, s1, 40):
+                if p[1] <= 0.0:
+                    top = z1 if p[1] >= tr.META_FILL["front"][0] else tr.META_FILL["front"][1]
+                    assert x0 + r <= p[0] <= x1 - r and z0 + r <= p[2] <= top - r, (side, p)

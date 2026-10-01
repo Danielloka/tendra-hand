@@ -46,7 +46,7 @@ The same protocol for both hands; only the number of joints *N* changes (v0: 8, 
 Joints are numbered **1–N = motors M1–MN** (v1: motor number = servo ID). Angles are in **radians**, and **positive = closing the hand**.
 
 - v0 joints: `index_dip, index_pip, index_mcp_flex, index_mcp_abd, thumb_ip, thumb_mcp, thumb_cmc_flex, thumb_cmc_rot`
-- v1 joints: `index_dip, index_pip, index_mcp_flex, index_mcp_abd, thumb_ip, thumb_mcp_flex, thumb_cmc_flex, thumb_cmc_rot, thumb_mcp_abd, middle_dip, middle_pip, middle_mcp_flex, middle_mcp_abd, ring_dip, ring_pip, ring_mcp_flex, ring_mcp_abd, little_dip, little_pip, little_mcp_flex, little_mcp_abd`
+- v1 joints: `index_dip, index_pip, index_mcp_flex, index_mcp_abd, thumb_ip, thumb_mcp_flex, thumb_cmc_flex, thumb_cmc_rot, middle_dip, middle_pip, middle_mcp_flex, middle_mcp_abd, ring_dip, ring_pip, ring_mcp_flex, ring_mcp_abd, little_dip, little_pip, little_mcp_flex, little_mcp_abd`
 
 | Command | Meaning | Reply |
 |---|---|---|

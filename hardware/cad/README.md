@@ -15,3 +15,5 @@ Fusion design **"Tendra Hand V1"** (a copy of "Hand assebly"). Workflow after a 
 1. `uv run python hardware/cad/tendon_router.py` (if routes/layout changed) and `uv run pytest hardware/cad/tests`
 2. In Fusion, run the `TendraHandV1` stages (each skips itself if already applied), then stage `export`
 3. `uv run python sim/convert_v1.py && uv run pytest`
+
+- `spool_v0.py`: parametric tendon spool for the V0 hand's 28BYJ-48 steppers (OpenCASCADE, writes `hardware/print/v0/spool_r<radius>.stl`). Run: `uv run --with cadquery-ocp python hardware/cad/spool_v0.py [--radius 5]`.

@@ -85,11 +85,48 @@ class SceneConfig:
     object_condim: int = 4  # 4 = with torsional friction (holds an object from turning)
     impratio: float = 10.0  # >1 makes friction harder than normal force: less slip
     settle: float = 0.2  # seconds simulated at reset so the object comes to rest
+    # MuJoCo contact sensors (`CONTACT_PARTS` x objects, hand/object vs. table), for the GPU
+    # training env: MuJoCo Warp reports contacts through sensors, not a Python contact loop.
+    contact_sensors: bool = False
     view_fovy: float = 60.0  # degrees: fingertips at home + the spawn area both in view
     # View camera, world (m): frames the hand at home and both spawn sides, ~25 deg from above,
     # ~0.4 m away (closer made the objects on the sides leave the image).
     view_pos: tuple[float, float, float] = (0.0, -0.38, 0.32)
     view_lookat: tuple[float, float, float] = (0.0, -0.02, 0.15)
+
+
+# Hand parts with a contact sensor each: (sensor name, MuJoCo object type, name). A finger is
+# the subtree of its base body; the palm is the palm body alone (its subtree holds the fingers).
+CONTACT_PARTS: tuple[tuple[str, mujoco.mjtObj, str], ...] = (
+    *((f, mujoco.mjtObj.mjOBJ_XBODY, f"{f}_base") for f in ("thumb", "index", "middle", "ring",
+                                                            "little")),
+    ("palm", mujoco.mjtObj.mjOBJ_BODY, "palm"),
+)  # fmt: skip
+_FOUND, _FORCE, _POS = (1 << int(mujoco.mjtConDataField.mjCONDATA_FOUND),
+                        1 << int(mujoco.mjtConDataField.mjCONDATA_FORCE),
+                        1 << int(mujoco.mjtConDataField.mjCONDATA_POS))  # fmt: skip
+_NETFORCE = 3  # contact sensor reduce mode: one net contact (force-weighted position)
+
+
+def contact_sensor_name(part: str, obj: str) -> str:
+    return f"touch_{part}_{obj}"
+
+
+def _add_contact_sensors(scene: mujoco.MjSpec, objects: tuple[str, ...]) -> None:
+    """Per object: one sensor per hand part (found, net force, position: 7 values), the
+    object on the table (found) and the hand on the table (found)."""
+    geom = mujoco.mjtObj.mjOBJ_GEOM
+    contact = mujoco.mjtSensor.mjSENS_CONTACT
+    for obj in objects:
+        for part, objtype, body in CONTACT_PARTS:
+            scene.add_sensor(name=contact_sensor_name(part, obj), type=contact, objtype=objtype,
+                             objname=body, reftype=geom, refname=obj,
+                             intprm=[_FOUND | _FORCE | _POS, _NETFORCE, 1])  # fmt: skip
+        scene.add_sensor(name=f"table_{obj}", type=contact, objtype=geom, objname=obj,
+                         reftype=geom, refname="table", intprm=[_FOUND, 0, 1])  # fmt: skip
+    scene.add_sensor(name="table_hand", type=contact, objtype=mujoco.mjtObj.mjOBJ_XBODY,
+                     objname="hand_root", reftype=geom, refname="table",
+                     intprm=[_FOUND, 0, 1])  # fmt: skip
 
 
 def _look_at(pos: np.ndarray, target: np.ndarray, up: np.ndarray) -> np.ndarray:
@@ -247,6 +284,8 @@ class GraspScene:
             body.add_geom(name=kind, type=gtype, size=list(size), mass=mass, rgba=list(rgba),
                           friction=list(cfg.object_friction), condim=cfg.object_condim)  # fmt: skip
 
+        if cfg.contact_sensors:
+            _add_contact_sensors(scene, cfg.objects)
         model = scene.compile()
         if cfg.lite:
             copy_inertia(model, _full_hand_model(V1.model_path))
@@ -306,10 +345,16 @@ class GraspScene:
         self.step(self.config.settle)
         self._rest_z = float(d.xpos[self._obj_body[obj]][2])
 
-    @staticmethod
-    def _half_height(kind: str) -> float:
-        gtype, size, _, _ = OBJECTS[kind]
-        return size[1] if gtype == mujoco.mjtGeom.mjGEOM_CYLINDER else size[-1]
+    def _half_height(self, kind: str) -> float:
+        """From the model (not `OBJECTS`), so resized objects (randomisation) spawn correctly."""
+        size = self.model.geom_size[self._obj_geom[kind]]
+        return float(size[1] if OBJECTS[kind][0] == mujoco.mjtGeom.mjGEOM_CYLINDER else
+                     size[0] if OBJECTS[kind][0] == mujoco.mjtGeom.mjGEOM_SPHERE else size[2])  # fmt: skip
+
+    @property
+    def rest_height(self) -> float:
+        """Height (world z, m) of the active object's centre when it rested after the reset."""
+        return self._rest_z
 
     @property
     def active_object(self) -> str:
@@ -405,7 +450,7 @@ POWER_GRASP: dict[str, float] = {
     **{f"{f}_{j}": q for f in ("index", "middle", "ring", "little")
        for j, q in (("mcp_flex", 1.4), ("pip", 1.5), ("dip", 1.2), ("mcp_abd", 0.0))},
     "thumb_cmc_rot": 0.0,
-    "thumb_cmc_flex": 1.2,
+    "thumb_cmc_flex": 0.75,  # V1 limit is 45 deg (0.785)
     "thumb_mcp_flex": 0.4,
     "thumb_ip": 0.4,
 }  # fmt: skip

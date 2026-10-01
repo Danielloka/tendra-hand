@@ -79,7 +79,7 @@ LIMITS_DEG = {
     "little_mcp_abd": (-20, 20),
     "thumb_ip": (-5, 95),
     "thumb_mcp_flex": (-5, 95),
-    "thumb_cmc_flex": (-13, 80),
+    "thumb_cmc_flex": (-13, 45),  # V1: the metacarpal block touches the base at 46 deg
     "thumb_cmc_rot": (-100, 40),
 }
 
@@ -329,7 +329,20 @@ def load_routes(path: Path = ROUTES_PATH) -> dict[str, dict] | None:
     if not path.exists():
         return None
     data = json.loads(path.read_text(encoding="utf-8"))
-    return {s["name"]: s for s in data["strands"]}
+    out = {s["name"]: s for s in data["strands"]}
+    sim = (data.get("thumb") or {}).get("sim")
+    if sim:  # the thumb's real paths (tendon_router.thumb_sim()), keyed by strand / joint
+        out["_thumb_paths"] = sim["strands"]
+        out["_thumb_drums"] = sim["drums"]
+    return out
+
+
+def thumb_drum(routes: dict | None, joint: str):
+    """(centre (m), half width (m)) of a thumb drum from tendon_routes.json, or None."""
+    d = (routes or {}).get("_thumb_drums", {}).get(joint)
+    if not d:
+        return None
+    return np.array(d["center_mm"]) * MM, d["half_width_mm"] * MM
 
 
 @dataclass
@@ -362,12 +375,39 @@ def build_strand(hand: Hand, joint: str, side: str, routes: dict | None) -> list
     r = drum_radius(joint)
     anchor_r = r + ANCHOR_OFFSET
     sgn = 1.0 if side == "flex" else -1.0
+    drum = thumb_drum(routes, joint)
+    center = drum[0] if drum else j.center
     # Anchor angle on the drum, measured from the tangent point toward u (distal). It shrinks by q
     # for the flex strand and grows by q for the ext strand; keep WRAP_MARGIN of wrap at the limits,
     # plus the extra angle lost because the anchor site sits just outside the drum.
     lost = math.acos(r / anchor_r)
     phi = (j.hi if side == "flex" else -j.lo) + WRAP_MARGIN + lost
-    anchor = j.center + anchor_r * (sgn * math.cos(phi) * j.w + math.sin(phi) * j.u)
+    real = (routes or {}).get("_thumb_paths", {}).get(f"{joint}_{side}")
+    if real:  # the thumb's real path: drum, then fixed points on the parts, then the palm route
+        if real["anchor_dir"] is None:  # the usual rule, around the real drum centre
+            anchor = center + anchor_r * (sgn * math.cos(phi) * j.w + math.sin(phi) * j.u)
+            side_dir = sgn * math.cos(math.pi / 4) * j.w + math.sin(math.pi / 4) * j.u
+            side_pos = center + 2 * r * side_dir
+        else:
+            anchor = center + anchor_r * np.array(real["anchor_dir"])
+            side_pos = np.array(real["side_mm"]) * MM
+        points = [
+            PathPoint(
+                j.child,
+                anchor,
+                "anchor",
+                drum=f"{joint}_drum",
+                side_body=j.parent,
+                side_pos=side_pos,
+            )
+        ]
+        points += [PathPoint(b, np.array(p) * MM, "real") for b, p in real["points"]]
+        route = routes.get(f"{joint}_{side}")
+        points += [
+            PathPoint(None, np.array(p, dtype=float) * MM, "route") for p in route["points_mm"]
+        ]
+        return points[::-1]
+    anchor = center + anchor_r * (sgn * math.cos(phi) * j.w + math.sin(phi) * j.u)
     chain = ancestors(hand, joint)
     parent_body = j.parent
     if len(chain) > 1:
@@ -383,9 +423,9 @@ def build_strand(hand: Hand, joint: str, side: str, routes: dict | None) -> list
             "anchor",
             drum=f"{joint}_drum",
             side_body=parent_body,
-            side_pos=j.center + 2 * r * side_dir,
+            side_pos=center + 2 * r * side_dir,
         ),
-        PathPoint(parent_body, j.center - guide * j.u + sgn * r * j.w, "guide"),
+        PathPoint(parent_body, center - guide * j.u + sgn * r * j.w, "guide"),
     ]
     for k in reversed(chain[:-1]):
         kj = hand.joints[k]
@@ -505,15 +545,15 @@ def build_mjcf(
         if part in hand.parent_joint:
             j = hand.joints[hand.parent_joint[part]]
             ET.SubElement(body, "joint", name=j.name, axis=_fmt(j.axis), range=_fmt([j.lo, j.hi]))
+            drum = thumb_drum(routes, j.name)
+            c, h = (drum[0] - pos, drum[1]) if drum else (np.zeros(3), DRUM_HALF_WIDTH)
             ET.SubElement(
                 body,
                 "geom",
                 {
                     "name": f"{j.name}_drum",
                     "class": "drum",
-                    "fromto": _fmt(
-                        np.concatenate([-DRUM_HALF_WIDTH * j.axis, DRUM_HALF_WIDTH * j.axis])
-                    ),
+                    "fromto": _fmt(np.concatenate([c - h * j.axis, c + h * j.axis])),
                     "size": _fmt([drum_radius(j.name)]),
                 },
             )

@@ -10,6 +10,7 @@ This folder is the research base for that goal. It is a living set of notes: add
 | [roadmap.md](roadmap.md) | Stages from "learn the stack" to "bimanual, language-driven tasks", each with a *done when* |
 | [math.md](math.md) | The maths and theory, in learning order, with where each topic is used in this project |
 | [resources.md](resources.md) | Books, courses, papers, open-source projects, datasets, simulators, hardware |
+| [grasp-rl.md](grasp-rl.md) | The RL system that teaches the hand to grasp by itself in simulation: design, research basis, how to run, results |
 | [ideas.md](ideas.md) | Creative bets and open questions: things that could give Tendra an edge |
 
 ## The one-paragraph version

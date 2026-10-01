@@ -14,6 +14,7 @@ Learn the core ideas and tools while the hand hardware is being built.
 
 - [x] **Grasp demos in simulation** (2026-09-29): floating V1 hand + table + objects, wrist and fingers from the webcam, episodes recorded and exportable to LeRobot (`sim/grasp_teleop.py`)
 - [ ] Record ~50 grasp demos and train ACT on them (free cloud GPU); measure the success rate in sim
+- [ ] **RL grasping in sim** (system built 2026-09-29: `sim/train_grasp.py`, `research/ai/grasp-rl.md`): cylinder, cube and ball ≥ 80% success from normal starts; then RL teacher → vision student
 
 **Done when:** you can move the simulated (and real) Tendra hand with your own hand in front of a webcam, and you have trained one policy yourself.
 

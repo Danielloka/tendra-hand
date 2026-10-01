@@ -20,10 +20,14 @@ teleop = [
     "fast-simplification>=0.2.0",
     "mediapipe>=1.0.1",
 ]
+train = [
+    "torch>=2.5",  # CPU build from PyPI on Windows; for a CUDA GPU see pytorch.org
+]
 
 [tool.uv]
-# `uv run` / `uv sync` install these groups by default (teleop: webcam hand tracking).
-default-groups = ["dev", "teleop"]
+# `uv run` / `uv sync` install these groups by default (teleop: webcam hand tracking,
+# train: PyTorch for sim/train_grasp.py).
+default-groups = ["dev", "teleop", "train"]
 
 [build-system]
 requires = ["hatchling"]

@@ -110,7 +110,7 @@ _V1_JOINTS_DEG: tuple[tuple[str, tuple[int, int]], ...] = (
     ("index_mcp_abd", (-15, 15)),  # ID 4
     ("thumb_ip", _FLEX),           # ID 5
     ("thumb_mcp_flex", _FLEX),     # ID 6
-    ("thumb_cmc_flex", (-13, 80)), # ID 7
+    ("thumb_cmc_flex", (-13, 45)), # ID 7  (the metacarpal block touches the base at 46)
     ("thumb_cmc_rot", (-100, 40)), # ID 8
     ("middle_dip", _FLEX),         # ID 9
     ("middle_pip", _FLEX),         # ID 10

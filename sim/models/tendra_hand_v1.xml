@@ -47,19 +47,18 @@
     <mesh name="servo_06_thumb_mcp_flex" file="meshes/servo_06_thumb_mcp_flex.stl" scale="0.001 0.001 0.001" inertia="exact" />
     <mesh name="servo_07_thumb_cmc_flex" file="meshes/servo_07_thumb_cmc_flex.stl" scale="0.001 0.001 0.001" inertia="exact" />
     <mesh name="servo_08_thumb_cmc_rot" file="meshes/servo_08_thumb_cmc_rot.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="servo_09_thumb_mcp_abd" file="meshes/servo_09_thumb_mcp_abd.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="servo_10_middle_dip" file="meshes/servo_10_middle_dip.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="servo_11_middle_pip" file="meshes/servo_11_middle_pip.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="servo_12_middle_mcp_flex" file="meshes/servo_12_middle_mcp_flex.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="servo_13_middle_mcp_abd" file="meshes/servo_13_middle_mcp_abd.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="servo_14_ring_dip" file="meshes/servo_14_ring_dip.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="servo_15_ring_pip" file="meshes/servo_15_ring_pip.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="servo_16_ring_mcp_flex" file="meshes/servo_16_ring_mcp_flex.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="servo_17_ring_mcp_abd" file="meshes/servo_17_ring_mcp_abd.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="servo_18_little_dip" file="meshes/servo_18_little_dip.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="servo_19_little_pip" file="meshes/servo_19_little_pip.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="servo_20_little_mcp_flex" file="meshes/servo_20_little_mcp_flex.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="servo_21_little_mcp_abd" file="meshes/servo_21_little_mcp_abd.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="servo_09_middle_dip" file="meshes/servo_09_middle_dip.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="servo_10_middle_pip" file="meshes/servo_10_middle_pip.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="servo_11_middle_mcp_flex" file="meshes/servo_11_middle_mcp_flex.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="servo_12_middle_mcp_abd" file="meshes/servo_12_middle_mcp_abd.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="servo_13_ring_dip" file="meshes/servo_13_ring_dip.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="servo_14_ring_pip" file="meshes/servo_14_ring_pip.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="servo_15_ring_mcp_flex" file="meshes/servo_15_ring_mcp_flex.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="servo_16_ring_mcp_abd" file="meshes/servo_16_ring_mcp_abd.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="servo_17_little_dip" file="meshes/servo_17_little_dip.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="servo_18_little_pip" file="meshes/servo_18_little_pip.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="servo_19_little_mcp_flex" file="meshes/servo_19_little_mcp_flex.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="servo_20_little_mcp_abd" file="meshes/servo_20_little_mcp_abd.stl" scale="0.001 0.001 0.001" inertia="exact" />
     <mesh name="spool_01_index_dip" file="meshes/spool_01_index_dip.stl" scale="0.001 0.001 0.001" inertia="exact" />
     <mesh name="spool_02_index_pip" file="meshes/spool_02_index_pip.stl" scale="0.001 0.001 0.001" inertia="exact" />
     <mesh name="spool_03_index_mcp_flex" file="meshes/spool_03_index_mcp_flex.stl" scale="0.001 0.001 0.001" inertia="exact" />
@@ -68,23 +67,22 @@
     <mesh name="spool_06_thumb_mcp_flex" file="meshes/spool_06_thumb_mcp_flex.stl" scale="0.001 0.001 0.001" inertia="exact" />
     <mesh name="spool_07_thumb_cmc_flex" file="meshes/spool_07_thumb_cmc_flex.stl" scale="0.001 0.001 0.001" inertia="exact" />
     <mesh name="spool_08_thumb_cmc_rot" file="meshes/spool_08_thumb_cmc_rot.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="spool_09_thumb_mcp_abd" file="meshes/spool_09_thumb_mcp_abd.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="spool_10_middle_dip" file="meshes/spool_10_middle_dip.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="spool_11_middle_pip" file="meshes/spool_11_middle_pip.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="spool_12_middle_mcp_flex" file="meshes/spool_12_middle_mcp_flex.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="spool_13_middle_mcp_abd" file="meshes/spool_13_middle_mcp_abd.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="spool_14_ring_dip" file="meshes/spool_14_ring_dip.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="spool_15_ring_pip" file="meshes/spool_15_ring_pip.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="spool_16_ring_mcp_flex" file="meshes/spool_16_ring_mcp_flex.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="spool_17_ring_mcp_abd" file="meshes/spool_17_ring_mcp_abd.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="spool_18_little_dip" file="meshes/spool_18_little_dip.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="spool_19_little_pip" file="meshes/spool_19_little_pip.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="spool_20_little_mcp_flex" file="meshes/spool_20_little_mcp_flex.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="spool_21_little_mcp_abd" file="meshes/spool_21_little_mcp_abd.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="spool_09_middle_dip" file="meshes/spool_09_middle_dip.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="spool_10_middle_pip" file="meshes/spool_10_middle_pip.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="spool_11_middle_mcp_flex" file="meshes/spool_11_middle_mcp_flex.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="spool_12_middle_mcp_abd" file="meshes/spool_12_middle_mcp_abd.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="spool_13_ring_dip" file="meshes/spool_13_ring_dip.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="spool_14_ring_pip" file="meshes/spool_14_ring_pip.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="spool_15_ring_mcp_flex" file="meshes/spool_15_ring_mcp_flex.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="spool_16_ring_mcp_abd" file="meshes/spool_16_ring_mcp_abd.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="spool_17_little_dip" file="meshes/spool_17_little_dip.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="spool_18_little_pip" file="meshes/spool_18_little_pip.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="spool_19_little_mcp_flex" file="meshes/spool_19_little_mcp_flex.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="spool_20_little_mcp_abd" file="meshes/spool_20_little_mcp_abd.stl" scale="0.001 0.001 0.001" inertia="exact" />
     <mesh name="thumb_base" file="meshes/thumb_base.stl" scale="0.001 0.001 0.001" inertia="exact" />
     <mesh name="thumb_distal" file="meshes/thumb_distal.stl" scale="0.001 0.001 0.001" inertia="exact" />
     <mesh name="thumb_metacarpal" file="meshes/thumb_metacarpal.stl" scale="0.001 0.001 0.001" inertia="exact" />
-    <mesh name="thumb_proximal" file="meshes/thumb_proximal.stl" scale="0.001 0.001 0.001" inertia="exact" />
+    <mesh name="thumb_proximal" file="meshes/thumb_proximal.stl" scale="0.001 0.001 0.001" inertia="legacy" />
   </asset>
   <worldbody>
     <light pos="0 -0.5 0.8" dir="0 0.5 -0.8" />
@@ -96,19 +94,19 @@
       <geom name="palm" mesh="palm" />
       <body name="index_base" pos="-0.0085306 0.0183677 0.0599764">
         <joint name="index_mcp_abd" axis="-0 1 0" range="-0.261799 0.261799" />
-        <geom name="index_mcp_abd_drum" class="drum" fromto="0 -0.0015 -0 -0 0.0015 0" size="0.006" />
+        <geom name="index_mcp_abd_drum" class="drum" fromto="0 -0.0015 0 0 0.0015 0" size="0.006" />
         <geom name="index_base" mesh="index_base" pos="0.0085306 -0.0183677 -0.0599764" />
         <body name="index_proximal" pos="-0.000141939 0.000655292 0.019">
           <joint name="index_mcp_flex" axis="1 -0 -0" range="-0.0872665 1.65806" />
-          <geom name="index_mcp_flex_drum" class="drum" fromto="-0.0015 0 0 0.0015 -0 -0" size="0.006" />
+          <geom name="index_mcp_flex_drum" class="drum" fromto="-0.0015 0 0 0.0015 0 0" size="0.006" />
           <geom name="index_proximal" mesh="index_proximal" pos="0.00867254 -0.019023 -0.0789764" />
           <body name="index_middle" pos="1.39467e-05 0 0.04">
             <joint name="index_pip" axis="1 0 0" range="-0.0872665 1.65806" />
-            <geom name="index_pip_drum" class="drum" fromto="-0.0015 -0 -0 0.0015 0 0" size="0.006" />
+            <geom name="index_pip_drum" class="drum" fromto="-0.0015 0 0 0.0015 0 0" size="0.006" />
             <geom name="index_middle" mesh="index_middle" pos="0.00865859 -0.019023 -0.118976" />
             <body name="index_distal" pos="2.3832e-05 0 0.023">
               <joint name="index_dip" axis="1 0 0" range="-0.0872665 1.65806" />
-              <geom name="index_dip_drum" class="drum" fromto="-0.0015 -0 -0 0.0015 0 0" size="0.006" />
+              <geom name="index_dip_drum" class="drum" fromto="-0.0015 0 0 0.0015 0 0" size="0.006" />
               <geom name="index_distal" mesh="index_distal" pos="0.00863476 -0.019023 -0.141976" />
               <site name="index_tip" pos="-0.00089582 -0.0027453 0.0224939" size="0.003" group="0" rgba="1 0.3 0.1 1" />
               <site name="index_dip_flex_47_anchor" pos="0 0.00454364 0.00464816" />
@@ -149,19 +147,19 @@
       </body>
       <body name="little_base" pos="-0.0655306 0.0183764 0.0529764">
         <joint name="little_mcp_abd" axis="-0 1 -0" range="-0.349066 0.349066" />
-        <geom name="little_mcp_abd_drum" class="drum" fromto="0 -0.0015 0 -0 0.0015 -0" size="0.006" />
+        <geom name="little_mcp_abd_drum" class="drum" fromto="0 -0.0015 0 0 0.0015 0" size="0.006" />
         <geom name="little_base" mesh="little_base" pos="0.0655306 -0.0183764 -0.0529764" />
         <body name="little_proximal" pos="-0.000144858 0.000646597 0.019">
           <joint name="little_mcp_flex" axis="1 -0 0" range="-0.0872665 1.65806" />
-          <geom name="little_mcp_flex_drum" class="drum" fromto="-0.0015 0 -0 0.0015 -0 0" size="0.006" />
+          <geom name="little_mcp_flex_drum" class="drum" fromto="-0.0015 0 0 0.0015 0 0" size="0.006" />
           <geom name="little_proximal" mesh="little_proximal" pos="0.0656755 -0.019023 -0.0719764" />
           <body name="little_middle" pos="1.55161e-05 0 0.032">
             <joint name="little_pip" axis="1 -0 0" range="-0.0872665 1.65806" />
-            <geom name="little_pip_drum" class="drum" fromto="-0.0015 0 -0 0.0015 -0 0" size="0.006" />
+            <geom name="little_pip_drum" class="drum" fromto="-0.0015 0 0 0.0015 0 0" size="0.006" />
             <geom name="little_middle" mesh="little_middle" pos="0.0656599 -0.019023 -0.103976" />
             <body name="little_distal" pos="2.51824e-05 0 0.019">
               <joint name="little_dip" axis="1 0 0" range="-0.0872665 1.65806" />
-              <geom name="little_dip_drum" class="drum" fromto="-0.0015 -0 -0 0.0015 0 0" size="0.006" />
+              <geom name="little_dip_drum" class="drum" fromto="-0.0015 0 0 0.0015 0 0" size="0.006" />
               <geom name="little_distal" mesh="little_distal" pos="0.0656348 -0.019023 -0.122976" />
               <site name="little_tip" pos="-0.000895819 -0.0027453 0.0224939" size="0.003" group="0" rgba="1 0.3 0.1 1" />
               <site name="little_dip_flex_46_anchor" pos="0 0.00454364 0.00464816" />
@@ -202,19 +200,19 @@
       </body>
       <body name="middle_base" pos="-0.0275306 0.0183653 0.0639764">
         <joint name="middle_mcp_abd" axis="0 1 -0" range="-0.261799 0.261799" />
-        <geom name="middle_mcp_abd_drum" class="drum" fromto="-0 -0.0015 0 0 0.0015 -0" size="0.006" />
+        <geom name="middle_mcp_abd_drum" class="drum" fromto="0 -0.0015 0 0 0.0015 0" size="0.006" />
         <geom name="middle_base" mesh="middle_base" pos="0.0275306 -0.0183653 -0.0639764" />
         <body name="middle_proximal" pos="-0.00013871 0.000657727 0.019">
           <joint name="middle_mcp_flex" axis="1 0 -0" range="-0.0872665 1.65806" />
-          <geom name="middle_mcp_flex_drum" class="drum" fromto="-0.0015 -0 0 0.0015 0 -0" size="0.006" />
+          <geom name="middle_mcp_flex_drum" class="drum" fromto="-0.0015 0 0 0.0015 0 0" size="0.006" />
           <geom name="middle_proximal" mesh="middle_proximal" pos="0.0276693 -0.019023 -0.0829764" />
           <body name="middle_middle" pos="1.33565e-05 0 0.044">
             <joint name="middle_pip" axis="1 -0 -0" range="-0.0872665 1.65806" />
-            <geom name="middle_pip_drum" class="drum" fromto="-0.0015 0 0 0.0015 -0 -0" size="0.006" />
+            <geom name="middle_pip_drum" class="drum" fromto="-0.0015 0 0 0.0015 0 0" size="0.006" />
             <geom name="middle_middle" mesh="middle_middle" pos="0.027656 -0.019023 -0.126976" />
             <body name="middle_distal" pos="2.11937e-05 0 0.026">
               <joint name="middle_dip" axis="1 -0 -0" range="-0.0872665 1.65806" />
-              <geom name="middle_dip_drum" class="drum" fromto="-0.0015 0 0 0.0015 -0 -0" size="0.006" />
+              <geom name="middle_dip_drum" class="drum" fromto="-0.0015 0 0 0.0015 0 0" size="0.006" />
               <geom name="middle_distal" mesh="middle_distal" pos="0.0276348 -0.019023 -0.152976" />
               <site name="middle_tip" pos="-0.000895821 -0.0027453 0.0224939" size="0.003" group="0" rgba="1 0.3 0.1 1" />
               <site name="middle_dip_flex_46_anchor" pos="0 0.00454364 0.00464816" />
@@ -255,19 +253,19 @@
       </body>
       <body name="ring_base" pos="-0.0465306 0.0183666 0.0609764">
         <joint name="ring_mcp_abd" axis="-0 1 -0" range="-0.261799 0.261799" />
-        <geom name="ring_mcp_abd_drum" class="drum" fromto="0 -0.0015 0 -0 0.0015 -0" size="0.006" />
+        <geom name="ring_mcp_abd_drum" class="drum" fromto="0 -0.0015 0 0 0.0015 0" size="0.006" />
         <geom name="ring_base" mesh="ring_base" pos="0.0465306 -0.0183666 -0.0609764" />
         <body name="ring_proximal" pos="-0.000140049 0.000656369 0.019">
           <joint name="ring_mcp_flex" axis="1 -0 0" range="-0.0872665 1.65806" />
-          <geom name="ring_mcp_flex_drum" class="drum" fromto="-0.0015 0 -0 0.0015 -0 0" size="0.006" />
+          <geom name="ring_mcp_flex_drum" class="drum" fromto="-0.0015 0 0 0.0015 0 0" size="0.006" />
           <geom name="ring_proximal" mesh="ring_proximal" pos="0.0466706 -0.019023 -0.0799764" />
           <body name="ring_middle" pos="1.49235e-05 0 0.041">
             <joint name="ring_pip" axis="1 -0 0" range="-0.0872665 1.65806" />
-            <geom name="ring_pip_drum" class="drum" fromto="-0.0015 0 -0 0.0015 -0 0" size="0.006" />
+            <geom name="ring_pip_drum" class="drum" fromto="-0.0015 0 0 0.0015 0 0" size="0.006" />
             <geom name="ring_middle" mesh="ring_middle" pos="0.0466557 -0.019023 -0.120976" />
             <body name="ring_distal" pos="2.09653e-05 0 0.025">
               <joint name="ring_dip" axis="1 0 0" range="-0.0872665 1.65806" />
-              <geom name="ring_dip_drum" class="drum" fromto="-0.0015 -0 -0 0.0015 0 0" size="0.006" />
+              <geom name="ring_dip_drum" class="drum" fromto="-0.0015 0 0 0.0015 0 0" size="0.006" />
               <geom name="ring_distal" mesh="ring_distal" pos="0.0466348 -0.019023 -0.145976" />
               <site name="ring_tip" pos="-0.000895819 -0.0027453 0.0224939" size="0.003" group="0" rgba="1 0.3 0.1 1" />
               <site name="ring_dip_flex_46_anchor" pos="0 0.00454364 0.00464816" />
@@ -306,67 +304,78 @@
         <site name="ring_mcp_abd_flex_43_anchor" pos="0.00347076 0 0.0054958" />
         <site name="ring_mcp_abd_ext_43_anchor" pos="-0.00349117 0 0.00548286" />
       </body>
-      <body name="thumb_base" pos="0.001 0.0155236 0.0102206">
+      <body name="thumb_base" pos="0.001 0.0155236 0.0130884">
         <joint name="thumb_cmc_rot" axis="-0 0 -1" range="-1.74533 0.698132" />
-        <geom name="thumb_cmc_rot_drum" class="drum" fromto="0 -0 0.0015 -0 0 -0.0015" size="0.0075" />
-        <geom name="thumb_base" mesh="thumb_base" pos="-0.001 -0.0155236 -0.0102206" />
-        <body name="thumb_metacarpal" pos="-0.000264996 -0.0055 0.00115579">
-          <joint name="thumb_cmc_flex" axis="-1 -0 0" range="-0.226893 1.39626" />
-          <geom name="thumb_cmc_flex_drum" class="drum" fromto="0.0015 0 -0 -0.0015 -0 0" size="0.006" />
-          <geom name="thumb_metacarpal" mesh="thumb_metacarpal" pos="-0.000735004 -0.0100236 -0.0113764" />
-          <body name="thumb_proximal" pos="0.000346416 -0.042 8.14199e-05">
+        <geom name="thumb_cmc_rot_drum" class="drum" fromto="0 0 -0.0167884 0 0 -0.0187884" size="0.0075" />
+        <geom name="thumb_base" mesh="thumb_base" pos="-0.001 -0.0155236 -0.0130884" />
+        <body name="thumb_metacarpal" pos="-0.000161779 -0.0055 -0.00171201">
+          <joint name="thumb_cmc_flex" axis="-1 -0 0" range="-0.226893 0.785398" />
+          <geom name="thumb_cmc_flex_drum" class="drum" fromto="0.00196178 0 0 -0.00163822 0 0" size="0.006" />
+          <geom name="thumb_metacarpal" mesh="thumb_metacarpal" pos="-0.000838221 -0.0100236 -0.0113764" />
+          <body name="thumb_proximal" pos="0.000493109 -0.042 0.00033133">
             <joint name="thumb_mcp_flex" axis="-0.707107 0 -0.707107" range="-0.0872665 1.65806" />
-            <geom name="thumb_mcp_flex_drum" class="drum" fromto="0.00106066 -0 0.00106066 -0.00106066 0 -0.00106066" size="0.006" />
-            <geom name="thumb_proximal" mesh="thumb_proximal" pos="-0.00108142 0.0319764 -0.0114578" />
-            <body name="thumb_distal" pos="-5.94971e-05 -0.035 -5.94971e-05">
+            <geom name="thumb_mcp_flex_drum" class="drum" fromto="-0.00103844 0 -0.00103844 -0.00245265 0 -0.00245265" size="0.006" />
+            <geom name="thumb_proximal" mesh="thumb_proximal" pos="-0.00133133 0.0319764 -0.0117077" />
+            <body name="thumb_distal" pos="-0.000124605 -0.035 -0.000124605">
               <joint name="thumb_ip" axis="-0.707107 0 -0.707107" range="-0.0872665 1.65806" />
-              <geom name="thumb_ip_drum" class="drum" fromto="0.00106066 -0 0.00106066 -0.00106066 0 -0.00106066" size="0.006" />
-              <geom name="thumb_distal" mesh="thumb_distal" pos="-0.00102192 0.0669764 -0.0113983" />
-              <site name="thumb_tip" pos="-0.00425761 -0.0224756 -0.000128981" size="0.003" group="0" rgba="1 0.3 0.1 1" />
-              <site name="thumb_ip_flex_77_anchor" pos="0.00321938 -0.00463909 -0.00321938" />
-              <site name="thumb_ip_ext_77_anchor" pos="0.00290636 -0.00503549 -0.00290636" />
+              <geom name="thumb_ip_drum" class="drum" fromto="0.0026217 0 0.0026217 -0.000913832 0 -0.000913832" size="0.006" />
+              <geom name="thumb_distal" mesh="thumb_distal" pos="-0.00120673 0.0669764 -0.0115831" />
+              <site name="thumb_tip" pos="0.000146726 -0.0225 0.00358236" size="0.003" group="0" rgba="1 0.3 0.1 1" />
+              <site name="thumb_ip_flex_79_anchor" pos="0.00409967 -0.00460221 -0.00239181" />
+              <site name="thumb_ip_ext_79_anchor" pos="0.00378892 -0.00500217 -0.00208105" />
             </body>
-            <site name="thumb_ip_flex_75_cross" pos="-5.94971e-05 0 -5.94971e-05" />
-            <site name="thumb_ip_flex_76_guide" pos="-0.00398415 -0.0266817 0.00386516" />
-            <site name="thumb_ip_flex_side" class="drum" pos="-0.00638084 -0.0430051 0.00626184" />
-            <site name="thumb_ip_ext_75_cross" pos="-5.94971e-05 0 -5.94971e-05" />
-            <site name="thumb_ip_ext_76_guide" pos="0.00448825 -0.0273426 -0.00460725" />
-            <site name="thumb_ip_ext_side" class="drum" pos="0.00560095 -0.0439397 -0.00571994" />
-            <site name="thumb_mcp_flex_flex_76_anchor" pos="0.00334018 -0.00446501 -0.00334018" />
-            <site name="thumb_mcp_flex_ext_76_anchor" pos="0.0030379 -0.00487774 -0.0030379" />
+            <site name="thumb_ip_flex_78_real" pos="-0.00033133 0 -0.00033133" />
+            <site name="thumb_ip_flex_side" class="drum" pos="-0.00554614 -0.0430769 0.0070048" />
+            <site name="thumb_ip_ext_78_real" pos="0.00178997 0 0.00178997" />
+            <site name="thumb_ip_ext_side" class="drum" pos="0.00644059 -0.0438749 -0.00498193" />
+            <site name="thumb_mcp_flex_flex_80_anchor" pos="0.00154854 -0.004533 -0.00503962" />
+            <site name="thumb_mcp_flex_ext_80_anchor" pos="0.00124205 -0.00493949 -0.00473314" />
           </body>
-          <site name="thumb_ip_flex_74_cross" pos="0.000286919 0 0" />
-          <site name="thumb_ip_ext_74_cross" pos="0.000286919 0 0" />
-          <site name="thumb_mcp_flex_flex_74_cross" pos="-0.00379615 0 0" />
-          <site name="thumb_mcp_flex_flex_75_guide" pos="-0.00379615 -0.0338958 0.00422398" />
-          <site name="thumb_mcp_flex_flex_side" class="drum" pos="-0.00575811 -0.0503348 0.00618595" />
-          <site name="thumb_mcp_flex_ext_74_cross" pos="0.00468782 0 0" />
-          <site name="thumb_mcp_flex_ext_75_guide" pos="0.00468782 -0.0341067 -0.00425999" />
-          <site name="thumb_mcp_flex_ext_side" class="drum" pos="0.00624004 -0.0506331 -0.0058122" />
-          <site name="thumb_cmc_flex_flex_85_anchor" pos="0 -0.00546691 -0.00351609" />
-          <site name="thumb_cmc_flex_ext_85_anchor" pos="0 -0.00535632 -0.00368236" />
+          <site name="thumb_ip_flex_74_real" pos="-0.00243822 0 0" />
+          <site name="thumb_ip_flex_75_real" pos="-0.00243822 -0.0031449 0.0137449" />
+          <site name="thumb_ip_flex_76_real" pos="-0.00243822 -0.0042056 0.0148056" />
+          <site name="thumb_ip_flex_77_real" pos="-0.00243822 -0.0055121 0.0150662" />
+          <site name="thumb_ip_ext_74_real" pos="0.00336178 0 0" />
+          <site name="thumb_ip_ext_75_real" pos="0.00336178 -0.0031449 0.0137449" />
+          <site name="thumb_ip_ext_76_real" pos="0.00336178 -0.0042056 0.0148056" />
+          <site name="thumb_ip_ext_77_real" pos="0.00336178 -0.0054554 0.015088" />
+          <site name="thumb_mcp_flex_flex_74_real" pos="-0.00563822 0 0" />
+          <site name="thumb_mcp_flex_flex_75_real" pos="-0.00563822 -0.0031449 0.0137449" />
+          <site name="thumb_mcp_flex_flex_76_real" pos="-0.00563822 -0.0042056 0.0148056" />
+          <site name="thumb_mcp_flex_flex_77_real" pos="-0.00563822 -0.0054696 0.0150828" />
+          <site name="thumb_mcp_flex_flex_78_real" pos="-0.00549512 -0.0246081 0.0029027" />
+          <site name="thumb_mcp_flex_flex_79_real" pos="-0.00549512 -0.0250236 0.0028284" />
+          <site name="thumb_mcp_flex_flex_side" class="drum" pos="-0.00744173 -0.0502089 0.00477508" />
+          <site name="thumb_mcp_flex_ext_74_real" pos="0.00616178 0 0" />
+          <site name="thumb_mcp_flex_ext_75_real" pos="0.00616178 -0.0031449 0.0137449" />
+          <site name="thumb_mcp_flex_ext_76_real" pos="0.00616178 -0.0042056 0.0148056" />
+          <site name="thumb_mcp_flex_ext_77_real" pos="0.00616178 -0.0056983 0.0149695" />
+          <site name="thumb_mcp_flex_ext_78_real" pos="0.00299018 -0.0288794 -0.0054693" />
+          <site name="thumb_mcp_flex_ext_79_real" pos="0.00299018 -0.0295236 -0.0056569" />
+          <site name="thumb_mcp_flex_ext_side" class="drum" pos="0.0045521 -0.050753 -0.00721875" />
+          <site name="thumb_cmc_flex_flex_84_anchor" pos="0.000161779 -0.00325 0.00562917" />
+          <site name="thumb_cmc_flex_ext_87_anchor" pos="0.000161779 0.00372825 -0.00532449" />
         </body>
-        <site name="thumb_ip_flex_73_cross" pos="0 0 0.00115579" />
-        <site name="thumb_ip_ext_73_cross" pos="0 0 0.00115579" />
-        <site name="thumb_mcp_flex_flex_73_cross" pos="0 0 0.00115579" />
-        <site name="thumb_mcp_flex_ext_73_cross" pos="0 0 0.00115579" />
-        <site name="thumb_cmc_flex_flex_83_cross" pos="0 0 0.00716312" />
-        <site name="thumb_cmc_flex_flex_84_guide" pos="-0.000264996 -0.00221492 0.00716312" />
-        <site name="thumb_cmc_flex_flex_side" class="drum" pos="-0.000264996 -0.0140042 0.00962216" />
-        <site name="thumb_cmc_flex_ext_83_cross" pos="0 0 -0.00483685" />
-        <site name="thumb_cmc_flex_ext_84_guide" pos="-0.000264996 -0.0021882 -0.00483685" />
-        <site name="thumb_cmc_flex_ext_side" class="drum" pos="-0.000264996 -0.0139664 -0.00734836" />
-        <site name="thumb_cmc_rot_flex_48_anchor" pos="-0.00136631 -0.00788246 0" />
-        <site name="thumb_cmc_rot_ext_48_anchor" pos="-0.0061785 -0.00508195 0" />
+        <site name="thumb_ip_flex_73_real" pos="0 0 -0.0145884" />
+        <site name="thumb_ip_ext_73_real" pos="0 0 -0.0145884" />
+        <site name="thumb_mcp_flex_flex_73_real" pos="0 0 -0.0145884" />
+        <site name="thumb_mcp_flex_ext_73_real" pos="0 0 -0.0145884" />
+        <site name="thumb_cmc_flex_flex_83_real" pos="-0.001 0.0005 -0.0145884" />
+        <site name="thumb_cmc_flex_flex_side" class="drum" pos="0 0.0005 0.00868029" />
+        <site name="thumb_cmc_flex_ext_83_real" pos="0.001 0.0003764 -0.0145884" />
+        <site name="thumb_cmc_flex_ext_84_real" pos="0.001 0.0039 0.00541159" />
+        <site name="thumb_cmc_flex_ext_85_real" pos="0.001 0.0022 0.00711159" />
+        <site name="thumb_cmc_flex_ext_86_real" pos="0.001 0.0005 0.00541159" />
+        <site name="thumb_cmc_flex_ext_side" class="drum" pos="0 0.00519208 -0.0071599" />
+        <site name="thumb_cmc_rot_flex_47_anchor" pos="-0.004 -0.0069282 -0.0177884" />
+        <site name="thumb_cmc_rot_ext_47_anchor" pos="-0.004 -0.0069282 -0.0177884" />
       </body>
       <site name="index_mcp_abd_flex_43_guide" pos="-0.00251513 0.0183677 0.051988" />
       <site name="index_mcp_abd_flex_side" class="drum" pos="-6.17588e-05 0.0183677 0.0684781" />
       <site name="index_mcp_abd_ext_43_guide" pos="-0.0145151 0.0183677 0.0519648" />
       <site name="index_mcp_abd_ext_side" class="drum" pos="-0.0170323 0.0183677 0.0684452" />
-      <site name="thumb_cmc_rot_flex_47_guide" pos="-0.00647233 0.0235494 0.0102206" />
-      <site name="thumb_cmc_rot_flex_side" class="drum" pos="-0.00964316 0.00495368 0.0102206" />
-      <site name="thumb_cmc_rot_ext_47_guide" pos="0.00852758 0.0234977 0.0102206" />
-      <site name="thumb_cmc_rot_ext_side" class="drum" pos="0.0115699 0.00488044 0.0102206" />
+      <site name="thumb_cmc_rot_flex_side" class="drum" pos="-0.0065 0.0080236 -0.0047" />
+      <site name="thumb_cmc_rot_ext_side" class="drum" pos="0.0085 0.0080236 -0.0047" />
       <site name="middle_mcp_abd_flex_42_guide" pos="-0.0215165 0.0183653 0.055987" />
       <site name="middle_mcp_abd_flex_side" class="drum" pos="-0.0190603 0.0183653 0.0724767" />
       <site name="middle_mcp_abd_ext_42_guide" pos="-0.0335164 0.0183653 0.0559658" />
@@ -404,44 +413,41 @@
     <body name="servo_08_thumb_cmc_rot">
       <geom name="servo_08_thumb_cmc_rot" mesh="servo_08_thumb_cmc_rot" />
     </body>
-    <body name="servo_09_thumb_mcp_abd">
-      <geom name="servo_09_thumb_mcp_abd" mesh="servo_09_thumb_mcp_abd" />
+    <body name="servo_09_middle_dip">
+      <geom name="servo_09_middle_dip" mesh="servo_09_middle_dip" />
     </body>
-    <body name="servo_10_middle_dip">
-      <geom name="servo_10_middle_dip" mesh="servo_10_middle_dip" />
+    <body name="servo_10_middle_pip">
+      <geom name="servo_10_middle_pip" mesh="servo_10_middle_pip" />
     </body>
-    <body name="servo_11_middle_pip">
-      <geom name="servo_11_middle_pip" mesh="servo_11_middle_pip" />
+    <body name="servo_11_middle_mcp_flex">
+      <geom name="servo_11_middle_mcp_flex" mesh="servo_11_middle_mcp_flex" />
     </body>
-    <body name="servo_12_middle_mcp_flex">
-      <geom name="servo_12_middle_mcp_flex" mesh="servo_12_middle_mcp_flex" />
+    <body name="servo_12_middle_mcp_abd">
+      <geom name="servo_12_middle_mcp_abd" mesh="servo_12_middle_mcp_abd" />
     </body>
-    <body name="servo_13_middle_mcp_abd">
-      <geom name="servo_13_middle_mcp_abd" mesh="servo_13_middle_mcp_abd" />
+    <body name="servo_13_ring_dip">
+      <geom name="servo_13_ring_dip" mesh="servo_13_ring_dip" />
     </body>
-    <body name="servo_14_ring_dip">
-      <geom name="servo_14_ring_dip" mesh="servo_14_ring_dip" />
+    <body name="servo_14_ring_pip">
+      <geom name="servo_14_ring_pip" mesh="servo_14_ring_pip" />
     </body>
-    <body name="servo_15_ring_pip">
-      <geom name="servo_15_ring_pip" mesh="servo_15_ring_pip" />
+    <body name="servo_15_ring_mcp_flex">
+      <geom name="servo_15_ring_mcp_flex" mesh="servo_15_ring_mcp_flex" />
     </body>
-    <body name="servo_16_ring_mcp_flex">
-      <geom name="servo_16_ring_mcp_flex" mesh="servo_16_ring_mcp_flex" />
+    <body name="servo_16_ring_mcp_abd">
+      <geom name="servo_16_ring_mcp_abd" mesh="servo_16_ring_mcp_abd" />
     </body>
-    <body name="servo_17_ring_mcp_abd">
-      <geom name="servo_17_ring_mcp_abd" mesh="servo_17_ring_mcp_abd" />
+    <body name="servo_17_little_dip">
+      <geom name="servo_17_little_dip" mesh="servo_17_little_dip" />
     </body>
-    <body name="servo_18_little_dip">
-      <geom name="servo_18_little_dip" mesh="servo_18_little_dip" />
+    <body name="servo_18_little_pip">
+      <geom name="servo_18_little_pip" mesh="servo_18_little_pip" />
     </body>
-    <body name="servo_19_little_pip">
-      <geom name="servo_19_little_pip" mesh="servo_19_little_pip" />
+    <body name="servo_19_little_mcp_flex">
+      <geom name="servo_19_little_mcp_flex" mesh="servo_19_little_mcp_flex" />
     </body>
-    <body name="servo_20_little_mcp_flex">
-      <geom name="servo_20_little_mcp_flex" mesh="servo_20_little_mcp_flex" />
-    </body>
-    <body name="servo_21_little_mcp_abd">
-      <geom name="servo_21_little_mcp_abd" mesh="servo_21_little_mcp_abd" />
+    <body name="servo_20_little_mcp_abd">
+      <geom name="servo_20_little_mcp_abd" mesh="servo_20_little_mcp_abd" />
     </body>
     <body name="spool_01_index_dip">
       <geom name="spool_01_index_dip" mesh="spool_01_index_dip" />
@@ -467,44 +473,41 @@
     <body name="spool_08_thumb_cmc_rot">
       <geom name="spool_08_thumb_cmc_rot" mesh="spool_08_thumb_cmc_rot" />
     </body>
-    <body name="spool_09_thumb_mcp_abd">
-      <geom name="spool_09_thumb_mcp_abd" mesh="spool_09_thumb_mcp_abd" />
+    <body name="spool_09_middle_dip">
+      <geom name="spool_09_middle_dip" mesh="spool_09_middle_dip" />
     </body>
-    <body name="spool_10_middle_dip">
-      <geom name="spool_10_middle_dip" mesh="spool_10_middle_dip" />
+    <body name="spool_10_middle_pip">
+      <geom name="spool_10_middle_pip" mesh="spool_10_middle_pip" />
     </body>
-    <body name="spool_11_middle_pip">
-      <geom name="spool_11_middle_pip" mesh="spool_11_middle_pip" />
+    <body name="spool_11_middle_mcp_flex">
+      <geom name="spool_11_middle_mcp_flex" mesh="spool_11_middle_mcp_flex" />
     </body>
-    <body name="spool_12_middle_mcp_flex">
-      <geom name="spool_12_middle_mcp_flex" mesh="spool_12_middle_mcp_flex" />
+    <body name="spool_12_middle_mcp_abd">
+      <geom name="spool_12_middle_mcp_abd" mesh="spool_12_middle_mcp_abd" />
     </body>
-    <body name="spool_13_middle_mcp_abd">
-      <geom name="spool_13_middle_mcp_abd" mesh="spool_13_middle_mcp_abd" />
+    <body name="spool_13_ring_dip">
+      <geom name="spool_13_ring_dip" mesh="spool_13_ring_dip" />
     </body>
-    <body name="spool_14_ring_dip">
-      <geom name="spool_14_ring_dip" mesh="spool_14_ring_dip" />
+    <body name="spool_14_ring_pip">
+      <geom name="spool_14_ring_pip" mesh="spool_14_ring_pip" />
     </body>
-    <body name="spool_15_ring_pip">
-      <geom name="spool_15_ring_pip" mesh="spool_15_ring_pip" />
+    <body name="spool_15_ring_mcp_flex">
+      <geom name="spool_15_ring_mcp_flex" mesh="spool_15_ring_mcp_flex" />
     </body>
-    <body name="spool_16_ring_mcp_flex">
-      <geom name="spool_16_ring_mcp_flex" mesh="spool_16_ring_mcp_flex" />
+    <body name="spool_16_ring_mcp_abd">
+      <geom name="spool_16_ring_mcp_abd" mesh="spool_16_ring_mcp_abd" />
     </body>
-    <body name="spool_17_ring_mcp_abd">
-      <geom name="spool_17_ring_mcp_abd" mesh="spool_17_ring_mcp_abd" />
+    <body name="spool_17_little_dip">
+      <geom name="spool_17_little_dip" mesh="spool_17_little_dip" />
     </body>
-    <body name="spool_18_little_dip">
-      <geom name="spool_18_little_dip" mesh="spool_18_little_dip" />
+    <body name="spool_18_little_pip">
+      <geom name="spool_18_little_pip" mesh="spool_18_little_pip" />
     </body>
-    <body name="spool_19_little_pip">
-      <geom name="spool_19_little_pip" mesh="spool_19_little_pip" />
+    <body name="spool_19_little_mcp_flex">
+      <geom name="spool_19_little_mcp_flex" mesh="spool_19_little_mcp_flex" />
     </body>
-    <body name="spool_20_little_mcp_flex">
-      <geom name="spool_20_little_mcp_flex" mesh="spool_20_little_mcp_flex" />
-    </body>
-    <body name="spool_21_little_mcp_abd">
-      <geom name="spool_21_little_mcp_abd" mesh="spool_21_little_mcp_abd" />
+    <body name="spool_20_little_mcp_abd">
+      <geom name="spool_20_little_mcp_abd" mesh="spool_20_little_mcp_abd" />
     </body>
     <site name="index_dip_flex_0_route" pos="-0.022 0.031 -0.09" />
     <site name="index_dip_flex_1_route" pos="-0.022 0.031 -0.042" />
@@ -2882,12 +2885,14 @@
       <site site="thumb_ip_flex_70_route" />
       <site site="thumb_ip_flex_71_route" />
       <site site="thumb_ip_flex_72_route" />
-      <site site="thumb_ip_flex_73_cross" />
-      <site site="thumb_ip_flex_74_cross" />
-      <site site="thumb_ip_flex_75_cross" />
-      <site site="thumb_ip_flex_76_guide" />
+      <site site="thumb_ip_flex_73_real" />
+      <site site="thumb_ip_flex_74_real" />
+      <site site="thumb_ip_flex_75_real" />
+      <site site="thumb_ip_flex_76_real" />
+      <site site="thumb_ip_flex_77_real" />
+      <site site="thumb_ip_flex_78_real" />
       <geom geom="thumb_ip_drum" sidesite="thumb_ip_flex_side" />
-      <site site="thumb_ip_flex_77_anchor" />
+      <site site="thumb_ip_flex_79_anchor" />
     </spatial>
     <spatial name="thumb_ip_ext" width="0.0004" rgba="0.15 0.35 0.85 1">
       <site site="thumb_ip_ext_0_route" />
@@ -2963,12 +2968,14 @@
       <site site="thumb_ip_ext_70_route" />
       <site site="thumb_ip_ext_71_route" />
       <site site="thumb_ip_ext_72_route" />
-      <site site="thumb_ip_ext_73_cross" />
-      <site site="thumb_ip_ext_74_cross" />
-      <site site="thumb_ip_ext_75_cross" />
-      <site site="thumb_ip_ext_76_guide" />
+      <site site="thumb_ip_ext_73_real" />
+      <site site="thumb_ip_ext_74_real" />
+      <site site="thumb_ip_ext_75_real" />
+      <site site="thumb_ip_ext_76_real" />
+      <site site="thumb_ip_ext_77_real" />
+      <site site="thumb_ip_ext_78_real" />
       <geom geom="thumb_ip_drum" sidesite="thumb_ip_ext_side" />
-      <site site="thumb_ip_ext_77_anchor" />
+      <site site="thumb_ip_ext_79_anchor" />
     </spatial>
     <spatial name="thumb_mcp_flex_flex" width="0.0004" rgba="0.85 0.2 0.15 1">
       <site site="thumb_mcp_flex_flex_0_route" />
@@ -3044,11 +3051,15 @@
       <site site="thumb_mcp_flex_flex_70_route" />
       <site site="thumb_mcp_flex_flex_71_route" />
       <site site="thumb_mcp_flex_flex_72_route" />
-      <site site="thumb_mcp_flex_flex_73_cross" />
-      <site site="thumb_mcp_flex_flex_74_cross" />
-      <site site="thumb_mcp_flex_flex_75_guide" />
+      <site site="thumb_mcp_flex_flex_73_real" />
+      <site site="thumb_mcp_flex_flex_74_real" />
+      <site site="thumb_mcp_flex_flex_75_real" />
+      <site site="thumb_mcp_flex_flex_76_real" />
+      <site site="thumb_mcp_flex_flex_77_real" />
+      <site site="thumb_mcp_flex_flex_78_real" />
+      <site site="thumb_mcp_flex_flex_79_real" />
       <geom geom="thumb_mcp_flex_drum" sidesite="thumb_mcp_flex_flex_side" />
-      <site site="thumb_mcp_flex_flex_76_anchor" />
+      <site site="thumb_mcp_flex_flex_80_anchor" />
     </spatial>
     <spatial name="thumb_mcp_flex_ext" width="0.0004" rgba="0.15 0.35 0.85 1">
       <site site="thumb_mcp_flex_ext_0_route" />
@@ -3124,11 +3135,15 @@
       <site site="thumb_mcp_flex_ext_70_route" />
       <site site="thumb_mcp_flex_ext_71_route" />
       <site site="thumb_mcp_flex_ext_72_route" />
-      <site site="thumb_mcp_flex_ext_73_cross" />
-      <site site="thumb_mcp_flex_ext_74_cross" />
-      <site site="thumb_mcp_flex_ext_75_guide" />
+      <site site="thumb_mcp_flex_ext_73_real" />
+      <site site="thumb_mcp_flex_ext_74_real" />
+      <site site="thumb_mcp_flex_ext_75_real" />
+      <site site="thumb_mcp_flex_ext_76_real" />
+      <site site="thumb_mcp_flex_ext_77_real" />
+      <site site="thumb_mcp_flex_ext_78_real" />
+      <site site="thumb_mcp_flex_ext_79_real" />
       <geom geom="thumb_mcp_flex_drum" sidesite="thumb_mcp_flex_ext_side" />
-      <site site="thumb_mcp_flex_ext_76_anchor" />
+      <site site="thumb_mcp_flex_ext_80_anchor" />
     </spatial>
     <spatial name="thumb_cmc_flex_flex" width="0.0004" rgba="0.85 0.2 0.15 1">
       <site site="thumb_cmc_flex_flex_0_route" />
@@ -3214,10 +3229,9 @@
       <site site="thumb_cmc_flex_flex_80_route" />
       <site site="thumb_cmc_flex_flex_81_route" />
       <site site="thumb_cmc_flex_flex_82_route" />
-      <site site="thumb_cmc_flex_flex_83_cross" />
-      <site site="thumb_cmc_flex_flex_84_guide" />
+      <site site="thumb_cmc_flex_flex_83_real" />
       <geom geom="thumb_cmc_flex_drum" sidesite="thumb_cmc_flex_flex_side" />
-      <site site="thumb_cmc_flex_flex_85_anchor" />
+      <site site="thumb_cmc_flex_flex_84_anchor" />
     </spatial>
     <spatial name="thumb_cmc_flex_ext" width="0.0004" rgba="0.15 0.35 0.85 1">
       <site site="thumb_cmc_flex_ext_0_route" />
@@ -3303,10 +3317,12 @@
       <site site="thumb_cmc_flex_ext_80_route" />
       <site site="thumb_cmc_flex_ext_81_route" />
       <site site="thumb_cmc_flex_ext_82_route" />
-      <site site="thumb_cmc_flex_ext_83_cross" />
-      <site site="thumb_cmc_flex_ext_84_guide" />
+      <site site="thumb_cmc_flex_ext_83_real" />
+      <site site="thumb_cmc_flex_ext_84_real" />
+      <site site="thumb_cmc_flex_ext_85_real" />
+      <site site="thumb_cmc_flex_ext_86_real" />
       <geom geom="thumb_cmc_flex_drum" sidesite="thumb_cmc_flex_ext_side" />
-      <site site="thumb_cmc_flex_ext_85_anchor" />
+      <site site="thumb_cmc_flex_ext_87_anchor" />
     </spatial>
     <spatial name="thumb_cmc_rot_flex" width="0.0004" rgba="0.85 0.2 0.15 1">
       <site site="thumb_cmc_rot_flex_0_route" />
@@ -3356,9 +3372,8 @@
       <site site="thumb_cmc_rot_flex_44_route" />
       <site site="thumb_cmc_rot_flex_45_route" />
       <site site="thumb_cmc_rot_flex_46_route" />
-      <site site="thumb_cmc_rot_flex_47_guide" />
       <geom geom="thumb_cmc_rot_drum" sidesite="thumb_cmc_rot_flex_side" />
-      <site site="thumb_cmc_rot_flex_48_anchor" />
+      <site site="thumb_cmc_rot_flex_47_anchor" />
     </spatial>
     <spatial name="thumb_cmc_rot_ext" width="0.0004" rgba="0.15 0.35 0.85 1">
       <site site="thumb_cmc_rot_ext_0_route" />
@@ -3408,9 +3423,8 @@
       <site site="thumb_cmc_rot_ext_44_route" />
       <site site="thumb_cmc_rot_ext_45_route" />
       <site site="thumb_cmc_rot_ext_46_route" />
-      <site site="thumb_cmc_rot_ext_47_guide" />
       <geom geom="thumb_cmc_rot_drum" sidesite="thumb_cmc_rot_ext_side" />
-      <site site="thumb_cmc_rot_ext_48_anchor" />
+      <site site="thumb_cmc_rot_ext_47_anchor" />
     </spatial>
     <spatial name="middle_dip_flex" width="0.0004" rgba="0.85 0.2 0.15 1">
       <site site="middle_dip_flex_0_route" />
@@ -4590,10 +4604,10 @@
     <general name="index_pip" tendon="index_pip_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-75.8170570323 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />
     <general name="index_mcp_flex" tendon="index_mcp_flex_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-50.6663240612 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />
     <general name="index_mcp_abd" tendon="index_mcp_abd_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-44.629680606 -2 -0.012" ctrlrange="-0.261799 0.261799" forcerange="-0.095 0.095" />
-    <general name="thumb_ip" tendon="thumb_ip_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-67.4076780823 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />
-    <general name="thumb_mcp_flex" tendon="thumb_mcp_flex_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-43.4983997964 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />
-    <general name="thumb_cmc_flex" tendon="thumb_cmc_flex_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-42.4221082285 -2 -0.012" ctrlrange="-0.226893 1.39626" forcerange="-0.095 0.095" />
-    <general name="thumb_cmc_rot" tendon="thumb_cmc_rot_flex" gear="-133.3333333" gaintype="fixed" biastype="affine" gainprm="3.125" biasprm="-36.7377357724 -3.125 -0.01875" ctrlrange="-1.74533 0.698132" forcerange="-0.11875 0.11875" />
+    <general name="thumb_ip" tendon="thumb_ip_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-70.9909049688 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />
+    <general name="thumb_mcp_flex" tendon="thumb_mcp_flex_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-47.0373935448 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />
+    <general name="thumb_cmc_flex" tendon="thumb_cmc_flex_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-38.4899057451 -2 -0.012" ctrlrange="-0.226893 0.785398" forcerange="-0.095 0.095" />
+    <general name="thumb_cmc_rot" tendon="thumb_cmc_rot_flex" gear="-133.3333333" gaintype="fixed" biastype="affine" gainprm="3.125" biasprm="-31.1503628403 -3.125 -0.01875" ctrlrange="-1.74533 0.698132" forcerange="-0.11875 0.11875" />
     <general name="middle_dip" tendon="middle_dip_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-86.823167703 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />
     <general name="middle_pip" tendon="middle_pip_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-77.6274563508 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />
     <general name="middle_mcp_flex" tendon="middle_mcp_flex_flex" gear="-166.6666667" gaintype="fixed" biastype="affine" gainprm="2" biasprm="-51.122206086 -2 -0.012" ctrlrange="-0.0872665 1.65806" forcerange="-0.095 0.095" />

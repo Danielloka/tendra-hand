@@ -20,7 +20,11 @@ import adsk.fusion
 # ---- PIP joint frame, from the STEP export (world, mm) ----
 AXIS_DIR = (0.994288, 0.0, 0.106731)  # PIP joint axis
 AXIS_PT = (-12.7571, 20.2348, 118.8432)  # point on the PIP axis
-DIP_PT = (-15.2084, 19.0036, 141.679)  # point on the DIP axis (defines the middle segment direction)
+DIP_PT = (
+    -15.2084,
+    19.0036,
+    141.679,
+)  # point on the DIP axis (defines the middle segment direction)
 BOSS_RADIUS = 1.95  # the middle segment's axle bosses at the PIP
 
 # ---- Plug and hole, in the PIP frame: x along the axis, y toward the back, z along the segment ----
@@ -138,7 +142,12 @@ def find_middle_segment(root):
     slot = world_pt(HOLE_X, -3.0, 3)
     matches = []
     for body, occ in all_bodies(root):
-        if body.isSolid and contains(body, tongue_a) and contains(body, tongue_b) and has_pip_boss(body):
+        if (
+            body.isSolid
+            and contains(body, tongue_a)
+            and contains(body, tongue_b)
+            and has_pip_boss(body)
+        ):
             matches.append((body, occ))
     if len(matches) != 1:
         return None, None, f"expected 1 matching middle segment body, found {len(matches)}"

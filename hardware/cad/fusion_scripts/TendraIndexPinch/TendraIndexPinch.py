@@ -54,15 +54,21 @@ def mcp_tool():
     tbm = adsk.fusion.TemporaryBRepManager.get()
     diff = adsk.fusion.BooleanTypes.DifferenceBooleanType
     plug = world_box(-8.13, -6.94, Y0 - 7.45, Y0 + 4.3, ZM - 3.0, ZM + 6.5)
-    tbm.booleanOperation(plug, world_box(-BIG, BIG, -BIG, BIG, ZM - BIG, ZM), diff)  # keep z >= axis
+    tbm.booleanOperation(
+        plug, world_box(-BIG, BIG, -BIG, BIG, ZM - BIG, ZM), diff
+    )  # keep z >= axis
     # Keep z' >= -y' * tan(15 deg) (z', y' relative to the axis): clearance past 90 deg of flexion.
     t = math.tan(math.radians(15.0))
     n = vec(0, t, 1)
     w = n.crossProduct(vec(1, 0, 0))  # so that length x width = n (the box's height direction)
     c = [0, Y0 - n.y * BIG / 2, ZM - n.z * BIG / 2]
-    obb = adsk.core.OrientedBoundingBox3D.create(pt(-8.0, c[1], c[2]), vec(1, 0, 0), w, BIG / 10, BIG / 10, BIG / 10)
+    obb = adsk.core.OrientedBoundingBox3D.create(
+        pt(-8.0, c[1], c[2]), vec(1, 0, 0), w, BIG / 10, BIG / 10, BIG / 10
+    )
     tbm.booleanOperation(plug, tbm.createBox(obb), diff)
-    hole = tbm.createCylinderOrCone(pt(-7.535, Y0, ZM - 1.0), 0.07, pt(-7.535, Y0, ZM + 9.5), 0.07)  # 1.4 mm
+    hole = tbm.createCylinderOrCone(
+        pt(-7.535, Y0, ZM - 1.0), 0.07, pt(-7.535, Y0, ZM + 9.5), 0.07
+    )  # 1.4 mm
     tbm.booleanOperation(plug, hole, diff)
     return [plug]
 
@@ -121,7 +127,9 @@ def has_boss(body, radius, direction, on_axis):
         if abs(abs(axis.dotProduct(d)) - 1) > 1e-4:
             continue
         o = cyl.origin
-        rel = adsk.core.Vector3D.create(on_axis[0] - o.x * 10, on_axis[1] - o.y * 10, on_axis[2] - o.z * 10)
+        rel = adsk.core.Vector3D.create(
+            on_axis[0] - o.x * 10, on_axis[1] - o.y * 10, on_axis[2] - o.z * 10
+        )
         if rel.crossProduct(d).length < 0.05:
             return True
     return False
@@ -132,7 +140,9 @@ def find_target(root, spec):
     matches = [
         (b, o)
         for b, o in all_bodies(root)
-        if b.isSolid and all(contains(b, pt(*p)) for p in spec["solid"]) and has_boss(b, *spec["boss"])
+        if b.isSolid
+        and all(contains(b, pt(*p)) for p in spec["solid"])
+        and has_boss(b, *spec["boss"])
     ]
     if len(matches) != 1:
         return None, None, f"expected 1 matching body, found {len(matches)}"
@@ -201,14 +211,18 @@ def run(context):
                 todo.append((spec, body, occ))
         if not todo:
             ui.messageBox(
-                "Nothing was changed.\n\n" + "\n".join(notes) + "\n\nIf this is unexpected: the index finger must "
+                "Nothing was changed.\n\n"
+                + "\n".join(notes)
+                + "\n\nIf this is unexpected: the index finger must "
                 "be straight (all joints at 0), as in the STEP export."
             )
             return
 
         lines = [f"- {s['label']} ('{b.name}')" for s, b, _o in todo]
         answer = ui.messageBox(
-            "This will change:\n" + "\n".join(lines) + ("\n\nSkipped:\n" + "\n".join(notes) if notes else "")
+            "This will change:\n"
+            + "\n".join(lines)
+            + ("\n\nSkipped:\n" + "\n".join(notes) if notes else "")
             + "\n\nHave you saved a copy of the design? Continue?",
             "Tendra index pinch",
             adsk.core.MessageBoxButtonTypes.YesNoButtonType,
@@ -226,7 +240,8 @@ def run(context):
                 f"tendon opening clear: {'yes' if clear else 'NO'}"
             )
         ui.messageBox(
-            "Done.\n\n" + "\n".join(report)
+            "Done.\n\n"
+            + "\n".join(report)
             + "\n\nUndo: delete the 'Tendra MCP pinch' / 'Tendra ABD pinch' features at the end of the timeline."
         )
     except Exception:

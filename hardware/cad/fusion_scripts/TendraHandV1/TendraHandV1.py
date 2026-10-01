@@ -67,8 +67,12 @@ def tbm():
 
 def box(x0, x1, y0, y1, z0, z1):
     obb = adsk.core.OrientedBoundingBox3D.create(
-        pt((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2), vec(1, 0, 0), vec(0, 1, 0),
-        (x1 - x0) / 10, (y1 - y0) / 10, (z1 - z0) / 10,
+        pt((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2),
+        vec(1, 0, 0),
+        vec(0, 1, 0),
+        (x1 - x0) / 10,
+        (y1 - y0) / 10,
+        (z1 - z0) / 10,
     )
     return tbm().createBox(obb)
 
@@ -83,7 +87,9 @@ def translate(body, dx, dy, dz):
 def cut_z(body, z0, z1):
     """Copy of `body` limited to z0 <= z <= z1 (mm)."""
     part = tbm().copy(body)
-    tbm().booleanOperation(part, box(-500, 500, -500, 500, z0, z1), adsk.fusion.BooleanTypes.IntersectionBooleanType)
+    tbm().booleanOperation(
+        part, box(-500, 500, -500, 500, z0, z1), adsk.fusion.BooleanTypes.IntersectionBooleanType
+    )
     return part
 
 
@@ -93,8 +99,11 @@ def union(a, b):
 
 
 def _op(a, b, kind):
-    t = {"-": adsk.fusion.BooleanTypes.DifferenceBooleanType, "+": adsk.fusion.BooleanTypes.UnionBooleanType,
-         "&": adsk.fusion.BooleanTypes.IntersectionBooleanType}[kind]
+    t = {
+        "-": adsk.fusion.BooleanTypes.DifferenceBooleanType,
+        "+": adsk.fusion.BooleanTypes.UnionBooleanType,
+        "&": adsk.fusion.BooleanTypes.IntersectionBooleanType,
+    }[kind]
     tbm().booleanOperation(a, b, t)
     return a
 
@@ -173,7 +182,9 @@ def pivot_face(occ, axis, through, radius_range=(0.5, 9.0)):
             if abs(abs(a.dotProduct(d)) - 1) > 1e-4:
                 continue
             o = cyl.origin
-            rel = adsk.core.Vector3D.create(through[0] - o.x * 10, through[1] - o.y * 10, through[2] - o.z * 10)
+            rel = adsk.core.Vector3D.create(
+                through[0] - o.x * 10, through[1] - o.y * 10, through[2] - o.z * 10
+            )
             if rel.crossProduct(d).length > 0.05:
                 continue
             if best is None or f.area > best.area:
@@ -189,7 +200,9 @@ def add_revolute(root, name, child, parent, axis, through):
     face = pivot_face(child, axis, through) or pivot_face(parent, axis, through)
     if face is None:
         raise RuntimeError(f"{name}: no pivot cylinder through {through} along {axis}")
-    geo = adsk.fusion.JointGeometry.createByNonPlanarFace(face, adsk.fusion.JointKeyPointTypes.MiddleKeyPoint)
+    geo = adsk.fusion.JointGeometry.createByNonPlanarFace(
+        face, adsk.fusion.JointKeyPointTypes.MiddleKeyPoint
+    )
     ji = root.asBuiltJoints.createInput(child, parent, geo)
     ji.setAsRevoluteJointMotion(adsk.fusion.JointDirections.ZAxisJointDirection)
     j = root.asBuiltJoints.add(ji)
@@ -210,7 +223,9 @@ def stage_fingers(design, log):
     # prototype occurrence names, or the names given by stage 'names'
     src = {k: find_occ(root, v) or find_comp_occ(root, f"index_{k}") for k, v in INDEX.items()}
     if any(o is None for o in src.values()):
-        raise RuntimeError("index parts not found: " + str({k: v is not None for k, v in src.items()}))
+        raise RuntimeError(
+            "index parts not found: " + str({k: v is not None for k, v in src.items()})
+        )
     palm = find_occ(root, PALM) or find_comp_occ(root, "palm")
     bodies = {k: o.bRepBodies.item(0) for k, o in src.items()}  # proxies, world coordinates
     for finger, p in FINGERS.items():
@@ -220,16 +235,41 @@ def stage_fingers(design, log):
         dx, dz, dp, dm = p["dx"], p["dz"], p["prox"], p["mid"]
         parts = {
             "base": translate(tbm().copy(bodies["base"]), dx, 0, dz),
-            "proximal": translate(change_length(bodies["proximal"], Z_STRETCH_PROX, dp, PRISM_PROX), dx, 0, dz),
-            "middle": translate(change_length(bodies["middle"], Z_STRETCH_MID, dm, PRISM_MID), dx, 0, dz + dp),
+            "proximal": translate(
+                change_length(bodies["proximal"], Z_STRETCH_PROX, dp, PRISM_PROX), dx, 0, dz
+            ),
+            "middle": translate(
+                change_length(bodies["middle"], Z_STRETCH_MID, dm, PRISM_MID), dx, 0, dz + dp
+            ),
             "distal": translate(tbm().copy(bodies["distal"]), dx, 0, dz + dp + dm),
         }
         occ = {k: new_part(root, f"{finger}_{k}", b) for k, b in parts.items()}
         x_abd, z_abd = X_ABD + dx, Z_ABD + dz
         add_revolute(root, f"{finger}_mcp_abd", occ["base"], palm, (0, 1, 0), (x_abd, Y_ABD, z_abd))
-        add_revolute(root, f"{finger}_mcp_flex", occ["proximal"], occ["base"], (1, 0, 0), (X_FLEX + dx, Y_FLEX, Z_MCP + dz))
-        add_revolute(root, f"{finger}_pip", occ["middle"], occ["proximal"], (1, 0, 0), (X_FLEX + dx, Y_FLEX, Z_PIP + dz + dp))
-        add_revolute(root, f"{finger}_dip", occ["distal"], occ["middle"], (1, 0, 0), (X_FLEX + dx, Y_FLEX, Z_DIP + dz + dp + dm))
+        add_revolute(
+            root,
+            f"{finger}_mcp_flex",
+            occ["proximal"],
+            occ["base"],
+            (1, 0, 0),
+            (X_FLEX + dx, Y_FLEX, Z_MCP + dz),
+        )
+        add_revolute(
+            root,
+            f"{finger}_pip",
+            occ["middle"],
+            occ["proximal"],
+            (1, 0, 0),
+            (X_FLEX + dx, Y_FLEX, Z_PIP + dz + dp),
+        )
+        add_revolute(
+            root,
+            f"{finger}_dip",
+            occ["distal"],
+            occ["middle"],
+            (1, 0, 0),
+            (X_FLEX + dx, Y_FLEX, Z_DIP + dz + dp + dm),
+        )
         vols = {k: round(o.bRepBodies.item(0).volume * 1000, 0) for k, o in occ.items()}
         log(f"{finger}: added (volumes mm3 {vols})")
 
@@ -250,7 +290,12 @@ THUMB_IP_PT = (-4.303, -66.976, 6.073)
 # its MCP / IP axes are the lines (x, 22.5, 1.5) / (x, -12.5, 1.5), its centre x = 83.5. Turning it
 # 135 deg about Y and moving the centre to (1.0, ., 11.3764) and y by -54.4764 puts both axes on the
 # V1 thumb's (checked: same bounding box as the hinged parts, best overlap of the two turns).
-PROX_TURN_DEG, PROX_OLD_CENTRE, PROX_NEW_CENTRE, PROX_DY = 135.0, (83.5, 1.5), (1.0, 11.3764), -54.4764
+PROX_TURN_DEG, PROX_OLD_CENTRE, PROX_NEW_CENTRE, PROX_DY = (
+    135.0,
+    (83.5, 1.5),
+    (1.0, 11.3764),
+    -54.4764,
+)
 
 
 def stage_thumb(design, log):
@@ -272,7 +317,9 @@ def _placed_old_proximal(design):
     (ox, oz), (nx, nz) = PROX_OLD_CENTRE, PROX_NEW_CENTRE
     xp, zp = ox * c + oz * s, -ox * s + oz * c
     m = adsk.core.Matrix3D.create()
-    m.setWithArray([c, 0, s, (nx - xp) / 10, 0, 1, 0, PROX_DY / 10, -s, 0, c, (nz - zp) / 10, 0, 0, 0, 1])
+    m.setWithArray(
+        [c, 0, s, (nx - xp) / 10, 0, 1, 0, PROX_DY / 10, -s, 0, c, (nz - zp) / 10, 0, 0, 0, 1]
+    )
     tbm().transform(body, m)
     return body
 
@@ -282,20 +329,24 @@ def stage_thumb_unhinge(design, log):
     prototype's one-piece phalanx, and re-add the thumb_mcp_flex / thumb_ip joints to it."""
     root = design.rootComponent
     link = find_comp_occ(root, "thumb_mcp_link")
-    if link is None:
-        log("thumb_unhinge: no hinge, skipped")
+    if link is None and find_comp_occ(root, "thumb_proximal"):
+        log("thumb_unhinge: one-piece proximal already there, skipped")
         return
     body = _placed_old_proximal(design)
     for j in list(root.asBuiltJoints):
         if j.name in ("thumb_mcp_flex", "thumb_mcp_abd", "thumb_ip"):
             j.deleteMe()
-    find_comp_occ(root, "thumb_proximal").deleteMe()
-    link.deleteMe()
+    for name in ("thumb_proximal", "thumb_mcp_link"):  # the hinge parts, if still there
+        occ = find_comp_occ(root, name)
+        if occ:
+            occ.deleteMe()
     prox = new_part(root, "thumb_proximal", body)
     meta, tip = find_comp_occ(root, "thumb_metacarpal"), find_comp_occ(root, "thumb_distal")
     add_revolute(root, "thumb_mcp_flex", prox, meta, THUMB_FLEX_AXIS, THUMB_MCP_PT)
     add_revolute(root, "thumb_ip", tip, prox, THUMB_FLEX_AXIS, THUMB_IP_PT)
-    log(f"thumb_unhinge: one-piece proximal ({prox.bRepBodies.item(0).volume * 1000:.0f} mm3), joints re-added")
+    log(
+        f"thumb_unhinge: one-piece proximal ({prox.bRepBodies.item(0).volume * 1000:.0f} mm3), joints re-added"
+    )
 
 
 # ---------------------------------------------------------------------------------------------------
@@ -347,7 +398,6 @@ def stage_names(design, log):
 # ---------------------------------------------------------------------------------------------------
 
 
-
 def _joint_record(j, as_built):
     m = adsk.fusion.RevoluteJointMotion.cast(j.jointMotion)
     if as_built:
@@ -388,12 +438,14 @@ def stage_export(design, log):
         opts.meshRefinement = adsk.fusion.MeshRefinementSettings.MeshRefinementMedium
         em.execute(opts)
         pp = body.physicalProperties
-        parts.append({"name": name, "mesh": f"meshes/{name}.stl", "volume_mm3": round(pp.volume * 1000, 1)})
+        parts.append(
+            {"name": name, "mesh": f"meshes/{name}.stl", "volume_mm3": round(pp.volume * 1000, 1)}
+        )
     data = {
         "source": "Fusion design 'Tendra Hand V1', exported by TendraHandV1.py stage 'export'",
         "units": "mm, world frame of the design, all joints at 0",
         "note": "Fusion's joint axis signs are arbitrary; the simulation converter applies the "
-                "closing-positive convention (CLAUDE.md).",
+        "closing-positive convention (CLAUDE.md).",
         "parts": sorted(parts, key=lambda p: p["name"]),
         "joints": sorted(joints, key=lambda j: j["name"]),
     }
@@ -425,7 +477,9 @@ def _sphere(c, r):
 
 
 def _sk_line(sk, a, b):
-    return sk.sketchCurves.sketchLines.addByTwoPoints(sk.modelToSketchSpace(pt(*a)), sk.modelToSketchSpace(pt(*b)))
+    return sk.sketchCurves.sketchLines.addByTwoPoints(
+        sk.modelToSketchSpace(pt(*a)), sk.modelToSketchSpace(pt(*b))
+    )
 
 
 def _sk_spline(sk, pts):
@@ -446,12 +500,21 @@ def _sk_curve(sk, pts):
     a, b = pts[0], pts[-1]
     ab = [b[i] - a[i] for i in range(3)]
     n = math.sqrt(sum(c * c for c in ab))
-    off = max(math.sqrt(sum((q[i] - a[i] - ab[i] * sum((q[k] - a[k]) * ab[k] for k in range(3)) / n / n) ** 2
-                            for i in range(3))) for q in pts)
+    off = max(
+        math.sqrt(
+            sum(
+                (q[i] - a[i] - ab[i] * sum((q[k] - a[k]) * ab[k] for k in range(3)) / n / n) ** 2
+                for i in range(3)
+            )
+        )
+        for q in pts
+    )
     return _sk_line(sk, a, b) if off < 1e-3 else _sk_spline(sk, pts)
 
 
-SHEATH_STOP_Z = -40.0  # sheaths: the last 2 mm of the wrist plate is a 1.2 mm bore (the tube's stop)
+SHEATH_STOP_Z = (
+    -40.0
+)  # sheaths: the last 2 mm of the wrist plate is a 1.2 mm bore (the tube's stop)
 
 
 def _thumb_paths(sk, st, curves_only):
@@ -462,15 +525,24 @@ def _thumb_paths(sk, st, curves_only):
     out = []
     if kind == "rot" and not curves_only:  # from the bay wall over the pin, then down
         e = P[0]
-        out += [(_sk_line(sk, (e[0], e[1] - 1.0, e[2]), P[1]), 0.12, name + " wall"),
-                (_sk_spline(sk, P[1:6]), 0.12, name + " wrap"),
-                (_sk_line(sk, P[5], P[small]), 0.12, name + " drop")]
+        out += [
+            (_sk_line(sk, (e[0], e[1] - 1.0, e[2]), P[1]), 0.12, name + " wall"),
+            (_sk_spline(sk, P[1:6]), 0.12, name + " wrap"),
+            (_sk_line(sk, P[5], P[small]), 0.12, name + " drop"),
+        ]
     if kind == "bare" and not curves_only:  # own 1.2 mm bore: down, then along the S-curve
-        out += [(_sk_line(sk, P[0], P[1]), 0.12, name + " hold"), (_sk_curve(sk, P[1:small + 1]), 0.12, name + " entry")]
+        out += [
+            (_sk_line(sk, P[0], P[1]), 0.12, name + " hold"),
+            (_sk_curve(sk, P[1 : small + 1]), 0.12, name + " entry"),
+        ]
     tube = P[small:] if kind != "sheath" else P
     if kind == "sheath" and curves_only:  # stop at the wrist plate bottom
-        tube = [q for q in tube if q[2] >= SHEATH_STOP_Z] + [[P[-1][0], P[-1][1], SHEATH_STOP_Z - 0.01]]
-        out.append((_sk_line(sk, tube[-1], (P[-1][0], P[-1][1], P[-1][2] - 1.0)), 0.12, name + " stop"))
+        tube = [q for q in tube if q[2] >= SHEATH_STOP_Z] + [
+            [P[-1][0], P[-1][1], SHEATH_STOP_Z - 0.01]
+        ]
+        out.append(
+            (_sk_line(sk, tube[-1], (P[-1][0], P[-1][1], P[-1][2] - 1.0)), 0.12, name + " stop")
+        )
     out.append((_sk_curve(sk, tube), 0.22, name))
     return out
 
@@ -491,27 +563,36 @@ def cut_channels(comp, body, strands, name, curves_only=False):
             continue
         e, small_end = st["entry_mm"], st["small_bore_end_mm"]
         top = sk.modelToSketchSpace(pt(e[0], e[1], e[2] + 1.5))
-        line = sk.sketchCurves.sketchLines.addByTwoPoints(top, sk.modelToSketchSpace(pt(*small_end)))
+        line = sk.sketchCurves.sketchLines.addByTwoPoints(
+            top, sk.modelToSketchSpace(pt(*small_end))
+        )
         if not curves_only:
             paths.append((line, 0.12, st["name"] + " entry"))
         # straight part (index strands drop beside the thumb bay first), then the S-curve on its own
         small_end, curve_start = st["small_bore_end_mm"], st["curve_start_mm"]
         if math.dist(small_end, curve_start) > 1e-6 and not curves_only:
             drop = sk.sketchCurves.sketchLines.addByTwoPoints(
-                sk.modelToSketchSpace(pt(*small_end)), sk.modelToSketchSpace(pt(*curve_start)))
+                sk.modelToSketchSpace(pt(*small_end)), sk.modelToSketchSpace(pt(*curve_start))
+            )
             paths.append((drop, 0.22, st["name"] + " drop"))
-        curve = st["points_mm"][st["points_mm"].index(curve_start):-1]  # curve_start .. wrist bottom
+        curve = st["points_mm"][
+            st["points_mm"].index(curve_start) : -1
+        ]  # curve_start .. wrist bottom
         lateral = math.dist(curve[0][:2], curve[-1][:2])
         if lateral < 1e-3:
             seg = sk.sketchCurves.sketchLines.addByTwoPoints(
-                sk.modelToSketchSpace(pt(*curve[0])), sk.modelToSketchSpace(pt(*curve[-1])))
+                sk.modelToSketchSpace(pt(*curve[0])), sk.modelToSketchSpace(pt(*curve[-1]))
+            )
         else:
             seg = _sk_spline(sk, curve)
         paths.append((seg, 0.22, st["name"]))
     sk.isComputeDeferred = False
     pipes = comp.features.pipeFeatures
     for curve, dia, sname in paths:
-        pi = pipes.createInput(comp.features.createPath(curve, False), adsk.fusion.FeatureOperations.CutFeatureOperation)
+        pi = pipes.createInput(
+            comp.features.createPath(curve, False),
+            adsk.fusion.FeatureOperations.CutFeatureOperation,
+        )
         pi.sectionSize = adsk.core.ValueInput.createByReal(dia)
         pi.participantBodies = [body]
         try:
@@ -525,7 +606,11 @@ def cut_channels(comp, body, strands, name, curves_only=False):
         if "kind" in st:
             continue
         e = st["entry_mm"]
-        cones.append(tbm().createCylinderOrCone(pt(e[0], e[1], e[2] + 0.3), 0.15, pt(e[0], e[1], e[2] - 0.6), 0.06))
+        cones.append(
+            tbm().createCylinderOrCone(
+                pt(e[0], e[1], e[2] + 0.3), 0.15, pt(e[0], e[1], e[2] - 0.6), 0.06
+            )
+        )
     return cones
 
 
@@ -578,25 +663,46 @@ def stage_palm(design, log):
     # 1. remove the prototype's stand: its left block (x < -16) and legs (z < -7.6)
     cut = box(-200, -16.0, -200, 200, -200, 200)
     _op(cut, box(-200, 200, -200, 200, -200, -7.6), "+")
-    body = _feature_with_tools(comp, body, [cut], adsk.fusion.FeatureOperations.CutFeatureOperation, "v1 palm trim")
+    body = _feature_with_tools(
+        comp, body, [cut], adsk.fusion.FeatureOperations.CutFeatureOperation, "v1 palm trim"
+    )
     # 2. add the full palm: base down to the wrist, steps under the knuckles, thicker back, posts
     x0, x1 = routes["palm"]["x"]
     y0 = routes["palm"]["y"][0]
-    add = [box(x0, x1, y0, PALM_BACK, PALM_BOTTOM, -7.6), box(-16.0, x1, 32.5, PALM_BACK, -7.6, 38.5)]
+    add = [
+        box(x0, x1, y0, PALM_BACK, PALM_BOTTOM, -7.6),
+        box(-16.0, x1, 32.5, PALM_BACK, -7.6, 38.5),
+    ]
     add += [box(a, b, y0, PALM_BACK, -7.6, top) for a, b, top in PALM_STEPS]
-    body = _feature_with_tools(comp, body, add + posts, adsk.fusion.FeatureOperations.JoinFeatureOperation, "v1 palm body")
+    body = _feature_with_tools(
+        comp, body, add + posts, adsk.fusion.FeatureOperations.JoinFeatureOperation, "v1 palm body"
+    )
     # 3. thumb (research/experiments/2026-09-29-thumb-routing): deeper bay floor, bearing for the
     #    base's hollow journal (a U-slot open to the front, the base slides in from there), and the
     #    blind hole for the 3 mm steel pin that turns the cmc_rot strands down
-    body = _feature_with_tools(comp, body, palm_thumb_tools(routes["thumb"]), adsk.fusion.FeatureOperations.CutFeatureOperation, "v1 palm thumb bay")
+    body = _feature_with_tools(
+        comp,
+        body,
+        palm_thumb_tools(routes["thumb"]),
+        adsk.fusion.FeatureOperations.CutFeatureOperation,
+        "v1 palm thumb bay",
+    )
     # 4. one channel per strand, and M3 heat-set insert holes in the bottom (wrist) face
     tools = cut_channels(comp, body, routes["strands"], "v1 palm channel")
     body = comp.bRepBodies.item(0)
     p = routes["palm"]
     for x, y in p["inserts_xy"]:
-        tools.append(_cyl_pts((x, y, PALM_BOTTOM - 1), (x, y, PALM_BOTTOM + p["insert_depth"]), p["insert_r"]))
-    _feature_with_tools(comp, body, tools, adsk.fusion.FeatureOperations.CutFeatureOperation, "v1 palm channels")
-    log(f"palm: built, {len(routes['strands'])} channels, volume {comp.bRepBodies.item(0).volume * 1000:.0f} mm3")
+        tools.append(
+            _cyl_pts(
+                (x, y, PALM_BOTTOM - 1), (x, y, PALM_BOTTOM + p["insert_depth"]), p["insert_r"]
+            )
+        )
+    _feature_with_tools(
+        comp, body, tools, adsk.fusion.FeatureOperations.CutFeatureOperation, "v1 palm channels"
+    )
+    log(
+        f"palm: built, {len(routes['strands'])} channels, volume {comp.bRepBodies.item(0).volume * 1000:.0f} mm3"
+    )
 
 
 Z_PLATE_TOP_PALM = 38.5
@@ -608,9 +714,11 @@ def palm_thumb_tools(th):
     j = th["journal"]
     rb, zb = j["r"] + j["clearance"], j["bottom_z"] - j["clearance"]
     floor = th["bay_floor_z"]
-    tools = [box(-16.0, 13.0, 12.0, 28.5, floor, OLD_BAY_FLOOR_Z + 0.5),  # deeper bay floor
-             _cyl_pts((ax, ay, zb), (ax, ay, floor + 0.5), rb),  # journal bearing
-             box(ax - rb, ax + rb, 5.0, ay, zb, floor + 0.5)]  # its U-slot to the front face
+    tools = [
+        box(-16.0, 13.0, 12.0, 28.5, floor, OLD_BAY_FLOOR_Z + 0.5),  # deeper bay floor
+        _cyl_pts((ax, ay, zb), (ax, ay, floor + 0.5), rb),  # journal bearing
+        box(ax - rb, ax + rb, 5.0, ay, zb, floor + 0.5),
+    ]  # its U-slot to the front face
     py, pz = th["rot_pin_yz"]
     x0, x1 = th["rot_pin_x"]
     tools.append(_cyl_pts((x0, py, pz), (x1 + 1.0, py, pz), th["pin_r"]))
@@ -664,7 +772,18 @@ def forearm_body(routes):
     for s in routes["servos"]:
         (cx0, cx1), _cy, (cz0, cz1) = s["case_box_mm"]
         yr = _deck_for(s, sv)
-        _op(body, box(cx0 - POCKET_CLEAR, cx1 + POCKET_CLEAR, yr[0] - 1, yr[1] + 1, cz0 - POCKET_CLEAR, cz1 + POCKET_CLEAR), "-")
+        _op(
+            body,
+            box(
+                cx0 - POCKET_CLEAR,
+                cx1 + POCKET_CLEAR,
+                yr[0] - 1,
+                yr[1] + 1,
+                cz0 - POCKET_CLEAR,
+                cz1 + POCKET_CLEAR,
+            ),
+            "-",
+        )
         x = (cx0 + cx1) / 2
         zc = (cz0 + cz1) / 2
         for dz in (-sv["hole_spacing"] / 2, sv["hole_spacing"] / 2):
@@ -686,7 +805,9 @@ def servo_body(s, sv):
     _op(body, tab, "+")
     x, y, z, sh = _servo_frame(s)
     case_top = y - sh * sv["spool_plane_above_case"]
-    _op(body, _cyl_pts((x, case_top - sh * 0.5, z), (x, case_top + sh * 3.2, z), 1.975), "+")  # spline
+    _op(
+        body, _cyl_pts((x, case_top - sh * 0.5, z), (x, case_top + sh * 3.2, z), 1.975), "+"
+    )  # spline
     return body
 
 
@@ -699,8 +820,12 @@ def spool_body(s, sv):
     ring = _cyl_pts((x, y - 0.6, z), (x, y + 0.6, z), fr + 0.1)
     _op(ring, _cyl_pts((x, y - 0.7, z), (x, y + 0.7, z), 5.8), "-")
     _op(body, ring, "-")
-    _op(body, _cyl_pts((x, y - ht - 1, z), (x, y + ht + 1, z), 2.0), "-")  # spline bore: 4.0 mm, prints ~3.85 = press fit on the 3.95 mm spline
-    _op(body, _cyl_pts((x, y - ht - 1, z - 4.2), (x, y + ht + 1, z - 4.2), 0.6), "-")  # tie-off hole
+    _op(
+        body, _cyl_pts((x, y - ht - 1, z), (x, y + ht + 1, z), 2.0), "-"
+    )  # spline bore: 4.0 mm, prints ~3.85 = press fit on the 3.95 mm spline
+    _op(
+        body, _cyl_pts((x, y - ht - 1, z - 4.2), (x, y + ht + 1, z - 4.2), 0.6), "-"
+    )  # tie-off hole
     _op(body, box(x - 0.4, x + 0.4, y - 0.6, y + 0.6, z - 6.0, z - 4.2), "-")  # slot groove -> hole
     return body
 
@@ -713,8 +838,13 @@ def stage_forearm(design, log):
     routes = load_routes()
     sv = routes["servo"]
     fo = new_part(root, "forearm", forearm_body(routes))
-    cut_channels(fo.component, fo.component.bRepBodies.item(0), routes["strands"], "v1 wrist channel",
-                 curves_only=True)  # only the S-curves reach down into the wrist plate
+    cut_channels(
+        fo.component,
+        fo.component.bRepBodies.item(0),
+        routes["strands"],
+        "v1 wrist channel",
+        curves_only=True,
+    )  # only the S-curves reach down into the wrist plate
     occs = [find_comp_occ(root, "palm"), fo]
     for s in routes["servos"]:
         tag = f"{s['id']:02d}_{s['joint']}"
@@ -737,7 +867,9 @@ def stage_forearm(design, log):
 
 OLD_PLATE_TOP = 2.5  # the prototype's base plate: z -4.4 .. 2.5, bottom pin below it
 PLATE_OUTLINE_Z = -3.0  # a height where the old plate has its full outline
-ROT_ANCHOR_DEG = 240.0  # tie hole of the cmc_rot loop (angle from +X): 20 deg of wrap left at both limits
+ROT_ANCHOR_DEG = (
+    240.0  # tie hole of the cmc_rot loop (angle from +X): 20 deg of wrap left at both limits
+)
 HANGER_X = (0.2, 1.4)
 
 
@@ -763,26 +895,51 @@ def thumb_base_tools(world_body, th):
     zb, zt = th["plate_z"]  # new plate bottom / top
     rd = th["rot_drum"]
     groove = (rd["z"] - rd["groove_w"] / 2, rd["z"] + rd["groove_w"] / 2)
-    walls = cut_z(world_body, OLD_PLATE_TOP, OLD_PLATE_TOP + 1.0)  # side walls just above the old plate
-    walls = _stack(walls, 0, 0, [-k for k in range(0, 6)])  # down to 2.5 - 5 = -2.5 (into the new plate)
+    walls = cut_z(
+        world_body, OLD_PLATE_TOP, OLD_PLATE_TOP + 1.0
+    )  # side walls just above the old plate
+    walls = _stack(
+        walls, 0, 0, [-k for k in range(0, 6)]
+    )  # down to 2.5 - 5 = -2.5 (into the new plate)
     outline = cut_z(world_body, PLATE_OUTLINE_Z - 0.5, PLATE_OUTLINE_Z + 0.5)
     lo, hi = groove[1], zt  # the new upper plate: from the groove's top to the plate top
-    plate = _stack(outline, 0, 0, [lo + 0.5 - PLATE_OUTLINE_Z + k * 0.5 for k in range(int((hi - lo) / 0.5) + 1)])
+    plate = _stack(
+        outline,
+        0,
+        0,
+        [lo + 0.5 - PLATE_OUTLINE_Z + k * 0.5 for k in range(int((hi - lo) / 0.5) + 1)],
+    )
     _op(plate, box(-50, 50, -50, 50, lo, hi), "&")
     j = th["journal"]
-    join = [walls, plate,
-            _cyl_pts((ax, ay, groove[0]), (ax, ay, groove[1] + 0.01), rd["r"] - th["line_r"]),  # groove floor
-            _cyl_pts((ax, ay, groove[0] - 1.0), (ax, ay, groove[0]), rd["flange_r"]),  # lower flange
-            _cyl_pts((ax, ay, j["bottom_z"]), (ax, ay, groove[0] - 0.99), j["r"]),  # journal
-            box(*HANGER_X, th["cmc_pin_yz"][0] - 2.3, th["cmc_pin_yz"][0] + 2.3, th["cmc_pin_yz"][1] - 2.3, 31.5)]
+    join = [
+        walls,
+        plate,
+        _cyl_pts(
+            (ax, ay, groove[0]), (ax, ay, groove[1] + 0.01), rd["r"] - th["line_r"]
+        ),  # groove floor
+        _cyl_pts((ax, ay, groove[0] - 1.0), (ax, ay, groove[0]), rd["flange_r"]),  # lower flange
+        _cyl_pts((ax, ay, j["bottom_z"]), (ax, ay, groove[0] - 0.99), j["r"]),  # journal
+        box(
+            *HANGER_X,
+            th["cmc_pin_yz"][0] - 2.3,
+            th["cmc_pin_yz"][0] + 2.3,
+            th["cmc_pin_yz"][1] - 2.3,
+            31.5,
+        ),
+    ]
     cut = [box(-40, 40, -20, 50, -30, OLD_PLATE_TOP)]
     a = math.radians(ROT_ANCHOR_DEG)
     r_tie = rd["r"] + 0.3
     py, pz = th["cmc_pin_yz"]
-    after = [_cyl_pts((ax, ay, j["bottom_z"] - 1), (ax, ay, zt + 1), th["bore_r"]),  # the bore
-             _cyl_pts((ax + r_tie * math.cos(a), ay + r_tie * math.sin(a), groove[0] - 1.5),
-                      (ax + r_tie * math.cos(a), ay + r_tie * math.sin(a), groove[1] - 0.2), 0.5),  # tie hole
-             _cyl_pts((HANGER_X[0] - 0.5, py, pz), (HANGER_X[1] + 0.5, py, pz), th["pin_r"])]  # pin hole
+    after = [
+        _cyl_pts((ax, ay, j["bottom_z"] - 1), (ax, ay, zt + 1), th["bore_r"]),  # the bore
+        _cyl_pts(
+            (ax + r_tie * math.cos(a), ay + r_tie * math.sin(a), groove[0] - 1.5),
+            (ax + r_tie * math.cos(a), ay + r_tie * math.sin(a), groove[1] - 0.2),
+            0.5,
+        ),  # tie hole
+        _cyl_pts((HANGER_X[0] - 0.5, py, pz), (HANGER_X[1] + 0.5, py, pz), th["pin_r"]),
+    ]  # pin hole
     return cut, join, after
 
 
@@ -798,9 +955,15 @@ def stage_thumb_base(design, log):
     cut, join, after = thumb_base_tools(tbm().copy(occ.bRepBodies.item(0)), th)
     body = comp.bRepBodies.item(0)
     ops = adsk.fusion.FeatureOperations
-    body = _feature_with_tools(comp, body, [to_comp(occ, t) for t in cut], ops.CutFeatureOperation, "v1 base cut old plate")
-    body = _feature_with_tools(comp, body, [to_comp(occ, t) for t in join], ops.JoinFeatureOperation, "v1 base new plate")
-    _feature_with_tools(comp, body, [to_comp(occ, t) for t in after], ops.CutFeatureOperation, "v1 base rework")
+    body = _feature_with_tools(
+        comp, body, [to_comp(occ, t) for t in cut], ops.CutFeatureOperation, "v1 base cut old plate"
+    )
+    body = _feature_with_tools(
+        comp, body, [to_comp(occ, t) for t in join], ops.JoinFeatureOperation, "v1 base new plate"
+    )
+    _feature_with_tools(
+        comp, body, [to_comp(occ, t) for t in after], ops.CutFeatureOperation, "v1 base rework"
+    )
     log(f"thumb_base: reworked, volume {comp.bRepBodies.item(0).volume * 1000:.0f} mm3")
     hanger_round(occ, th, log)
 
@@ -814,7 +977,13 @@ def hanger_round(occ, th, log):
     py, pz = th["cmc_pin_yz"]
     tool = box(HANGER_X[0] - 0.1, HANGER_X[1] + 0.1, py - 2.4, py + 2.4, pz - 2.4, pz)
     _op(tool, _cyl_pts((HANGER_X[0] - 1, py, pz), (HANGER_X[1] + 1, py, pz), 2.3), "-")
-    _feature_with_tools(comp, comp.bRepBodies.item(0), [to_comp(occ, tool)], adsk.fusion.FeatureOperations.CutFeatureOperation, "v1 base hanger round")
+    _feature_with_tools(
+        comp,
+        comp.bRepBodies.item(0),
+        [to_comp(occ, tool)],
+        adsk.fusion.FeatureOperations.CutFeatureOperation,
+        "v1 base hanger round",
+    )
     log("thumb_base: hanger bottom rounded")
 
 
@@ -836,8 +1005,13 @@ def _halfspace_yz(x0, x1, c, n):
     big = 200.0
     ny, nz = n
     obb = adsk.core.OrientedBoundingBox3D.create(
-        pt((x0 + x1) / 2, c[0] + ny * big / 2, c[1] + nz * big / 2), vec(1, 0, 0), vec(0, ny, nz),
-        (x1 - x0) / 10, big / 10, big / 10)
+        pt((x0 + x1) / 2, c[0] + ny * big / 2, c[1] + nz * big / 2),
+        vec(1, 0, 0),
+        vec(0, ny, nz),
+        (x1 - x0) / 10,
+        big / 10,
+        big / 10,
+    )
     return tbm().createBox(obb)
 
 
@@ -858,13 +1032,22 @@ def thumb_meta_tools(th):
     _op(clear, _cyl_pts((x0 - 1, cy, cz), (x1 + 1, cy, cz), d["flange_r"]), "-")
     tools = [clear]
     for gx in d["groove_x"].values():
-        ring = _cyl_pts((gx - d["groove_w"] / 2, cy, cz), (gx + d["groove_w"] / 2, cy, cz), d["flange_r"] + 0.1)
-        tools.append(_op(ring, _cyl_pts((gx - 1, cy, cz), (gx + 1, cy, cz), d["r"] - th["line_r"]), "-"))
+        ring = _cyl_pts(
+            (gx - d["groove_w"] / 2, cy, cz), (gx + d["groove_w"] / 2, cy, cz), d["flange_r"] + 0.1
+        )
+        tools.append(
+            _op(ring, _cyl_pts((gx - 1, cy, cz), (gx + 1, cy, cz), d["r"] - th["line_r"]), "-")
+        )
     a = math.radians(CMC_ANCHOR_DEG)
     ry = d["r"] - th["line_r"] - 0.2
     gxs = sorted(d["groove_x"].values())
-    tools.append(_cyl_pts((gxs[0], cy + ry * math.cos(a), cz + ry * math.sin(a)),
-                          (gxs[-1], cy + ry * math.cos(a), cz + ry * math.sin(a)), 0.5))
+    tools.append(
+        _cyl_pts(
+            (gxs[0], cy + ry * math.cos(a), cz + ry * math.sin(a)),
+            (gxs[-1], cy + ry * math.cos(a), cz + ry * math.sin(a)),
+            0.5,
+        )
+    )
     return tools
 
 
@@ -881,13 +1064,253 @@ def stage_thumb_meta(design, log):
     if not comp.features.itemByName("v1 meta clear top"):
         cy, cz = th["cmc_flex_axis_yz"]
         tool = _sector_yz(*META_CLEAR_X, (cy, cz), *META_CLEAR_EXTRA_DEG)
-        _op(tool, _cyl_pts((META_CLEAR_X[0] - 1, cy, cz), (META_CLEAR_X[1] + 1, cy, cz), th["cmc_drum"]["flange_r"]), "-")
-        _feature_with_tools(comp, comp.bRepBodies.item(0), [to_comp(occ, tool)], cut, "v1 meta clear top")
+        _op(
+            tool,
+            _cyl_pts(
+                (META_CLEAR_X[0] - 1, cy, cz),
+                (META_CLEAR_X[1] + 1, cy, cz),
+                th["cmc_drum"]["flange_r"],
+            ),
+            "-",
+        )
+        _feature_with_tools(
+            comp, comp.bRepBodies.item(0), [to_comp(occ, tool)], cut, "v1 meta clear top"
+        )
         log(f"thumb_meta: top cleared, volume {comp.bRepBodies.item(0).volume * 1000:.0f} mm3")
 
 
-STAGES = {"fingers": stage_fingers, "thumb": stage_thumb, "names": stage_names, "thumb_base": stage_thumb_base,
-          "thumb_meta": stage_thumb_meta, "palm": stage_palm, "forearm": stage_forearm}
+# ---------------------------------------------------------------------------------------------------
+# Stage: thumb_inner (the thumb's tendon paths past the base, research/experiments/2026-09-29-thumb-
+# routing). All geometry comes from tendon_routes.json "thumb" (tendon_router.thumb_inner()):
+# - metacarpal: a solid block (it was thin in front), a socket block on each side of the cmc_flex
+#   gap with the 4 sheath sockets (2.2 mm, the step to 1.2 mm stops the tube), 2 mm steel pins
+#   (pin A per side, pin B per mcp_flex line) with a groove around each where a line wraps, and
+#   1.2 mm bores along the straight runs. The slab behind the cmc_flex drum is cleared again.
+# - proximal: the MCP drum groove (r 5.8 floor), its tie hole, and for each ip line a 1.2 mm hole
+#   exactly on the MCP axis, a fan-shaped slot behind it (the line swings with the joint) and a
+#   bore straight on to its IP groove.
+# - distal: the two IP drum grooves (r 5.8 floor) and their tie hole.
+# ---------------------------------------------------------------------------------------------------
+
+S2 = math.sqrt(0.5)
+THUMB_A = (S2, 0.0, S2)  # MCP / IP axis direction
+THUMB_W = (-S2, 0.0, S2)  # across it, the closing side
+TIE_ANGLE_DEG = -45.0  # MCP and IP loop tie point: >= 20 deg of wrap on both strands at -5 / 95
+
+
+def _v(*a):
+    return tuple(float(x) for x in a)
+
+
+def _add(p, *terms):
+    x, y, z = p
+    for k, d in terms:
+        x, y, z = x + k * d[0], y + k * d[1], z + k * d[2]
+    return (x, y, z)
+
+
+def _halfspace(c, n, size=200.0):
+    """Box = {p : n . (p - c) >= 0}, n a unit 3-tuple."""
+    nv = vec(*n)
+    other = vec(1, 0, 0) if abs(n[0]) < 0.9 else vec(0, 1, 0)
+    w = nv.crossProduct(other)
+    w.normalize()
+    obb = adsk.core.OrientedBoundingBox3D.create(pt(*_add(c, (size / 2, n))), nv, w, size / 10, size / 10, size / 10)
+    return tbm().createBox(obb)
+
+
+def _thumb_pt(th, a, w, y):
+    cx, cz = th["cl_xz"]
+    return _add((cx, y, cz), (a, THUMB_A), (w, THUMB_W))
+
+
+def _ring(center, axis, a0, a1, r_in, r_out):
+    """Groove tool: annulus r_in..r_out around `axis` through `center`, from a0 to a1 along it."""
+    ring = tbm().createCylinderOrCone(pt(*_add(center, (a0, axis))), r_out / 10, pt(*_add(center, (a1, axis))), r_out / 10)
+    core = tbm().createCylinderOrCone(pt(*_add(center, (a0 - 1, axis))), r_in / 10, pt(*_add(center, (a1 + 1, axis))), r_in / 10)
+    return _op(ring, core, "-")
+
+
+def _seg(a, b, r):
+    return tbm().createCylinderOrCone(pt(*a), r / 10, pt(*b), r / 10)
+
+
+def _poly_prism_yz(x0, x1, pts):
+    """Convex polygon (y, z) points, counter-clockwise in (y right, z up), extruded along x."""
+    body = None
+    n = len(pts)
+    for i in range(n):
+        (y0, z0), (y1, z1) = pts[i], pts[(i + 1) % n]
+        dy, dz = y1 - y0, z1 - z0
+        L = math.hypot(dy, dz)
+        inward = (-dz / L, dy / L)  # left of the edge = inside for a CCW polygon
+        hs = _halfspace_yz(x0, x1, (y0, z0), inward)
+        body = hs if body is None else _op(body, hs, "&")
+    return body
+
+
+def _tie_point(center, r, ang_deg):
+    u, w = (0.0, -1.0, 0.0), THUMB_W
+    a = math.radians(ang_deg)
+    return _add(center, (r * math.cos(a), u), (r * math.sin(a), w))
+
+
+def thumb_inner_tools(th):
+    """{part: (join tools, cut tools)} in world space."""
+    inn, fill = th["inner"], th["meta_fill"]
+    sd = th["socket_dir_yz"]
+    rho = th["pin2_r"] + th["line_r"]
+    x0, x1 = fill["x"]
+    (y0, y1), (z0, z1) = fill["y"], fill["z"]
+    yf, zf = fill["front"]
+    join_m = [box(x0, x1, yf, y1, z0, z1), box(x0, x1, y0, yf, z0, zf)]
+    cut_m, cut_p, cut_d = [], [], []
+    e = (S2, S2)  # (y, z) across the socket direction, up-back
+    for side in ("flex", "ext"):
+        strands = [k for k in inn if k.endswith("_" + side)]
+        s0 = inn[strands[0]]
+        sy, sz = s0["socket"]
+        ty, tz = s0["tube_end"]
+        ay, az = s0["pin_a"]
+        p1, p2 = (sy - 2.0 * e[0], sz - 2.0 * e[1]), (sy + 2.0 * e[0], sz + 2.0 * e[1])
+        p3, p4, p5 = (ty + 2.0 * e[0], tz + 2.0 * e[1]), (ay, az + 2.3), (ay - 2.3, az)
+        p6, p7 = (ay - 2.3, 20.0), (p1[0], 20.0)
+        # two convex pieces (counter-clockwise in y right, z up); the notch under p1 stays open for
+        # the incoming tube
+        bx0, bx1 = th["pin_a_x"][side]
+        bx = (x0 + 0.1, bx1) if side == "flex" else (bx0, x1 - 0.1)
+        join_m.append(_poly_prism_yz(*bx, [p1, p2, p3, p4, p5]))
+        join_m.append(_poly_prism_yz(*bx, [p5, p6, p7, p1]))
+        cut_m.append(_seg((bx0 - 1.0, ay, az), (bx1 + 1.0, ay, az), th["pin2_r"]))  # pin A hole
+    for name, t in inn.items():
+        side = name.rsplit("_", 1)[1]
+        x = t["x"]
+        sy, sz = t["socket"]
+        ty, tz = t["tube_end"]
+        cut_m.append(_seg((x, sy - 1.0 * sd[0], sz - 1.0 * sd[1]), (x, ty, tz), th["bore_tube"] / 2))  # socket
+        ay, az = t["pin_a"]
+        cut_m.append(_seg((x - 0.6, ay, az), (x + 0.6, ay, az), rho + 0.6))  # line groove around pin A
+        for p0, p1 in th["bores"][name]:
+            cut_m.append(_seg(tuple(p0), tuple(p1), th["bore_small"] / 2))
+        if "pin_b" in t:
+            by, bz = t["pin_b"]
+            lx = t["line_x"]
+            px0, px1 = (x0 - 1.0, lx + 1.2) if side == "flex" else (lx - 1.2, x1 + 1.0)
+            cut_m.append(_seg((px0, by, bz), (px1, by, bz), th["pin2_r"]))  # pin B hole, from outside
+            cut_m.append(_seg((lx - 0.6, by, bz), (lx + 0.6, by, bz), rho + 0.6))
+    # proximal: MCP drum groove + tie hole, ip crossing holes, fan slots and bores
+    ga = th["mcp_groove_a"]
+    hw = th["groove_half_w"]
+    r_floor = th["thumb_drum_r"] - th["line_r"]
+    mcp_c = _thumb_pt(th, 0.0, 0.0, th["mcp_y"])
+    ip_c = _thumb_pt(th, 0.0, 0.0, th["ip_y"])
+    cut_p.append(_ring(mcp_c, THUMB_A, ga - hw, ga + hw, r_floor, 7.7))
+    tie = _tie_point(_thumb_pt(th, ga, 0.0, th["mcp_y"]), r_floor - 0.3, TIE_ANGLE_DEG)
+    cut_p.append(_seg(_add(tie, (-0.5, THUMB_A)), _add(tie, (3.5, THUMB_A)), 0.5))
+    for side in ("flex", "ext"):
+        t = inn["thumb_ip_" + side]
+        a = t["cross_a"]
+        cross = tuple(t["cross"])
+        cut_p.append(_seg(cross, tuple(t["ip_tangent"]), th["cross_hole_d"] / 2))  # bore to the IP groove
+        # fan behind the hole: the incoming line (from pin A) turns with the MCP joint, -5..95 deg
+        start = (t["x"], *th["pin_a_out"][f"thumb_ip_{side}"])
+        d = [start[i] - cross[i] for i in range(3)]
+        L = math.sqrt(sum(c * c for c in d))
+        d = [c / L for c in d]
+        for q_deg in range(-10, 101, 4):  # rotate d about the closing axis (-A) by -q (proximal's view)
+            q = math.radians(-q_deg)
+            k = (-THUMB_A[0], -THUMB_A[1], -THUMB_A[2])
+            kd = sum(k[i] * d[i] for i in range(3))
+            kxd = (k[1] * d[2] - k[2] * d[1], k[2] * d[0] - k[0] * d[2], k[0] * d[1] - k[1] * d[0])
+            dr = tuple(d[i] * math.cos(q) + kxd[i] * math.sin(q) + k[i] * kd * (1 - math.cos(q)) for i in range(3))
+            cut_p.append(_seg(_add(cross, (0.4, dr)), _add(cross, (12.0, dr)), th["cross_hole_d"] / 2 + 0.1))
+        # distal: its groove
+        cut_d.append(_ring(ip_c, THUMB_A, a - hw, a + hw, r_floor, 7.7))
+    a_lo, a_hi = sorted(th["ip_groove_a"].values())
+    tie = _tie_point(_thumb_pt(th, a_lo, 0.0, th["ip_y"]), r_floor - 0.3, TIE_ANGLE_DEG)
+    cut_d.append(_seg(_add(tie, (-0.5, THUMB_A)), _add(tie, (a_hi - a_lo + 0.5, THUMB_A)), 0.5))
+    return {"thumb_metacarpal": (join_m, cut_m), "thumb_proximal": ([], cut_p), "thumb_distal": ([], cut_d)}
+
+
+def _rot_about(v, k, ang):
+    """Rotate vector v about unit axis k by ang (rad), Rodrigues."""
+    kd = sum(k[i] * v[i] for i in range(3))
+    kxv = (k[1] * v[2] - k[2] * v[1], k[2] * v[0] - k[0] * v[2], k[0] * v[1] - k[1] * v[0])
+    c, s_ = math.cos(ang), math.sin(ang)
+    return tuple(v[i] * c + kxv[i] * s_ + k[i] * kd * (1 - c) for i in range(3))
+
+
+def mcp_relief_tools(th):
+    """Proximal: a 1.4 mm slot where each mcp_flex line sweeps past the back of the phalanx as the
+    MCP closes (-10..100 deg). The line is fixed to the metacarpal; seen from the proximal it turns
+    the other way about the MCP axis (found by the clearance check: it touched from 70 deg)."""
+    mcp_c = _thumb_pt(th, 0.0, 0.0, th["mcp_y"])
+    k = (-THUMB_A[0], -THUMB_A[1], -THUMB_A[2])  # closing axis
+    tools = []
+    for side in ("flex", "ext"):
+        tan = th["inner"]["thumb_mcp_flex_" + side]["drum_tangent"]
+        # from 3 mm behind the tangent (so the slot never cuts the drum's groove floor) to 16 mm
+        start = _add(tuple(tan), (3.0, (0.0, 1.0, 0.0)))
+        back = _add(tuple(tan), (16.0, (0.0, 1.0, 0.0)))
+        for q_deg in range(-10, 101, 3):
+            q = math.radians(-q_deg)
+            p0 = _add(mcp_c, (1.0, _rot_about(tuple(start[i] - mcp_c[i] for i in range(3)), k, q)))
+            p1 = _add(mcp_c, (1.0, _rot_about(tuple(back[i] - mcp_c[i] for i in range(3)), k, q)))
+            tools.append(_seg(p0, p1, 0.7))
+    return tools
+
+
+def stage_thumb_inner(design, log):
+    root = design.rootComponent
+    meta = find_comp_occ(root, "thumb_metacarpal")
+    if meta.component.features.itemByName("v1 meta inner"):
+        mcp_relief(design, load_routes()["thumb"], log)
+        log("thumb_inner: already built, skipped")
+        return
+    th = load_routes()["thumb"]
+    ops = adsk.fusion.FeatureOperations
+    for part, (join, cut) in thumb_inner_tools(th).items():
+        occ = find_comp_occ(root, part)
+        comp = occ.component
+        body = comp.bRepBodies.item(0)
+        if join:
+            body = _feature_with_tools(comp, body, [to_comp(occ, t) for t in join], ops.JoinFeatureOperation, "v1 meta block")
+        name = "v1 meta inner" if part == "thumb_metacarpal" else f"v1 {part.split('_', 1)[1]} inner"
+        _feature_with_tools(comp, body, [to_comp(occ, t) for t in cut], ops.CutFeatureOperation, name)
+        log(f"thumb_inner: {part} done, volume {comp.bRepBodies.item(0).volume * 1000:.0f} mm3")
+    # the block covers the slab behind the cmc_flex drum again: clear it like stage thumb_meta did
+    cy, cz = th["cmc_flex_axis_yz"]
+    tools = []
+    for a0, a1 in ((META_CLEAR_DEG[0], 15.0), (15.0, META_CLEAR_EXTRA_DEG[1])):
+        w = _sector_yz(*META_CLEAR_X, (cy, cz), a0, a1)
+        _op(w, _cyl_pts((META_CLEAR_X[0] - 1, cy, cz), (META_CLEAR_X[1] + 1, cy, cz), th["cmc_drum"]["flange_r"]), "-")
+        tools.append(w)
+    comp = meta.component
+    _feature_with_tools(comp, comp.bRepBodies.item(0), [to_comp(meta, t) for t in tools], ops.CutFeatureOperation, "v1 meta clear slab again")
+    log(f"thumb_inner: metacarpal slab cleared, volume {comp.bRepBodies.item(0).volume * 1000:.0f} mm3")
+    mcp_relief(design, th, log)
+
+
+def mcp_relief(design, th, log):
+    prox = find_comp_occ(design.rootComponent, "thumb_proximal")
+    comp = prox.component
+    if comp.features.itemByName("v1 proximal mcp relief"):
+        return
+    tools = [to_comp(prox, t) for t in mcp_relief_tools(th)]
+    _feature_with_tools(comp, comp.bRepBodies.item(0), tools, adsk.fusion.FeatureOperations.CutFeatureOperation, "v1 proximal mcp relief")
+    log(f"thumb_inner: proximal relief for the mcp_flex lines, volume {comp.bRepBodies.item(0).volume * 1000:.0f} mm3")
+
+
+STAGES = {
+    "fingers": stage_fingers,
+    "thumb": stage_thumb,
+    "names": stage_names,
+    "thumb_base": stage_thumb_base,
+    "thumb_meta": stage_thumb_meta,
+    "palm": stage_palm,
+    "forearm": stage_forearm,
+    "thumb_inner": stage_thumb_inner,
+}
 EXTRA_STAGES_MIGRATE = {"thumb_unhinge": stage_thumb_unhinge}  # one-off, for designs built before
 EXTRA_STAGES = {"export": stage_export}  # run on demand, not by run()
 
@@ -896,7 +1319,9 @@ def run_stage(name):
     app = adsk.core.Application.get()
     design = adsk.fusion.Design.cast(app.activeProduct)
     doc = app.activeDocument
-    doc_name = doc.dataFile.name if doc.dataFile else doc.name  # the tab title updates only on reopen
+    doc_name = (
+        doc.dataFile.name if doc.dataFile else doc.name
+    )  # the tab title updates only on reopen
     if doc_name != "Tendra Hand V1":
         raise RuntimeError("open the 'Tendra Hand V1' design first (not the original prototype)")
     lines = []
@@ -909,7 +1334,8 @@ def run(context):
     try:
         answer = ui.messageBox(
             "Build the Tendra Hand V1 stages (" + ", ".join(STAGES) + ") in this design?",
-            "Tendra Hand V1", adsk.core.MessageBoxButtonTypes.YesNoButtonType,
+            "Tendra Hand V1",
+            adsk.core.MessageBoxButtonTypes.YesNoButtonType,
         )
         if answer != adsk.core.DialogResults.DialogYes:
             return

@@ -1,15 +1,23 @@
 """DIP-PIP coupling linkage for the Tendra Hand V1 fingers (owner's choice, 2026-10-01).
 
-Each finger's DIP has no servo. One rigid bar inside the middle phalanx couples it to the PIP:
-pin A is fixed to the proximal phalanx near the PIP axis (back side), pin B to the distal phalanx
-near the DIP axis (palm side), so the bar crosses the middle phalanx diagonally. Bending the PIP
-swings pin A back, the bar pushes pin B, and the DIP bends with it. Nothing to tension, no creep.
+Each finger's DIP has no servo. One rigid bar couples it to the PIP: pin A is fixed to the
+proximal phalanx near the PIP axis (back side), pin B to the distal phalanx near the DIP axis (palm
+side), so the bar runs diagonally along the middle phalanx. Bending the PIP swings pin A back, the
+bar pushes pin B, and the DIP bends with it. Nothing to tension, no creep.
+
+The linkage sits in a thin layer outside the finger's side face (LAYOUT, owner's choice 2026-10-02):
+the PIP and DIP carry an 8 mm bearing in each side wall of the parent part, so there is no room for
+pins near the axes inside the finger. Plate A is glued onto the proximal phalanx's side face (it also
+holds the PIP bearing in), plate B onto the distal phalanx's side face (relieved over the middle
+phalanx's cheek), each with a 1.5 mm steel pin; the bar runs on the pins outside the plates.
 
 This script finds, per finger, the pin positions that keep DIP = RATIO x PIP over the whole PIP
 range, under these rules (mm, in the middle phalanx's plane: x from the PIP axis toward the DIP
 axis, y toward the back of the finger):
-- pins A and B between PIN_R_MIN and PIN_R_MAX from their axis (room for the pin and the axle);
-- the bar stays inside the phalanx (|y| <= HALF_HEIGHT) and keeps AXIS_CLEAR from both axes;
+- pins A and B between PIN_R_MIN and PIN_R_MAX from their axis (pin A clears the recess over the
+  PIP bearing's inner race, pin B stays on its plate);
+- the bar stays within the phalanx's side outline (|y| <= HALF_HEIGHT) and keeps AXIS_CLEAR from
+  both axes;
 - the angles between the bar and each crank stay in TRANSMISSION, so it never locks up near a
   straight line (a "toggle" position) and pushes the fingertip well at every angle.
 
@@ -17,7 +25,8 @@ Angles: gamma_a is pin A's direction from the PIP axis and gamma_b pin B's from 
 measured from +x toward +y (the back of the finger), at q = 0 (finger straight).
 
 The result goes into tendon_routes.json ("coupling") through tendon_router.py: the MuJoCo model
-uses the fitted DIP(PIP) curve and the Fusion script will build the pins and bar from it.
+uses the fitted DIP(PIP) curve, and the Fusion script (stage 'linkage') builds the plates and the
+bar from it.
 
     uv run python hardware/cad/dip_linkage.py      # prints the design per finger
 """
@@ -37,11 +46,25 @@ FINGERS = ("index", "middle", "ring", "little")
 
 RATIO = 0.75  # DIP angle per PIP angle (human-like)
 PIP_RANGE_DEG = (-5.0, 95.0)  # same as config_v1.h
-PIN_R_MIN, PIN_R_MAX = 3.0, 5.5  # pin centre from its joint axis
+PIN_R_MIN, PIN_R_MAX = 3.5, 5.5  # pin centre from its joint axis (pin A: 0.75 + 2.75 recess)
 HALF_HEIGHT = 5.5  # the middle phalanx is ~14 mm tall; keep the bar's centreline within +-5.5
 AXIS_CLEAR = 2.0  # bar centreline to either joint axis
 TRANSMISSION = (30.0, 150.0)  # bar-to-crank angles (deg), away from toggle
 POLY_DEGREE = 4  # MuJoCo's joint equality takes a quartic
+
+# Outside layer, on the finger's -x side (toward the little finger), mm. x is measured outward from
+# the side face of the phalanges (index: x = -14.03).
+LAYOUT = {
+    "side": "-x",
+    "plate_t": 1.5,  # plates A and B
+    "gap": 0.2,  # plate to bar
+    "bar_t": 1.2,
+    "bar_w": 3.2,
+    "pin_d": 1.5,  # steel pins; press fit in the plates, running fit (1.6 holes) in the bar
+    "bearing_recess_r": 2.75,  # plate A clears the PIP bearing's inner race and the axle stub
+    "relief_r": 8.8,  # plate B clears the middle phalanx's DIP cheek (r 7.5 .. 8.5)
+}
+BAR_PLANE_MM = LAYOUT["plate_t"] + LAYOUT["gap"] + LAYOUT["bar_t"] / 2  # bar centre, out of the face
 
 
 def middle_lengths(spec_path: Path = SPEC) -> dict[str, float]:

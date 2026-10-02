@@ -56,10 +56,22 @@ def default_config() -> config_dict.ConfigDict:
         obs_noise=0.003,
         mass_scale=[0.5, 2.0],
         rewards=config_dict.create(
-            reach=1.0, tips=0.5, palm_facing=0.3, contact=0.5, opposition=1.0, lift=4.0,
-            held=2.0, success=30.0, action_rate=0.1, residual=0.2, effort=0.05, knock=0.3,
-            tilt=0.3, table=0.5, fail=10.0,
-        ),  # fmt: skip
+            reach=1.0,
+            tips=0.5,
+            palm_facing=0.3,
+            contact=0.5,
+            opposition=1.0,
+            lift=4.0,
+            held=2.0,
+            success=30.0,
+            action_rate=0.1,
+            residual=0.2,
+            effort=0.05,
+            knock=0.3,
+            tilt=0.3,
+            table=0.5,
+            fail=10.0,
+        ),
     )
 
 
@@ -233,6 +245,7 @@ class TendraGrasp(mjx_env.MjxEnv):
             "from_demo": info["from_demo"] / self._config.episode_length,
             "blowup": blowup.astype(float), "fail": fail.astype(float),
         }  # fmt: skip
+        metrics = {**state.metrics, **metrics}  # keep keys added by wrappers (e.g. "reward")
         return state.replace(data=data, obs=obs, reward=reward, done=done, metrics=metrics,
                              info=info)  # fmt: skip
 
@@ -273,7 +286,7 @@ class TendraGrasp(mjx_env.MjxEnv):
 
     # ----- reward -----
 
-    def _reward(self, data: mjx.Data, info: dict, s: dict, a: jax.Array):  # noqa: ANN202
+    def _reward(self, data: mjx.Data, info: dict, s: dict, a: jax.Array):
         cfg, b, w = self._config, self._b, self._config.rewards
         obj = info["obj"]
         t: dict[str, jax.Array] = {}

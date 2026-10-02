@@ -30,6 +30,17 @@
    "little_dip": "little_pip"
   },
   "frame": "middle phalanx plane: x from the PIP axis toward the DIP axis, y toward the back of the finger; pin angles from +x toward +y at q = 0; pin A on the proximal phalanx, pin B on the distal phalanx",
+  "layout": {
+   "side": "-x",
+   "plate_t": 1.5,
+   "gap": 0.2,
+   "bar_t": 1.2,
+   "bar_w": 3.2,
+   "pin_d": 1.5,
+   "bearing_recess_r": 2.75,
+   "relief_r": 8.8,
+   "bar_plane_mm": 2.3
+  },
   "linkages": {
    "index": {
     "middle_length_mm": 23.0,

@@ -866,6 +866,7 @@ def layout() -> dict:
                      "frame": "middle phalanx plane: x from the PIP axis toward the DIP axis, y toward "
                               "the back of the finger; pin angles from +x toward +y at q = 0; pin A "
                               "on the proximal phalanx, pin B on the distal phalanx",
+                     "layout": {**dip_linkage.LAYOUT, "bar_plane_mm": dip_linkage.BAR_PLANE_MM},
                      "linkages": dip_linkage.linkages()},
         "bores_mm": {"entry": BORE_SMALL, "entry_length": SMALL_LEN, "tube": BORE_TUBE},
         "palm": {"x": PALM_X, "y": PALM_Y, "z_wrist": Z_WRIST, "z_wrist_plate_bottom": Z_WRIST_PLATE_BOTTOM,

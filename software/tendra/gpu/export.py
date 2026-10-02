@@ -53,16 +53,20 @@ def export_bundle(path: str | Path, demos_per_object: int = 20, seed: int = 0) -
     frames = {k: [d for d in demos if d.obj == k] for k in OBJECT_KINDS}
 
     # The shared GPU model: every object collides and floats (gravity comes from the env).
+    # Reset first: `scene.reset` itself switches collisions and gravity compensation per object.
+    scene.reset(np.random.default_rng(seed), obj=OBJECT_KINDS[0])
+    home_qpos = scene.data.qpos.copy()
     for kind in OBJECT_KINDS:
         g, b = scene._obj_geom[kind], scene._obj_body[kind]
         m.geom_contype[g], m.geom_conaffinity[g] = scene._obj_contype[kind]
         m.body_gravcomp[b] = 1.0
-    scene.reset(np.random.default_rng(seed), obj=OBJECT_KINDS[0])
-    home_qpos = scene.data.qpos.copy()
     for i, kind in enumerate(OBJECT_KINDS):
         adr = scene._obj_qpos[kind]
         home_qpos[adr : adr + 7] = [*scene._park_pos(i), 1, 0, 0, 0]
 
+    for kind in OBJECT_KINDS:  # the shared GPU model must hold for every object (run gpu1 bug)
+        g, b = scene._obj_geom[kind], scene._obj_body[kind]
+        assert m.geom_contype[g] and m.geom_conaffinity[g] and m.body_gravcomp[b] == 1.0, kind
     mjb = path.with_suffix(".mjb")
     mujoco.mj_saveModel(m, str(mjb), None)
     model_bytes = np.frombuffer(mjb.read_bytes(), np.uint8)
@@ -78,8 +82,12 @@ def export_bundle(path: str | Path, demos_per_object: int = 20, seed: int = 0) -
     arrays = {
         "model": model_bytes,
         "home_qpos": home_qpos,
-        "home_pos": scene.home_pos, "home_quat": scene.home_quat,
-        "qadr": scene._qadr, "act": scene._act, "lower": V1.lower, "upper": V1.upper,
+        "home_pos": scene.home_pos,
+        "home_quat": scene.home_quat,
+        "qadr": scene._qadr,
+        "act": scene._act,
+        "lower": V1.lower,
+        "upper": V1.upper,
         "frc_max": np.abs(m.actuator_forcerange[scene._act]).max(axis=1),
         "root_body": np.array(scene._root),
         "root_dof": np.array(m.jnt_dofadr[m.body_jntadr[scene._root]]),
@@ -91,32 +99,53 @@ def export_bundle(path: str | Path, demos_per_object: int = 20, seed: int = 0) -
         "obj_size": np.array([m.geom_size[scene._obj_geom[k]] for k in OBJECT_KINDS]),
         "obj_mass": np.array([m.body_mass[scene._obj_body[k]] for k in OBJECT_KINDS]),
         "obj_half_height": np.array([scene._half_height(k) for k in OBJECT_KINDS]),
-        "obj_radius": np.array([m.geom_size[scene._obj_geom[k]][0] *
-                                (1.2 if t == mujoco.mjtGeom.mjGEOM_BOX else 1.0)
-                                for k, t in zip(OBJECT_KINDS, gtypes, strict=True)]),
+        "obj_radius": np.array(
+            [
+                m.geom_size[scene._obj_geom[k]][0]
+                * (1.2 if t == mujoco.mjtGeom.mjGEOM_BOX else 1.0)
+                for k, t in zip(OBJECT_KINDS, gtypes, strict=True)
+            ]
+        ),
         "obj_upright": np.array([t != mujoco.mjtGeom.mjGEOM_SPHERE for t in gtypes]),
         "obj_friction": np.array([m.geom_friction[scene._obj_geom[k], 0] for k in OBJECT_KINDS]),
         "sensor_part": sensors,
         "sensor_table_obj": np.array([_sensor_adr(m, f"table_{k}") for k in OBJECT_KINDS]),
         "sensor_table_hand": np.array(_sensor_adr(m, "table_hand")),
-        "spawn_lo": np.array(scene.config.spawn_lo), "spawn_hi": np.array(scene.config.spawn_hi),
-        "workspace_lo": np.array(cfg.workspace_lo), "workspace_hi": np.array(cfg.workspace_hi),
-        "syn_rest": env.syn.rest, "syn_basis": env.syn.basis,
-        "palm_centre": PALM_CENTRE, "power_zone": POWER_ZONE,
-        "demo_qpos": demo_array("qpos"), "demo_qvel": demo_array("qvel"),
-        "demo_ctrl": demo_array("ctrl"), "demo_mocap_pos": demo_array("mocap_pos"),
+        "spawn_lo": np.array(scene.config.spawn_lo),
+        "spawn_hi": np.array(scene.config.spawn_hi),
+        "workspace_lo": np.array(cfg.workspace_lo),
+        "workspace_hi": np.array(cfg.workspace_hi),
+        "syn_rest": env.syn.rest,
+        "syn_basis": env.syn.basis,
+        "palm_centre": PALM_CENTRE,
+        "power_zone": POWER_ZONE,
+        "demo_qpos": demo_array("qpos"),
+        "demo_qvel": demo_array("qvel"),
+        "demo_ctrl": demo_array("ctrl"),
+        "demo_mocap_pos": demo_array("mocap_pos"),
         "demo_mocap_quat": demo_array("mocap_quat"),
-        "demo_rest_z": np.concatenate([np.full(len(d), d.rest_z) for k in OBJECT_KINDS
-                                       for d in frames[k]]),  # fmt: skip
-        "demo_start": np.concatenate([[0], np.cumsum(counts)[:-1]]), "demo_count": counts,
-        "meta": np.frombuffer(json.dumps({
-            "version": BUNDLE_VERSION, "objects": list(OBJECT_KINDS), "parts": list(PARTS),
-            "synergies": list(env.syn.names), "joint_names": list(V1.joint_names),
-            "sim_dt": cfg.sim_timestep, "substeps": env.substeps,
-            "env_config": {k: v for k, v in asdict(cfg).items() if k != "rewards"},
-            "rewards": asdict(cfg.rewards),
-        }).encode(), np.uint8),
-    }  # fmt: skip
+        "demo_rest_z": np.concatenate(
+            [np.full(len(d), d.rest_z) for k in OBJECT_KINDS for d in frames[k]]
+        ),
+        "demo_start": np.concatenate([[0], np.cumsum(counts)[:-1]]),
+        "demo_count": counts,
+        "meta": np.frombuffer(
+            json.dumps(
+                {
+                    "version": BUNDLE_VERSION,
+                    "objects": list(OBJECT_KINDS),
+                    "parts": list(PARTS),
+                    "synergies": list(env.syn.names),
+                    "joint_names": list(V1.joint_names),
+                    "sim_dt": cfg.sim_timestep,
+                    "substeps": env.substeps,
+                    "env_config": {k: v for k, v in asdict(cfg).items() if k != "rewards"},
+                    "rewards": asdict(cfg.rewards),
+                }
+            ).encode(),
+            np.uint8,
+        ),
+    }
     np.savez_compressed(path, **arrays)
     return path
 

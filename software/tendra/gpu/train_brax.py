@@ -56,11 +56,11 @@ def _save(obj: object, path: Path) -> None:
     tmp.replace(path)
 
 
-def to_numpy(tree):  # noqa: ANN001, ANN201
+def to_numpy(tree):
     return jax.tree.map(lambda x: np.asarray(x), tree)
 
 
-def run_phase(phase: dict, bundle: str, out: Path, ppo_cfg: dict, start_params, log=print):  # noqa: ANN001, ANN201
+def run_phase(phase: dict, bundle: str, out: Path, ppo_cfg: dict, start_params, log=print):
     """Train one phase; returns its final params (normalizer, policy, value)."""
     pdir = out / f"phase_{phase['name']}"
     pdir.mkdir(parents=True, exist_ok=True)
@@ -106,7 +106,7 @@ def run_phase(phase: dict, bundle: str, out: Path, ppo_cfg: dict, start_params, 
             f"lift {row.get('eval/episode_lift_cm', float('nan')):5.2f} cm | "
             f"blowups {row.get('eval/episode_blowup', float('nan')):.3f}")  # fmt: skip
 
-    def save_params(step: int, make_policy, p) -> None:  # noqa: ANN001
+    def save_params(step: int, make_policy, p) -> None:
         if step > 0:
             _save({"steps": done_steps + step, "params": to_numpy(p)}, state_file)
 
@@ -116,7 +116,7 @@ def run_phase(phase: dict, bundle: str, out: Path, ppo_cfg: dict, start_params, 
         environment=env, eval_env=eval_env, num_timesteps=remaining,
         episode_length=env._config.episode_length, wrap_env_fn=wrapper.wrap_for_brax_training,
         network_factory=make_networks, progress_fn=progress, policy_params_fn=save_params,
-        restore_params=params, bootstrap_on_timeout=True, seed=hash(phase["name"]) % 1000,
+        restore_params=params, seed=hash(phase["name"]) % 1000,
         **kwargs,
     )  # fmt: skip
     final = to_numpy(final)
@@ -126,7 +126,9 @@ def run_phase(phase: dict, bundle: str, out: Path, ppo_cfg: dict, start_params, 
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     p.add_argument("--bundle", default="tendra_gpu.npz")
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--scale", type=float, default=1.0, help="multiply every phase's steps")

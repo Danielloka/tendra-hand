@@ -432,6 +432,8 @@ def stage_export(design, log):
         if not occ.isLightBulbOn and occ.component.name not in RENAME_COMPONENTS.values():
             continue
         name = occ.component.name
+        if "_link_" in name:  # DIP coupling plates and bar: the sim models the bar as a tendon
+            continue
         body = occ.bRepBodies.item(0)  # proxy: world coordinates
         opts = em.createSTLExportOptions(body, f"{EXPORT_DIR}/meshes/{name}.stl")
         opts.isBinaryFormat = True
@@ -1301,6 +1303,211 @@ def mcp_relief(design, th, log):
     log(f"thumb_inner: proximal relief for the mcp_flex lines, volume {comp.bRepBodies.item(0).volume * 1000:.0f} mm3")
 
 
+# ---------------------------------------------------------------------------------------------------
+# Stage: knuckle (owner, 2026-10-01): the finger mcp_flex drum grows from r 6 to the router's r 7
+# (14 mm tendon circle, servo_per_joint 7 / 5 = 1.4). The drum is the proximal phalanx's rounded end
+# (r 7.5, tongue x +3..+8 from the flex boss face X_FLEX) with a 1 mm groove at x +4..+5 that runs all
+# the way round: a tunnel over the top, and a side window at x +3..+4 there to thread and tie the line.
+# The new groove keeps that shape: floor r 6.8 (line centre r 7), 1 mm rims at r 8 on both sides
+# (0.5 mm proud of the finger's front and back faces; owner OK'd, 2026-10-02).
+# ---------------------------------------------------------------------------------------------------
+
+KNUCKLE_GROOVE_X = (4.0, 5.0)  # from X_FLEX (index: -10.03 .. -9.03)
+KNUCKLE_RIMS_X = ((3.0, 4.0), (5.0, 5.6))  # the right rim stops 0.5 mm short of the on-axis slit
+KNUCKLE_RIM_R = 8.0
+KNUCKLE_TIE_HALF_Y = 2.3  # tie window over the top: +-19 deg of the groove, like the prototype's
+
+
+def knuckle_tools(drum_r, line_r, dx, dz):
+    """(join, cut) temporary bodies for one finger's knuckle drum, in its component space (which is
+    world space at q = 0). dx, dz: the finger's offset from the index (FINGERS)."""
+    y, z = Y_FLEX, Z_MCP + dz
+    x = X_FLEX + dx
+    floor = drum_r - line_r
+
+    def cyl(x0, x1, r):
+        return _cyl_pts((x + x0, y, z), (x + x1, y, z), r)
+
+    g0, g1 = KNUCKLE_GROOVE_X
+    t0 = KNUCKLE_RIMS_X[0][0]
+    # fill the old groove, its top tunnel and tie window up to the new floor
+    join = [cyl(t0, g1, floor), box(x + t0, x + g1, y - 6.5, y + 6.5, z, z + floor)]
+    join += [cyl(a, b, KNUCKLE_RIM_R) for a, b in KNUCKLE_RIMS_X]
+    cut = [_ring((x, y, z), (1.0, 0.0, 0.0), g0, g1, floor, KNUCKLE_RIM_R + 0.6)]
+    window = _ring((x, y, z), (1.0, 0.0, 0.0), t0 - 0.5, g0 + 0.01, floor, KNUCKLE_RIM_R + 0.6)
+    _op(window, box(x - 1, x + 10, y - KNUCKLE_TIE_HALF_Y, y + KNUCKLE_TIE_HALF_Y, z, z + 20), "&")
+    cut.append(window)
+    return join, cut
+
+
+def stage_knuckle(design, log):
+    root = design.rootComponent
+    routes = load_routes()
+    line_r = routes["thumb"]["line_r"]
+    ops = adsk.fusion.FeatureOperations
+    for finger in ("index", *FINGERS):
+        occ = find_comp_occ(root, f"{finger}_proximal")
+        comp = occ.component
+        if comp.features.itemByName("v1 knuckle drum"):
+            log(f"knuckle: {finger} already done, skipped")
+            continue
+        drum_r = routes["drums_mm"][f"{finger}_mcp_flex"]
+        off = FINGERS.get(finger, {"dx": 0.0, "dz": 0.0})
+        # the old r 6 groove must be where we expect it (else the design changed: stop)
+        x, z = X_FLEX + off["dx"], Z_MCP + off["dz"]
+        found = False
+        for f in comp.bRepBodies.item(0).faces:
+            g = f.geometry
+            if not isinstance(g, adsk.core.Cylinder) or abs(g.radius * 10 - 6.0) > 0.01:
+                continue
+            bb = f.boundingBox
+            if (
+                abs(g.origin.y * 10 - Y_FLEX) < 0.05
+                and abs(g.origin.z * 10 - z) < 0.05
+                and bb.minPoint.x * 10 > x + 3.9
+                and bb.maxPoint.x * 10 < x + 5.1
+            ):
+                found = True
+        if not found:
+            raise RuntimeError(f"knuckle: no r 6 groove on {finger}_proximal at x {x + 4:.2f}")
+        join, cut = knuckle_tools(drum_r, line_r, off["dx"], off["dz"])
+        body = _feature_with_tools(comp, comp.bRepBodies.item(0), join, ops.JoinFeatureOperation, "v1 knuckle fill")
+        _feature_with_tools(comp, body, cut, ops.CutFeatureOperation, "v1 knuckle drum")
+        log(f"knuckle: {finger} drum r {drum_r} (floor {drum_r - line_r:.1f}), volume {comp.bRepBodies.item(0).volume * 1000:.0f} mm3")
+
+
+# ---------------------------------------------------------------------------------------------------
+# Stage: linkage (owner, 2026-10-02): each finger's DIP-PIP coupling bar (hardware/cad/dip_linkage.py)
+# in a layer outside the finger's -x side face, because the PIP and DIP bearings fill the joints:
+# plate A glued on the proximal phalanx (over the PIP bearing, which it holds in), plate B glued on
+# the distal phalanx (relieved over the middle phalanx's DIP cheek), 1.5 mm steel pins, and the bar.
+# Each plate has a 1.5 mm peg hole into its phalanx to line it up. Pin positions: middle phalanx
+# frame, x from the PIP axis toward the DIP axis (= +z here), y toward the back (= +y).
+# ---------------------------------------------------------------------------------------------------
+
+PLATE_R = 6.0  # plate disc around its joint axis
+PLATE_HALF_Y = 5.5
+PLATE_A_DOWN = 12.0  # plate A runs this far down the proximal phalanx from the PIP axis
+PLATE_B_UP = 14.0  # plate B runs this far up the distal phalanx from the DIP axis
+PEG_A, PEG_B = 8.0, 11.5  # peg holes: below the PIP axis / beyond the DIP axis
+PEG_D, PEG_DEPTH = 1.5, 3.0
+PIN_FIT_D, PIN_RUN_D = 1.45, 1.6  # press fit in the plates, running fit in the bar
+PIN_SKIN = 0.4  # plate material left behind each pin hole
+
+
+def finger_axes(finger):
+    """(x of the -x side face, y of the flex axes, z of the PIP axis, z of the DIP axis), mm."""
+    f = FINGERS.get(finger, {"dx": 0.0, "dz": 0.0, "prox": 0.0, "mid": 0.0})
+    z_pip = Z_PIP + f["dz"] + f["prox"]
+    return X_FLEX + f["dx"], Y_FLEX, z_pip, Z_DIP + f["dz"] + f["prox"] + f["mid"]
+
+
+def _pin(center_yz, pin):
+    g = math.radians(pin["angle_deg"])
+    return center_yz[0] + pin["r_mm"] * math.sin(g), center_yz[1] + pin["r_mm"] * math.cos(g)
+
+
+def linkage_tools(finger, link, lay):
+    """World-space temporary bodies: {"plate_a", "plate_b", "bar": body, "cut_proximal",
+    "cut_distal": [tools]} and the pin centres (y, z)."""
+    x0, y, zp, zd = finger_axes(finger)
+    t, g, bt = lay["plate_t"], lay["gap"], lay["bar_t"]
+    xa, xb = x0 - t, x0  # plates
+    pa, pb = _pin((y, zp), link["pin_a"]), _pin((y, zd), link["pin_b"])
+
+    def xcyl(x_lo, x_hi, yy, zz, r):
+        return _cyl_pts((x_lo, yy, zz), (x_hi, yy, zz), r)
+
+    def pin_hole(p):  # blind, from the outside
+        return xcyl(xa - 0.5, xb - PIN_SKIN, p[0], p[1], PIN_FIT_D / 2)
+
+    plate_a = _op(xcyl(xa, xb, y, zp, PLATE_R), box(xa, xb, y - PLATE_HALF_Y, y + PLATE_HALF_Y, zp - PLATE_A_DOWN, zp), "+")
+    for tool in (
+        xcyl(xb - 0.3, xb + 0.1, y, zp, lay["bearing_recess_r"]),
+        pin_hole(pa),
+        xcyl(xa - 0.5, xb + 0.1, y, zp - PEG_A, PEG_D / 2),
+    ):
+        _op(plate_a, tool, "-")
+    plate_b = _op(xcyl(xa, xb, y, zd, PLATE_R), box(xa, xb, y - PLATE_HALF_Y, y + PLATE_HALF_Y, zd, zd + PLATE_B_UP), "+")
+    for tool in (
+        xcyl(xb - 0.3, xb + 0.1, y, zd, lay["relief_r"]),
+        pin_hole(pb),
+        xcyl(xa - 0.5, xb + 0.1, y, zd + PEG_B, PEG_D / 2),
+    ):
+        _op(plate_b, tool, "-")
+    # bar: stadium from pin A to pin B, with running-fit holes
+    bx0, bx1 = xa - g - bt, xa - g
+    w = lay["bar_w"] / 2
+    (ya, za), (yb, zb) = pa, pb
+    length = math.hypot(yb - ya, zb - za)
+    uy, uz = (yb - ya) / length, (zb - za) / length
+    ny, nz = -uz, uy
+    corners = [(ya + ny * w, za + nz * w), (ya - ny * w, za - nz * w), (yb - ny * w, zb - nz * w), (yb + ny * w, zb + nz * w)]
+    if (corners[1][0] - corners[0][0]) * (corners[2][1] - corners[1][1]) - (corners[1][1] - corners[0][1]) * (corners[2][0] - corners[1][0]) < 0:
+        corners.reverse()  # counter-clockwise for _poly_prism_yz
+    bar = _poly_prism_yz(bx0, bx1, corners)
+    for p in (pa, pb):
+        _op(bar, xcyl(bx0, bx1, p[0], p[1], w), "+")
+    for p in (pa, pb):
+        _op(bar, xcyl(bx0 - 1, bx1 + 1, p[0], p[1], PIN_RUN_D / 2), "-")
+    cut_prox = [xcyl(x0 - 0.1, x0 + PEG_DEPTH, y, zp - PEG_A, PEG_D / 2)]
+    cut_dist = [xcyl(x0 - 0.1, x0 + PEG_DEPTH, y, zd + PEG_B, PEG_D / 2)]
+    return {"plate_a": plate_a, "plate_b": plate_b, "bar": bar, "cut_proximal": cut_prox, "cut_distal": cut_dist}, (pa, pb, length)
+
+
+def _rigid(root, name, a, b):
+    for j in root.asBuiltJoints:
+        if j.name == name:
+            return
+    ji = root.asBuiltJoints.createInput(a, b, None)
+    ji.setAsRigidJointMotion()
+    root.asBuiltJoints.add(ji).name = name
+
+
+def _check_contact(occ, pts, what):
+    """Every point (world mm) must be inside `occ`'s body: the plate sits on material."""
+    body = occ.bRepBodies.item(0)
+    inside = adsk.fusion.PointContainment.PointInsidePointContainment
+    bad = [p for p in pts if body.pointContainment(pt(*p)) != inside]
+    if bad:
+        raise RuntimeError(f"linkage: {what}: {len(bad)} of {len(pts)} contact points are not on {occ.component.name}, e.g. {bad[0]}")
+
+
+def stage_linkage(design, log):
+    root = design.rootComponent
+    coupling = load_routes()["coupling"]
+    lay = coupling["layout"]
+    for finger in ("index", *FINGERS):
+        if find_comp_occ(root, f"{finger}_link_bar"):
+            log(f"linkage: {finger} already there, skipped")
+            continue
+        link = coupling["linkages"][finger]
+        x0, y, zp, zd = finger_axes(finger)
+        prox, dist = (find_comp_occ(root, f"{finger}_{k}") for k in ("proximal", "distal"))
+        # the plates must sit on their own phalanx (0.2 mm inside the side face). Plate A: below the
+        # PIP axis and on the cheek's two horns (above the bearing the cheek is a U-slot, open toward
+        # the fingertip, that the middle phalanx's axle slides into). Plate B: beyond its relief.
+        xc = x0 + 0.2
+        on_a = [(dy, dz) for dy in (-5.0, -2.5, 0.0, 2.5, 5.0) for dz in (-11.5, -9.0, -6.5)]
+        on_a += [(dy, dz) for dy in (-5.0, 5.0) for dz in (-1.0, 1.0)]
+        on_b = [(dy, dz) for dy in (-4.0, -2.0, 0.0, 2.0, 4.0) for dz in (10.0, 11.5, 13.0)]
+        _check_contact(prox, [(xc, y + dy, zp + dz) for dy, dz in on_a], "plate A")
+        _check_contact(dist, [(xc, y + dy, zd + dz) for dy, dz in on_b], "plate B")
+        tools, (pa, pb, length) = linkage_tools(finger, link, lay)
+        if abs(length - link["bar_mm"]) > 0.01:
+            raise RuntimeError(f"linkage: {finger} bar {length:.3f} mm, design {link['bar_mm']}")
+        ops = adsk.fusion.FeatureOperations
+        for occ, key, label in ((prox, "cut_proximal", "proximal"), (dist, "cut_distal", "distal")):
+            comp = occ.component
+            _feature_with_tools(comp, comp.bRepBodies.item(0), tools[key], ops.CutFeatureOperation, f"v1 link peg {label}")
+        plate_a = new_part(root, f"{finger}_link_plate_a", tools["plate_a"])
+        plate_b = new_part(root, f"{finger}_link_plate_b", tools["plate_b"])
+        new_part(root, f"{finger}_link_bar", tools["bar"])
+        _rigid(root, f"{finger}_link_plate_a_fix", plate_a, prox)
+        _rigid(root, f"{finger}_link_plate_b_fix", plate_b, dist)
+        log(f"linkage: {finger} plates + bar {length:.2f} mm, pin A (y {pa[0]:.2f}, z {pa[1]:.2f}), pin B (y {pb[0]:.2f}, z {pb[1]:.2f})")
+
+
 STAGES = {
     "fingers": stage_fingers,
     "thumb": stage_thumb,
@@ -1310,6 +1517,8 @@ STAGES = {
     "palm": stage_palm,
     "forearm": stage_forearm,
     "thumb_inner": stage_thumb_inner,
+    "knuckle": stage_knuckle,
+    "linkage": stage_linkage,
 }
 EXTRA_STAGES_MIGRATE = {"thumb_unhinge": stage_thumb_unhinge}  # one-off, for designs built before
 EXTRA_STAGES = {"export": stage_export}  # run on demand, not by run()

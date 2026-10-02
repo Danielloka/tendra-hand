@@ -114,8 +114,9 @@ Take the hand out of the lab and into a home.
 - [ ] First body: a **bimanual station**: two 7-DOF arms with two Tendra hands on a fixed pole (optional linear lift), head + wrist cameras (`research/ai/vision.md`)
 - [ ] Mount the hand on a robot arm (wrist with 2–3 DOF), two hands for bimanual tasks
   - [x] Sim: one right arm = OpenArm v2 shoulder + elbow (J1–J4, its J5 motor turns our forearm), Tendra forearm, 2-way wrist, V1 hand (`tendra.arm`, 2026-10-02)
-  - [x] Sim: the grasp scene and RL env can use the arm (`SceneConfig(arm=True)`, `train_grasp.py --arm`; IK turns the wrist target into joint targets; 2026-10-02)
-  - [ ] Sim: train a real policy with the arm, then the bimanual pedestal (mirrored left hand), arm for the GPU path and for webcam teleop
+  - [x] Sim: the grasp scene and RL env run on the arm only (the floating hand is removed; `train_grasp.py --hands`; IK turns the wrist target into joint targets; 2026-10-02)
+  - [x] Sim: bimanual pedestal: the left arm and a mirrored left hand (`hardware/cad/mirror_export.py`, `convert_v1.py --side left`), one policy drives either hand (2026-10-02)
+  - [ ] Sim: train a real policy on both arms (one hand each, then one model for both hands), port the GPU path and the webcam teleop to the arm scene
   - [ ] Hardware: wrist gimbal with a hollow centre for the PTFE sheaths, wrist actuators, slimmer forearm; own arm design based on OpenArm
 - [ ] Kitchen tasks: cut, stir, pour, crack an egg, cook a simple meal
 - [ ] Household chores: fold laundry, load a dishwasher, tidy up

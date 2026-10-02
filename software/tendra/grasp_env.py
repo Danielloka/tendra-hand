@@ -1,11 +1,18 @@
-"""A reinforcement-learning environment: the floating V1 hand learns to grasp and lift objects.
+"""A reinforcement-learning environment: the Tendra robot's hands learn to grasp and lift objects.
 
-Built on `tendra.scene.GraspScene` (the same scene as webcam grasp teleop), so learned policies,
-human demos and the future real arm all share one action: "move the wrist, shape the fingers".
+Built on `tendra.scene.GraspScene`: the robot (two arms, OpenArm's shoulders and elbows, Tendra's
+forearms, wrists and V1 hands) at a table. Policies, human demos and the future real arm all share
+one action: "move the wrist, shape the fingers".
+
+**One hand per episode, one policy for both.** Each episode one hand (right or left, `hands`) picks
+up an object on its side; the other arm rests. The left hand is the mirror image of the right one,
+so the env mirrors everything the policy sees and does (positions, rotations, the wrist action)
+into the right hand's view: the same network drives either hand, and every grasp trains the same
+fingers twice as often. (Both hands at once, each with its own object, is the next step.)
 
 **Action** (all in [-1, 1], `action_dim` = 6 + k + 16):
 
-    [0:3]    wrist velocity, world frame (x `wrist_speed` m/s)
+    [0:3]    wrist velocity, world frame of the right hand's view (x `wrist_speed` m/s)
     [3:6]    wrist turn rate about the world axes (x `wrist_turn_speed` rad/s)
     [6:6+k]  finger synergy coefficients (`tendra.synergy`): a whole-hand posture, like a human
     [6+k:]   per-joint residual (x `residual_scale` rad), for what the synergies can't express
@@ -19,13 +26,12 @@ touch). The critic also gets privileged simulator facts (clean object pose, cont
 mass, friction): an *asymmetric actor-critic* (Pinto et al. 2018, OpenAI 2019) learns faster and
 still yields a policy that runs without them.
 
-**With an arm** (`GraspEnvConfig(arm=True)`) the wrist is held by a real arm (OpenArm's shoulder and
-elbow + Tendra's forearm and 2-way wrist, `tendra.arm`) instead of an ideal floating one. The
-action is the same: the target moves, inverse kinematics makes the arm follow, so the policy learns
-wrist motion that a real arm can do (joint limits, speed, unreachable poses: the target may only
-run `wrist_lead` m / `wrist_turn_lead` rad ahead of the real wrist). The actor also sees the arm's
-joint angles and speeds, and a small penalty keeps the arm away from its joint limits. The arm
-is a stand-in: the owner's own arm will differ, so what the policy should learn is the *hand*.
+**The arm.** The wrist is held by a real arm: the target moves, inverse kinematics makes the arm
+follow, so the policy learns wrist motion that a real arm can do (joint limits, speed, unreachable
+poses: the target may only run `wrist_lead` m / `wrist_turn_lead` rad ahead of the real wrist). The
+actor also sees the arm's joint angles and speeds, and a small penalty keeps the arm away from its
+joint limits. The arm is a stand-in: the owner's own arm will differ, so what the policy should
+learn is the *hand*.
 
 **Reward** (`RewardWeights`), human-like by design:
 - reach: bring the object into the hand's grasp zone, palm facing it (humans approach palm first)
@@ -55,6 +61,7 @@ from typing import Any
 import mujoco
 import numpy as np
 
+from .arm import SIDES
 from .joints import V1
 from .scene import (
     ARM_GRASP,
@@ -113,14 +120,13 @@ class GraspEnvConfig:
     wrist_speed: float = 0.3  # m/s at |action| = 1
     wrist_turn_speed: float = 2.0  # rad/s at |action| = 1
     wrist_lead: float = 0.03  # the target may run at most this far ahead of the real wrist (m)
-    arm: bool = False  # wrist on the Tendra arm (tendra.arm) instead of an ideal floating one
-    wrist_turn_lead: float = 0.3  # arm only: the target's orientation may lead the wrist's (rad)
-    workspace_lo: tuple[float, float, float] = (-0.25, -0.25, -0.14)  # wrist box, rel. to home
-    workspace_hi: tuple[float, float, float] = (0.25, 0.20, 0.15)
-    # With the arm (home is the arm's start pose, low and to the side of the objects), the box
-    # is rel. to that home and is what the arm can reach: forward and sideways a hand's width.
-    arm_workspace_lo: tuple[float, float, float] = (-0.10, -0.25, -0.05)
-    arm_workspace_hi: tuple[float, float, float] = (0.25, 0.10, 0.20)
+    wrist_turn_lead: float = 0.3  # the target's orientation may lead the wrist's (rad)
+    hands: str = "any"  # which hand picks up the object: "right", "left" or "any" (random)
+    # The wrist box, relative to home, in the right hand's view (the left one is mirrored). Home is
+    # the arm's start pose, low and to the side of the objects; the box is what the arm reaches:
+    # forward and sideways a hand's width.
+    workspace_lo: tuple[float, float, float] = (-0.10, -0.25, -0.05)
+    workspace_hi: tuple[float, float, float] = (0.25, 0.10, 0.20)
     finger_smoothing: float = 0.4  # per step: target += smoothing * (commanded - target)
     residual_scale: float = 0.25  # rad at |residual action| = 1
     synergies: str | None = None  # .npz from `Synergies.save` (e.g. fit on teleop); None = default
@@ -178,6 +184,7 @@ class Demo:
     ctrl: np.ndarray
     mocap_pos: np.ndarray
     mocap_quat: np.ndarray
+    side: str = "right"  # the hand that made the grasp
 
     def __len__(self) -> int:
         return len(self.qpos)
@@ -191,9 +198,9 @@ class GraspEnv:
         self.config = cfg = config or GraspEnvConfig()
         if cfg.grasp_type not in (*GRASP_TYPES, "any"):
             raise ValueError(f"grasp_type must be one of {GRASP_TYPES} or 'any'")
-        self.scene = scene or GraspScene(SceneConfig(objects=cfg.objects, arm=cfg.arm))
-        if self.scene.config.arm != cfg.arm:
-            raise ValueError("the scene and the env config disagree on `arm`")
+        if cfg.hands not in (*SIDES, "any"):
+            raise ValueError(f"hands must be one of {SIDES} or 'any'")
+        self.scene = scene or GraspScene(SceneConfig(objects=cfg.objects))
         self.model, self.data = m, _ = self.scene.model, self.scene.data
         m.opt.timestep = cfg.sim_timestep
         self.substeps = max(1, round(1.0 / (cfg.control_hz * cfg.sim_timestep)))
@@ -204,32 +211,52 @@ class GraspEnv:
         self.demos: list[Demo] = []
 
         s = self.scene
-        self._arm_range = (s._ik.lo, s._ik.hi) if cfg.arm else None
-        self._tips = np.array([m.site(f"{p}_tip").id for p in PARTS[:5]])
-        self._act = s._act
-        self._frc_max = np.abs(m.actuator_forcerange[self._act]).max(axis=1)
-        # Every geom's contact group: 0..4 fingers (PARTS), 5 palm, 6 other hand part, -1 not hand.
-        self._part = np.full(m.ngeom, -1)
-        for g in range(m.ngeom):
-            b = int(m.geom_bodyid[g])
-            if b not in s._hand_bodies:
-                continue
-            name = m.body(b).name
-            self._part[g] = next((i for i, p in enumerate(PARTS[:5]) if name.startswith(p + "_")),
-                                 PARTS.index("palm") if name == "palm" else OTHER)  # fmt: skip
+        # The arm joints' ranges (the same on both sides: equal angles are mirrored postures).
+        self._arm_range = (s.sides["right"].ik.lo, s.sides["right"].ik.hi)
+        # Every geom's contact group, per side: 0..4 fingers (PARTS), 5 palm, 6 other hand part,
+        # -1 not on that hand. `self._part` is the active side's.
+        self._parts = {}
+        for side, arm in s.sides.items():
+            part = np.full(m.ngeom, -1)
+            for g in range(m.ngeom):
+                b = int(m.geom_bodyid[g])
+                if b not in arm.hand_bodies:
+                    continue
+                name = m.body(b).name.removeprefix(f"{side}_")
+                part[g] = next((i for i, p in enumerate(PARTS[:5]) if name.startswith(p + "_")),
+                               PARTS.index("palm") if name == "palm" else OTHER)  # fmt: skip
+            self._parts[side] = part
+        self._frc_maxes = {side: np.abs(m.actuator_forcerange[arm.act]).max(axis=1)
+                           for side, arm in s.sides.items()}  # fmt: skip
+        self._select_side()
         self._nominal = {
             "geom_size": m.geom_size.copy(), "geom_rbound": m.geom_rbound.copy(),
             "geom_aabb": m.geom_aabb.copy(), "geom_friction": m.geom_friction.copy(),
             "body_mass": m.body_mass.copy(), "body_inertia": m.body_inertia.copy(),
             "gainprm": m.actuator_gainprm.copy(), "biasprm": m.actuator_biasprm.copy(),
         }  # fmt: skip
-        self._home = s.home_pos.copy()
-        self._ws_lo = self._home + np.array(cfg.arm_workspace_lo if cfg.arm else cfg.workspace_lo)
-        self._ws_hi = self._home + np.array(cfg.arm_workspace_hi if cfg.arm else cfg.workspace_hi)
+        # Home and the workspace in the right hand's view (the left hand's are their mirror images).
+        self._home = s.sides["right"].home_pos.copy()
+        self._ws_lo = self._home + np.array(cfg.workspace_lo)
+        self._ws_hi = self._home + np.array(cfg.workspace_hi)
 
         self.reset()
         a, c = self._observe()
         self.obs_dim, self.critic_dim = a.size, c.size
+
+    def _select_side(self) -> None:
+        """Point the per-side arrays at the active hand (after every scene reset)."""
+        s = self.scene
+        self.side = s.side
+        self._part = self._parts[s.side]
+        self._frc_max = self._frc_maxes[s.side]
+        self._act = s.arm.act
+        self._tips = s.arm.tips
+
+    def _tip_positions(self) -> np.ndarray:
+        """The active hand's fingertips (5 x 3), in the right hand's view."""
+        s = self.scene
+        return np.array([s.canon_pos(p) for p in self.data.site_xpos[self._tips]])
 
     @property
     def max_steps(self) -> int:
@@ -259,12 +286,18 @@ class GraspEnv:
     # ----- episode -----
 
     def reset(self, seed: int | None = None, obj: str | None = None,
-              grasp_type: str | None = None) -> tuple[np.ndarray, np.ndarray]:  # fmt: skip
+              grasp_type: str | None = None,
+              side: str | None = None) -> tuple[np.ndarray, np.ndarray]:  # fmt: skip
         if seed is not None:
             self.rng = np.random.default_rng(seed)
         cfg, rng, s = self.config, self.rng, self.scene
+        side = side or (cfg.hands if cfg.hands != "any" else None)
         demos = [
-            dm for dm in self.demos if dm.obj in cfg.objects and (obj is None or dm.obj == obj)
+            dm
+            for dm in self.demos
+            if dm.obj in cfg.objects
+            and (obj is None or dm.obj == obj)
+            and (side is None or dm.side == side)
         ]
         self.from_demo = bool(demos) and rng.random() < cfg.demo_prob
         self.grasp_type = grasp_type or (
@@ -273,7 +306,7 @@ class GraspEnv:
         if self.from_demo:
             demo = demos[int(rng.integers(len(demos)))]
             self._randomize(nominal=True)  # demo states were recorded with the nominal model
-            s.reset(rng, obj=demo.obj)
+            s.reset(rng, obj=demo.obj, side=demo.side)
             k, d = int(rng.integers(len(demo))), self.data
             d.qpos[:], d.qvel[:], d.ctrl[:] = demo.qpos[k], demo.qvel[k], demo.ctrl[k]
             d.mocap_pos[:], d.mocap_quat[:] = demo.mocap_pos[k], demo.mocap_quat[k]
@@ -283,7 +316,8 @@ class GraspEnv:
             self._randomize(nominal=not cfg.randomize)
             if obj is None:
                 obj = cfg.objects[int(rng.integers(len(cfg.objects)))]
-            s.reset(rng, obj=obj)
+            s.reset(rng, obj=obj, side=side)
+        self._select_side()
 
         self.t = 0
         self.hold = 0
@@ -308,8 +342,9 @@ class GraspEnv:
         if nominal:
             return
         k = rng.uniform(*cfg.stiffness_scale)
-        m.actuator_gainprm[self._act, 0] *= k
-        m.actuator_biasprm[self._act, :3] *= k
+        for arm in self.scene.sides.values():  # both hands, so the idle one matches
+            m.actuator_gainprm[arm.act, 0] *= k
+            m.actuator_biasprm[arm.act, :3] *= k
         for kind in self.scene.config.objects:
             g, b = self.scene._obj_geom[kind], self.scene._obj_body[kind]
             size, mass = rng.uniform(*cfg.size_scale), rng.uniform(*cfg.mass_scale)
@@ -328,22 +363,24 @@ class GraspEnv:
         a = np.clip(np.asarray(action, dtype=float), -1.0, 1.0)
         k = self.syn.k
 
-        # Wrist: move the target, but never far ahead of the real wrist, inside the workspace.
+        # Wrist: move the target, but never far ahead of the real wrist, inside the workspace. All in
+        # the right hand's view: for the left hand the scene's mirror maps in and out.
         pos, quat = s.wrist_target()
-        wrist, _ = s.wrist_pose()
+        wrist, wrist_quat = s.wrist_pose()
+        pos, wrist = s.canon_pos(pos), s.canon_pos(wrist)
         pos = pos + a[0:3] * cfg.wrist_speed * self.dt
         lead = pos - wrist
         dist = np.linalg.norm(lead)
         if dist > cfg.wrist_lead:
             pos = wrist + lead * (cfg.wrist_lead / dist)
-        pos = np.clip(pos, self._ws_lo, self._ws_hi)
-        turn = a[3:6] * cfg.wrist_turn_speed * self.dt
+        pos = s.canon_pos(np.clip(pos, self._ws_lo, self._ws_hi))
+        turn = s.canon_axial(a[3:6]) * cfg.wrist_turn_speed * self.dt
         angle = np.linalg.norm(turn)
         if angle > 1e-9:
             dq = np.concatenate([[np.cos(angle / 2)], np.sin(angle / 2) * turn / angle])
             quat = _quat_mul(dq, quat)  # world-frame turn
-        if cfg.arm:  # an arm can't follow a target that turned far ahead of it (the weld can)
-            quat = _limit_lead(quat, s.wrist_pose()[1], cfg.wrist_turn_lead)
+        # An arm can't follow a target that turned far ahead of it.
+        quat = _limit_lead(quat, wrist_quat, cfg.wrist_turn_lead)
         s.set_wrist_target(pos, quat)
 
         # Fingers: synergy posture + residual, smoothed.
@@ -368,7 +405,7 @@ class GraspEnv:
                 "return": self.ep_return, "length": self.t, "success": self.success,
                 "object": s.active_object, "grasp_type": self.grasp_type,
                 "demo": self.from_demo, "max_height": self.max_height, "fail": fail,
-                "unstable": self.blew_up,
+                "unstable": self.blew_up, "side": self.side,
             }  # fmt: skip
         return self._observe(), reward, terminated, truncated, info
 
@@ -426,9 +463,9 @@ class GraspEnv:
                                 mujoco.mjtGeom.mjGEOM_BOX else 1.0))  # fmt: skip
 
     def _grasp_centre(self, root_pos: np.ndarray, root_mat: np.ndarray) -> np.ndarray:
-        """Where the object's centre should be for this grasp type (world)."""
+        """Where the object's centre should be for this grasp type (the right hand's view)."""
         if self.grasp_type == "precision":  # between the thumb and index tips
-            return self.data.site_xpos[self._tips[:2]].mean(axis=0)
+            return self._tip_positions()[:2].mean(axis=0)
         zone = POWER_ZONE - np.array([0.0, self._object_radius() + 0.003, 0.0])
         return root_pos + root_mat @ zone
 
@@ -438,8 +475,11 @@ class GraspEnv:
         w, cfg, d, s = self.config.rewards, self.config, self.data, self.scene
         self._contacts()
         root_pos, root_mat = s.wrist_frame()
+        root_pos, root_mat = s.canon_pos(root_pos), s.canon_rot(root_mat)
         obj_pos, obj_quat = s.object_pose()
-        obj_vel = d.qvel[s._obj_dof[s.active_object] : s._obj_dof[s.active_object] + 3]
+        obj_pos = s.canon_pos(obj_pos)
+        dof = s._obj_dof[s.active_object]
+        obj_vel = s.canon_vec(d.qvel[dof : dof + 3])
         radius = self._object_radius()
         precision = self.grasp_type == "precision"
         fingers = (0, 1, 2) if precision else (0, 1, 2, 3, 4)
@@ -449,7 +489,7 @@ class GraspEnv:
         d_centre = np.linalg.norm(obj_pos - self._grasp_centre(root_pos, root_mat))
         terms["reach"] = w.reach * (0.5 * (1 - np.tanh(d_centre / 0.2))
                                     + 0.5 * (1 - np.tanh(d_centre / 0.04)))  # fmt: skip
-        tips = d.site_xpos[self._tips[list(fingers)]]
+        tips = self._tip_positions()[list(fingers)]
         d_tips = np.maximum(np.linalg.norm(tips - obj_pos, axis=1) - radius, 0.0)
         terms["tips"] = w.tips * (1 - np.tanh(d_tips.mean() / 0.04))
         if not precision:
@@ -503,11 +543,10 @@ class GraspEnv:
         if upright and height < 0.01:
             terms["tilt"] = -k * w.tilt * (1 - up_z)
         terms["table"] = -k * w.table * float(self.hand_on_table)
-        if cfg.arm:  # keep every arm joint away from its limit (where the IK gets stuck)
-            lo, hi = self._arm_range
-            # 0 = middle of the range, 1 = at a limit
-            near = np.abs(2 * (s.arm_positions() - lo) / (hi - lo) - 1)
-            terms["arm_limits"] = -k * w.arm_limits * float(np.mean(np.maximum(near - 0.8, 0) ** 2))
+        # Keep every arm joint away from its limit (where the IK gets stuck).
+        lo, hi = self._arm_range
+        near = np.abs(2 * (s.arm_positions() - lo) / (hi - lo) - 1)  # 0 = middle, 1 = at a limit
+        terms["arm_limits"] = -k * w.arm_limits * float(np.mean(np.maximum(near - 0.8, 0) ** 2))
         if precision and touch[PARTS.index("palm")]:
             terms["contact"] -= 0.5 * w.contact  # a precision grasp holds in the fingertips
 
@@ -525,15 +564,19 @@ class GraspEnv:
         lo, hi = V1.lower, V1.upper
         mid, half = (hi + lo) / 2, (hi - lo) / 2
         root_pos, root_mat = s.wrist_frame()
+        root_pos, root_mat = s.canon_pos(root_pos), s.canon_rot(root_mat)
         root_quat = mat_to_quat(root_mat)
         obj_pos, obj_quat = s.object_pose()
+        obj_pos = s.canon_pos(obj_pos)
+        obj_quat = mat_to_quat(s.canon_rot(quat_to_mat(obj_quat)))
         dof = s._obj_dof[s.active_object]
-        obj_vel = d.qvel[dof : dof + 6]
+        obj_vel = np.concatenate([s.canon_vec(d.qvel[dof : dof + 3]),
+                                  s.canon_axial(d.qvel[dof + 3 : dof + 6])])  # fmt: skip
         noise = self.obs_bias + self.rng.normal(0, cfg.obs_noise, 3)
         kind = s.active_object
         size = self.model.geom_size[s._obj_geom[kind]]
         centre = self._grasp_centre(root_pos, root_mat)
-        tips = d.site_xpos[self._tips]
+        tips = self._tip_positions()
 
         def object_view(p: np.ndarray) -> list[np.ndarray]:
             return [p - root_pos, root_mat.T @ (p - root_pos), p - centre, (tips - p).ravel()]
@@ -543,11 +586,11 @@ class GraspEnv:
             (self.finger_target - mid) / half,
             root_pos - self._home,
             rot6d(root_quat),
-            s.wrist_velocity(),
+            np.concatenate([s.canon_vec(s.wrist_velocity()[:3]), s.canon_axial(s.wrist_velocity()[3:])]),
         ]
-        if cfg.arm:  # what a real arm reports: joint angles (0 = middle of the range) and speeds
-            lo, hi = self._arm_range
-            common += [2 * (s.arm_positions() - lo) / (hi - lo) - 1, s.arm_velocities()]
+        # What a real arm reports: joint angles (0 = middle of the range) and speeds.
+        lo, hi = self._arm_range
+        common += [2 * (s.arm_positions() - lo) / (hi - lo) - 1, s.arm_velocities()]
         tail = [
             rot6d(obj_quat),
             obj_vel,
@@ -581,8 +624,10 @@ class GraspEnv:
         s, d = self.scene, self.data
         for i in range(n):
             obj = self.config.objects[i % len(self.config.objects)]
+            hands = self.config.hands
+            side = hands if hands != "any" else SIDES[(i // len(self.config.objects)) % 2]
             self._randomize(nominal=True)
-            s.reset(rng, obj=obj)
+            s.reset(rng, obj=obj, side=side)
             states: list[tuple[np.ndarray, ...]] = []
             next_t = self.data.time
             original = s.step
@@ -599,11 +644,12 @@ class GraspEnv:
 
             s.step = recording_step  # type: ignore[method-assign]
             try:
-                scripted_grasp(s, hold=0.6, **(ARM_GRASP if self.config.arm else {}))
+                scripted_grasp(s, hold=0.6, **ARM_GRASP)
             finally:
                 del s.step
             if s.lifted(0.05) and states:
-                demos.append(Demo(obj, s.rest_height, *map(np.array, zip(*states, strict=True))))
+                demos.append(Demo(obj, s.rest_height, *map(np.array, zip(*states, strict=True)),
+                                  side=side))  # fmt: skip
         return demos
 
 
@@ -624,8 +670,9 @@ def demos_from_dataset(root: str | Path, model: mujoco.MjModel,
         obj = meta.get("object") or meta.get("extra", {}).get("object")
         if obj is None or "object.pos" not in ep:
             continue
+        side = meta.get("side") or meta.get("extra", {}).get("side") or "right"
         demos.append(Demo(obj, float(ep["object.pos"][0, 2]), ep["qpos"], ep["qvel"],
-                          ep["ctrl"], ep["mocap_pos"], ep["mocap_quat"]))  # fmt: skip
+                          ep["ctrl"], ep["mocap_pos"], ep["mocap_quat"], side))  # fmt: skip
     return demos
 
 

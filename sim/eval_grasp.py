@@ -83,8 +83,10 @@ def main() -> int:
     env.configure(objects=objects)
     if args.grasp:
         env.configure(grasp_type=args.grasp)
-    print(f"{path} ({ck['steps']:,} steps, curriculum stage {ck['curriculum']['stage']}"
-          f"{', with the arm' if env.config.arm else ''})")
+    print(
+        f"{path} ({ck['steps']:,} steps, curriculum stage {ck['curriculum']['stage']}"
+        f"hands: {env.config.hands})"
+    )
 
     on_step, frames, recorder = None, [], None
     if args.watch or args.video:
@@ -108,14 +110,13 @@ def main() -> int:
             return True
 
     if args.record:
+        from tendra.arm import ARM_JOINTS
         from tendra.dataset import EpisodeRecorder, default_dataset_root
 
+        # The working hand's 16 servos, its wrist pose, then its 7 arm joints (the IK's targets
+        # as the action); the side goes in each episode's extra.
         names = [*env.scene.spec.joint_names, "wrist_x", "wrist_y", "wrist_z",
-                 "wrist_qw", "wrist_qx", "wrist_qy", "wrist_qz"]  # same as grasp_teleop.py  # fmt: skip
-        if env.config.arm:  # + the arm's joint angles (the IK's joint targets as the action)
-            from tendra.arm import ARM_JOINTS
-
-            names += list(ARM_JOINTS)
+                 "wrist_qw", "wrist_qx", "wrist_qy", "wrist_qz", *ARM_JOINTS]  # fmt: skip
         recorder = EpisodeRecorder(default_dataset_root(args.record), env.model,
                                    fps=round(1 / env.dt), state_names=names,
                                    action_names=[f"{n}_target" for n in names],
@@ -140,7 +141,9 @@ def main() -> int:
             env.rng = np.random.default_rng(args.seed + objects.index(obj))  # fixed spawns
             for _ in range(args.episodes):
                 if recorder:
-                    recorder.start_episode(f"pick up the {obj}", extra={"object": obj})
+                    recorder.start_episode(
+                        f"pick up the {obj}", extra={"object": obj, "side": env.side}
+                    )
                 ep = run_episode(env, policy, rng, obj, args.stochastic, on_step)
                 if recorder:
                     if ep and ep["success"]:

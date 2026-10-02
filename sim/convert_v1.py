@@ -6,9 +6,14 @@ Input (never edited by hand; a fresh export from Fusion only needs a re-run of t
     hardware/robot_description/v1_export/meshes/*.stl
     hardware/robot_description/v1_export/tendon_routes.json  (optional) strand paths in the palm/forearm
 
-Output: sim/models/tendra_hand_v1.xml
+Output: sim/models/tendra_hand_v1.xml (right hand) and tendra_hand_v1_left.xml (left hand)
 
-    uv run python sim/convert_v1.py
+    uv run python sim/convert_v1.py                 # both hands
+    uv run python sim/convert_v1.py --side left     # one of them
+
+The left hand is built from hardware/robot_description/v1_export_left/, the mirror image of the
+right export (hardware/cad/mirror_export.py), by the same code. Only the direction rules differ:
+the thumb side is -X instead of +X, so "toward the thumb" and "across the palm" swap sign.
 
 What the converter does:
 - One body per part. Parts that are not the child of any joint (palm, later forearm, servo
@@ -45,6 +50,10 @@ EXPORT_DIR = ROOT / "hardware" / "robot_description" / "v1_export"
 SPEC_PATH = EXPORT_DIR / "hand_v1.json"
 ROUTES_PATH = EXPORT_DIR / "tendon_routes.json"
 OUT_PATH = ROOT / "sim" / "models" / "tendra_hand_v1.xml"
+
+SIDES = ("right", "left")
+EXPORT_DIRS = {"right": EXPORT_DIR, "left": ROOT / "hardware" / "robot_description" / "v1_export_left"}
+OUT_PATHS = {"right": OUT_PATH, "left": ROOT / "sim" / "models" / "tendra_hand_v1_left.xml"}
 
 MM = 0.001
 DEG = math.pi / 180.0
@@ -96,14 +105,16 @@ LIMITS_DEG = {
 # - finger mcp_abd: toward the thumb side, +X
 # - thumb_cmc_rot: swings the thumb across the palm (opposition), -X
 # - thumb flexion (cmc_flex, mcp_flex, ip): the thumb curls toward the fingers, +Z
-def closing_direction(joint: str) -> np.ndarray:
+# The left hand is the mirror image in X, so its X components flip.
+def closing_direction(joint: str, side: str = "right") -> np.ndarray:
     finger, motion = joint.split("_", 1)
+    sx = 1.0 if side == "right" else -1.0
     if finger == "thumb":
         if motion == "cmc_rot":
-            return np.array([-1.0, 0.0, 0.0])
+            return np.array([-sx, 0.0, 0.0])
         return np.array([0.0, 0.0, 1.0])
     if motion == "mcp_abd":
-        return np.array([1.0, 0.0, 0.0])
+        return np.array([sx, 0.0, 0.0])
     return np.array([0.0, -1.0, 0.0])
 
 
@@ -262,7 +273,7 @@ class Hand:
 _STALE_PART = re.compile(r"^(servo|spool)_\d\d_(\w+)$")
 
 
-def load_hand(spec_path: Path = SPEC_PATH) -> Hand:
+def load_hand(spec_path: Path = SPEC_PATH, side: str = "right") -> Hand:
     spec = json.loads(spec_path.read_text(encoding="utf-8"))
     base = spec_path.parent
     parts = {}
@@ -309,7 +320,7 @@ def load_hand(spec_path: Path = SPEC_PATH) -> Hand:
         motion = _unit(
             np.cross(a0, radial)
         )  # where the child moves for a positive rotation about a0
-        closing = closing_direction(name)
+        closing = closing_direction(name, side)
         alignment = float(np.dot(motion, closing))
         if abs(alignment) < 0.25:
             raise ValueError(
@@ -497,17 +508,18 @@ def build_mjcf(
     lengths0: dict[str, float] | None = None,
     meshdir: str | None = None,
     qpos_order: list[str] | None = None,
+    side: str = "right",
 ) -> ET.Element:
     """MJCF tree. `lengths0` are the flex strand lengths at q = 0 (from a first compile); they set the
     actuator offset so that ctrl = 0 means a straight joint. `qpos_order` is MuJoCo's joint order
     (body tree order, from that compile); the keyframes are only written when it is given."""
-    mujoco = ET.Element("mujoco", model="tendra_hand_v1")
+    mujoco = ET.Element("mujoco", model="tendra_hand_v1" + ("" if side == "right" else "_left"))
     ET.SubElement(
         mujoco,
         "compiler",
         angle="radian",
         autolimits="true",
-        meshdir=meshdir or _relpath(EXPORT_DIR, OUT_PATH.parent),
+        meshdir=meshdir or _relpath(EXPORT_DIRS[side], OUT_PATHS[side].parent),
     )
     ET.SubElement(mujoco, "option", timestep="0.002", integrator="implicitfast")
 
@@ -617,12 +629,15 @@ def build_mjcf(
     for part in hand.fixed:
         add_body(world, part, np.zeros(3))
 
-    # Fingertip sites: on each distal part, the mesh point farthest along the finger.
+    # Fingertip sites: on each distal part, the middle of the mesh points that lie within 1 mm of
+    # the farthest point along the finger. (The single farthest point is arbitrary on a rounded tip:
+    # it differed by 6 mm between the right hand and its mirror image.)
     for j in hand.joints.values():
         if any(o.parent == j.child for o in hand.joints.values()):
             continue
         verts = hand.parts[j.child]["tris"].reshape(-1, 3)
-        tip = verts[np.argmax((verts - j.center) @ j.u)]
+        reach = (verts - j.center) @ j.u
+        tip = verts[reach >= reach.max() - 1.0 * MM].mean(axis=0)
         ET.SubElement(
             body_el[j.child],
             "site",
@@ -641,9 +656,9 @@ def build_mjcf(
     strands = [
         (j, s, build_strand(hand, j, s, routes)) for j in ACTUATOR_ORDER for s in ("flex", "ext")
     ]
-    for joint, side, path in strands:
-        strand = f"{joint}_{side}"
-        rgba = "0.85 0.2 0.15 1" if side == "flex" else "0.15 0.35 0.85 1"
+    for joint, kind, path in strands:
+        strand = f"{joint}_{kind}"
+        rgba = "0.85 0.2 0.15 1" if kind == "flex" else "0.15 0.35 0.85 1"
         spatial = ET.SubElement(tendon, "spatial", name=strand, width="0.0004", rgba=rgba)
         for i, p in enumerate(path):
             site = f"{strand}_{i}_{p.kind}"
@@ -757,45 +772,51 @@ def build_mjcf(
 
 
 def build(
-    spec_path: Path = SPEC_PATH, routes_path: Path = ROUTES_PATH, meshdir: str | None = None
+    spec_path: Path | None = None,
+    routes_path: Path | None = None,
+    meshdir: str | None = None,
+    side: str = "right",
 ) -> ET.Element:
     """Full build: a first compile measures the flex strand lengths at q = 0 for the actuator offsets.
 
-    `meshdir` overrides the mesh path (default: relative to OUT_PATH), e.g. to load the result from
-    a string."""
+    `meshdir` overrides the mesh path (default: relative to the output file), e.g. to load the
+    result from a string."""
     import mujoco
 
-    hand = load_hand(spec_path)
+    spec_path = spec_path or EXPORT_DIRS[side] / "hand_v1.json"
+    routes_path = routes_path or EXPORT_DIRS[side] / "tendon_routes.json"
+    hand = load_hand(spec_path, side)
     routes = load_routes(routes_path)
-    probe = build_mjcf(hand, routes, meshdir=spec_path.parent.as_posix())
+    probe = build_mjcf(hand, routes, meshdir=spec_path.parent.as_posix(), side=side)
     model = mujoco.MjModel.from_xml_string(ET.tostring(probe, encoding="unicode"))
     data = mujoco.MjData(model)
     mujoco.mj_forward(model, data)
     lengths0 = {model.tendon(i).name: float(data.ten_length[i]) for i in range(model.ntendon)}
     qpos_order = [model.joint(i).name for i in range(model.njnt)]
-    mjcf = build_mjcf(hand, routes, lengths0, meshdir, qpos_order)
+    mjcf = build_mjcf(hand, routes, lengths0, meshdir, qpos_order, side)
     ET.indent(mjcf)
     return mjcf
 
 
 def main() -> None:
-    mjcf = build()
-    header = (
-        "<!-- GENERATED by sim/convert_v1.py from hardware/robot_description/v1_export. "
-        "Do not edit by hand: change convert_v1.py and re-run it. -->\n"
-    )
-    OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUT_PATH.write_text(
-        header + ET.tostring(mjcf, encoding="unicode") + "\n", encoding="utf-8", newline="\n"
-    )
-    print(
-        f"Wrote {OUT_PATH.relative_to(ROOT)}"
-        + (
-            ""
-            if ROUTES_PATH.exists()
-            else " (no tendon_routes.json: strands end at the finger base)"
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--side", choices=SIDES, help="one hand (default: both)")
+    args = parser.parse_args()
+    for side in [args.side] if args.side else SIDES:
+        mjcf = build(side=side)
+        header = (
+            f"<!-- GENERATED by sim/convert_v1.py (side: {side}) from "
+            f"{EXPORT_DIRS[side].relative_to(ROOT).as_posix()}. "
+            "Do not edit by hand: change convert_v1.py and re-run it. -->\n"
         )
-    )
+        out = OUT_PATHS[side]
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(
+            header + ET.tostring(mjcf, encoding="unicode") + "\n", encoding="utf-8", newline="\n"
+        )
+        print(f"Wrote {out.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":

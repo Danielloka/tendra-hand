@@ -67,13 +67,13 @@ def simplify_meshes(spec: mujoco.MjSpec, mesh_dir: Path, keep: float = KEEP) -> 
 INERTIA_FIELDS = ("body_mass", "body_inertia", "body_ipos", "body_iquat")
 
 
-def copy_inertia(dst: mujoco.MjModel, src: mujoco.MjModel) -> None:
-    """Copy mass and inertia of every body of `src` to the body with the same name in `dst`.
+def copy_inertia(dst: mujoco.MjModel, src: mujoco.MjModel, prefix: str = "") -> None:
+    """Copy mass and inertia of every body of `src` to the body named `prefix` + its name in `dst`.
 
     Call `mujoco.mj_setConst` on `dst` afterwards.
     """
     for b in range(1, src.nbody):
-        target = dst.body(src.body(b).name).id
+        target = dst.body(prefix + src.body(b).name).id
         for name in INERTIA_FIELDS:
             getattr(dst, name)[target] = getattr(src, name)[b]
 

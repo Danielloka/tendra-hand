@@ -8,7 +8,7 @@ Status: **built 2026-09-29**, first training runs on the laptop. Code: `software
 
 ```mermaid
 flowchart LR
-    subgraph sim [MuJoCo: V1 hand on an ideal floating wrist or on the arm, table, object]
+    subgraph sim [MuJoCo: two arms with V1 hands, table, object]
       E[GraspEnv<br/>20 Hz control, 4 ms physics]
     end
     P["Policy network (actor)<br/>sees: joints, wrist, noisy object pose, touch"] -->|"wrist velocity (6)<br/>synergies (6) + residual (20)"| E
@@ -25,35 +25,49 @@ changes its behaviour to get more score. It needs millions of tries, which is wh
 simulation. **PPO** is the standard, robust algorithm for this (used for OpenAI's Rubik's cube
 hand, NVIDIA's DextrAH, MuJoCo Playground's LEAP hand).
 
-## With an arm (added 2026-10-02)
+## The arms (added 2026-10-02; floating hand removed the same day)
 
-`--arm` replaces the invisible floating wrist with an arm: OpenArm's shoulder and elbow, then
-Tendra's forearm, a forearm twist and a 2-way wrist (`software/tendra/arm.py`, `sim/convert_v1_wrist.py`).
+The wrist is always held by an arm; there is no floating hand any more (owner: "this is the
+training standard now"). The robot has **two arms** (OpenArm's shoulder and elbow, then Tendra's
+forearm, a forearm twist and a 2-way wrist, `software/tendra/arm.py`, `sim/convert_v1_wrist.py`)
+with a right and a **mirrored left** hand (`hardware/cad/mirror_export.py`, `convert_v1.py --side`).
 The owner has no arm hardware and won't for a long time, and will probably build their own arm, so
 the arm is a **stand-in** and everything is built so it can be swapped:
 
 - **Same interface.** The policy still outputs "move the wrist target + shape the fingers". The
-  arm is one layer below: `ArmIK` (damped-least-squares inverse kinematics on a private copy of
-  the state) turns the wrist target into 7 joint targets for the arm's position servos. A different
-  arm = a different model + joint list; the policy, rewards and fingers don't change.
-- **What it adds for training the hand:** a wrist that moves like a real one (joint limits,
+  arm is one layer below: `ArmIK` (damped-least-squares inverse kinematics on a bare kinematic
+  copy of one arm, `ik_model(side)`, ~0.2 ms a solve) turns the wrist target into 7 joint targets
+  for the arm's position servos. A different arm = a different model + joint list; the policy,
+  rewards and fingers don't change.
+- **One hand per episode, one policy for both.** `GraspEnvConfig(hands="right"|"left"|"any")`
+  picks the working hand each episode; the other arm rests (asleep in the physics, so it costs
+  almost nothing). The left hand is seen through a mirror (`scene.canon_pos/vec/rot`, the mirror
+  plane is the body's middle): observations, rewards and actions are all in the right hand's
+  view, so the same network drives either hand and a left episode equals its mirrored right one
+  (tested). OpenArm's left joints 1-3 are sign-flipped so equal angles mean mirrored postures.
+  A model that controls both hands at once, like a human, is the later step; "train one hand each"
+  comes first.
+- **What the arm adds for training the hand:** a wrist that moves like a real one (joint limits,
   speed, a ~30% overshoot on big steps, poses it can't reach). The target may only run 3 cm / 0.3 rad
   ahead of the real wrist, so unreachable targets don't wind up. The actor sees the arm's 7 joint
   angles and speeds; a small penalty keeps joints off their limits.
 - **Setup** (`SceneConfig`): the pedestal stands behind the table (y 0.35), shoulders 0.30 m above
-  the table top (OpenArm's own height), the arm starts "elbow out 20 deg, forearm twisted back
-  so the thumb is up". Gravity is compensated on the arm (a real arm does that in its controller;
-  without it the servos sag 5 mm under the hand). Objects spawn in a 14 x 16 cm box the arm reaches.
-- **Reach, measured** (IK over the scripted grasp's path): the arm reaches x -0.10…+0.14 m,
+  the table top (OpenArm's own height), each arm starts "elbow 90 deg, forearm twisted back
+  so the thumb is up" (`POSES["table"]`). Gravity is compensated on the arm (a real arm does that
+  in its controller; without it the servos sag 5 mm under the hand). Objects spawn in a box each
+  arm reaches (mirrored for the left).
+- **Reach, measured** (IK over the scripted grasp's path, right arm): x -0.10…+0.14 m,
   y -0.08…+0.12 m; farther toward the body's middle it runs out of shoulder adduction (OpenArm's
   J2 allows 10 deg). Low objects are the other limit: with a level forearm the wrist can't go
   below ~5 cm, so the **scripted grasp** needs a small pitch and height for the cube and ball
-  (`ARM_GRASP`, 8 deg + 1 cm; 58 of 60 grasps lift, over the whole box).
-- **Speed:** ~300 env steps/s vs ~470 for the floating hand (IK is ~0.4 ms, the arm's meshes add
-  contacts). Not supported on the GPU path yet (`software/tendra/gpu/`: floating hand only).
-- **Not done:** the webcam grasp teleop (`sim/grasp_teleop.py`) still drives the floating hand: its
-  home pose (palm toward the camera, fingers up) is not one this arm can take. Demos for the
-  arm come from the scripted grasp and from RL rollouts (`eval_grasp.py --record`).
+  (`ARM_GRASP`, 8 deg + 1 cm; about 29 of 30 grasps lift with either hand).
+- **First arm result** (right arm only, `arm_try1`, before the left arm existed): 400k steps on the
+  laptop reached about 87% success.
+- **Not done:** the webcam grasp teleop (`sim/grasp_teleop.py`) is disabled (a stub that explains
+  why) until it is ported to the arm scene, and the GPU path (`software/tendra/gpu/`, floating
+  hand only) raises a clear error (`SceneConfig(contact_sensors=True)` is not implemented). Demos
+  come from the scripted grasps (both hands) and from RL rollouts (`eval_grasp.py --record`,
+  the side is stored per episode).
 
 ## What makes it human-like (the creative part)
 
@@ -94,7 +108,7 @@ uv run python sim/train_grasp.py --run runs/grasp --steps 5e6  # a real run (Ctr
 uv run python sim/eval_grasp.py --run runs/grasp               # success table on fixed spawns
 uv run python sim/eval_grasp.py --run runs/grasp --watch       # watch it live
 uv run python sim/eval_grasp.py --run runs/grasp --record rl_grasps --episodes 50  # as a dataset
-uv run python sim/train_grasp.py --arm --run runs/arm          # the same, with the wrist on the arm
+uv run python sim/train_grasp.py --hands right --run runs/right  # one hand only (default: any = both)
 ```
 
 `runs/<name>/progress.csv` has one row per update (2,048 steps): `success` (normal starts),

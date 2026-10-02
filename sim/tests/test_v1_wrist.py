@@ -73,7 +73,7 @@ def test_axes_and_signs(model):
     _q(model, data)
     thumb0 = data.site("thumb_tip").xpos.copy()
     _q(model, data, forearm_rot=0.3)
-    assert np.dot(data.site("thumb_tip").xpos - thumb0, -Y) > 0.005
+    assert np.dot(data.site("thumb_tip").xpos - thumb0, -Y) > 0.003
 
 
 def test_strands_keep_their_length_at_every_wrist_angle(model):

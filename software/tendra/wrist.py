@@ -27,7 +27,9 @@ a real right hand drives it as its mirror image, like the finger retargeting doe
 
     tracker = WristTracker()
     pose = tracker.update(hand, t=time.monotonic(), chirality=retargeter.chirality)
-    scene.set_wrist_from_view(pose.pos, pose.rot)
+    # then map pose.pos / pose.rot into the scene's world and call
+    # scene.set_wrist_target(pos, quat, side): the arm's IK follows. (The scene's old floating hand
+    # and `set_wrist_from_view` are gone; the webcam grasp teleop is disabled until it is ported.)
 """
 
 import math

@@ -7,6 +7,7 @@ Kinematic/physical models of the hand.
   Its `LICENSE` and `package.xml` are template leftovers from the plugin and don't describe this project.
 
 - `v1_export/`: the v1 hand (20 joints, 16 servos), written by the `TendraHandV1` Fusion script (stage `export`): `hand_v1.json` (parts + joints, world mm, all joints at 0; Fusion's axis signs are arbitrary), `meshes/*.stl`, and `tendon_routes.json` from `hardware/cad/tendon_router.py`. `sim/convert_v1.py` turns it into `sim/models/tendra_hand_v1.xml`.
+- `v1_export_left/`: the **mirrored left hand**, generated (don't edit) from `v1_export/` by `hardware/cad/mirror_export.py` (reflection across x = -33.5 mm, the hand's mirror plane; STL winding reversed). `uv run python hardware/cad/mirror_export.py` rebuilds it, `--check` fails if it is stale; `uv run pytest` checks that too. Re-run after every new `v1_export/`.
 
 The cleaned models (correct PLA masses, recomputed inertias, descriptive joint names, flexion-positive axes, MuJoCo MJCF) are **generated** from this export by a script in `sim/`.
 

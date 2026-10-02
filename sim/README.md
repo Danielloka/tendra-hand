@@ -11,17 +11,18 @@ uv sync                          # create the Python 3.12 environment (first tim
 uv run python sim/view.py        # open the hand in the MuJoCo viewer
 uv run python sim/view.py --v1   # open the full v1 hand (20 joints, tendon-driven)
 uv run python sim/view.py --wrist  # v1 on its forearm: + forearm twist and a 2-way wrist
-uv run python sim/view.py --arm  # OpenArm shoulder + elbow, then the Tendra forearm, wrist and v1 hand
+uv run python sim/view.py --arm  # both arms: OpenArm shoulder + elbow, then the Tendra forearm, wrist and v1 hand
+uv run python sim/view.py --v1 --left  # the mirrored left hand (also --wrist --left)
 uv run python sim/twin.py --fake # digital twin with a software ESP32
 uv run python sim/twin.py --port auto   # digital twin driving the real hand
 uv run python sim/twin.py --fake --hand v1          # v1 (20 joints) with a software ESP32
 uv run python sim/twin.py --port auto --mirror      # v1: the sim follows the real hand
 uv run python sim/teleop.py      # webcam teleop: your hand moves the v1 twin (--hand v0, --fake, --port)
-uv run python sim/grasp_teleop.py                 # pick up objects with the floating hand, record demos
+uv run python sim/grasp_teleop.py                 # DISABLED until ported to the arm scene (prints why)
 uv run python sim/export_lerobot.py ~/tendra-data/datasets/grasp-sim --preview   # MP4 previews
 uv run --with "lerobot[dataset]" python sim/export_lerobot.py ~/tendra-data/datasets/grasp-sim --repo-id tendra/grasp-sim --out <dir>
 uv run python sim/train_grasp.py --run runs/grasp  # RL: the hand learns to grasp by itself (re-run = resume)
-uv run python sim/train_grasp.py --arm --run runs/arm   # the same with the wrist on the arm (tendra.arm)
+uv run python sim/train_grasp.py --hands right --run runs/right   # one hand only (default any: both arms, one policy)
 uv run python sim/eval_grasp.py --run runs/grasp --watch   # success table / watch / --video / --record
 uv run python sim/fit_synergies.py grasp-sim       # your own eigengrasps from teleop demos (for --synergies)
 ```
@@ -40,15 +41,16 @@ Move the joints with the sliders under **Control** in the right-hand panel.
 | `models/tendra_hand_v1.xml` | The generated v1 model (**don't edit by hand**; re-run `convert_v1.py`) |
 | `convert_v1_wrist.py` | Puts the v1 hand on its forearm (`models/tendra_hand_v1_wrist.xml`): `forearm_rot` (twist, OpenArm's J5 motor), a 2-way wrist gimbal (`wrist_flex`, `wrist_dev`) in a 20 mm gap between forearm and palm. Every servo strand runs through one site on the wrist centre (PTFE sheaths through a hollow wrist), so wrist motion never changes a strand's length. Input is the generated `tendra_hand_v1.xml`, so it follows every `convert_v1.py` change |
 | `models/tendra_hand_v1_wrist.xml` | The generated wrist model (**don't edit by hand**; re-run `convert_v1_wrist.py`). The full arm (OpenArm + this) is built in Python: `tendra.arm` |
-| `view.py` | Interactive viewer (`--v1` full hand, `--wrist` on its forearm, `--arm` on the OpenArm shoulder and elbow) |
+| `convert_v1.py --side left`, `convert_v1_wrist.py --side left` | Build the mirrored left hand and wrist (`models/tendra_hand_v1_left.xml`, `tendra_hand_v1_wrist_left.xml`) from `hardware/robot_description/v1_export_left/` (made by `hardware/cad/mirror_export.py`). With no `--side` both sides are built |
+| `view.py` | Interactive viewer (`--v1` full hand, `--wrist` on its forearm, `--arm` both arms, `--left` the mirrored left hand) |
 | `twin.py` | **Digital twin**: slider targets are sent to the real hand (rate-limited, only on change); the terminal shows real-vs-sim difference. v1 adds `--mirror` (real → sim) |
 | `teleop.py` | **Webcam teleoperation**: MediaPipe hand tracking → `tendra.retarget` → the twin (and optionally the real hand). One window: camera image + the hand, drawn only when it moves (≤ 30 fps). Defaults are tuned for a slow laptop: kinematic mode (no servo delay; `--physics` for the tendon sim), simplified meshes, no shadows, tendons hidden (`--tendons`), MuJoCo's viewer only with `--viewer`. Mouse on the hand: drag rotates, wheel zooms. Prints a speed summary on exit. Keys in the camera window: C calibrate (hand open and flat), SPACE pause, M flip palm side, Q quit |
-| `grasp_teleop.py` | **Grasp teleoperation + demo recording.** The floating V1 hand (`tendra.scene`) over a table with a cylinder, cube or ball. Your wrist pose (`tendra.wrist`) moves the hand, your fingers (`tendra.retarget`) close it. Records episodes (`tendra.dataset`) to `~/tendra-data/datasets/<name>`; success = object held up for 1 s. Keys: R record/stop, X discard, N new round, W wrist clutch, C calibrate, SPACE pause, M flip, Q quit |
+| `grasp_teleop.py` | **Disabled** (2026-10-02): the webcam grasp teleop drove the floating hand, which was removed. It is a stub that explains this; the old version is in git history. To port: map the webcam wrist pose to `scene.set_wrist_target(pos, quat, side)` with a pose the arm can reach |
 | `export_lerobot.py` | Renders recorded episodes offline (replaying the saved sim state) and exports them to a Hugging Face **LeRobot** dataset (v3.0 format, lerobot 0.6.1, run with `uv run --with "lerobot[dataset]"`), or only MP4 previews (`--preview`). Successful episodes only unless `--all` |
-| `train_grasp.py` | **Reinforcement learning:** PPO trains the V1 hand (floating wrist, or `--arm`: on OpenArm's shoulder and elbow + Tendra's forearm and wrist) to grasp and lift (`tendra.grasp_env`, `tendra.rl`): synergy actions, human-like rewards, demo-state starts, object and penalty curriculum, domain randomisation, parallel worker processes. Writes `runs/<name>/` (`progress.csv`, `latest.pt`, `best.pt`); `--smoke` for a 30 s check. Design and research: `research/ai/grasp-rl.md` |
+| `train_grasp.py` | **Reinforcement learning:** PPO trains the V1 hand on its arm (OpenArm's shoulder and elbow + Tendra's forearm and wrist; two arms, `--hands right|left|any`, one policy for both via a mirror) to grasp and lift (`tendra.grasp_env`, `tendra.rl`): synergy actions, human-like rewards, demo-state starts, object and penalty curriculum, domain randomisation, parallel worker processes. Writes `runs/<name>/` (`progress.csv`, `latest.pt`, `best.pt`); `--smoke` for a 30 s check. Design and research: `research/ai/grasp-rl.md` |
 | `eval_grasp.py` | Evaluates a trained policy on fixed spawns (success, lift, time, smoothness, effort, synergy residual); `--watch` live window, `--video out.mp4`, `--record <name>` saves successful rollouts as a teleop-format dataset (RL teacher → imitation student) |
 | `fit_synergies.py` | PCA "eigengrasps" from recorded teleop datasets → `.npz` for `train_grasp.py --synergies` |
-| `tests/` | Model sanity checks, twin, grasp pipeline end to end (`test_grasp_teleop.py`): `uv run pytest` |
+| `tests/` | Model sanity checks, twin, mirrored left hand (`test_v1_left.py`): `uv run pytest` |
 
 After a new Fusion export, or a change to `convert.py` / `convert_v1.py`:
 ```bash

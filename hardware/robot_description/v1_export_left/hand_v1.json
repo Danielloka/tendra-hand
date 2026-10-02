@@ -1,0 +1,639 @@
+{
+ "source": "Fusion design 'Tendra Hand V1', exported by TendraHandV1.py stage 'export'",
+ "units": "mm, world frame of the design, all joints at 0",
+ "note": "LEFT hand: mirror image of v1_export/ in the plane x = -33.5 mm, made by hardware/cad/mirror_export.py. Do not edit.",
+ "parts": [
+  {
+   "name": "forearm",
+   "mesh": "meshes/forearm.stl",
+   "volume_mm3": 188053.5
+  },
+  {
+   "name": "index_base",
+   "mesh": "meshes/index_base.stl",
+   "volume_mm3": 2060.1
+  },
+  {
+   "name": "index_distal",
+   "mesh": "meshes/index_distal.stl",
+   "volume_mm3": 2892.3
+  },
+  {
+   "name": "index_middle",
+   "mesh": "meshes/index_middle.stl",
+   "volume_mm3": 2706.4
+  },
+  {
+   "name": "index_proximal",
+   "mesh": "meshes/index_proximal.stl",
+   "volume_mm3": 5313.9
+  },
+  {
+   "name": "little_base",
+   "mesh": "meshes/little_base.stl",
+   "volume_mm3": 2060.1
+  },
+  {
+   "name": "little_distal",
+   "mesh": "meshes/little_distal.stl",
+   "volume_mm3": 2892.3
+  },
+  {
+   "name": "little_middle",
+   "mesh": "meshes/little_middle.stl",
+   "volume_mm3": 2062.4
+  },
+  {
+   "name": "little_proximal",
+   "mesh": "meshes/little_proximal.stl",
+   "volume_mm3": 4057.9
+  },
+  {
+   "name": "middle_base",
+   "mesh": "meshes/middle_base.stl",
+   "volume_mm3": 2060.1
+  },
+  {
+   "name": "middle_distal",
+   "mesh": "meshes/middle_distal.stl",
+   "volume_mm3": 2892.3
+  },
+  {
+   "name": "middle_middle",
+   "mesh": "meshes/middle_middle.stl",
+   "volume_mm3": 3190.6
+  },
+  {
+   "name": "middle_proximal",
+   "mesh": "meshes/middle_proximal.stl",
+   "volume_mm3": 5941.9
+  },
+  {
+   "name": "palm",
+   "mesh": "meshes/palm.stl",
+   "volume_mm3": 149419.8
+  },
+  {
+   "name": "ring_base",
+   "mesh": "meshes/ring_base.stl",
+   "volume_mm3": 2060.1
+  },
+  {
+   "name": "ring_distal",
+   "mesh": "meshes/ring_distal.stl",
+   "volume_mm3": 2892.3
+  },
+  {
+   "name": "ring_middle",
+   "mesh": "meshes/ring_middle.stl",
+   "volume_mm3": 3029.6
+  },
+  {
+   "name": "ring_proximal",
+   "mesh": "meshes/ring_proximal.stl",
+   "volume_mm3": 5470.9
+  },
+  {
+   "name": "servo_01_index_dip",
+   "mesh": "meshes/servo_01_index_dip.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_02_index_pip",
+   "mesh": "meshes/servo_02_index_pip.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_03_index_mcp_flex",
+   "mesh": "meshes/servo_03_index_mcp_flex.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_04_index_mcp_abd",
+   "mesh": "meshes/servo_04_index_mcp_abd.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_05_thumb_ip",
+   "mesh": "meshes/servo_05_thumb_ip.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_06_thumb_mcp_flex",
+   "mesh": "meshes/servo_06_thumb_mcp_flex.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_07_thumb_cmc_flex",
+   "mesh": "meshes/servo_07_thumb_cmc_flex.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_08_thumb_cmc_rot",
+   "mesh": "meshes/servo_08_thumb_cmc_rot.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_09_middle_dip",
+   "mesh": "meshes/servo_09_middle_dip.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_10_middle_pip",
+   "mesh": "meshes/servo_10_middle_pip.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_11_middle_mcp_flex",
+   "mesh": "meshes/servo_11_middle_mcp_flex.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_12_middle_mcp_abd",
+   "mesh": "meshes/servo_12_middle_mcp_abd.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_13_ring_dip",
+   "mesh": "meshes/servo_13_ring_dip.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_14_ring_pip",
+   "mesh": "meshes/servo_14_ring_pip.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_15_ring_mcp_flex",
+   "mesh": "meshes/servo_15_ring_mcp_flex.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_16_ring_mcp_abd",
+   "mesh": "meshes/servo_16_ring_mcp_abd.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_17_little_dip",
+   "mesh": "meshes/servo_17_little_dip.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_18_little_pip",
+   "mesh": "meshes/servo_18_little_pip.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_19_little_mcp_flex",
+   "mesh": "meshes/servo_19_little_mcp_flex.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "servo_20_little_mcp_abd",
+   "mesh": "meshes/servo_20_little_mcp_abd.stl",
+   "volume_mm3": 7309.8
+  },
+  {
+   "name": "spool_01_index_dip",
+   "mesh": "meshes/spool_01_index_dip.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_02_index_pip",
+   "mesh": "meshes/spool_02_index_pip.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_03_index_mcp_flex",
+   "mesh": "meshes/spool_03_index_mcp_flex.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_04_index_mcp_abd",
+   "mesh": "meshes/spool_04_index_mcp_abd.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_05_thumb_ip",
+   "mesh": "meshes/spool_05_thumb_ip.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_06_thumb_mcp_flex",
+   "mesh": "meshes/spool_06_thumb_mcp_flex.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_07_thumb_cmc_flex",
+   "mesh": "meshes/spool_07_thumb_cmc_flex.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_08_thumb_cmc_rot",
+   "mesh": "meshes/spool_08_thumb_cmc_rot.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_09_middle_dip",
+   "mesh": "meshes/spool_09_middle_dip.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_10_middle_pip",
+   "mesh": "meshes/spool_10_middle_pip.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_11_middle_mcp_flex",
+   "mesh": "meshes/spool_11_middle_mcp_flex.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_12_middle_mcp_abd",
+   "mesh": "meshes/spool_12_middle_mcp_abd.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_13_ring_dip",
+   "mesh": "meshes/spool_13_ring_dip.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_14_ring_pip",
+   "mesh": "meshes/spool_14_ring_pip.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_15_ring_mcp_flex",
+   "mesh": "meshes/spool_15_ring_mcp_flex.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_16_ring_mcp_abd",
+   "mesh": "meshes/spool_16_ring_mcp_abd.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_17_little_dip",
+   "mesh": "meshes/spool_17_little_dip.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_18_little_pip",
+   "mesh": "meshes/spool_18_little_pip.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_19_little_mcp_flex",
+   "mesh": "meshes/spool_19_little_mcp_flex.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "spool_20_little_mcp_abd",
+   "mesh": "meshes/spool_20_little_mcp_abd.stl",
+   "volume_mm3": 728.8
+  },
+  {
+   "name": "thumb_base",
+   "mesh": "meshes/thumb_base.stl",
+   "volume_mm3": 4057.1
+  },
+  {
+   "name": "thumb_distal",
+   "mesh": "meshes/thumb_distal.stl",
+   "volume_mm3": 4328.7
+  },
+  {
+   "name": "thumb_metacarpal",
+   "mesh": "meshes/thumb_metacarpal.stl",
+   "volume_mm3": 10579.7
+  },
+  {
+   "name": "thumb_proximal",
+   "mesh": "meshes/thumb_proximal.stl",
+   "volume_mm3": 6126.3
+  }
+ ],
+ "joints": [
+  {
+   "name": "index_dip",
+   "child": "index_distal",
+   "parent": "index_middle",
+   "point_mm": [
+    -52.9694,
+    19.023,
+    141.9764
+   ],
+   "axis": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "index_mcp_abd",
+   "child": "index_base",
+   "parent": "palm",
+   "point_mm": [
+    -58.4694,
+    12.523,
+    59.9764
+   ],
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "index_mcp_flex",
+   "child": "index_proximal",
+   "parent": "index_base",
+   "point_mm": [
+    -52.9694,
+    19.023,
+    78.9764
+   ],
+   "axis": [
+    -1.0,
+    -0.0,
+    -0.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "index_pip",
+   "child": "index_middle",
+   "parent": "index_proximal",
+   "point_mm": [
+    -52.9694,
+    19.023,
+    118.9764
+   ],
+   "axis": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "little_dip",
+   "child": "little_distal",
+   "parent": "little_middle",
+   "point_mm": [
+    -2.9694,
+    19.023,
+    122.9764
+   ],
+   "axis": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "little_mcp_abd",
+   "child": "little_base",
+   "parent": "palm",
+   "point_mm": [
+    -1.4694,
+    20.023,
+    52.9764
+   ],
+   "axis": [
+    -0.0,
+    -1.0,
+    0.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "little_mcp_flex",
+   "child": "little_proximal",
+   "parent": "little_base",
+   "point_mm": [
+    -2.4694,
+    19.023,
+    71.9764
+   ],
+   "axis": [
+    1.0,
+    0.0,
+    -0.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "little_pip",
+   "child": "little_middle",
+   "parent": "little_proximal",
+   "point_mm": [
+    -2.4694,
+    19.023,
+    103.9764
+   ],
+   "axis": [
+    1.0,
+    0.0,
+    -0.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "middle_dip",
+   "child": "middle_distal",
+   "parent": "middle_middle",
+   "point_mm": [
+    -40.9694,
+    19.023,
+    152.9764
+   ],
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "middle_mcp_abd",
+   "child": "middle_base",
+   "parent": "palm",
+   "point_mm": [
+    -39.4694,
+    20.023,
+    63.9764
+   ],
+   "axis": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "middle_mcp_flex",
+   "child": "middle_proximal",
+   "parent": "middle_base",
+   "point_mm": [
+    -40.4694,
+    19.023,
+    82.9764
+   ],
+   "axis": [
+    1.0,
+    -0.0,
+    0.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "middle_pip",
+   "child": "middle_middle",
+   "parent": "middle_proximal",
+   "point_mm": [
+    -40.4694,
+    19.023,
+    126.9764
+   ],
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "ring_dip",
+   "child": "ring_distal",
+   "parent": "ring_middle",
+   "point_mm": [
+    -21.9694,
+    19.023,
+    145.9764
+   ],
+   "axis": [
+    1.0,
+    -0.0,
+    -0.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "ring_mcp_abd",
+   "child": "ring_base",
+   "parent": "palm",
+   "point_mm": [
+    -20.4694,
+    20.023,
+    60.9764
+   ],
+   "axis": [
+    -0.0,
+    -1.0,
+    0.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "ring_mcp_flex",
+   "child": "ring_proximal",
+   "parent": "ring_base",
+   "point_mm": [
+    -21.4694,
+    19.023,
+    79.9764
+   ],
+   "axis": [
+    1.0,
+    0.0,
+    -0.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "ring_pip",
+   "child": "ring_middle",
+   "parent": "ring_proximal",
+   "point_mm": [
+    -21.4694,
+    19.023,
+    120.9764
+   ],
+   "axis": [
+    1.0,
+    0.0,
+    -0.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "thumb_cmc_flex",
+   "child": "thumb_metacarpal",
+   "parent": "thumb_base",
+   "point_mm": [
+    -57.0,
+    10.0236,
+    11.3764
+   ],
+   "axis": [
+    -1.0,
+    0.0,
+    -0.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "thumb_cmc_rot",
+   "child": "thumb_base",
+   "parent": "palm",
+   "point_mm": [
+    -68.0,
+    15.5236,
+    38.4764
+   ],
+   "axis": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "thumb_ip",
+   "child": "thumb_distal",
+   "parent": "thumb_proximal",
+   "point_mm": [
+    -72.278,
+    -66.9764,
+    15.6544
+   ],
+   "axis": [
+    0.707107,
+    0.0,
+    -0.707107
+   ],
+   "angle_rad": 0.0
+  },
+  {
+   "name": "thumb_mcp_flex",
+   "child": "thumb_proximal",
+   "parent": "thumb_metacarpal",
+   "point_mm": [
+    -66.5858,
+    -31.9764,
+    9.9622
+   ],
+   "axis": [
+    -0.707107,
+    -0.0,
+    0.707107
+   ],
+   "angle_rad": 0.0
+  }
+ ]
+}

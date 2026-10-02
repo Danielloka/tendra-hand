@@ -7,6 +7,7 @@ Source design files for the hand.
 - `fusion_scripts/`: Fusion API scripts (see its README). `TendraHandV1/` builds the full v1 hand.
 - `tendon_router.py`: v1 tendon routes + forearm servo layout (single source of truth for the CAD channels and the MuJoCo tendons). Run `uv run python hardware/cad/tendon_router.py`; tests in `tests/` (run by `uv run pytest`).
 - `dip_linkage.py`: the DIP-PIP coupling bar of each V1 finger (pin positions found per finger from the middle-phalanx length in `hand_v1.json`, so DIP ≈ 0.75 × PIP). `tendon_router.py` writes the result into `tendon_routes.json` (`coupling.linkages`); `uv run python hardware/cad/dip_linkage.py` prints it.
+- `mirror_export.py`: reflects `v1_export/` into `../robot_description/v1_export_left/` (the left hand for the two-arm sim; mirror plane x = -33.5 mm). `--check` reports if it is stale. Re-run after every `tendon_router.py` or Fusion export change.
 
 When the design changes, export both, and re-export the URDF into `../robot_description/fusion_export/`.
 

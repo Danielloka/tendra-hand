@@ -12,7 +12,7 @@ Learn the core ideas and tools while the hand hardware is being built.
 - [x] **Webcam teleop of Tendra V0/V1 in MuJoCo** (`sim/teleop.py`, 2026-09-28; live tuning with a real hand pending): MediaPipe hand tracking → retargeting → `SimHand`. Then the same on the real hand via `RealHand`
 - [ ] Forward kinematics + Jacobian of the Tendra hand from the MJCF, checked against MuJoCo
 
-- [x] **Grasp demos in simulation** (2026-09-29): floating V1 hand + table + objects, wrist and fingers from the webcam, episodes recorded and exportable to LeRobot (`sim/grasp_teleop.py`)
+- [x] **Grasp demos in simulation** (2026-09-29): V1 hand (then floating; now on the arm, and the webcam teleop is disabled until ported) + table + objects, wrist and fingers from the webcam, episodes recorded and exportable to LeRobot (`sim/grasp_teleop.py`)
 - [ ] Record ~50 grasp demos and train ACT on them (free cloud GPU); measure the success rate in sim
 - [ ] **RL grasping in sim** (system built 2026-09-29: `sim/train_grasp.py`, `research/ai/grasp-rl.md`): cylinder, cube and ball ≥ 80% success from normal starts; then RL teacher → vision student
 
@@ -33,7 +33,7 @@ Learn the full "demonstrate → train → deploy" loop on cheap, proven hardware
 Put our hand on an arm and control all fingers.
 
 - [ ] Choose/build an arm with enough payload for V1 (see `resources.md` → Arms); mount V1 with a wrist camera
-  - [x] Sim stand-in (2026-10-02): OpenArm's shoulder + elbow, Tendra forearm/wrist/hand, grasp training with `--arm` (`research/ai/grasp-rl.md`). The owner's own arm replaces it later: same wrist-target interface, new model + joint list.
+  - [x] Sim stand-in (2026-10-02): OpenArm's shoulder + elbow, Tendra forearm/wrist/hand, two arms with a mirrored left hand, no floating hand, grasp training with `--hands right|left|any` (`research/ai/grasp-rl.md`). The owner's own arm replaces it later: same wrist-target interface, new model + joint list.
 - [ ] **Hand teleop device:** VR hand tracking (Quest 3) and/or the Tendra kinematic-twin glove (`ideas.md`)
 - [ ] Retargeting human hand → Tendra hand (fingertip-position optimisation)
 - [ ] Imitation learning with the hand: power grasp, pinch, cylinder grasp
@@ -43,7 +43,7 @@ Put our hand on an arm and control all fingers.
 **Done when:** the arm + hand picks up 10 everyday objects of different shapes, and does one in-hand skill learned in simulation.
 
 ## Stage D: Two arms on the pole (~18–30 months)
-- [ ] Second arm + mirrored left hand; head camera
+- [ ] Second arm + mirrored left hand (in sim since 2026-10-02: both arms train, one hand per episode; next: one model that drives both at once); head camera
 - [ ] Bimanual teleop (two gloves / VR)
 - [ ] Bimanual policies: handover, open a jar, fold a towel
 - [ ] Fine-tune a large open VLA (π0 / GR00T / RDT style) on our data with cloud GPUs

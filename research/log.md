@@ -11,6 +11,16 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** what I learned and what to try next
 ```
 
+## 2026-10-02: Two arms, a mirrored left hand, no floating hand
+**Goal:** owner: "remove the floating hand, this is the training standard now; make the left arm so we have 2 to train it", and a model with both hands like a human, starting with one hand each. Not to start training ("just make it ready").
+**Result:**
+- Left hand by exact reflection (`hardware/cad/mirror_export.py` → `v1_export_left/`, STL winding reversed; converters take `--side`). Same tendon lengths, limits and masses; fingertips mirror to 0.0 mm (the tip site is now the cap centroid, mirror-safe). Left wrist: `forearm_rot` and `wrist_dev` axes negated. Tested in `sim/tests/test_v1_left.py`.
+- One model with both OpenArm arms (`tendra.arm`, `right_`/`left_` names; left J1-J3 sign-flipped so equal angles = mirrored posture). IK runs on a bare kinematic copy (`ik_model`, 0.2 ms, matches the full model).
+- `GraspScene` has two arms; the resting one sleeps in the physics. Scripted grasps lift objects with either hand (about 29/30 each). `scene.canon_*` mirror functions map the left hand to the right, so `GraspEnv` (`hands="right|left|any"`) gives the same 141-dim observation for a mirrored left episode (tested; it needed the cube's spawn yaw mirrored too).
+- Earlier arm-only run `arm_try1`: 400k steps, about 87% success.
+- Disabled until ported (owner's choice): webcam grasp teleop (stub) and the GPU path (clear error).
+**Conclusion / next:** no training started. Next: a first two-arm run (`train_grasp.py --hands any`), then one model that controls both hands at once, then port the GPU path and the teleop.
+
 ## 2026-10-02: Training the hand on the arm (grasp scene + RL with `--arm`)
 **Goal:** the owner has no arm hardware and won't for a long time (probably an own arm later), so the arm is a sim stand-in to train the *hand* on realistic wrist motion. Make it a drop-in: same policy action, swappable arm.
 **Result:**

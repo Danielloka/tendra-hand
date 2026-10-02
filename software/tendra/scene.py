@@ -1,58 +1,58 @@
-"""A grasping scene: the Tendra V1 hand floating above a table with one object to pick up.
+"""A grasping scene: the Tendra robot (two arms, two V1 hands) at a table with an object to pick up.
 
-This is a stand-in for the future robot arm. An invisible, ideal "arm" moves the wrist: the
-hand's fixed parts (forearm, palm, servos, spools) hang from one free body `hand_root`, which a
-weld constraint pulls toward a mocap body `wrist_target`. So the robot's action is
-"wrist pose + 16 finger joint targets", the same for a human operator (teleoperation) and for a
-learned policy later.
+The robot is the body of CLAUDE.md: OpenArm's pedestal with both shoulders and elbows, then
+Tendra's forearms, 2-way wrists and V1 hands (`tendra.arm`). It stands behind the table (+y) and
+faces the operator's side (-y). One hand is *active* in an episode (right or left, chosen at
+`reset`): the object is on its side of the table and it is the one that picks it up; the other
+arm rests. The robot's action is "wrist pose + 16 finger joint targets" for the active hand, for a
+learned policy and for a person alike.
 
-World frame: table top at z = 0, the robot stands across the table (+Y), the "view" camera looks
-at it from the operator's side (-Y), slightly from above. Units m, rad, quaternions wxyz.
+The wrist target is where the arm should put the wrist; inverse kinematics (`tendra.arm.ArmIK`)
+turns it into joint targets for the arm's position servos, so the wrist moves like a real arm
+would: joint limits, speed, and poses it simply cannot reach. (The arm is a stand-in: the owner
+will build their own, so what is trained here is the *hand*.)
+
+World frame: table top at z = 0, units m, rad, quaternions wxyz. The robot's symmetry plane is
+x = `arm_base[0]` (0): the right hand works at x < 0, the left at x > 0, mirror images of each
+other. `canon_*` map the left side onto the right one so that one policy can drive both hands.
 
     scene = GraspScene()
-    scene.reset(np.random.default_rng(0), obj="cylinder")
-    scene.set_wrist_target(pos, quat)       # or set_wrist_from_view(...) for teleoperation
-    scene.set_finger_targets(q)             # 16 joint targets (servos), V1 order
+    scene.reset(np.random.default_rng(0), obj="cylinder", side="right")
+    scene.set_wrist_target(pos, quat)       # the active hand's wrist
+    scene.set_finger_targets(q)             # its 16 joint targets (servos), V1 order
     scene.step(0.02)
     scene.lifted()                          # success check
-
-With `SceneConfig(arm=True)` the ideal floating wrist is replaced by a real arm: OpenArm's shoulder
-and elbow, then Tendra's forearm, wrist and hand (`tendra.arm`), on a pedestal behind the table. The
-interface does not change: `set_wrist_target` still says where the wrist should go, but now
-inverse kinematics (`tendra.arm.ArmIK`) turns it into joint targets for the arm's position servos,
-so the wrist moves like a real arm would: joint limits, speed, and poses it simply cannot reach.
-This is for training the hand on realistic wrist motion; the real arm will differ.
-
-The view frame (shared with the webcam wrist tracker): x = right on screen, y = up, z = toward
-the viewer, origin = the home point. The screen shows the webcam image mirrored, next to the
-"view" camera render, so the view camera acts like a mirror: see `set_wrist_from_view`.
 """
 
-import functools
 import math
 from dataclasses import dataclass
-from pathlib import Path
 
 import mujoco
 import numpy as np
 
+from .arm import (
+    ARM_JOINTS,
+    POSES,
+    SIDES,
+    WRIST_MODEL_PATHS,
+    WRIST_SITE,
+    ArmIK,
+    _look_at,
+    arm_spec,
+    full_hand_model,
+    hand_joint_names,
+    ik_model,
+    joint_names,
+)
 from .joints import V1
-from .lite_model import KEEP, copy_inertia, simplify_meshes
+from .lite_model import KEEP, copy_inertia
 
-# The wrist point in the hand model's frame (m): middle of the palm's lower edge, where the palm
-# meets the forearm. `hand_root` sits here, so the hand turns about the wrist like a human one.
-# (The model origin is at the thumb-side edge of the palm, x spans -79..12 mm, y 12..40 mm.)
-WRIST_IN_MODEL = np.array([-0.0335, 0.026, -0.030])
-
-# Bodies of the five fingers (not servos or spools): `thumb_base`, `index_proximal`, ...
+# Bodies of the five fingers (not servos or spools), without the side prefix: `thumb_base`, ...
 FINGERS = ("thumb_", "index_", "middle_", "ring_", "little_")
+TIP_FINGERS = ("thumb", "index", "middle", "ring", "little")
 
 # The arm model's shoulder height above its own origin (OpenArm's pedestal top, m).
 ARM_SHOULDER_Z = 0.698
-
-# Home orientation in the view frame: palm facing the camera (model -Y = view +z), fingers up
-# (model +Z = view +y), so the thumb side (model +X) is view +x. Columns = model axes.
-HOME_ROT_VIEW = np.array([[1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, -1.0, 0.0]])
 
 # Objects, sized for this hand (knuckle pitch 19 mm, index ~86 mm, palm ~90 mm wide).
 # kind: (MuJoCo geom type, size, mass kg, rgba)
@@ -69,103 +69,32 @@ class SceneConfig:
     lite: bool = True  # simplified meshes (much faster to draw, same physics)
     lite_keep: float = KEEP  # fraction of triangles kept by the simplification
     table_half: tuple[float, float] = (0.30, 0.25)  # table top half size x, y (m)
-    # Home wrist point, world (m): low and close behind the objects, so the operator only needs
-    # a small, comfortable hand motion to reach them (from 0.2 m up, reaching the table meant
-    # moving the real hand out of the webcam image). Measured at this pose: the forearm (servo
-    # pack, on the palm side) reaches down to z 0.022 and forward to y ~-0.078, so the table
-    # and the objects spawned in front (y <= -0.13) stay clear; `test_scene` checks it.
-    home: tuple[float, float, float] = (0.0, 0.02, 0.15)
-    # Objects spawn uniformly in this box (x, y, world m). With `spawn_sides`, x is the distance
-    # to the side and the side (left/right of the hand) is random. Beside the hand, at about its
-    # depth, the operator reaches by moving sideways and down: the directions a webcam tracks
-    # best. (In front of the hand, toward the camera, they had to bring their real hand very
-    # close to the webcam.) The hand at home spans x +-0.046 (measured), so |x| >= 0.09 keeps
-    # even the ball (r 28 mm) clear of it.
-    spawn_lo: tuple[float, float] = (0.09, -0.07)
-    spawn_hi: tuple[float, float] = (0.15, 0.0)
-    spawn_sides: bool = True
-    # Weld between hand_root and wrist_target: time constant (s), damping ratio. 0.02 s tracks
-    # a hand motion without visible lag and holds hand + object against gravity; MuJoCo's soft
-    # constraints scale with mass, so it stays stable on contact with the table.
-    weld_solref: tuple[float, float] = (0.02, 1.0)
-    weld_solimp: tuple[float, ...] = (
-        0.95,
-        0.99,
-        0.001,
-        0.5,
-        2.0,
-    )  # stiffer than default: < 1 mm sag
+    # The robot: the arm model's frame origin on the floor. It faces -y (toward the operator's
+    # side of the table), its symmetry plane is x = arm_base[0]; the pedestal stands behind the
+    # table (y >= 0.33 clears the table's edge at 0.25). `arm_shoulder_height` is above the table
+    # top (OpenArm's own tables: 0.30).
+    arm_base: tuple[float, float] = (0.0, 0.35)
+    arm_shoulder_height: float = 0.30
+    # Objects spawn uniformly in this box (x, y, world m) for the RIGHT hand, and mirrored for the
+    # left one: where the hand can reach with a level forearm. `test_scene` checks that the
+    # scripted grasp works over the whole box. At home the right hand is at x ~ -0.23.
+    spawn_lo: tuple[float, float] = (-0.14, -0.07)
+    spawn_hi: tuple[float, float] = (0.0, 0.09)
+    arm_ik_dt: float = 0.025  # s between inverse-kinematics updates while stepping
     object_friction: tuple[float, float, float] = (1.0, 0.01, 0.0002)  # slide, spin, roll
     object_condim: int = 4  # 4 = with torsional friction (holds an object from turning)
     impratio: float = 10.0  # >1 makes friction harder than normal force: less slip
     settle: float = 0.2  # seconds simulated at reset so the object comes to rest
-    # MuJoCo contact sensors (`CONTACT_PARTS` x objects, hand/object vs. table), for the GPU
-    # training env: MuJoCo Warp reports contacts through sensors, not a Python contact loop.
+    # The resting arm falls asleep (MuJoCo's sleeping: no physics, tendons or collisions for it
+    # while nothing touches it), which makes a step ~2x cheaper. Only for one-hand episodes: an
+    # asleep arm ignores its wrist target. Set False for tasks that use both hands.
+    sleep_idle: bool = True
+    # Contact sensors for the GPU training env: not ported to the arms yet (raises).
     contact_sensors: bool = False
-    # The arm (arm=True; module docs). The base is the arm model's frame origin on the floor: it
-    # faces -y (toward the operator's side of the table), the pedestal stands behind the table
-    # (y >= 0.33 clears the table's edge at 0.25). `arm_shoulder_height` is above the table top
-    # (OpenArm's own tables: 0.30). Objects spawn in `arm_spawn_*` (x, y world m) instead of
-    # `spawn_*`: where the hand can reach with a level forearm; `test_scene` checks that the
-    # scripted grasp works over the whole box.
-    arm: bool = False
-    arm_base: tuple[float, float] = (0.11, 0.35)
-    arm_shoulder_height: float = 0.30
-    arm_spawn_lo: tuple[float, float] = (-0.03, -0.07)
-    arm_spawn_hi: tuple[float, float] = (0.11, 0.09)
-    arm_ik_dt: float = 0.025  # s between inverse-kinematics updates while stepping
-    # The view camera in arm mode: from the operator's side, the whole arm and the table in view.
-    arm_view_pos: tuple[float, float, float] = (0.5, -0.5, 0.5)
-    arm_view_lookat: tuple[float, float, float] = (-0.03, 0.15, 0.15)
-    view_fovy: float = 60.0  # degrees: fingertips at home + the spawn area both in view
-    # View camera, world (m): frames the hand at home and both spawn sides, ~25 deg from above,
-    # ~0.4 m away (closer made the objects on the sides leave the image).
-    view_pos: tuple[float, float, float] = (0.0, -0.38, 0.32)
-    view_lookat: tuple[float, float, float] = (0.0, -0.02, 0.15)
-
-
-# Hand parts with a contact sensor each: (sensor name, MuJoCo object type, name). A finger is
-# the subtree of its base body; the palm is the palm body alone (its subtree holds the fingers).
-CONTACT_PARTS: tuple[tuple[str, mujoco.mjtObj, str], ...] = (
-    *((f, mujoco.mjtObj.mjOBJ_XBODY, f"{f}_base") for f in ("thumb", "index", "middle", "ring",
-                                                            "little")),
-    ("palm", mujoco.mjtObj.mjOBJ_BODY, "palm"),
-)  # fmt: skip
-_FOUND, _FORCE, _POS = (1 << int(mujoco.mjtConDataField.mjCONDATA_FOUND),
-                        1 << int(mujoco.mjtConDataField.mjCONDATA_FORCE),
-                        1 << int(mujoco.mjtConDataField.mjCONDATA_POS))  # fmt: skip
-_NETFORCE = 3  # contact sensor reduce mode: one net contact (force-weighted position)
-
-
-def contact_sensor_name(part: str, obj: str) -> str:
-    return f"touch_{part}_{obj}"
-
-
-def _add_contact_sensors(scene: mujoco.MjSpec, objects: tuple[str, ...],
-                         root: str = "hand_root") -> None:  # fmt: skip
-    """Per object: one sensor per hand part (found, net force, position: 7 values), the
-    object on the table (found) and the hand on the table (found). `root`: the hand's root body."""
-    geom = mujoco.mjtObj.mjOBJ_GEOM
-    contact = mujoco.mjtSensor.mjSENS_CONTACT
-    for obj in objects:
-        for part, objtype, body in CONTACT_PARTS:
-            scene.add_sensor(name=contact_sensor_name(part, obj), type=contact, objtype=objtype,
-                             objname=body, reftype=geom, refname=obj,
-                             intprm=[_FOUND | _FORCE | _POS, _NETFORCE, 1])  # fmt: skip
-        scene.add_sensor(name=f"table_{obj}", type=contact, objtype=geom, objname=obj,
-                         reftype=geom, refname="table", intprm=[_FOUND, 0, 1])  # fmt: skip
-    scene.add_sensor(name="table_hand", type=contact, objtype=mujoco.mjtObj.mjOBJ_XBODY,
-                     objname=root, reftype=geom, refname="table",
-                     intprm=[_FOUND, 0, 1])  # fmt: skip
-
-
-def _look_at(pos: np.ndarray, target: np.ndarray, up: np.ndarray) -> np.ndarray:
-    """MuJoCo camera `xyaxes` (camera x and y in the parent frame) for looking at `target`."""
-    back = pos - target
-    back /= np.linalg.norm(back)  # camera z points backward (it looks along -z)
-    x = np.cross(up, back)
-    x /= np.linalg.norm(x)
-    return np.concatenate([x, np.cross(back, x)])
+    # The "view" camera: from the operator's side, both arms and the table in view.
+    view_fovy: float = 60.0
+    view_pos: tuple[float, float, float] = (0.0, -0.62, 0.55)
+    view_lookat: tuple[float, float, float] = (0.0, 0.12, 0.15)
 
 
 def mat_to_quat(mat: np.ndarray) -> np.ndarray:
@@ -180,41 +109,37 @@ def quat_to_mat(quat: np.ndarray) -> np.ndarray:
     return mat.reshape(3, 3)
 
 
-@functools.lru_cache(maxsize=2)
-def full_hand_model(path: Path) -> mujoco.MjModel:
-    """The unsimplified hand, only used for its masses and inertias (cached, loading is slow)."""
-    return mujoco.MjModel.from_xml_path(str(path))
+@dataclass
+class ArmSide:
+    """Everything the scene needs to know about one arm and its hand (ids in the compiled model)."""
 
-
-def hand_spec(path: Path, lite: bool = True, keep: float = KEEP) -> mujoco.MjSpec:
-    """A hand model (V1, or V1 on its wrist) as an MjSpec, ready to be attached (no floor, lights
-    or keyframes), with a wrist camera on the palm. `lite`: simplified meshes, see lite_model."""
-    hand = mujoco.MjSpec.from_file(str(path))
-    hand.meshdir = str((path.parent / hand.meshdir).resolve())
-    if lite:
-        simplify_meshes(hand, Path(hand.meshdir), keep)
-    for geom in list(hand.worldbody.geoms):  # the floor plane: the scene has a table instead
-        hand.delete(geom)
-    for light in list(hand.worldbody.lights):
-        hand.delete(light)
-    for key in list(hand.keys):  # keyframes have hand-only qpos sizes
-        hand.delete(key)
-    # Wrist camera on the palm side near the wrist, looking along the fingers (at what the hand
-    # grasps), with the back of the hand up in the image.
-    pos = WRIST_IN_MODEL + np.array([0.0, -0.05, 0.0])
-    cam = hand.body("palm").add_camera(name="wrist", fovy=75.0, pos=pos)
-    cam.alt.type = mujoco.mjtOrientation.mjORIENTATION_XYAXES
-    cam.alt.xyaxes = _look_at(pos, np.array([-0.0335, -0.015, 0.10]), np.array([0, 1.0, 0]))
-    return hand
+    name: str
+    root: int  # the forearm body: the hand's root
+    hand_bodies: set[int]  # every body from the forearm down
+    act: np.ndarray  # the hand's 16 servo actuators, V1 order
+    qadr: np.ndarray  # their joints' qpos addresses (the 16 servo joints)
+    arm_qadr: np.ndarray  # the arm's 7 joints: qpos addresses
+    arm_dofs: np.ndarray  # and dof addresses
+    arm_act: np.ndarray  # and actuators
+    tree: int  # its kinematic tree (for sleeping)
+    ik: ArmIK
+    site: int  # the wrist site in the scene's model
+    mocap: int  # index of this side's wrist target in the mocap arrays
+    tips: np.ndarray  # fingertip sites: thumb, index, middle, ring, little
+    ready: np.ndarray  # arm joint angles at the start pose
+    home_pos: np.ndarray  # wrist position at the start pose (world, m)
+    home_quat: np.ndarray  # and orientation (wxyz)
 
 
 class GraspScene:
-    """The V1 hand on an ideal floating wrist, above a table with objects (see module docs)."""
+    """The robot at a table with objects (see module docs)."""
 
-    CAMERAS = ("view", "wrist")
+    CAMERAS = ("view", "right_wrist", "left_wrist")
 
     def __init__(self, config: SceneConfig | None = None) -> None:
         self.config = config = config or SceneConfig()
+        if config.contact_sensors:
+            raise NotImplementedError("contact sensors (the GPU path) are not ported to the arms")
         for kind in config.objects:
             if kind not in OBJECTS:
                 raise ValueError(f"unknown object {kind!r}, expected one of {sorted(OBJECTS)}")
@@ -223,15 +148,7 @@ class GraspScene:
         self.data = mujoco.MjData(self.model)
         m = self.model
 
-        # The hand's root body: the free body that the weld holds, or (arm) the forearm.
-        self._root = m.body("forearm" if config.arm else "hand_root").id
-        self._root_qpos = None if config.arm else m.jnt_qposadr[m.body_jntadr[self._root]]
-        self._mocap = m.body_mocapid[m.body("wrist_target").id]
-        self._act = np.array([m.actuator(n).id for n in V1.joint_names])
-        self._qadr = np.array([m.jnt_qposadr[m.joint(n).id] for n in V1.joint_names])
         self._table = m.geom("table").id
-        # Every body of the hand (the root's subtree), for contact checks.
-        self._hand_bodies = {b for b in range(m.nbody) if self._in_hand(b)}
         self._obj_body = {k: m.body(k).id for k in config.objects}
         self._obj_qpos = {k: m.jnt_qposadr[m.body_jntadr[b]] for k, b in self._obj_body.items()}
         self._obj_dof = {k: m.jnt_dofadr[m.body_jntadr[b]] for k, b in self._obj_body.items()}
@@ -239,46 +156,57 @@ class GraspScene:
         self._obj_contype = {k: (m.geom_contype[g], m.geom_conaffinity[g])
                              for k, g in self._obj_geom.items()}  # fmt: skip
 
-        # The view camera's basis C = [right, up, backward] as world columns (fixed camera).
-        mujoco.mj_kinematics(m, self.data)
-        mujoco.mj_camlight(m, self.data)
-        # The mirror mapping uses the view camera's axes *levelled*: right = the camera's right
-        # (horizontal), up = world up, backward = horizontal toward the camera. With the camera's
-        # own (tilted, ~30 deg down) axes, moving the real hand toward the webcam also lifted the
-        # sim hand, so the operator had to hold their hand very low to reach the table.
-        cam_x = self.data.cam_xmat[m.camera("view").id].reshape(3, 3)[:, 0]
-        right = np.array([cam_x[0], cam_x[1], 0.0]) / np.linalg.norm(cam_x[:2])
-        up = np.array([0.0, 0.0, 1.0])
-        self.view_basis = np.column_stack([right, up, np.cross(right, up)])
-        if config.arm:
-            self._init_arm()
-        else:
-            self.home_pos = np.array(config.home, dtype=float)
-            self.home_quat = mat_to_quat(self.view_basis @ HOME_ROT_VIEW)
-
+        self.mirror_x = config.arm_base[0]  # the robot's symmetry plane
+        self.sides = {side: self._init_side(side, i) for i, side in enumerate(SIDES)}
+        self._side = "right"
+        self.ik_error = 0.0  # last inverse-kinematics residual of the active arm (m + 0.5 x rad)
         self._active = config.objects[0]
         self._rest_z = 0.0
         self.reset(np.random.default_rng(0))
 
-    def _init_arm(self) -> None:
-        """Arm mode: the IK controller, the ready pose, and the home pose that follows from it
-        (the hand's orientation at the start pose = `SIDE_GRASP_ROT`: fingers forward, thumb up)."""
-        from .arm import ARM_JOINTS, POSES, ArmIK
-
-        m = self.model
-        self._arm_qadr = np.array([m.joint(n).qposadr[0] for n in ARM_JOINTS])
-        self._arm_dofs = np.array([m.jnt_dofadr[m.joint(n).id] for n in ARM_JOINTS])
-        self._arm_act = np.array([m.actuator(n).id for n in ARM_JOINTS])
-        ready = POSES["table"]
-        self.arm_ready = np.array([ready.get(n, 0.0) for n in ARM_JOINTS])
-        self._ik = ArmIK(m, rest=self.arm_ready)
-        qpos = self.data.qpos.copy()
-        qpos[self._arm_qadr] = self.arm_ready
-        pos, rot = self._ik.pose(qpos)
-        self.home_pos, self.home_quat = pos, mat_to_quat(rot)
-        self.ik_error = 0.0  # last inverse-kinematics residual (m + 0.5 x rad); ~0 = reachable
-
     # ----- building the model -----
+
+    def _init_side(self, side: str, mocap: int) -> ArmSide:
+        m = self.model
+        root = m.body(f"{side}_forearm").id
+        hand_bodies = set()
+        for b in range(m.nbody):
+            body = b
+            while body:
+                if body == root:
+                    hand_bodies.add(b)
+                    break
+                body = m.body_parentid[body]
+        arm_joints = joint_names(side)
+        ready = np.array([POSES["table"].get(n, 0.0) for n in ARM_JOINTS])
+        # The IK works on a bare kinematic copy of the arm, placed like the arm in this scene.
+        ik = ArmIK(ik_model(side, *self._arm_frame()), arm_joints, f"{side}_{WRIST_SITE}", rest=ready)
+        pos, rot = ik.pose(ready)
+        return ArmSide(
+            name=side,
+            root=root,
+            hand_bodies=hand_bodies,
+            act=np.array([m.actuator(n).id for n in hand_joint_names(side)]),
+            qadr=np.array([m.jnt_qposadr[m.joint(n).id] for n in hand_joint_names(side)]),
+            arm_qadr=np.array([m.joint(n).qposadr[0] for n in arm_joints]),
+            arm_dofs=np.array([m.jnt_dofadr[m.joint(n).id] for n in arm_joints]),
+            arm_act=np.array([m.actuator(n).id for n in arm_joints]),
+            tree=int(m.body_treeid[root]),
+            ik=ik,
+            site=m.site(f"{side}_{WRIST_SITE}").id,
+            mocap=m.body_mocapid[m.body(f"wrist_target_{side}").id],
+            tips=np.array([m.site(f"{side}_{f}_tip").id for f in TIP_FINGERS]),
+            ready=ready,
+            home_pos=pos,
+            home_quat=mat_to_quat(rot),
+        )
+
+    def _arm_frame(self) -> tuple[list[float], list[float]]:
+        """Where the arm model's origin is in the world (position, quaternion): on the floor behind
+        the table, turned so the arms' +x (forward) points along world -y."""
+        cfg = self.config
+        base_z = cfg.arm_shoulder_height - ARM_SHOULDER_Z
+        return [*cfg.arm_base, base_z], [math.cos(math.pi / 4), 0, 0, -math.sin(math.pi / 4)]
 
     def _build(self) -> mujoco.MjModel:
         cfg = self.config
@@ -308,37 +236,25 @@ class GraspScene:
         world.add_geom(name="table", type=mujoco.mjtGeom.mjGEOM_BOX, size=[hx, hy, 0.02],
                        pos=[0, 0, -0.02], material="scene_table", friction=[0.8, 0.01, 0.0001])  # fmt: skip
         base_z = cfg.arm_shoulder_height - ARM_SHOULDER_Z  # the arm model's origin, on the floor
-        floor_z = base_z - 0.004 if cfg.arm else -0.75
         world.add_geom(name="floor", type=mujoco.mjtGeom.mjGEOM_PLANE, size=[2, 2, 0.1],
-                       pos=[0, 0, floor_z], material="scene_floor", contype=0, conaffinity=0)  # fmt: skip
+                       pos=[0, 0, base_z - 0.004], material="scene_floor", contype=0, conaffinity=0)  # fmt: skip
 
-        view_pos, view_at = ((cfg.arm_view_pos, cfg.arm_view_lookat) if cfg.arm
-                             else (cfg.view_pos, cfg.view_lookat))  # fmt: skip
-        cam = world.add_camera(name="view", fovy=cfg.view_fovy, pos=list(view_pos))
+        cam = world.add_camera(name="view", fovy=cfg.view_fovy, pos=list(cfg.view_pos))
         cam.alt.type = mujoco.mjtOrientation.mjORIENTATION_XYAXES
-        cam.alt.xyaxes = _look_at(np.array(view_pos), np.array(view_at), np.array([0, 0, 1.0]))
+        cam.alt.xyaxes = _look_at(np.array(cfg.view_pos), np.array(cfg.view_lookat),
+                                  np.array([0, 0, 1.0]))  # fmt: skip
 
-        target = world.add_body(name="wrist_target", mocap=True, pos=list(cfg.home))
-        target.add_geom(type=mujoco.mjtGeom.mjGEOM_SPHERE, size=[0.004], rgba=[0.1, 0.6, 1, 0.5],
-                        contype=0, conaffinity=0, group=2)  # fmt: skip
-        if cfg.arm:
-            # The arm: OpenArm's pedestal, shoulder and elbow, then the Tendra forearm, wrist and
-            # hand. Its +x (forward) points along world -y, toward the operator's side.
-            from .arm import arm_spec
+        # One wrist target per hand (mocap bodies: where the IK should put the wrist).
+        for side in SIDES:
+            target = world.add_body(name=f"wrist_target_{side}", mocap=True, pos=[0, 0, 0.1])
+            target.add_geom(type=mujoco.mjtGeom.mjGEOM_SPHERE, size=[0.004],
+                            rgba=[0.1, 0.6, 1, 0.5], contype=0, conaffinity=0, group=2)  # fmt: skip
 
-            frame = world.add_frame(pos=[*cfg.arm_base, base_z],
-                                    quat=[math.cos(math.pi / 4), 0, 0, -math.sin(math.pi / 4)])  # fmt: skip
-            scene.attach(arm_spec(cfg.lite, cfg.lite_keep, floor=False), frame=frame, prefix="")
-        else:
-            # The floating hand: a free body whose frame is the wrist point, held by a weld.
-            root = world.add_body(name="hand_root", pos=list(cfg.home))
-            root.add_freejoint(name="hand_root")
-            frame = root.add_frame(pos=list(-WRIST_IN_MODEL))
-            scene.attach(hand_spec(V1.model_path, cfg.lite, cfg.lite_keep), frame=frame, prefix="")
-            scene.add_equality(type=mujoco.mjtEq.mjEQ_WELD, name="wrist", name1="hand_root",
-                               name2="wrist_target", objtype=mujoco.mjtObj.mjOBJ_BODY,
-                               solref=list(cfg.weld_solref), solimp=list(cfg.weld_solimp),
-                               data=[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1])  # identity offset  # fmt: skip
+        # The robot: OpenArm's pedestal, shoulders and elbows, the Tendra forearms, wrists and
+        # hands. Its +x (forward) points along world -y, toward the operator's side.
+        frame_pos, frame_quat = self._arm_frame()
+        frame = world.add_frame(pos=frame_pos, quat=frame_quat)
+        scene.attach(arm_spec(cfg.lite, cfg.lite_keep, floor=False), frame=frame, prefix="")
 
         # Objects, each with a free joint. Parked ones float (gravity compensated) far away.
         for i, kind in enumerate(cfg.objects):
@@ -348,64 +264,135 @@ class GraspScene:
             body.add_geom(name=kind, type=gtype, size=list(size), mass=mass, rgba=list(rgba),
                           friction=list(cfg.object_friction), condim=cfg.object_condim)  # fmt: skip
 
-        if cfg.contact_sensors:
-            _add_contact_sensors(scene, cfg.objects, "forearm" if cfg.arm else "hand_root")
         model = scene.compile()
         if cfg.lite:
-            from .arm import WRIST_MODEL_PATH
-
-            copy_inertia(model, full_hand_model(WRIST_MODEL_PATH if cfg.arm else V1.model_path))
+            for side in SIDES:
+                copy_inertia(model, full_hand_model(WRIST_MODEL_PATHS[side]), prefix=f"{side}_")
         model.light_castshadow[:] = 0
         model.mat_reflectance[:] = 0
-        if cfg.arm:
-            # A real arm carries its own weight (gravity compensation in its controller). Without
-            # it the position servos sag 5 mm under the hand, and the wrist would be off by that.
-            # The fingers and objects are not compensated: grip and lift load the hand as usual.
-            for b in range(1, model.nbody):
-                name = model.body(b).name
-                if name not in OBJECTS and name != "wrist_target" and not name.startswith(FINGERS):
-                    model.body_gravcomp[b] = 1.0
+        # A real arm carries its own weight (gravity compensation in its controller). Without it
+        # the position servos sag 5 mm under the hand, and the wrist would be off by that. The
+        # fingers and objects are not compensated: grip and lift load the hand as usual.
+        finger_prefixes = tuple(f"{side}_{f}" for side in SIDES for f in FINGERS)
+        for b in range(1, model.nbody):
+            name = model.body(b).name
+            if (name not in OBJECTS and not name.startswith("wrist_target")
+                    and not name.startswith(finger_prefixes)):  # fmt: skip
+                model.body_gravcomp[b] = 1.0
+        model.opt.enableflags |= int(mujoco.mjtEnableBit.mjENBL_SLEEP)
         mujoco.mj_setConst(model, mujoco.MjData(model))
-        strands = 2 * V1.num_joints + len(V1.couplings)  # servo loops + one DIP coupling bar each
-        nu = V1.num_joints + (7 if cfg.arm else 0)  # + the arm's 7 joints
-        if model.nu != nu or model.ntendon != strands or model.neq < len(V1.couplings):
-            raise RuntimeError("scene model lost hand actuators, tendons or DIP couplings")
+        strands = len(SIDES) * (2 * V1.num_joints + len(V1.couplings))  # servo loops + DIP bars
+        nu = len(SIDES) * (V1.num_joints + len(ARM_JOINTS))
+        if model.nu != nu or model.ntendon != strands or model.neq < len(SIDES) * len(V1.couplings):
+            raise RuntimeError("scene model lost arm or hand actuators, tendons or DIP couplings")
         return model
 
     @staticmethod
     def _park_pos(i: int) -> list[float]:
         return [1.0 + 0.2 * i, 1.5, 0.3]  # far behind the table, out of every camera's view
 
-    def _in_hand(self, body: int) -> bool:
-        while body:
-            if body == self._root:
-                return True
-            body = self.model.body_parentid[body]
-        return False
+    # ----- the active side and the mirror -----
+
+    @property
+    def side(self) -> str:
+        """The hand that picks up the object in this episode: "right" or "left"."""
+        return self._side
+
+    @property
+    def arm(self) -> ArmSide:
+        return self.sides[self._side]
+
+    @property
+    def flip(self) -> bool:
+        """True for the left hand: its world is the mirror image of the right one's."""
+        return self._side == "left"
+
+    # The mirror, both ways (it is its own inverse): the left side's world quantities as the right
+    # hand would have them (positions mirrored in the plane x = mirror_x, rotations as M R M_hand,
+    # M = flip x in the world, M_hand = flip x in the hand model's frame, which is mirrored too).
+    # For the right hand they do nothing. The policy sees and acts in this canonical right-hand view.
+    def canon_pos(self, p: np.ndarray) -> np.ndarray:
+        p = np.asarray(p, dtype=float)
+        return np.array([2 * self.mirror_x - p[0], p[1], p[2]]) if self.flip else p.copy()
+
+    def canon_vec(self, v: np.ndarray) -> np.ndarray:
+        """A polar vector (velocity, offset)."""
+        v = np.asarray(v, dtype=float)
+        return np.array([-v[0], v[1], v[2]]) if self.flip else v.copy()
+
+    def canon_axial(self, w: np.ndarray) -> np.ndarray:
+        """An axial vector (angular velocity, turn rate): mirrored axial vectors flip the other
+        two components."""
+        w = np.asarray(w, dtype=float)
+        return np.array([w[0], -w[1], -w[2]]) if self.flip else w.copy()
+
+    def canon_rot(self, r: np.ndarray) -> np.ndarray:
+        r = np.asarray(r, dtype=float)
+        return np.diag([-1.0, 1.0, 1.0]) @ r @ np.diag([-1.0, 1.0, 1.0]) if self.flip else r.copy()
+
+    # Aliases for the active side, so callers don't need `scene.arm.x` everywhere.
+    @property
+    def _act(self) -> np.ndarray:
+        return self.arm.act
+
+    @property
+    def _qadr(self) -> np.ndarray:
+        return self.arm.qadr
+
+    @property
+    def _hand_bodies(self) -> set[int]:
+        return self.arm.hand_bodies
+
+    @property
+    def _ik(self) -> ArmIK:
+        return self.arm.ik
+
+    @property
+    def home_pos(self) -> np.ndarray:
+        return self.arm.home_pos
+
+    @property
+    def home_quat(self) -> np.ndarray:
+        return self.arm.home_quat
+
+    @property
+    def arm_ready(self) -> np.ndarray:
+        return self.arm.ready
 
     # ----- episode -----
 
-    def reset(self, rng: np.random.Generator | None = None, obj: str | None = None) -> None:
-        """Hand home (fingers open), one object at a random spot on the table, others parked."""
+    def reset(self, rng: np.random.Generator | None = None, obj: str | None = None,
+              side: str | None = None) -> None:  # fmt: skip
+        """Both arms at home (fingers open), one object at a random spot on the active hand's side
+        of the table (`side`: "right" or "left", random if None), the others parked."""
         rng = rng or np.random.default_rng()
-        m, d = self.model, self.data
+        m, d, cfg = self.model, self.data, self.config
         if obj is None:
-            obj = self.config.objects[int(rng.integers(len(self.config.objects)))]
+            obj = cfg.objects[int(rng.integers(len(cfg.objects)))]
         if obj not in self._obj_body:
-            raise ValueError(f"object {obj!r} is not in this scene ({self.config.objects})")
+            raise ValueError(f"object {obj!r} is not in this scene ({cfg.objects})")
+        if side is None:
+            side = SIDES[int(rng.integers(len(SIDES)))]
+        if side not in SIDES:
+            raise ValueError(f"side must be one of {SIDES}, not {side!r}")
+        self._side = side
         self._active = obj
         mujoco.mj_resetData(m, d)
+        for arm in self.sides.values():  # the resting arm may sleep, the working one never
+            sleepy = cfg.sleep_idle and arm.name != side
+            m.tree_sleep_policy[arm.tree] = int(
+                mujoco.mjtSleepPolicy.mjSLEEP_ALLOWED if sleepy else mujoco.mjtSleepPolicy.mjSLEEP_NEVER
+            )
 
-        if self.config.arm:
-            d.qpos[self._arm_qadr] = self.arm_ready
-            d.ctrl[self._arm_act] = self.arm_ready
-        else:
-            d.qpos[self._root_qpos : self._root_qpos + 3] = self.home_pos
-            d.qpos[self._root_qpos + 3 : self._root_qpos + 7] = self.home_quat
-        self.set_wrist_target(self.home_pos, self.home_quat)
-        self.set_finger_targets(np.zeros(V1.num_joints))
+        for arm in self.sides.values():
+            d.qpos[arm.arm_qadr] = arm.ready
+            d.ctrl[arm.arm_act] = arm.ready
+            d.mocap_pos[arm.mocap] = arm.home_pos
+            d.mocap_quat[arm.mocap] = arm.home_quat
+        d.ctrl[self.sides["right"].act] = 0.0  # fingers open
+        d.ctrl[self.sides["left"].act] = 0.0
 
-        for i, kind in enumerate(self.config.objects):
+        for i, kind in enumerate(cfg.objects):
             adr, geom, body = self._obj_qpos[kind], self._obj_geom[kind], self._obj_body[kind]
             active = kind == obj
             m.body_gravcomp[body] = 0.0 if active else 1.0
@@ -413,18 +400,15 @@ class GraspScene:
                 self._obj_contype[kind] if active else (0, 0)
             )
             if active:
-                cfg = self.config
-                xy = rng.uniform(*((cfg.arm_spawn_lo, cfg.arm_spawn_hi) if cfg.arm
-                                   else (cfg.spawn_lo, cfg.spawn_hi)))  # fmt: skip
-                if not cfg.arm and cfg.spawn_sides and rng.random() < 0.5:
-                    xy[0] = -xy[0]  # the other side of the hand
-                yaw = rng.uniform(-np.pi, np.pi)
+                x, y = rng.uniform(cfg.spawn_lo, cfg.spawn_hi)
+                xy = self.canon_pos([x, y, 0.0])[:2]  # the left hand's box is the mirror image
+                yaw = rng.uniform(-np.pi, np.pi) * (-1.0 if self.flip else 1.0)  # mirrored too
                 d.qpos[adr : adr + 3] = [xy[0], xy[1], self._half_height(kind) + 0.001]
                 d.qpos[adr + 3 : adr + 7] = [np.cos(yaw / 2), 0, 0, np.sin(yaw / 2)]
             else:
                 d.qpos[adr : adr + 3] = self._park_pos(i)
         mujoco.mj_forward(m, d)
-        self.step(self.config.settle)
+        self.step(cfg.settle)
         self._rest_z = float(d.xpos[self._obj_body[obj]][2])
 
     def _half_height(self, kind: str) -> float:
@@ -444,113 +428,94 @@ class GraspScene:
 
     # ----- wrist -----
 
-    def set_wrist_target(self, pos: np.ndarray, quat: np.ndarray) -> None:
-        """Where the ideal arm should put the wrist: world position (m) and quaternion (wxyz)."""
+    def _arm(self, side: str | None) -> ArmSide:
+        return self.sides[side] if side else self.arm
+
+    def set_wrist_target(self, pos: np.ndarray, quat: np.ndarray, side: str | None = None) -> None:
+        """Where the arm should put the wrist: world position (m) and quaternion (wxyz). The
+        active hand's, unless `side` says otherwise."""
+        arm = self._arm(side)
         quat = np.asarray(quat, dtype=float)
-        self.data.mocap_pos[self._mocap] = pos
-        self.data.mocap_quat[self._mocap] = quat / np.linalg.norm(quat)
+        self.data.mocap_pos[arm.mocap] = pos
+        self.data.mocap_quat[arm.mocap] = quat / np.linalg.norm(quat)
 
-    def view_to_world(self, pos_view: np.ndarray, rot_view: np.ndarray
-                      ) -> tuple[np.ndarray, np.ndarray]:  # fmt: skip
-        """A view-frame wrist pose as a world pose (pos, quat), the view camera as a mirror.
+    def wrist_target(self, side: str | None = None) -> tuple[np.ndarray, np.ndarray]:
+        arm = self._arm(side)
+        return self.data.mocap_pos[arm.mocap].copy(), self.data.mocap_quat[arm.mocap].copy()
 
-        world_pos = home + C @ pos_view, world_R = C @ rot_view, C = `view_basis` = [right, up,
-        backward] of the view camera, levelled (up = world up, backward = horizontal toward the
-        camera). `rot_view` columns are the hand model's axes (X thumb side, Y back of the hand,
-        Z fingers) in the view frame; `HOME_ROT_VIEW` = palm facing the camera, fingers up.
-        """
-        c = self.view_basis
-        pos = self.home_pos + c @ np.asarray(pos_view, dtype=float)
-        return pos, mat_to_quat(c @ np.asarray(rot_view, dtype=float))
-
-    def set_wrist_from_view(self, pos_view: np.ndarray, rot_view: np.ndarray) -> None:
-        self.set_wrist_target(*self.view_to_world(pos_view, rot_view))
-
-    def wrist_pose(self) -> tuple[np.ndarray, np.ndarray]:
-        """Actual pose of the wrist point (hand_root; the arm's `wrist` site): world position,
-        quaternion wxyz."""
-        pos, mat = self.wrist_frame()
+    def wrist_pose(self, side: str | None = None) -> tuple[np.ndarray, np.ndarray]:
+        """Actual pose of the wrist point (the `<side>_wrist` site): world position, quat wxyz."""
+        pos, mat = self.wrist_frame(side)
         return pos, mat_to_quat(mat)
 
-    def wrist_frame(self) -> tuple[np.ndarray, np.ndarray]:
-        """The wrist point and the hand model's axes (X thumb side, Y back of the hand, Z along the
-        fingers) as world position and 3x3 matrix (columns = axes)."""
-        d = self.data
-        if self.config.arm:
-            site = self._ik.site
-            return d.site_xpos[site].copy(), d.site_xmat[site].reshape(3, 3).copy()
-        return d.xpos[self._root].copy(), d.xmat[self._root].reshape(3, 3).copy()
+    def wrist_frame(self, side: str | None = None) -> tuple[np.ndarray, np.ndarray]:
+        """The wrist point and the hand model's axes (X thumb side on the right hand, -X on the
+        left; Y back of the hand; Z along the fingers) as world position and 3x3 matrix."""
+        arm, d = self._arm(side), self.data
+        return d.site_xpos[arm.site].copy(), d.site_xmat[arm.site].reshape(3, 3).copy()
 
-    def wrist_velocity(self) -> np.ndarray:
-        """Wrist velocity (6): linear in the world frame, angular in the hand's own frame (a free
-        joint's convention, so the floating and the arm hand give the same kind of numbers)."""
-        m, d = self.model, self.data
-        if not self.config.arm:
-            dof = m.jnt_dofadr[m.body_jntadr[self._root]]
-            return d.qvel[dof : dof + 6].copy()
+    def wrist_velocity(self, side: str | None = None) -> np.ndarray:
+        """Wrist velocity (6): linear in the world frame, angular in the hand's own frame."""
+        arm, m, d = self._arm(side), self.model, self.data
         vel = np.zeros(6)  # [angular, linear], world frame, at the site
-        mujoco.mj_objectVelocity(m, d, mujoco.mjtObj.mjOBJ_SITE, self._ik.site, vel, 0)
-        mat = d.site_xmat[self._ik.site].reshape(3, 3)
+        mujoco.mj_objectVelocity(m, d, mujoco.mjtObj.mjOBJ_SITE, arm.site, vel, 0)
+        mat = d.site_xmat[arm.site].reshape(3, 3)
         return np.concatenate([vel[3:], mat.T @ vel[:3]])
 
-    # ----- arm -----
+    # ----- arms -----
 
-    def drive_arm(self) -> None:
-        """Inverse kinematics: set the arm servos' targets so the wrist goes to the target pose.
-        Does nothing without an arm (the weld does it). Called by `step`; call it yourself if you
-        step the physics directly."""
-        if not self.config.arm:
-            return
-        pos, quat = self.wrist_target()
-        q, self.ik_error = self._ik.solve(self.data.qpos, pos, quat_to_mat(quat), iters=6)
-        self.data.ctrl[self._arm_act] = q
+    def drive_arms(self) -> None:
+        """Inverse kinematics: set both arms' servo targets so each wrist goes to its target pose.
+        Called by `step`; call it yourself if you step the physics directly."""
+        for arm in self.sides.values():
+            if self.data.tree_asleep[arm.tree] >= 0:  # asleep: nothing to do
+                continue
+            pos, quat = self.wrist_target(arm.name)
+            q, err = arm.ik.solve(self.data.qpos[arm.arm_qadr], pos, quat_to_mat(quat), iters=6)
+            self.data.ctrl[arm.arm_act] = q
+            if arm.name == self._side:
+                self.ik_error = err
 
-    def arm_positions(self) -> np.ndarray:
-        """The arm's 7 joint angles (`tendra.arm.ARM_JOINTS` order, rad); empty without an arm."""
-        return self.data.qpos[self._arm_qadr].copy() if self.config.arm else np.zeros(0)
+    def arm_positions(self, side: str | None = None) -> np.ndarray:
+        """The 7 arm joint angles (`tendra.arm.ARM_JOINTS` order, rad)."""
+        return self.data.qpos[self._arm(side).arm_qadr].copy()
 
-    def arm_targets(self) -> np.ndarray:
-        """The arm servos' current targets (what the IK last asked for); empty without an arm."""
-        return self.data.ctrl[self._arm_act].copy() if self.config.arm else np.zeros(0)
+    def arm_targets(self, side: str | None = None) -> np.ndarray:
+        """The arm servos' current targets (what the IK last asked for)."""
+        return self.data.ctrl[self._arm(side).arm_act].copy()
 
-    def arm_velocities(self) -> np.ndarray:
-        return self.data.qvel[self._arm_dofs].copy() if self.config.arm else np.zeros(0)
-
-    def wrist_target(self) -> tuple[np.ndarray, np.ndarray]:
-        return self.data.mocap_pos[self._mocap].copy(), self.data.mocap_quat[self._mocap].copy()
+    def arm_velocities(self, side: str | None = None) -> np.ndarray:
+        return self.data.qvel[self._arm(side).arm_dofs].copy()
 
     # ----- fingers -----
 
-    def set_finger_targets(self, q: np.ndarray) -> None:
+    def set_finger_targets(self, q: np.ndarray, side: str | None = None) -> None:
         """16 joint targets in V1 order (rad), clipped to the joint limits."""
         q = np.asarray(q, dtype=float)
         if q.shape != (V1.num_joints,):
             raise ValueError(f"expected {V1.num_joints} targets, got shape {q.shape}")
-        self.data.ctrl[self._act] = np.clip(q, V1.lower, V1.upper)
+        self.data.ctrl[self._arm(side).act] = np.clip(q, V1.lower, V1.upper)
 
-    def finger_targets(self) -> np.ndarray:
-        return self.data.ctrl[self._act].copy()
+    def finger_targets(self, side: str | None = None) -> np.ndarray:
+        return self.data.ctrl[self._arm(side).act].copy()
 
-    def finger_positions(self) -> np.ndarray:
+    def finger_positions(self, side: str | None = None) -> np.ndarray:
         """16 measured joint angles in V1 order (rad)."""
-        return self.data.qpos[self._qadr].copy()
+        return self.data.qpos[self._arm(side).qadr].copy()
 
-    def all_finger_positions(self) -> np.ndarray:
+    def all_finger_positions(self, side: str | None = None) -> np.ndarray:
         """All 20 joint angles, the coupled DIPs last (`V1.all_joint_names` order, rad)."""
-        m = self.model
-        adr = [m.joint(n).qposadr[0] for n in V1.all_joint_names]
+        side = side or self._side
+        adr = [self.model.joint(f"{side}_{n}").qposadr[0] for n in V1.all_joint_names]
         return self.data.qpos[adr].copy()
 
     # ----- simulation and checks -----
 
     def step(self, seconds: float) -> None:
         n = max(1, round(seconds / self.model.opt.timestep))
-        if not self.config.arm:
-            mujoco.mj_step(self.model, self.data, n)
-            return
         chunk = max(1, round(self.config.arm_ik_dt / self.model.opt.timestep))
-        while n > 0:  # the arm follows the target through IK, refreshed every `arm_ik_dt`
-            self.drive_arm()
+        while n > 0:  # the arms follow their targets through IK, refreshed every `arm_ik_dt`
+            self.drive_arms()
             mujoco.mj_step(self.model, self.data, min(chunk, n))
             n -= chunk
 
@@ -560,7 +525,7 @@ class GraspScene:
         return self.data.xpos[b].copy(), self.data.xquat[b].copy()
 
     def object_contacts(self) -> tuple[bool, bool]:
-        """(touches the table, touches the hand) for the active object."""
+        """(touches the table, touches the active hand) for the active object."""
         m, d = self.model, self.data
         geom = self._obj_geom[self._active]
         g1, g2 = d.contact.geom1[: d.ncon], d.contact.geom2[: d.ncon]
@@ -578,14 +543,20 @@ class GraspScene:
 
 # ----- a scripted grasp (a baseline and a test that the hand can hold something) -----
 
-# Power grasp of the standing cylinder from the side: fingers horizontal and pointing toward
-# the view camera (-Y), thumb side up (+Z), palm facing +X. The cylinder stands in front of the
-# knuckles; the fingers wrap around it and the thumb (cmc_flex) presses it from the wrist side
-# (found by trial, holds for every spawn tried). Columns = hand model axes in the world.
+# Power grasp from the side, in the right hand's (canonical) view: fingers horizontal and pointing
+# toward the operator's side (-Y), thumb up (+Z), palm facing +X (toward the body's middle). The
+# object stands in front of the knuckles; the fingers wrap around it and the thumb (cmc_flex)
+# presses it from the wrist side (found by trial, holds for every spawn tried). Columns = hand
+# model axes in the world. This is also the start pose's orientation (the arm's "table" pose).
 SIDE_GRASP_ROT = np.array([[0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0]])
-# Wrist minus cylinder centre (world, m) in that pose. The forearm and palm reach 45 mm below
-# the wrist on the little-finger side, so the wrist stays >= 50 mm above the table.
+# Wrist minus cylinder centre (world, m) in that pose. The forearm and palm reach 45 mm below the
+# wrist on the little-finger side, so the wrist stays >= 50 mm above the table.
 SIDE_GRASP_OFFSET = np.array([-0.040, 0.085, 0.0065])
+
+# The arm can't put its wrist as low as the grasp wants for the small cube and ball (the forearm
+# would touch the table), so the fingers tip down a little and the wrist rides a little higher.
+# Found by sweeping both: all three objects lift from every spawn tried, with exact IK all the way.
+ARM_GRASP = {"pitch": math.radians(8.0), "raise_": 0.01}
 
 POWER_GRASP: dict[str, float] = {
     **{f"{f}_{j}": q for f in ("index", "middle", "ring", "little")
@@ -604,7 +575,7 @@ def grasp_targets(grasp: dict[str, float] = POWER_GRASP) -> np.ndarray:
 
 def move_wrist(scene: GraspScene, pos: np.ndarray, quat: np.ndarray, seconds: float,
                dt: float = 0.02) -> None:  # fmt: skip
-    """Move the wrist target along a straight line (and turn it) to `pos`, `quat`."""
+    """Move the active hand's wrist target along a straight line (and turn it) to `pos`, `quat`."""
     p0, q0 = scene.wrist_target()
     quat = np.asarray(quat, dtype=float)
     if np.dot(q0, quat) < 0:
@@ -620,29 +591,45 @@ def move_wrist(scene: GraspScene, pos: np.ndarray, quat: np.ndarray, seconds: fl
 
 def scripted_grasp(scene: GraspScene, lift: float = 0.10, hold: float = 2.0, pitch: float = 0.0,
                    raise_: float = 0.0) -> None:  # fmt: skip
-    """Pick up the active object with a side power grasp, lift, hold.
+    """Pick up the active object with a side power grasp, lift, hold (with either hand).
 
-    `pitch` (rad) tips the fingers down about the world x axis and `raise_` (m) lifts the wrist.
-    The floating hand needs neither. The arm can't put its wrist as low as the floating hand
-    can for the small cube and ball (the forearm would touch the table), so it uses a small
-    pitch and a little height (`ARM_GRASP`: all three objects, from the whole spawn box).
+    `pitch` (rad) tips the fingers down about the x axis and `raise_` (m) lifts the wrist: pass
+    `**ARM_GRASP` for the cube and the ball. Works out the grasp for the right hand and maps it to
+    the left one with the scene's mirror.
     """
     c, s = np.cos(pitch), np.sin(pitch)
     tip = np.array([[1.0, 0.0, 0.0], [0.0, c, -s], [0.0, s, c]])
-    obj, _ = scene.object_pose()
-    quat = mat_to_quat(tip @ SIDE_GRASP_ROT)
+    obj = scene.canon_pos(scene.object_pose()[0])
     grasp = obj + tip @ SIDE_GRASP_OFFSET + np.array([0.0, 0.0, raise_])
     side = np.array([-0.05, 0.0, 0.0])  # pre-grasp: beside the object, palm facing it
+    home_z = scene.canon_pos(scene.home_pos)[2]
+
+    def go(pos: np.ndarray, seconds: float) -> None:
+        quat = mat_to_quat(scene.canon_rot(tip @ SIDE_GRASP_ROT))
+        move_wrist(scene, scene.canon_pos(pos), quat, seconds)
+
     scene.set_finger_targets(np.zeros(V1.num_joints))
-    move_wrist(scene, np.array([*(grasp + side)[:2], max(scene.home_pos[2], grasp[2])]), quat, 0.8)
-    move_wrist(scene, grasp + side, quat, 0.5)
-    move_wrist(scene, grasp, quat, 0.5)
+    go(np.array([*(grasp + side)[:2], max(home_z, grasp[2])]), 0.8)
+    go(grasp + side, 0.5)
+    go(grasp, 0.5)
     scene.set_finger_targets(grasp_targets())
     scene.step(0.8)
-    move_wrist(scene, grasp + np.array([0.0, 0.0, lift]), quat, 1.0)
+    go(grasp + np.array([0.0, 0.0, lift]), 1.0)
     scene.step(hold)
 
 
-# What `scripted_grasp` needs with the arm (found by sweeping pitch and height: all three objects
-# lift from every spawn tried, with exact inverse kinematics all the way).
-ARM_GRASP = {"pitch": math.radians(8.0), "raise_": 0.01}
+__all__ = [
+    "ARM_GRASP",
+    "OBJECTS",
+    "POWER_GRASP",
+    "SIDE_GRASP_OFFSET",
+    "SIDE_GRASP_ROT",
+    "ArmSide",
+    "GraspScene",
+    "SceneConfig",
+    "grasp_targets",
+    "mat_to_quat",
+    "move_wrist",
+    "quat_to_mat",
+    "scripted_grasp",
+]

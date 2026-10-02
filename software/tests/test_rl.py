@@ -96,15 +96,15 @@ def test_train_resume_and_policy(tmp_path):
     assert np.allclose(env.syn.basis, ck["synergies"]["basis"])
 
 
-def test_train_with_the_arm(tmp_path):
-    """The arm env trains in worker processes and a checkpoint reloads as an arm env."""
+def test_train_with_both_hands(tmp_path):
+    """The two-arm env trains in worker processes and a checkpoint reloads as the same env."""
     cfg = TrainConfig(run_dir=tmp_path / "arm", total_steps=64, num_envs=2, workers=2,
-                      horizon=16, scripted_demos=2, env=GraspEnvConfig(arm=True))  # fmt: skip
+                      horizon=16, scripted_demos=2, env=GraspEnvConfig(hands="any"))  # fmt: skip
     latest = train(cfg, log=lambda *_: None)
     ck = torch.load(latest, weights_only=False)
-    assert ck["steps"] == 64 and ck["env_config"]["arm"] is True
+    assert ck["steps"] == 64 and ck["env_config"]["hands"] == "any"
     env = load_env_for(ck)
-    assert env.config.arm and env.scene.arm_positions().shape == (7,)
+    assert env.scene.arm_positions().shape == (7,)
     obs, _ = env.reset(seed=0)
-    a = Policy.load(str(latest))(obs)  # obs includes the arm's joints
+    a = Policy.load(str(latest))(obs)  # one policy, either hand
     assert a.shape == (env.action_dim,) and np.all(np.abs(a) <= 1)

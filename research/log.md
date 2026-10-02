@@ -11,6 +11,17 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** what I learned and what to try next
 ```
 
+## 2026-10-02: Training the hand on the arm (grasp scene + RL with `--arm`)
+**Goal:** the owner has no arm hardware and won't for a long time (probably an own arm later), so the arm is a sim stand-in to train the *hand* on realistic wrist motion. Make it a drop-in: same policy action, swappable arm.
+**Result:**
+- `tendra.arm.ArmIK` (damped least squares on a private data copy): wrist pose → 7 joint targets, any model/joints/site. The first version missed by 3-5 mm (damping 0.05 + rest pull biased it); damping 0.01, rest gain 0.2 → 0.1 mm.
+- `SceneConfig(arm=True)`: OpenArm pedestal behind the table, hand hangs from the elbow, the scene API is unchanged (`wrist_frame`, `wrist_velocity`, `drive_arm`, `arm_positions`...). Gravity compensation on the arm: without it the servos sagged 5 mm under the hand.
+- Geometry measured with IK over the scripted grasp's path: with OpenArm's shoulder height (0.30 m above the table) and the elbow straight down, objects beside the hand were out of reach (one 10° of adduction in J2). Starting with the elbow out 20° and the forearm twisted back 20° (keeps the thumb up) widens it to x -0.10…+0.14 m, y -0.08…+0.12 m. A level forearm can't put the wrist below ~5 cm, so the cube and ball need `ARM_GRASP` (8° pitch, +1 cm): cylinder 20/20, cube 18/20, ball 20/20 scripted grasps lift.
+- Step response of the arm: ~30% overshoot, settles in 0.3 s; the same at 2 ms and 4 ms physics (stable for the 4 ms RL step).
+- `GraspEnv(arm=True)`: obs + 14 (arm angles, speeds), `arm_limits` penalty, target orientation lead 0.3 rad, arm workspace box. ~300 env steps/s vs ~470. `train_grasp.py --arm` trains (smoke run OK, 2,048 steps), `eval_grasp.py` reloads the arm config from the checkpoint, `--record` adds the 7 arm joints to the dataset state/action (30 values; replay into images works).
+- 33 new tests (`test_scene_arm.py`, `test_grasp_env_arm.py`, `test_rl.py::test_train_with_the_arm`).
+**Conclusion / next:** run a real arm training (compare success with the floating run at equal steps; watch whether the cube/ball reach stage works from the low spawn), then the GPU path and a mirrored left hand for two arms. Webcam teleop with the arm needs a new home pose (the current one, palm to the camera with fingers up, is unreachable).
+
 ## 2026-10-02: Arm for the sim: OpenArm shoulder + elbow, Tendra forearm, wrist and hand
 **Goal:** put the V1 hand on a real arm model for AI training (owner: use OpenArm's shoulder and elbow, design our own version later; the hand/forearm needs a wrist joint).
 **Decisions (owner):** forearm twist + 2-way wrist (7 DOF per arm, like a human and OpenArm); the 32 strands cross the wrist in **PTFE sheaths through a hollow wrist centre**; one right arm first.

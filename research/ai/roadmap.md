@@ -33,6 +33,7 @@ Learn the full "demonstrate → train → deploy" loop on cheap, proven hardware
 Put our hand on an arm and control all fingers.
 
 - [ ] Choose/build an arm with enough payload for V1 (see `resources.md` → Arms); mount V1 with a wrist camera
+  - [x] Sim stand-in (2026-10-02): OpenArm's shoulder + elbow, Tendra forearm/wrist/hand, grasp training with `--arm` (`research/ai/grasp-rl.md`). The owner's own arm replaces it later: same wrist-target interface, new model + joint list.
 - [ ] **Hand teleop device:** VR hand tracking (Quest 3) and/or the Tendra kinematic-twin glove (`ideas.md`)
 - [ ] Retargeting human hand → Tendra hand (fingertip-position optimisation)
 - [ ] Imitation learning with the hand: power grasp, pinch, cylinder grasp

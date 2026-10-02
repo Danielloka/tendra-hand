@@ -83,7 +83,8 @@ def main() -> int:
     env.configure(objects=objects)
     if args.grasp:
         env.configure(grasp_type=args.grasp)
-    print(f"{path} ({ck['steps']:,} steps, curriculum stage {ck['curriculum']['stage']})")
+    print(f"{path} ({ck['steps']:,} steps, curriculum stage {ck['curriculum']['stage']}"
+          f"{', with the arm' if env.config.arm else ''})")
 
     on_step, frames, recorder = None, [], None
     if args.watch or args.video:
@@ -111,6 +112,10 @@ def main() -> int:
 
         names = [*env.scene.spec.joint_names, "wrist_x", "wrist_y", "wrist_z",
                  "wrist_qw", "wrist_qx", "wrist_qy", "wrist_qz"]  # same as grasp_teleop.py  # fmt: skip
+        if env.config.arm:  # + the arm's joint angles (the IK's joint targets as the action)
+            from tendra.arm import ARM_JOINTS
+
+            names += list(ARM_JOINTS)
         recorder = EpisodeRecorder(default_dataset_root(args.record), env.model,
                                    fps=round(1 / env.dt), state_names=names,
                                    action_names=[f"{n}_target" for n in names],
@@ -122,8 +127,9 @@ def main() -> int:
             pos, quat = s.wrist_pose()
             tpos, tquat = s.wrist_target()
             opos, oquat = s.object_pose()
-            recorder.add_frame(e.data, np.concatenate([s.finger_positions(), pos, quat]),
-                               np.concatenate([s.finger_targets(), tpos, tquat]),
+            recorder.add_frame(e.data,
+                               np.concatenate([s.finger_positions(), pos, quat, s.arm_positions()]),
+                               np.concatenate([s.finger_targets(), tpos, tquat, s.arm_targets()]),
                                {"object.pos": opos, "object.quat": oquat})  # fmt: skip
             return record_prev(e) if record_prev else True
 

@@ -4,6 +4,7 @@
     uv run python sim/train_grasp.py --steps 2e6 --run runs/try1
     uv run python sim/train_grasp.py --run runs/grasp        # same folder again = resume
     uv run python sim/train_grasp.py --smoke                 # 30 s check that everything runs
+    uv run python sim/train_grasp.py --arm --run runs/arm    # the wrist on the arm (tendra.arm)
 
 Watch it learn: progress.csv in the run folder (success, lift height, reward terms), and try the
 current policy any time with `sim/eval_grasp.py --run <folder> --watch`.
@@ -14,6 +15,10 @@ palm-first approach, thumb opposition, lifting and holding, and punish knocking 
 jerky motion and needless force. Episodes sometimes start from states of successful scripted
 grasps (or your own teleop demos, --dataset), less often as it improves; objects are added in
 stages (cylinder, + cube, + ball).
+
+With --arm the wrist is held by an arm (OpenArm's shoulder and elbow, then Tendra's forearm and
+wrist) instead of an ideal floating one: the policy learns wrist motion a real arm can do, and
+sees the arm's joint angles. ~1.6x slower. The arm is a stand-in for the owner's own arm later.
 
 Laptop speed: ~1,000-1,500 steps/s with 4 workers, so 5 M steps take ~1-1.5 h. For big runs use
 a cloud machine with many CPU cores (--workers 32 --envs 256).
@@ -45,12 +50,13 @@ def main() -> None:
     p.add_argument("--demos", type=int, default=60, help="scripted demo grasps (0 = none)")
     p.add_argument("--dataset", action="append", default=[], help="teleop dataset as demos")
     p.add_argument("--synergies", type=Path, help=".npz synergies (e.g. from fit_synergies.py)")
+    p.add_argument("--arm", action="store_true", help="the wrist is held by the Tendra arm")
     p.add_argument("--no-randomize", action="store_true", help="no domain randomisation")
     p.add_argument("--device", default="cpu", help="cpu or cuda")
     p.add_argument("--smoke", action="store_true", help="tiny run to check the setup")
     args = p.parse_args()
 
-    env = GraspEnvConfig(grasp_type=args.grasp, randomize=not args.no_randomize,
+    env = GraspEnvConfig(grasp_type=args.grasp, randomize=not args.no_randomize, arm=args.arm,
                          synergies=str(args.synergies) if args.synergies else None)  # fmt: skip
     cfg = TrainConfig(run_dir=args.run, total_steps=int(args.steps), num_envs=args.envs,
                       workers=args.workers, horizon=args.horizon, seed=args.seed, env=env,

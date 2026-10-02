@@ -11,6 +11,17 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** what I learned and what to try next
 ```
 
+## 2026-10-02: Arm for the sim: OpenArm shoulder + elbow, Tendra forearm, wrist and hand
+**Goal:** put the V1 hand on a real arm model for AI training (owner: use OpenArm's shoulder and elbow, design our own version later; the hand/forearm needs a wrist joint).
+**Decisions (owner):** forearm twist + 2-way wrist (7 DOF per arm, like a human and OpenArm); the 32 strands cross the wrist in **PTFE sheaths through a hollow wrist centre**; one right arm first.
+**Setup:** OpenArm v2 MuJoCo model (`openarm-mujoco` 2.3.0, Apache-2.0, a dependency, not copied into the repo). Its J5 (forearm twist) motor sits at the bottom of the elbow link, 95.5 mm below the elbow; from J5 to their wrist is 120.5 mm. Our forearm (servo pack) is 123 mm, so it replaces OpenArm's forearm almost 1:1.
+**Result:**
+- `sim/convert_v1_wrist.py` → `sim/models/tendra_hand_v1_wrist.xml`: `forearm_rot` (± 90°, OpenArm J5 values), `wrist_flex` (−60…+70°) and `wrist_dev` (−30…+20°) on a gimbal whose axes cross at the wrist centre, in a 20 mm gap (like the carpal bones). Wrist actuators and the 50 g gimbal are placeholders.
+- Every servo strand goes through one site on the wrist centre (the sheath ideal). Measured: wrist and twist change strand lengths by < 1e-9 m, and a closed hand's finger angles move < 1° while the wrist bends. Friction in bent sheaths is not modelled.
+- `tendra.arm`: OpenArm pedestal, right arm J1–J4 (renamed `shoulder_pitch/roll/yaw`, `elbow`), left arm and right forearm/gripper removed, the wrist model bolted to J5's flange (thumb forward, palm facing the body). 5.0 kg, 23 actuators. Poses `rest` and `ready` (elbow 90°: wrist 0.23 m forward, 0.48 m up) are contact-free and hold within 1.2°.
+- Known limits: the arm is longer than OpenArm's, so hanging straight down the thumb touches the pedestal (`rest` holds the arm 10° out). Above ~55° wrist flexion with radial deviation, the thumb base hits the forearm: the servo box (91 × 85 mm) is wider than a human forearm.
+**Conclusion / next:** drive the arm from the grasp scene / RL env (IK from a wrist target to the 7 joints), then the bimanual pedestal with a mirrored left hand. Hardware: design the hollow gimbal, choose wrist actuators, slim the forearm.
+
 ## 2026-10-02: DIP coupling by a rigid linkage instead of a tendon
 **Goal:** pick the best mechanism to couple each finger's DIP to its PIP (owner's question).
 **Options compared:**

@@ -566,6 +566,16 @@ wheels = [
 ]
 
 [[package]]
+name = "openarm-mujoco"
+version = "2.3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "mujoco" },
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d7/cf/d4ce0f428aef402af4adbdb0d2c22392b644c7d9853d066fb5652d757735/openarm_mujoco-2.3.0.tar.gz", hash = "sha256:2e32cfac261d3f4dcbb5ebfa7e2ba2d7205dd5a9655798cff13170a0cf1b5339", size = 6071364, upload-time = "2026-09-18T05:50:14.682Z" }
+
+[[package]]
 name = "opencv-contrib-python"
 version = "5.0.0.93"
 source = { registry = "https://pypi.org/simple" }
@@ -774,6 +784,9 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
+arm = [
+    { name = "openarm-mujoco" },
+]
 dev = [
     { name = "pytest" },
     { name = "ruff" },
@@ -794,6 +807,7 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
+arm = [{ name = "openarm-mujoco", specifier = "==2.3.0" }]
 dev = [
     { name = "pytest", specifier = ">=8" },
     { name = "ruff", specifier = ">=0.6" },

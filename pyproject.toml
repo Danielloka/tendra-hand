@@ -23,11 +23,16 @@ teleop = [
 train = [
     "torch>=2.5",  # CPU build from PyPI on Windows; for a CUDA GPU see pytorch.org
 ]
+arm = [
+    # OpenArm's MuJoCo model (Apache-2.0): the shoulder and elbow for tendra.arm. Pinned: the
+    # arm code relies on its body and joint names.
+    "openarm-mujoco==2.3.0",
+]
 
 [tool.uv]
 # `uv run` / `uv sync` install these groups by default (teleop: webcam hand tracking,
-# train: PyTorch for sim/train_grasp.py).
-default-groups = ["dev", "teleop", "train"]
+# train: PyTorch for sim/train_grasp.py, arm: the OpenArm model).
+default-groups = ["dev", "teleop", "train", "arm"]
 
 [build-system]
 requires = ["hatchling"]

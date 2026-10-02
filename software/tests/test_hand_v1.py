@@ -117,8 +117,10 @@ def test_v1_sim_hand_follows_targets():
     # the DIPs follow their PIPs through the model's coupling
     assert np.degrees(np.abs(hand.all_positions() - V1.expand(hand.positions()))).max() < 1.0
     m = hand.model
-    for i in range(m.neq):
-        assert m.eq_data[i, 1] == pytest.approx(DIP_PIP_RATIO)
+    pip = np.radians(np.linspace(-5, 95, 21))
+    for i in range(m.neq):  # the linkage's curve (a quartic) stays close to the nominal ratio
+        dip = sum(c * pip**k for k, c in enumerate(m.eq_data[i, :5]))
+        assert np.degrees(np.abs(dip - DIP_PIP_RATIO * pip)).max() < 1.0
 
 
 @needs_v1_model

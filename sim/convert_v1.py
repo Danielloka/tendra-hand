@@ -20,11 +20,11 @@ What the converter does:
   "legacy" inertia, which tolerates them).
 - Tendons: two strands per servo-driven joint (<joint>_flex, <joint>_ext) that model the real
   routing rule, see build_strand(). Each of the 16 servos is a position actuator on its flex strand.
-- DIP coupling (2026-10-01): the four finger DIPs have no servo. Their two strands are tied in the
-  proximal phalanx, wrap a hub on the PIP axis and the DIP drum, crossed in the middle phalanx, so the
-  DIP turns COUPLING_RATIO x the PIP (see build_coupling_strand()). The physics uses a joint equality
-  (dip = ratio * pip, the same force law as an inextensible coupling loop); the passive strands give
-  the real geometry, and the tests check that their lengths stay constant along the coupling.
+- DIP coupling (2026-10-01): the four finger DIPs have no servo. A rigid bar in the middle phalanx
+  (pin A on the proximal phalanx, pin B on the distal one; hardware/cad/dip_linkage.py) makes the
+  DIP follow the PIP, DIP ~ 0.75 x PIP. The physics uses a joint equality with the linkage's fitted
+  DIP(PIP) curve (a quartic). The bar is a passive tendon `<f>_dip_link` between its two pins: it
+  is drawn in the viewer, and the tests check that its length stays constant along the curve.
 """
 
 from __future__ import annotations
@@ -120,9 +120,19 @@ _ROUTES_JSON = json.loads(ROUTES_PATH.read_text(encoding="utf-8")) if ROUTES_PAT
 SPOOL_RADIUS = _ROUTES_JSON.get("spool_radius_mm", 5.0) * MM  # every servo spool
 _DRUMS_MM = _ROUTES_JSON.get("drums_mm") or {}
 _COUPLING = _ROUTES_JSON.get("coupling") or {}
-COUPLING_HUB_RADIUS = _COUPLING.get("hub_r_mm", 4.5) * MM  # hub on the PIP axis (proximal)
-COUPLING_RATIO = _COUPLING.get("ratio", 0.75)  # DIP angle per PIP angle
+COUPLING_RATIO = _COUPLING.get("ratio", 0.75)  # nominal DIP angle per PIP angle
+LINKAGES: dict[str, dict] = _COUPLING.get("linkages") or {}  # per finger, from dip_linkage.py
 COUPLING_SOLREF = (0.01, 1.0)  # stiff, critically damped (>= 2 x the 4 ms RL timestep)
+
+
+def coupling_polycoef(dip: str) -> list[float]:
+    """dip = c0 + c1 pip + ... + c4 pip^4 (rad), MuJoCo's joint-equality polynomial."""
+    link = LINKAGES.get(finger_of(dip))
+    return list(link["polycoef"]) if link else [0.0, COUPLING_RATIO, 0.0, 0.0, 0.0]
+
+
+def coupled_angle(dip: str, q_pip: float) -> float:
+    return sum(c * q_pip**k for k, c in enumerate(coupling_polycoef(dip)))
 
 
 def drum_radius(joint: str) -> float:
@@ -151,7 +161,6 @@ GUIDE_DISTANCE = (
     8.0 * MM
 )  # the strand runs tangent to the drum for this far before it (parent side)
 START_DISTANCE = 10.0 * MM  # without tendon_routes.json, strands start this far into the palm
-HUB_CROSS = 8.0 * MM  # coupling strand: crossing point along the middle phalanx (<= 40 % of it)
 
 # SCS0009: 0.19 N*m stall at 5 V. Use half of it as the continuous limit (19 N tendon force at the
 # 5 mm spool). The servo's P controller saturates after roughly 0.1 rad of error, so kp ~ 2 N*m/rad;
@@ -461,58 +470,22 @@ def build_strand(hand: Hand, joint: str, side: str, routes: dict | None) -> list
     return points[::-1]
 
 
-def build_coupling_strand(hand: Hand, joint: str, side: str) -> list[PathPoint]:
-    """Path of one strand of a DIP's coupling loop, proximal (tie in the proximal phalanx) to distal
-    (anchor on the DIP drum). `joint` is the DIP, p = its PIP.
+def link_pins(hand: Hand, dip: str) -> tuple[np.ndarray, np.ndarray]:
+    """World positions (m, q = 0) of a finger's coupling bar pins: A on the proximal phalanx near the
+    PIP axis, B on the distal phalanx near the DIP axis, in the plane through the joint centres.
+    dip_linkage.py gives them in the middle phalanx's frame: x from the PIP axis toward the DIP
+    axis, y toward the back of the finger (= -w, away from where the joints close)."""
+    d, p = hand.joints[dip], hand.joints[COUPLED[dip]]
+    link = LINKAGES[finger_of(dip)]
+    x = d.center - p.center
+    x = _unit(x - p.axis * np.dot(x, p.axis))
+    back = -_unit(np.cross(p.axis, x))  # square to x (p.w leans with the phalanx's centroid)
 
-    - DIP end: as in build_strand(): the flex strand is tangent to the DIP drum's closing side (+w),
-      the ext strand to its opening side, so dL_flex/dq_dip = -r_dip.
-    - PIP end: the strand wraps a hub of radius r_hub that is fixed to the PROXIMAL phalanx, on the
-      PIP axis, on the opposite side: flex on the hub's back (-w), ext on its palm side. A strand on
-      the outside of a bend gets longer as the joint closes: dL_flex/dq_pip = +r_hub.
-    - The loop's length is fixed, so r_hub * dq_pip = r_dip * dq_dip: DIP = (r_hub / r_dip) x PIP.
-      The two strands cross inside the middle phalanx (crossing site -> DIP guide).
-    """
-    d, p = hand.joints[joint], hand.joints[COUPLED[joint]]
-    sgn = 1.0 if side == "flex" else -1.0
-    r_dip, r_hub = drum_radius(joint), COUPLING_HUB_RADIUS
-    # DIP drum: anchor and guide as in build_strand().
-    anchor_r = r_dip + ANCHOR_OFFSET
-    phi = (d.hi if side == "flex" else -d.lo) + WRAP_MARGIN + math.acos(r_dip / anchor_r)
-    anchor = d.center + anchor_r * (sgn * math.cos(phi) * d.w + math.sin(phi) * d.u)
-    middle_len = abs(np.dot(d.center - p.center, p.u))
-    guide = min(GUIDE_DISTANCE, 0.6 * middle_len)
-    side_dir = sgn * math.cos(math.pi / 4) * d.w + math.sin(math.pi / 4) * d.u
-    # Hub: the strand leaves the hub tangent at -sgn * w, runs along the middle phalanx to a crossing
-    # point, and wraps back toward the palm to its tie. The wrap at q = 0 leaves WRAP_MARGIN where it
-    # is smallest (flex: PIP fully open, ext: PIP fully closed). The side site sits straight out
-    # from the hub on the strand's side (-sgn * w): a parameter sweep (crossing distance, side site
-    # angle and distance, tie offset) found this keeps MuJoCo's wrap on the right side over the
-    # whole PIP range; other side-site angles flip it at large bends.
-    tie_r = r_hub + ANCHOR_OFFSET
-    psi = (-p.lo if side == "flex" else p.hi) + WRAP_MARGIN + math.acos(r_hub / tie_r)
-    tie = p.center + tie_r * (-sgn * math.cos(psi) * p.w - math.sin(psi) * p.u)
-    cross = p.center + min(HUB_CROSS, 0.4 * middle_len) * p.u - sgn * r_hub * p.w
-    return [
-        PathPoint(p.parent, tie, "tie"),
-        PathPoint(
-            p.child,
-            cross,
-            "cross",
-            drum=f"{joint}_hub",
-            side_body=p.parent,
-            side_pos=p.center - sgn * 2 * r_hub * p.w,
-        ),
-        PathPoint(d.parent, d.center - guide * d.u + sgn * r_dip * d.w, "guide"),
-        PathPoint(
-            d.child,
-            anchor,
-            "anchor",
-            drum=f"{joint}_drum",
-            side_body=d.parent,
-            side_pos=d.center + 2 * r_dip * side_dir,
-        ),
-    ]
+    def pin(center, key):
+        r, g = link[key]["r_mm"] * MM, math.radians(link[key]["angle_deg"])
+        return center + r * (math.cos(g) * x + math.sin(g) * back)
+
+    return pin(p.center, "pin_a"), pin(d.center, "pin_b")
 
 
 # ----- MJCF ----------------------------------------------------------------------------------
@@ -618,6 +591,8 @@ def build_mjcf(
         if part in hand.parent_joint:
             j = hand.joints[hand.parent_joint[part]]
             ET.SubElement(body, "joint", name=j.name, axis=_fmt(j.axis), range=_fmt([j.lo, j.hi]))
+        if part in hand.parent_joint and hand.parent_joint[part] not in COUPLED:  # DIPs: no drum
+            j = hand.joints[hand.parent_joint[part]]
             drum = thumb_drum(routes, j.name)
             c, h = (drum[0] - pos, drum[1]) if drum else (np.zeros(3), DRUM_HALF_WIDTH)
             ET.SubElement(
@@ -630,25 +605,6 @@ def build_mjcf(
                     "size": _fmt([drum_radius(j.name)]),
                 },
             )
-        # Coupling hubs: fixed to this part, on the axis of the PIP whose parent it is.
-        for dip, pip in COUPLED.items():
-            pj = hand.joints[pip]
-            if pj.parent == part:
-                c = pj.center - pos
-                ET.SubElement(
-                    body,
-                    "geom",
-                    {
-                        "name": f"{dip}_hub",
-                        "class": "drum",
-                        "fromto": _fmt(
-                            np.concatenate(
-                                [c - DRUM_HALF_WIDTH * pj.axis, c + DRUM_HALF_WIDTH * pj.axis]
-                            )
-                        ),
-                        "size": _fmt([COUPLING_HUB_RADIUS]),
-                    },
-                )
         geom = {"name": part, "mesh": part}
         if np.any(pos):
             geom["pos"] = _fmt(-pos)
@@ -680,12 +636,11 @@ def build_mjcf(
     def local(body: str | None, p: np.ndarray) -> np.ndarray:
         return p - (hand.body_pos[body] if body else 0.0)
 
-    # Servo strands in actuator order, then the passive DIP coupling strands.
+    # Servo strands in actuator order, then the DIP coupling bars (passive, drawn grey).
     tendon = ET.SubElement(mujoco, "tendon")
     strands = [
         (j, s, build_strand(hand, j, s, routes)) for j in ACTUATOR_ORDER for s in ("flex", "ext")
     ]
-    strands += [(j, s, build_coupling_strand(hand, j, s)) for j in COUPLED for s in ("flex", "ext")]
     for joint, side, path in strands:
         strand = f"{joint}_{side}"
         rgba = "0.85 0.2 0.15 1" if side == "flex" else "0.15 0.35 0.85 1"
@@ -694,7 +649,7 @@ def build_mjcf(
             site = f"{strand}_{i}_{p.kind}"
             attrs = {"name": site, "pos": _fmt(local(p.body, p.pos))}
             if p.drum:
-                side_site = f"{strand}_hub_side" if p.drum.endswith("_hub") else f"{strand}_side"
+                side_site = f"{strand}_side"
                 ET.SubElement(
                     body_el[p.side_body],
                     "site",
@@ -707,6 +662,18 @@ def build_mjcf(
                 ET.SubElement(spatial, "geom", geom=p.drum, sidesite=side_site)
             ET.SubElement(body_el[p.body], "site", attrs)
             ET.SubElement(spatial, "site", site=site)
+    if LINKAGES:
+        for dip, pip in COUPLED.items():
+            pin_a, pin_b = link_pins(hand, dip)
+            prox, dist = hand.joints[pip].parent, hand.joints[dip].child
+            bar = ET.SubElement(
+                tendon, "spatial", name=f"{dip}_link", width="0.0007", rgba="0.45 0.45 0.5 1"
+            )
+            for name, body, pos in (("a", prox, pin_a), ("b", dist, pin_b)):
+                ET.SubElement(
+                    body_el[body], "site", name=f"{dip}_link_{name}", pos=_fmt(local(body, pos))
+                )
+                ET.SubElement(bar, "site", site=f"{dip}_link_{name}")
 
     # The fixed parts are welded to the world, so MuJoCo's parent-child contact filter does not
     # apply to them; their convex hulls overlap the first moving part at the joint.
@@ -718,8 +685,8 @@ def build_mjcf(
         if body1 in hand.parts and body2 in hand.parts:
             ET.SubElement(contact, "exclude", body1=body1, body2=body2)
 
-    # DIP coupling: dip = COUPLING_RATIO * pip. An inextensible coupling loop applies exactly this
-    # constraint's force law (lambda * [1, -ratio] on dip, pip); the strands above are passive.
+    # DIP coupling: dip = f(pip), the linkage's fitted curve (~0.75 pip). A rigid bar transmits the
+    # force along this constraint (lambda * [1, -f'(pip)] on dip, pip); the bar tendon is passive.
     equality = ET.SubElement(mujoco, "equality")
     for dip, pip in COUPLED.items():
         ET.SubElement(
@@ -728,7 +695,7 @@ def build_mjcf(
             name=f"{dip}_coupling",
             joint1=dip,
             joint2=pip,
-            polycoef=_fmt([0, COUPLING_RATIO, 0, 0, 0]),
+            polycoef=_fmt(coupling_polycoef(dip)),
             solref=_fmt(COUPLING_SOLREF),
         )
 
@@ -768,7 +735,7 @@ def build_mjcf(
         # ctrl is in actuator order; qpos in MuJoCo's joint order, each DIP on its coupling.
         def fist_q(n: str) -> float:
             if n in COUPLED:
-                return COUPLING_RATIO * fist_q(COUPLED[n])
+                return coupled_angle(n, fist_q(COUPLED[n]))
             return pose_deg(FIST_DEG, n) * DEG
 
         keyframe = ET.SubElement(mujoco, "keyframe")

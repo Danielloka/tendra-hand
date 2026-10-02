@@ -74,7 +74,7 @@ class SimHand(Hand):
 
         Used to mirror the real hand (digital twin, real -> sim). NaN entries (joints with no
         measurement, e.g. an offline servo) are left where they are. Coupled joints follow their
-        driver (v1: DIP = 0.75 x PIP).
+        driver (v1: DIP ~ 0.75 x PIP; the physics then uses the linkage's exact curve).
         """
         q = np.asarray(q, dtype=float)
         if q.shape != (self.num_joints,):

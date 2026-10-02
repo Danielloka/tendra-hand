@@ -29,7 +29,9 @@ def angle_between(q1: np.ndarray, q2: np.ndarray) -> float:
 
 def test_structure(scene):
     m = scene.model
-    assert m.nu == 16 and m.ntendon == 40 and m.neq == 5  # 4 DIP couplings + the wrist weld
+    assert (
+        m.nu == 16 and m.ntendon == 36 and m.neq == 5
+    )  # 32 strands + 4 DIP bars; 4 DIP couplings + the wrist weld
     assert [m.actuator(i).name for i in range(m.nu)] == list(V1.joint_names)
     for cam in GraspScene.CAMERAS:
         assert m.camera(cam).id >= 0

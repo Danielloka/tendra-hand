@@ -5,29 +5,9 @@ strands (`flex` and `ext`) that leave the finger base, run through their own cha
 cross the wrist, and go straight down to the two sides of the servo's spool (radius 5 mm, the loop
 wraps the bottom half of the spool). 16 servos, 32 strands, 32 separate routes.
 
-Each finger's DIP has no servo (2026-10-01): its two strands stay inside the finger. They are
-anchored in the proximal phalanx, wrap a fixed hub on the PIP axis (radius COUPLING_HUB_R) and the
-DIP drum (DIP_DRUM_R), crossed in the middle phalanx (the DIP flex strand wraps the hub's back
-side). Bending the PIP then bends the DIP by COUPLING_RATIO = COUPLING_HUB_R / DIP_DRUM_R. This file
-only records those numbers ("coupling" in the JSON); the strand paths are built by sim/convert_v1.py
-and the Fusion script.
-
-Layout idea (see research/experiments/2026-09-28-full-hand/):
-- Servo shafts point inward, towards a central "core" where all strands run. Each spool's two strands
-  are tangent at x_s -/+ 5 mm, in the spool's plane (a constant y, called a sheet).
-- Servos sit in levels along the forearm. Deeper levels sit closer to the core (a staircase), so a
-  strand going to a deeper spool always passes inside the upper spools and servos: no strand is ever
-  blocked, and every strand is a straight line from the wrist to its spool.
-- One column (x_s) per finger, the thumb gets the fifth column plus one slot on the third level.
-
-In the palm each strand gets its own channel: 6 mm of 1.2 mm bore at the entry (bare line, tight
-grid under the finger), then a 2.2 mm bore for a 1 x 2 mm PTFE tube (the step stops the tube). The
-channel is a smooth S-curve (bend radius >= 15 mm) that ends vertical at the bottom of the wrist
-plate, then the strand runs straight to the spool.
-
-Run: `uv run python hardware/cad/tendon_router.py` -> hardware/robot_description/v1_export/tendon_routes.json
-Tests: hardware/cad/tests/test_tendon_router.py (spacing, walls, bend radius, no blocked strand).
-Units: mm, the Fusion design's world frame (fingers +Z, palm face -Y, little finger -X).
+Each finger's DIP has no servo (2026-10-01): a rigid bar inside the middle phalanx couples it to
+the PIP (DIP ~ 0.75 x PIP). Its pin positions per finger come from dip_linkage.py and are written
+into the JSON ("coupling"), for the sim and the Fusion script.
 """
 
 from __future__ import annotations
@@ -38,6 +18,7 @@ import math
 from dataclasses import dataclass
 from pathlib import Path
 
+import dip_linkage
 import numpy as np
 
 OUT = Path(__file__).resolve().parents[1] / "robot_description" / "v1_export" / "tendon_routes.json"
@@ -47,9 +28,6 @@ SPOOL_R = 5.0  # tendon centreline radius on every servo spool (2026-10-01, was 
 SPOOL_FLANGE_R = 6.5
 # Tendon centreline radius of each joint's drum; servo_per_joint = drum / SPOOL_R.
 FINGER_DRUM_R = {"mcp_flex": 7.0, "pip": 6.0, "mcp_abd": 6.0}  # mcp_flex: 14 mm, the most that fits
-DIP_DRUM_R = 6.0
-COUPLING_HUB_R = 4.5  # fixed hub on the PIP axis (on the proximal phalanx)
-COUPLING_RATIO = COUPLING_HUB_R / DIP_DRUM_R  # DIP angle per PIP angle (0.75)
 SPOOL_HALF_T = 2.5  # spool half-thickness along its axis, around the groove plane
 BORE_SMALL, SMALL_LEN = 1.2, 6.0  # bare-line entry section
 BORE_TUBE = 2.2  # hole for a 1 x 2 mm PTFE tube
@@ -209,7 +187,7 @@ def drum_r(joint: str) -> float:
     finger, _, j = joint.partition("_")
     if finger == "thumb":
         return {"cmc_rot": ROT_DRUM_R, "cmc_flex": CMC_DRUM_R}.get(j, THUMB_DRUM_R)
-    return DIP_DRUM_R if j == "dip" else FINGER_DRUM_R[j]
+    return FINGER_DRUM_R[j]
 
 
 def servo_per_joint(joint: str) -> float:
@@ -883,11 +861,12 @@ def layout() -> dict:
         "source": "hardware/cad/tendon_router.py",
         "units": "mm, world frame of the Fusion design 'Tendra Hand V1', all joints at 0",
         "spool_radius_mm": SPOOL_R,
-        "drums_mm": {j: drum_r(j) for j in [*SERVO_IDS, *COUPLED]},
-        "coupling": {"hub_r_mm": COUPLING_HUB_R, "dip_drum_r_mm": DIP_DRUM_R, "ratio": COUPLING_RATIO,
-                     "joints": COUPLED,
-                     "routing": "DIP flex strand wraps the hub's back (dorsal) side, ext the palm side; "
-                                "they cross in the middle phalanx"},
+        "drums_mm": {j: drum_r(j) for j in SERVO_IDS},
+        "coupling": {"type": "linkage", "ratio": dip_linkage.RATIO, "joints": COUPLED,
+                     "frame": "middle phalanx plane: x from the PIP axis toward the DIP axis, y toward "
+                              "the back of the finger; pin angles from +x toward +y at q = 0; pin A "
+                              "on the proximal phalanx, pin B on the distal phalanx",
+                     "linkages": dip_linkage.linkages()},
         "bores_mm": {"entry": BORE_SMALL, "entry_length": SMALL_LEN, "tube": BORE_TUBE},
         "palm": {"x": PALM_X, "y": PALM_Y, "z_wrist": Z_WRIST, "z_wrist_plate_bottom": Z_WRIST_PLATE_BOTTOM,
                  "inserts_xy": INSERTS, "insert_r": INSERT_R, "insert_depth": INSERT_DEPTH},

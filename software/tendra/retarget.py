@@ -218,7 +218,7 @@ def fit_fingers(
     default to this frame's; an average over many frames is less noisy.
 
     `ratios[finger]` = k fits that finger with its DIP coupled to its PIP (dip = k * pip, the
-    robot's coupling tendon): 3 free parameters, so the robot finger's PIP, DIP and tip land as
+    robot's coupling bar): 3 free parameters, so the robot finger's PIP, DIP and tip land as
     close as they can to the human ones. Dropping the DIP instead would leave the tip short.
 
     Returns {finger: params (rad)} (4 values; coupled fingers have dip = k * pip); pass it back

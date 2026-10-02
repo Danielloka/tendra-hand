@@ -154,8 +154,9 @@ _V1_JOINTS_DEG: tuple[tuple[str, tuple[int, int], float], ...] = (
 )  # mcp_abd: positive = toward the thumb, for every finger
 # fmt: on
 
-# Each finger's DIP has no servo: a passive coupling tendon (hub r 4.5 mm on the PIP axis, DIP drum
-# r 6 mm) bends it by DIP_PIP_RATIO x its PIP (tendon_router.py COUPLING_RATIO).
+# Each finger's DIP has no servo: a rigid bar in the middle phalanx (hardware/cad/dip_linkage.py)
+# bends it with its PIP. DIP_PIP_RATIO is the nominal ratio; the real linkage stays within ~0.6 deg
+# of it, and the MuJoCo model uses the linkage's exact curve.
 DIP_PIP_RATIO = 0.75
 
 V1 = HandSpec(

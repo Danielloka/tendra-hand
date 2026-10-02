@@ -68,11 +68,9 @@ def test_firmware_servo_per_joint_is_drum_over_spool():
 def test_dips_are_coupled_not_routed():
     assert not any("_dip" in r["joint"] for r in ROUTES)
     assert tr.COUPLED == {f"{f}_dip": f"{f}_pip" for f in tr.FINGERS}
-    assert (
-        tr.COUPLING_RATIO == pytest.approx(tr.COUPLING_HUB_R / tr.DIP_DRUM_R) == pytest.approx(0.75)
-    )
     c = tr.layout()["coupling"]
-    assert c["ratio"] == tr.COUPLING_RATIO and c["joints"] == tr.COUPLED
+    assert c["type"] == "linkage" and c["ratio"] == 0.75 and c["joints"] == tr.COUPLED
+    assert set(c["linkages"]) == set(tr.FINGERS)
 
 
 def test_every_strand_has_its_own_entry_wrist_hole_and_tangent():

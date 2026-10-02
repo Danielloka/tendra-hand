@@ -11,6 +11,23 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** what I learned and what to try next
 ```
 
+## 2026-10-02: DIP coupling by a rigid linkage instead of a tendon
+**Goal:** pick the best mechanism to couple each finger's DIP to its PIP (owner's question).
+**Options compared:**
+- **Coupling tendon** (what the sim had): an exact ratio, but 2 strands per finger to pretension. Creep and slack make the fingertip loose, and the DIP has no servo to take the slack up.
+- **Rigid four-bar linkage:** one bar per finger crossing the middle phalanx. Pin A on the proximal phalanx (back side of the PIP), pin B on the distal phalanx (palm side of the DIP). Nothing to tension, no creep, and a broken bar is easy to swap.
+**Result:**
+- With pins at 90° (straight up and down), the linkage is very uneven: the DIP stalls at large PIP angles (27° at PIP 90°).
+- `hardware/cad/dip_linkage.py` searches each finger's pin radii and angles under these rules: bar inside the phalanx (|y| ≤ 5.5 mm), ≥ 2 mm from both axes, bar-to-crank angles ≥ 30° (no toggle).
+- Every finger lands **within 0.6° of 0.75 × PIP over −5…95°**. All four get nearly the same pins: A ≈ 3.5 mm @ 27–36°, B ≈ 4.5 mm @ −78…−81°. Bars: index 21.8, middle 24.9, ring 23.9, little 17.7 mm.
+- The sim uses the fitted quartic curve in the joint equality. The bar is a passive tendon whose length stays at the design value: 0.003 mm spread at random poses.
+- The first sim version was 0.1 mm off. The pin frame used `w`, which leans 1.4° toward the phalanx's centre of mass; it is now built square to the PIP-DIP line.
+- All tests pass. The hub, coupling strands and DIP drum are gone from the model (36 tendons now).
+**Conclusion / next:**
+- Linkage chosen (owner, 2026-10-02).
+- In Fusion: pins of 1.5 mm steel (or a bent 1.2 mm steel wire bar), bar beside the PIP drum groove (or two thin bars), and slots in the middle phalanx base for the bar's swing.
+- The 4.5 mm hub and crossing holes from yesterday's plan are dropped.
+
 ## 2026-10-01: Decision: V1 goes to 16 servos (DIP coupled to PIP), 5 mm spools, 7 mm knuckle drums
 **Goal:** act on the state-of-the-art research (`research/references/hands/README.md` §5).
 **Decisions (owner):**
@@ -67,6 +84,22 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 - Do now: firmware smoothness (100 Hz, per-servo goal speed, jerk filter, register tuning), braid tendon on V0, bench tests (friction, stretch, fingertip force, cycles).
 - Owner decisions: test 1–2 HLS3606M on the V0 index MCP; DIP–PIP coupling (sim first); MCP drum 7.5 mm / spool 5 mm.
 - Commercial hands checked: Shadow = 20 forearm motors + 40 Spectra tendons, one agonist–antagonist pair per spool (Tendra's scheme), DIP–PIP coupled. Fingertip force: Inspire 10 N, PSYONIC 9.3 N pinch, Wuji 15 N, Sharpa Wave 20 N. Allegro, Tesollo and Schunk are still unverified.
+
+## 2026-10-02: First GPU training run: 77% grasp success in 49 minutes
+**Goal:** train the grasp policy on a free Colab T4 with MuJoCo Warp + Brax PPO (`software/tendra/gpu/`, notebook from `sim/colab/make_train_notebook.py`).
+**Setup:** `TendraGrasp` (JAX twin of `GraspEnv`: same actions, reward and observations; contacts from MuJoCo contact sensors; power grasp only), 2,048 parallel hands, Brax PPO (policy 256-256-128, critic 512-256-128 on privileged obs), phase A = cylinder, 50% demo starts, penalties at 30%. Hand: the old 20-servo V1. Stack: mujoco 3.14, warp-lang 1.17, brax 0.14.2, playground, **jax 0.9** (brax 0.14 breaks on jax ≥ 0.10).
+**Result** (run `gpu1`, evaluation = normal starts without demo help):
+
+| Steps | Minutes | Success | Mean lift |
+|---|---|---|---|
+| 3.7 M | 20 | 0% | 0.05 cm |
+| 5.5 M | 27 | 29% | 1.3 cm |
+| 7.3 M | 34 | 63% | 3.8 cm |
+| 11.0 M | 49 | **77%** | 9.0 cm |
+
+~4,000 env steps/s including learning. The free session then disconnected (weights saved on Drive at 11 M). For comparison, the laptop's CPU run reached 7% at 0.27 M steps after hours.
+**Bugs found afterwards:** (1) the bundle export called `scene.reset` *after* making every object collide and float, and the reset switched that off again: cube and ball fell through the table and the cylinder got gravity twice (the run trained with a 2–4× heavy cylinder; it still learned). Fixed (reset first, then configure, plus an assert). (2) Python output through `| grep` in Colab was block-buffered, so no progress showed; now `python -u` + `grep --line-buffered`.
+**Conclusion / next:** GPU training works and is ~10–25× faster than the laptop. The hand changed to 16 servos (DIP coupled to PIP) on 2026-10-01, so the next run (`gpu2`) starts fresh with a new bundle (`tendra_gpu_kit_<hash>.zip`; the hash in the name stops Colab from reusing a stale kit) and goes through all three phases (cylinder → all objects → full penalties).
 
 ## 2026-09-30: GPU physics check: MuJoCo Warp runs the grasp scene
 **Goal:** can the grasp scene run on a GPU (for 10–100× faster RL), before porting anything?

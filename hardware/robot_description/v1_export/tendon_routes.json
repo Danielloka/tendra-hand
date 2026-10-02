@@ -18,15 +18,10 @@
   "ring_mcp_abd": 6.0,
   "little_pip": 6.0,
   "little_mcp_flex": 7.0,
-  "little_mcp_abd": 6.0,
-  "index_dip": 6.0,
-  "middle_dip": 6.0,
-  "ring_dip": 6.0,
-  "little_dip": 6.0
+  "little_mcp_abd": 6.0
  },
  "coupling": {
-  "hub_r_mm": 4.5,
-  "dip_drum_r_mm": 6.0,
+  "type": "linkage",
   "ratio": 0.75,
   "joints": {
    "index_dip": "index_pip",
@@ -34,7 +29,101 @@
    "ring_dip": "ring_pip",
    "little_dip": "little_pip"
   },
-  "routing": "DIP flex strand wraps the hub's back (dorsal) side, ext the palm side; they cross in the middle phalanx"
+  "frame": "middle phalanx plane: x from the PIP axis toward the DIP axis, y toward the back of the finger; pin angles from +x toward +y at q = 0; pin A on the proximal phalanx, pin B on the distal phalanx",
+  "linkages": {
+   "index": {
+    "middle_length_mm": 23.0,
+    "pin_a": {
+     "r_mm": 3.5,
+     "angle_deg": 34.062
+    },
+    "pin_b": {
+     "r_mm": 4.5039,
+     "angle_deg": -80.312
+    },
+    "bar_mm": 21.8182,
+    "max_ratio_error_deg": 0.472,
+    "polycoef": [
+     0.0,
+     0.682287,
+     0.200808,
+     -0.165049,
+     0.040354
+    ],
+    "poly_fit_error_deg": 0.039,
+    "axis_clear_mm": 2.154,
+    "min_transmission_deg": 37.976
+   },
+   "middle": {
+    "middle_length_mm": 26.0,
+    "pin_a": {
+     "r_mm": 3.5039,
+     "angle_deg": 35.625
+    },
+    "pin_b": {
+     "r_mm": 4.5039,
+     "angle_deg": -78.047
+    },
+    "bar_mm": 24.9327,
+    "max_ratio_error_deg": 0.484,
+    "polycoef": [
+     0.0,
+     0.679527,
+     0.195556,
+     -0.151939,
+     0.034929
+    ],
+    "poly_fit_error_deg": 0.0407,
+    "axis_clear_mm": 2.149,
+    "min_transmission_deg": 37.827
+   },
+   "ring": {
+    "middle_length_mm": 25.0,
+    "pin_a": {
+     "r_mm": 3.5078,
+     "angle_deg": 34.531
+    },
+    "pin_b": {
+     "r_mm": 4.5039,
+     "angle_deg": -78.125
+    },
+    "bar_mm": 23.9084,
+    "max_ratio_error_deg": 0.498,
+    "polycoef": [
+     0.0,
+     0.677584,
+     0.203326,
+     -0.159188,
+     0.037037
+    ],
+    "poly_fit_error_deg": 0.0411,
+    "axis_clear_mm": 2.175,
+    "min_transmission_deg": 38.329
+   },
+   "little": {
+    "middle_length_mm": 19.0,
+    "pin_a": {
+     "r_mm": 3.5,
+     "angle_deg": 27.5
+    },
+    "pin_b": {
+     "r_mm": 4.4844,
+     "angle_deg": -80.937
+    },
+    "bar_mm": 17.6679,
+    "max_ratio_error_deg": 0.592,
+    "polycoef": [
+     0.0,
+     0.663839,
+     0.2553,
+     -0.211464,
+     0.052889
+    ],
+    "poly_fit_error_deg": 0.0415,
+    "axis_clear_mm": 2.289,
+    "min_transmission_deg": 40.836
+   }
+  }
  },
  "bores_mm": {
   "entry": 1.2,

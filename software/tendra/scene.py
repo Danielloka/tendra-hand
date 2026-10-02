@@ -28,7 +28,7 @@ from pathlib import Path
 import mujoco
 import numpy as np
 
-from .joints import V1, HandSpec
+from .joints import V1
 from .lite_model import KEEP, copy_inertia, simplify_meshes
 
 # The wrist point in the hand model's frame (m): middle of the palm's lower edge, where the palm
@@ -151,18 +151,18 @@ def quat_to_mat(quat: np.ndarray) -> np.ndarray:
 
 
 @functools.lru_cache(maxsize=2)
-def _full_hand_model(path: Path) -> mujoco.MjModel:
+def full_hand_model(path: Path) -> mujoco.MjModel:
     """The unsimplified hand, only used for its masses and inertias (cached, loading is slow)."""
     return mujoco.MjModel.from_xml_path(str(path))
 
 
-def _hand_spec(spec: HandSpec, config: SceneConfig) -> mujoco.MjSpec:
-    """The hand model as an MjSpec, ready to be attached (no floor, lights or keyframes)."""
-    path = spec.model_path
+def hand_spec(path: Path, lite: bool = True, keep: float = KEEP) -> mujoco.MjSpec:
+    """A hand model (V1, or V1 on its wrist) as an MjSpec, ready to be attached (no floor, lights
+    or keyframes), with a wrist camera on the palm. `lite`: simplified meshes, see lite_model."""
     hand = mujoco.MjSpec.from_file(str(path))
     hand.meshdir = str((path.parent / hand.meshdir).resolve())
-    if config.lite:
-        simplify_meshes(hand, Path(hand.meshdir), config.lite_keep)
+    if lite:
+        simplify_meshes(hand, Path(hand.meshdir), keep)
     for geom in list(hand.worldbody.geoms):  # the floor plane: the scene has a table instead
         hand.delete(geom)
     for light in list(hand.worldbody.lights):
@@ -267,7 +267,7 @@ class GraspScene:
         root = world.add_body(name="hand_root", pos=list(cfg.home))
         root.add_freejoint(name="hand_root")
         frame = root.add_frame(pos=list(-WRIST_IN_MODEL))
-        scene.attach(_hand_spec(V1, cfg), frame=frame, prefix="")
+        scene.attach(hand_spec(V1.model_path, cfg.lite, cfg.lite_keep), frame=frame, prefix="")
         target = world.add_body(name="wrist_target", mocap=True, pos=list(cfg.home))
         target.add_geom(type=mujoco.mjtGeom.mjGEOM_SPHERE, size=[0.004], rgba=[0.1, 0.6, 1, 0.5],
                         contype=0, conaffinity=0, group=2)  # fmt: skip
@@ -288,11 +288,11 @@ class GraspScene:
             _add_contact_sensors(scene, cfg.objects)
         model = scene.compile()
         if cfg.lite:
-            copy_inertia(model, _full_hand_model(V1.model_path))
+            copy_inertia(model, full_hand_model(V1.model_path))
         model.light_castshadow[:] = 0
         model.mat_reflectance[:] = 0
         mujoco.mj_setConst(model, mujoco.MjData(model))
-        strands = 2 * (V1.num_joints + len(V1.couplings))  # servo loops + DIP coupling loops
+        strands = 2 * V1.num_joints + len(V1.couplings)  # servo loops + one DIP coupling bar each
         if model.nu != V1.num_joints or model.ntendon != strands or model.neq < len(V1.couplings):
             raise RuntimeError("scene model lost hand actuators, tendons or DIP couplings")
         return model

@@ -8,7 +8,7 @@ makes learning faster and the motion more human-like, because odd postures (one 
 backward, fingertip hooks) sit far outside the space.
 
 A `Synergies` object maps a small action vector `a` (each entry in [-1, 1]) to the 16 servo joint
-angles (V1; each DIP follows its PIP through the coupling tendon):
+angles (V1; each DIP follows its PIP through the coupling bar):
 
     q = rest + basis @ a            (then clipped to the joint limits)
 

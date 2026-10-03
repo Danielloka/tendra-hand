@@ -11,6 +11,14 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** what I learned and what to try next
 ```
 
+## 2026-10-03: DIP linkage modelled in Fusion
+**Goal:** model the rigid PIP→DIP bars in the "Tendra Hand V1" design.
+**Setup:** `TendraHandV1.py` stage `linkage` (run through the Fusion MCP; the call timed out but the stage finished).
+**Result:** `<finger>_link_plate_a`, `_plate_b` and `_bar` for index, middle, ring, little (bar 21.8 / 24.9 / 23.9 / 17.7 mm), rigid as-built joints to the phalanges, pegs cut into the phalanges. Interference check: 0 collisions in all four fingers.
+**Conclusion / next:** the design is not saved or exported yet. Still open in CAD: thumb routing, palm/forearm rebuild for 16 servos (the old DIP servos are still in the design), then re-export and re-run `mirror_export.py` and the converters. Print one index finger to test the linkage.
+
+---
+
 ## 2026-10-02: Two arms, a mirrored left hand, no floating hand
 **Goal:** owner: "remove the floating hand, this is the training standard now; make the left arm so we have 2 to train it", and a model with both hands like a human, starting with one hand each. Not to start training ("just make it ready").
 **Result:**

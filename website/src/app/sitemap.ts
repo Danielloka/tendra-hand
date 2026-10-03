@@ -6,7 +6,7 @@ import { siteConfig } from "@/lib/site";
 // Every public route. /dev/* (internal tools) and /styleguide are left out on purpose.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const url = (path: string) => `${siteConfig.url}${path}`;
-  const pages = ["", "/project", "/hardware", "/software", "/docs", "/log", "/gallery", "/contribute"];
+  const pages = ["", "/project", "/journey", "/hardware", "/software", "/docs", "/log", "/gallery", "/contribute"];
   const posts = await getLogPosts();
 
   return [

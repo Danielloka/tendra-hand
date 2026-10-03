@@ -10,7 +10,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import "./layout.css";
 
 // Long reading pages get a progress line under the nav (the homepage tells its own story).
-const PROGRESS_ROUTES = ["/project", "/hardware", "/software", "/contribute", "/docs/"];
+const PROGRESS_ROUTES = ["/project", "/journey", "/hardware", "/software", "/contribute", "/docs/"];
 const hasProgress = (pathname: string) => PROGRESS_ROUTES.some((r) => (r.endsWith("/") ? pathname.startsWith(r) : pathname === r)) || /^\/log\/[^/]+$/.test(pathname);
 
 export function Nav() {

@@ -37,7 +37,7 @@
       "status": "in-progress",
       "items": [
         "Middle, ring and little fingers, copied from the index and sized like a human hand (designed in Fusion 360)",
-        "A thumb with 5 joints, like a human thumb",
+        "A thumb with 4 joints (a fifth was tried and dropped)",
         "All 16 servos in the forearm, with every tendon in its own channel through the palm and wrist",
         "Full-hand simulation model: 20 joints and 36 tendons",
         "Firmware for the servo bus, ready for all 16 servos, with the same Python code as V0",

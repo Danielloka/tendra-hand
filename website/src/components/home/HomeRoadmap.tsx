@@ -13,6 +13,9 @@ export function HomeRoadmap() {
             <Link className="btn btn--secondary" href="/project">
               See the full plan
             </Link>
+            <Link className="btn btn--outline" href="/journey">
+              See the whole journey
+            </Link>
           </div>
           <RoadmapTimeline compact />
         </div>

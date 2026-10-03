@@ -22,7 +22,7 @@ print(hand.positions())
 | Variant | Joints | Motors | Firmware config | MuJoCo model |
 |---|---|---|---|---|
 | `v0` | 8 (index + thumb) | 28BYJ-48 steppers, open loop | `firmware/include/config.h` | `sim/models/tendra_hand.xml` |
-| `v1` | 20 (all five fingers, 4-DOF thumb) | Feetech SCS0009 servos, IDs 1–20 = motor order | `firmware/include/config_v1.h` | `sim/models/tendra_hand_v1.xml` |
+| `v1` | 20 (all five fingers, 4-DOF thumb) | Feetech SCS0009 servos, 16 servos, IDs 1–16 = motor order (finger DIPs are coupled to the PIPs) | `firmware/include/config_v1.h` | `sim/models/tendra_hand_v1.xml` |
 
 Each variant is a `HandSpec` in `tendra/joints.py` (`V0`, `V1`, or `get_hand("v1")`): joint names, limits, model path, servo IDs. Every hand object has a `.spec`, so `hand.joint_names` and `hand.num_joints` always fit the hand in use. The old module constants (`JOINT_NAMES`, `NUM_JOINTS`, `JOINT_LIMITS`, `MODEL_PATH`) still describe v0.
 

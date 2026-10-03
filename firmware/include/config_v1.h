@@ -63,7 +63,7 @@ struct ServoJointConfig {
 };
 
 // Motor order M1..M16 = protocol order = servo ID (since 0.4.0, 2026-10-01). The four finger DIPs
-// have no servo: a passive coupling tendon bends each DIP by 0.75 x its PIP (see tendon_router.py).
+// have no servo: a rigid linkage bar bends each DIP by 0.75 x its PIP (see tendon_router.py).
 // servo_per_joint = drum radius / 5 mm spool: finger mcp_flex 7 mm -> 1.4, thumb_cmc_rot 7.5 mm ->
 // 1.5, every other drum 6 mm -> 1.2.
 // zero_ticks: thumb_cmc_rot needs 140 deg x 1.5 = 210 servo degrees, so its zero sits off-centre

@@ -1,7 +1,7 @@
 """RealHand: talks to the ESP32 firmware over USB serial (text protocol, firmware/README.md).
 
 Both hands use the same protocol with a different number of joints. The variant (v0: 8
-steppers, v1: 20 servos) is read from the firmware's `I` line, or can be given. Example:
+steppers, v1: 16 servos, 20 joints) is read from the firmware's `I` line, or can be given. Example:
 
     from tendra import RealHand
     with RealHand() as hand:            # finds the ESP32 and the hand variant automatically

@@ -65,7 +65,7 @@
       "items": [
         {
           "part": "Feetech SCS0009 smart servo",
-          "qty": 8,
+          "qty": 16,
           "spec": "5 V, serial bus (half-duplex), addressable IDs, position feedback",
           "notes": "Replaces the steppers in Phase 2. Daisy-chained on one cable and no manual homing.",
           "planned": true

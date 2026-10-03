@@ -49,15 +49,15 @@ Just a start: make the 8-joint prototype move cleanly and control it from the PC
 **Done when:** all 8 joints move smoothly (no jerks, no missed steps) through their full range, and the sim and the real hand match within a few degrees.
 
 ## Phase 2: Tendra Hand V1 — the first full hand
-Five fingers, 20 joints (4-DOF thumb) on 16 Feetech SCS0009 smart servos (position feedback, no manual homing, one shared bus); each finger's fingertip joint follows its middle joint through a coupling tendon, as in Shadow, ORCA and LEAP. This is the first real Tendra Hand.
+Five fingers, 20 joints (4-DOF thumb) on 16 Feetech SCS0009 smart servos (position feedback, no manual homing, one shared bus); each finger's fingertip joint follows its middle joint (DIP = 0.75 × PIP) through a rigid linkage bar, with no servo of its own. This is the first real Tendra Hand.
 
 - [x] Middle, ring and little fingers (reuse the index design, with sizes scaled to human proportions) — designed in Fusion "Tendra Hand V1" (2026-09-28)
 - [x] Thumb base reworked for PTFE-sheathed tendons (hollow pivot); 5th thumb DOF tried and removed again (owner, 2026-09-29)
 - [x] Actuator packaging (forearm), tendon routing through the wrist: one channel per strand, tested (`hardware/cad/tendon_router.py`)
-- [x] Full-hand MJCF (20 joints, 16 servos, 40 tendons incl. DIP coupling): `sim/models/tendra_hand_v1.xml`
+- [x] Full-hand MJCF (20 joints, 16 servos, 36 tendons: 32 servo strands + 4 DIP linkage bars): `sim/models/tendra_hand_v1.xml`
 - [x] `Scs0009Servo` driver behind the same HAL (joint code unchanged), firmware env `hand_v1_servo`
 - [ ] Full-hand electronics and power budget on the servo bus (plan in `research/experiments/2026-09-28-full-hand/research.md`)
-- [ ] Wire the servo bus: ESP32 UART → FE-URT-1 → daisy-chained SCS0009s; assign IDs 1–20
+- [ ] Wire the servo bus: ESP32 UART → FE-URT-1 → daisy-chained SCS0009s; assign IDs 1–16
 - [ ] Mechanical adapters: servo mounts and tendon spools
 - [ ] Test channels and PTFE fit on a printed section first, then print and assemble V1
 - [ ] Read back position, load and temperature on the real hand

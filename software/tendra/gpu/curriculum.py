@@ -7,9 +7,12 @@ of the next chunk. One change per chunk, so its effect can be told apart:
 1. **objects**: when success on the current objects passes `add_object_at`, the next object is
    added (cylinder, then cube, then ball). Success then drops: that is expected, not a regression.
 2. **penalty_scale**: raised by `penalty_step` while success stays above `ramp_at`, up to 1.0.
-3. **demo_prob**: halved while success stays above `ramp_at` (the scripted-grasp starts are a crutch
-   for exploration; at the end the policy must work from normal starts), down to `demo_final`.
-4. **dr_scale** (only if the env has it): domain-randomisation width, raised by `dr_step`.
+3. **starts**: the help from scripted-grasp starts is reduced while success stays above `ramp_at`
+   (a crutch for exploration; at the end the policy must work from normal starts). With an env
+   that has `start_probs` ({normal, near, demo}: near = approach-phase demo frames) the share of
+   normal starts rises by `start_step` up to `start_final`, the rest split evenly between near and
+   demo; otherwise `demo_prob` is halved down to `demo_final`.
+4. **dr_level** (only if the env has it): domain-randomisation width, raised by `dr_step`.
 
 Guard: if success drops by more than `regress_drop` right after a *penalty / demo / DR* change,
 that change is reverted and nothing changes for `cooldown` chunks. Training is done when every
@@ -41,6 +44,9 @@ class Rules:
     penalty_step: float = 0.2
     demo_start: float = 0.5
     demo_final: float = 0.02
+    start_normal: float = 0.4  # initial share of normal starts (start_probs envs)
+    start_final: float = 0.9
+    start_step: float = 0.15
     dr_step: float = 0.25
     cooldown: int = 1
     target: float = 0.90
@@ -54,8 +60,9 @@ class State:
 
     objects: list[str] = field(default_factory=lambda: [OBJECT_ORDER[0]])
     demo_prob: float = 0.5
+    start_normal: float = 0.4
     penalty_scale: float = 0.3
-    dr_scale: float = 0.0
+    dr_level: float = 0.0
     chunk: int = 0  # index of the chunk being trained
     chunk_steps_done: int = 0
     chunk_scores: list[float] = field(default_factory=list)
@@ -71,29 +78,37 @@ class State:
 
     def settings(self) -> dict:
         return {"objects": list(self.objects), "demo_prob": self.demo_prob,
-                "penalty_scale": self.penalty_scale, "dr_scale": self.dr_scale}  # fmt: skip
+                "start_normal": self.start_normal, "penalty_scale": self.penalty_scale,
+                "dr_level": self.dr_level}  # fmt: skip
+
+    def start_probs(self) -> dict[str, float]:
+        rest = round((1.0 - self.start_normal) / 2, 4)
+        return {"normal": round(self.start_normal, 4), "near": rest, "demo": rest}
 
     def level(self) -> tuple[int, float]:
         """What makes evaluation harder: number of objects, DR width (penalty/demo do not)."""
-        return len(self.objects), self.dr_scale
+        return len(self.objects), self.dr_level
 
 
 class Curriculum:
     def __init__(self, rules: Rules | None = None, has_dr: bool = False,
-                 path: Path | None = None, state: State | None = None) -> None:  # fmt: skip
+                 path: Path | None = None, state: State | None = None,
+                 has_starts: bool = False) -> None:  # fmt: skip
         self.rules = rules or Rules()
-        self.has_dr = has_dr
+        self.has_dr = has_dr  # the env has `dr_level`
+        self.has_starts = has_starts  # the env has `start_probs`
         self.path = path
         self.state = state or State(demo_prob=self.rules.demo_start,
+                                    start_normal=self.rules.start_normal,
                                     penalty_scale=self.rules.penalty_start)  # fmt: skip
         if not self.has_dr:
-            self.state.dr_scale = 0.0
+            self.state.dr_level = 0.0
 
     # ----- persistence -----
 
     @classmethod
     def load_or_new(cls, path: Path, rules: Rules | None = None, has_dr: bool = False,
-                    log=print) -> Curriculum:  # fmt: skip
+                    log=print, has_starts: bool = False) -> Curriculum:  # fmt: skip
         path = Path(path)
         if path.exists():
             raw = json.loads(path.read_text())
@@ -103,8 +118,8 @@ class Curriculum:
                 f"curriculum: resuming chunk {state.chunk}, {state.total_steps:,} steps, "
                 f"settings {state.settings()}"
             )
-            return cls(rules, has_dr, path, state)
-        return cls(rules, has_dr, path)
+            return cls(rules, has_dr, path, state, has_starts)
+        return cls(rules, has_dr, path, None, has_starts)
 
     def save(self) -> None:
         if self.path is None:
@@ -140,13 +155,19 @@ class Curriculum:
         s = self.state.chunk_scores[-self.rules.score_evals :]
         return sum(s) / len(s) if s else 0.0
 
+    def _starts_final(self) -> bool:
+        r, st = self.rules, self.state
+        if self.has_starts:
+            return st.start_normal >= r.start_final - 1e-9
+        return st.demo_prob <= r.demo_final + 1e-9
+
     def is_final(self) -> bool:
-        st, r = self.state, self.rules
+        st = self.state
         return (
             len(st.objects) == len(OBJECT_ORDER)
             and st.penalty_scale >= 1.0
-            and st.demo_prob <= r.demo_final + 1e-9
-            and (not self.has_dr or st.dr_scale >= 1.0)
+            and self._starts_final()
+            and (not self.has_dr or st.dr_level >= 1.0)
         )
 
     # ----- the decision -----
@@ -208,10 +229,16 @@ class Curriculum:
         if st.penalty_scale < 1.0:
             new = round(min(1.0, st.penalty_scale + r.penalty_step), 3)
             return {"what": "penalty_scale", "old": st.penalty_scale, "new": new}, "raise penalties"
-        if st.demo_prob > r.demo_final + 1e-9:
+        if self.has_starts and not self._starts_final():
+            new = round(min(r.start_final, st.start_normal + r.start_step), 4)
+            return (
+                {"what": "start_normal", "old": st.start_normal, "new": new},
+                "more normal starts, fewer helped ones",
+            )
+        if not self.has_starts and st.demo_prob > r.demo_final + 1e-9:
             new = round(max(r.demo_final, st.demo_prob / 2), 4)
             return {"what": "demo_prob", "old": st.demo_prob, "new": new}, "fewer demo starts"
-        if self.has_dr and st.dr_scale < 1.0:
-            new = round(min(1.0, st.dr_scale + r.dr_step), 3)
-            return {"what": "dr_scale", "old": st.dr_scale, "new": new}, "widen randomisation"
+        if self.has_dr and st.dr_level < 1.0:
+            new = round(min(1.0, st.dr_level + r.dr_step), 3)
+            return {"what": "dr_level", "old": st.dr_level, "new": new}, "widen randomisation"
         return None, "nothing left to change"

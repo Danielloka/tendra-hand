@@ -162,6 +162,14 @@ def export_bundle(path: str | Path, demos_per_object: int = 10, seed: int = 0) -
     def per_side(f) -> np.ndarray:
         return np.array([f(s, a) for s, a in zip(SIDES, sides, strict=True)])
 
+    # Contact sensors: [side, object, part] -> address (found, force xyz, pos xyz); the parts
+    # are PARTS + "hand" (everything from the forearm down).
+    sensor_part = np.array([[[_sensor_adr(m, contact_sensor_name(s, p, k))
+                              for p, _, _ in CONTACT_PARTS] for k in OBJECT_KINDS]
+                            for s in SIDES])  # fmt: skip
+    ik_params = {"rot_weight": ik.rot_weight, "damping": ik.damping, "rest_gain": ik.rest_gain,
+                 "max_step": ik.max_step, "iters": IK_ITERS, "tol": 3e-4}  # fmt: skip
+
     arrays = {
         "model": model_bytes,
         "home_qpos": home.qpos.copy(),
@@ -186,11 +194,7 @@ def export_bundle(path: str | Path, demos_per_object: int = 10, seed: int = 0) -
         "mocap": per_side(lambda s, a: a.mocap),
         "tips": per_side(lambda s, a: a.tips),
         **{f"chain_{k}": np.array([c[k] for c in chains]) for k in chains[0]},
-        # Sensors: [side, object, part] -> address (found, force xyz, pos xyz); the parts are
-        # PARTS + "hand" (everything from the forearm down).
-        "sensor_part": np.array([[[_sensor_adr(m, contact_sensor_name(s, p, k))
-                                   for p, _, _ in CONTACT_PARTS] for k in OBJECT_KINDS]
-                                 for s in SIDES]),  # fmt: skip
+        "sensor_part": sensor_part,
         "sensor_table_obj": np.array([_sensor_adr(m, table_sensor_name(k)) for k in OBJECT_KINDS]),
         "sensor_table_hand": np.array([_sensor_adr(m, table_sensor_name(s)) for s in SIDES]),
         # Objects.
@@ -245,9 +249,7 @@ def export_bundle(path: str | Path, demos_per_object: int = 10, seed: int = 0) -
                     "substeps": env.substeps,
                     "settle": scene.config.settle,
                     "arm_ik_dt": scene.config.arm_ik_dt,
-                    "ik": {"rot_weight": ik.rot_weight, "damping": ik.damping,
-                           "rest_gain": ik.rest_gain, "max_step": ik.max_step,
-                           "iters": IK_ITERS, "tol": 3e-4},  # fmt: skip
+                    "ik": ik_params,
                     "demos": {f"{s}/{k}": len(frames[s, k]) for s, k in order},
                     "env_config": {k: v for k, v in asdict(cfg).items() if k != "rewards"},
                     "rewards": asdict(cfg.rewards),

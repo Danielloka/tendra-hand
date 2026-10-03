@@ -58,8 +58,10 @@ def default_config() -> config_dict.ConfigDict:
         sim_dt=0.004,
         episode_length=104,  # 5 s
         impl="warp",
-        naconmax=160 * 2048,  # contact buffer for ALL worlds: set to 160 x num_envs
-        njmax=900,  # constraint rows per world
+        # Contact buffer for ALL worlds: set to 96 x num_envs. Constraint rows per world. (CPU
+        # MuJoCo on the demo states, both arms: <= 33 contacts, <= 138 rows per world.)
+        naconmax=96 * 2048,
+        njmax=600,
         hands="any",  # "right", "left" or "any" (random per world)
         objects=["cylinder", "cube", "ball"],  # allowed objects (curriculum)
         demo_prob=0.0,
@@ -353,6 +355,23 @@ class TendraGrasp(mjx_env.MjxEnv):
 
     # ----- reset -----
 
+    def blank_data(self) -> mjx.Data:
+        cfg = self._config
+        return mjx_env.make_data(self._mj_model, impl=cfg.impl, naconmax=cfg.naconmax,
+                                 njmax=cfg.njmax)  # fmt: skip
+
+    def state_data(self, blank: mjx.Data, obj: jax.Array, mass_scale: jax.Array, qpos, qvel, ctrl,
+                   mocap_pos, mocap_quat) -> mjx.Data:  # fmt: skip
+        """A world in this simulator state, the object `obj` pulled down by its weight (x
+        `mass_scale`), forward kinematics and contacts done. `blank` from `blank_data` (make it
+        once per traced function: two `make_data` under vmap leak tracers with Warp)."""
+        frc = blank.xfrc_applied.at[self._b["obj_body"][obj], 2].set(
+            -self._b["obj_mass"][obj] * mass_scale * GRAVITY
+        )
+        data = blank.replace(qpos=qpos, qvel=qvel, ctrl=ctrl, mocap_pos=mocap_pos,
+                             mocap_quat=mocap_quat, xfrc_applied=frc)  # fmt: skip
+        return mjx.forward(self._mjx_model, data)
+
     def reset(self, rng: jax.Array) -> mjx_env.State:
         cfg, b = self._config, self._b
         keys = jax.random.split(rng, 10)
@@ -363,16 +382,10 @@ class TendraGrasp(mjx_env.MjxEnv):
         flip = side == 1
         obj = jax.random.choice(keys[0], self._n_obj, p=self._allowed / self._allowed.sum())
         body = b["obj_body"][obj]
-        weight = b["obj_mass"][obj] * GRAVITY
-
-        blank = mjx_env.make_data(self._mj_model, impl=cfg.impl, naconmax=cfg.naconmax,
-                                  njmax=cfg.njmax)  # fmt: skip
+        blank = self.blank_data()
 
         def start(qpos, qvel, ctrl, mpos, mquat, mass_scale) -> mjx.Data:
-            frc = blank.xfrc_applied.at[body, 2].set(-weight * mass_scale)
-            data = blank.replace(qpos=qpos, qvel=qvel, ctrl=ctrl, mocap_pos=mpos,
-                                 mocap_quat=mquat, xfrc_applied=frc)  # fmt: skip
-            return mjx.forward(self._mjx_model, data)
+            return self.state_data(blank, obj, mass_scale, qpos, qvel, ctrl, mpos, mquat)
 
         # Normal start: arms at home, the object at a random spot on the working hand's side
         # (the right hand's box, mirrored for the left), settled on the table.
@@ -389,15 +402,19 @@ class TendraGrasp(mjx_env.MjxEnv):
         normal, _ = self.physics(normal, b["home_ctrl"], side, self._settle_chunks)
 
         # Demo start: a random frame of a successful scripted grasp of the same object with the
-        # same hand, with the nominal mass (as recorded).
+        # same hand, with the nominal mass (as recorded). Only the inputs are selected: a
+        # tree-wide select of two Warp datas leaks tracers under vmap.
         count = b["demo_count"][side, obj]
         frame = b["demo_start"][side, obj] + jax.random.randint(keys[4], (), 0,
                                                                jp.maximum(count, 1))  # fmt: skip
-        demo = start(b["demo_qpos"][frame], b["demo_qvel"][frame], b["demo_ctrl"][frame],
-                     b["demo_mocap_pos"][frame], b["demo_mocap_quat"][frame], 1.0)  # fmt: skip
         use_demo = (jax.random.uniform(keys[5]) < cfg.demo_prob) & (count > 0)
-        data = jax.tree.map(lambda d, n: jp.where(use_demo, d, n), demo, normal)
-        mass_scale = jp.where(use_demo, 1.0, mass_scale)
+        demo = (b["demo_qpos"][frame], b["demo_qvel"][frame], b["demo_ctrl"][frame],
+                b["demo_mocap_pos"][frame], b["demo_mocap_quat"][frame], 1.0)  # fmt: skip
+        settled = (normal.qpos, normal.qvel, normal.ctrl, normal.mocap_pos, normal.mocap_quat,
+                   mass_scale)  # fmt: skip
+        inputs = [jp.where(use_demo, d, n) for d, n in zip(demo, settled, strict=True)]
+        data = start(*inputs)
+        mass_scale = inputs[-1]
         obj_pos = canon_pos(data.xpos[body], flip, b["mirror_x"])
         rest_z = jp.where(use_demo, b["demo_rest_z"][frame], obj_pos[2])
 
@@ -423,33 +440,12 @@ class TendraGrasp(mjx_env.MjxEnv):
     # ----- step -----
 
     def step(self, state: mjx_env.State, action: jax.Array) -> mjx_env.State:
-        cfg, b, data, info = self._config, self._b, state.data, state.info
+        b, data, info = self._b, state.data, state.info
         a = jp.clip(action, -1.0, 1.0)
-        k = self._k
-        side, flip, mx = info["side"], info["flip"], b["mirror_x"]
-
-        # Wrist target: velocity command, never far ahead of the real wrist, in the workspace;
-        # all in the right hand's view (`GraspEnv.step`).
-        m_id, site = b["mocap"][side], b["wrist_site"][side]
-        pos, quat = data.mocap_pos[m_id], data.mocap_quat[m_id]
-        wrist = canon_pos(data.site_xpos[site], flip, mx)
-        wrist_quat = mat_to_quat(data.site_xmat[site].reshape(3, 3))
-        pos = canon_pos(pos, flip, mx) + a[0:3] * cfg.wrist_speed * cfg.ctrl_dt
-        lead = pos - wrist
-        dist = jp.linalg.norm(lead)
-        pos = jp.where(dist > cfg.wrist_lead, wrist + lead * cfg.wrist_lead / (dist + 1e-9), pos)
-        pos = canon_pos(jp.clip(pos, self._ws_lo, self._ws_hi), flip, mx)
-        turn = canon_axial(a[3:6], flip) * cfg.wrist_turn_speed * cfg.ctrl_dt
-        angle = jp.linalg.norm(turn)
-        dq = axis_angle(turn / jp.maximum(angle, 1e-12), angle)
-        quat = jp.where(angle > 1e-9, quat_mul(dq, quat), quat)  # world-frame turn
-        quat = limit_lead(quat, wrist_quat, cfg.wrist_turn_lead)
-        quat = quat / jp.linalg.norm(quat)
-
-        # Fingers: synergy posture + residual, low-pass filtered.
-        q_cmd = b["syn_rest"] + b["syn_basis"] @ a[6 : 6 + k] + cfg.residual_scale * a[6 + k :]
-        q_cmd = jp.clip(q_cmd, b["lower"], b["upper"])
-        target = info["finger_target"] + cfg.finger_smoothing * (q_cmd - info["finger_target"])
+        side = info["side"]
+        m_id = b["mocap"][side]
+        pos, quat = self.wrist_command(data, info, a)
+        target = self.finger_command(info, a)
         ctrl = data.ctrl.at[b["act"][side]].set(target)
         data = data.replace(mocap_pos=data.mocap_pos.at[m_id].set(pos),
                             mocap_quat=data.mocap_quat.at[m_id].set(quat))  # fmt: skip
@@ -467,13 +463,43 @@ class TendraGrasp(mjx_env.MjxEnv):
             **{key: terms[key] for key in self._metric_keys() if key in terms and key != "held"},
             "held_r": terms["held"], "success": new_success, "held": sense["held"].astype(float),
             "lift_cm": 100 * jp.clip(sense["height"], 0.0, 0.4) / n,
-            "from_demo": info["from_demo"] / n, "left": flip.astype(float) / n,
+            "from_demo": info["from_demo"] / n, "left": info["flip"].astype(float) / n,
             "ik_err_mm": 1000 * jp.clip(jp.nan_to_num(ik_err), 0.0, 1.0) / n,
             "blowup": blowup.astype(float), "fail": fail.astype(float),
         }  # fmt: skip
         metrics = {**state.metrics, **metrics}  # keep keys added by wrappers (e.g. "reward")
         return state.replace(data=data, obs=obs, reward=reward, done=done, metrics=metrics,
                              info=info)  # fmt: skip
+
+    def wrist_command(self, data: mjx.Data, info: dict, a: jax.Array):
+        """The working hand's new wrist target (world position, quaternion): velocity command,
+        never far ahead of the real wrist, in the workspace; all in the right hand's view
+        (`GraspEnv.step`)."""
+        cfg, b = self._config, self._b
+        side, flip, mx = info["side"], info["flip"], b["mirror_x"]
+        m_id, site = b["mocap"][side], b["wrist_site"][side]
+        pos, quat = data.mocap_pos[m_id], data.mocap_quat[m_id]
+        wrist = canon_pos(data.site_xpos[site], flip, mx)
+        wrist_quat = mat_to_quat(data.site_xmat[site].reshape(3, 3))
+        pos = canon_pos(pos, flip, mx) + a[0:3] * cfg.wrist_speed * cfg.ctrl_dt
+        lead = pos - wrist
+        dist = jp.linalg.norm(lead)
+        pos = jp.where(dist > cfg.wrist_lead, wrist + lead * cfg.wrist_lead / (dist + 1e-9), pos)
+        pos = canon_pos(jp.clip(pos, self._ws_lo, self._ws_hi), flip, mx)
+        turn = canon_axial(a[3:6], flip) * cfg.wrist_turn_speed * cfg.ctrl_dt
+        angle = jp.linalg.norm(turn)
+        dq = axis_angle(turn / jp.maximum(angle, 1e-12), angle)
+        quat = jp.where(angle > 1e-9, quat_mul(dq, quat), quat)  # world-frame turn
+        quat = limit_lead(quat, wrist_quat, cfg.wrist_turn_lead)
+        return pos, quat / jp.linalg.norm(quat)
+
+    def finger_command(self, info: dict, a: jax.Array) -> jax.Array:
+        """The 16 finger targets: synergy posture (clipped to the limits, `Synergies.posture`) +
+        residual, clipped again, low-pass filtered."""
+        cfg, b, k = self._config, self._b, self._k
+        posture = jp.clip(b["syn_rest"] + b["syn_basis"] @ a[6 : 6 + k], b["lower"], b["upper"])
+        q_cmd = jp.clip(posture + cfg.residual_scale * a[6 + k :], b["lower"], b["upper"])
+        return info["finger_target"] + cfg.finger_smoothing * (q_cmd - info["finger_target"])
 
     # ----- sensing (shared by reward and observation), in the right hand's view -----
 

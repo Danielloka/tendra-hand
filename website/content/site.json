@@ -10,8 +10,7 @@
     { "label": "Journey", "href": "/journey" },
     { "label": "Gallery", "href": "/gallery" },
     { "label": "Contribute", "href": "/contribute" },
-    { "label": "Docs", "href": "/docs" },
-    { "label": "Hand lab", "href": "/dev/hand" }
+    { "label": "Docs", "href": "/docs" }
   ],
   "docsNav": [
     { "label": "Getting started", "href": "/docs/getting-started" },

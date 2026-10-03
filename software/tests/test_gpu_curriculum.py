@@ -1,5 +1,6 @@
 """Adaptive curriculum of the GPU trainer (tendra/gpu/curriculum.py): plain python, no jax."""
 
+import itertools
 import json
 
 from tendra.gpu.curriculum import Curriculum, Rules
@@ -38,7 +39,7 @@ def test_one_change_per_chunk_and_full_ramp():
         if cur.state.done:
             break
     # objects first, then penalties, then demos; never two at once
-    for a, b in zip(seen, seen[1:], strict=False):
+    for a, b in itertools.pairwise(seen):
         changed = sum(a[k] != b[k] for k in ("objects", "demo_prob", "penalty_scale"))
         assert changed <= 1
     st = cur.state
@@ -80,7 +81,7 @@ def test_domain_randomisation_only_with_env_support():
         cur.state.objects = ["cylinder", "cube", "ball"]
         cur.state.penalty_scale, cur.state.demo_prob = 1.0, cur.rules.demo_final
         s = chunk(cur, 0.9, 0.9)
-        assert s["dr_scale"] == (0.25 if has_dr else 0.0)
+        assert s["dr_level"] == (0.25 if has_dr else 0.0)
 
 
 def test_best_is_per_difficulty_level():
@@ -111,3 +112,20 @@ def test_every_decision_is_logged():
     chunk(cur, 0.9, 0.9)
     entry = cur.state.log[-1]
     assert entry["event"] == "decision" and entry["change"]["what"] == "objects"
+
+
+def test_start_probs_shift_toward_normal_starts():
+    cur = Curriculum(has_starts=True)
+    assert cur.state.start_probs() == {"normal": 0.4, "near": 0.3, "demo": 0.3}
+    cur.state.objects = ["cylinder", "cube", "ball"]
+    cur.state.penalty_scale = 1.0
+    seen = []
+    for _ in range(10):
+        chunk(cur, 0.9, 0.9)
+        seen.append(cur.state.start_normal)
+        if cur.state.done:
+            break
+    assert seen[:3] == [0.55, 0.7, 0.85] and seen[3] == 0.9
+    p = cur.state.start_probs()
+    assert abs(sum(p.values()) - 1.0) < 1e-9 and p["normal"] == 0.9
+    assert cur.state.done and cur.state.demo_prob == cur.rules.demo_start  # demo_prob untouched

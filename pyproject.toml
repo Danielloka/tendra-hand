@@ -28,6 +28,17 @@ arm = [
     # arm code relies on its body and joint names.
     "openarm-mujoco==2.3.0",
 ]
+gpu = [
+    # The GPU training env (software/tendra/gpu) on this laptop's CPU, for its tests:
+    # `uv run --group gpu pytest software/tests/test_gpu_env.py`. Not default (~1 GB). Colab
+    # installs the CUDA build itself (sim/colab/make_train_notebook.py). Brax 0.14 needs jax < 0.10.
+    "mujoco-mjx==3.14.*",
+    "jax[cpu]==0.9.*",
+    "warp-lang",
+    "mujoco-warp",
+    "playground",
+    "brax==0.14.*",
+]
 
 [tool.uv]
 # `uv run` / `uv sync` install these groups by default (teleop: webcam hand tracking,

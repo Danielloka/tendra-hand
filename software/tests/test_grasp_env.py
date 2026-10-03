@@ -91,6 +91,24 @@ def test_one_policy_sees_both_hands_the_same_way(env):
     assert np.allclose(left_critic[:-8], right_critic[:-8], atol=2e-3)
 
 
+def test_left_hand_spawn_and_opposition_are_mirrored(env):
+    """Regression (2026-10-03): the spawn point and contact points were kept in world
+    coordinates but compared with the mirrored object, so a third of the left episodes failed at
+    once ("pushed away") and the left hand never got opposition."""
+    from tendra.scene import ARM_GRASP, scripted_grasp
+
+    for seed in range(12):  # many spawns far from the mirror plane (|x| > 0.1)
+        env.reset(seed=seed, side="left")
+        _, _, term, _, info = env.step(np.zeros(env.action_dim))
+        assert not term, info["terms"]
+        assert np.allclose(env._observe()[1][-2:], 0.0, atol=0.01)  # obj xy - spawn xy
+    for side in SIDES:
+        env.reset(seed=1, obj="cylinder", side=side)
+        scripted_grasp(env.scene, hold=0.3, **ARM_GRASP)
+        env._contacts()
+        assert env._opposition(env.scene.canon_pos(env.scene.object_pose()[0])), side
+
+
 def test_the_same_actions_do_the_same_on_both_hands(env):
     """Mirrored world, same action in the policy's view: the observation and reward agree."""
     rng = np.random.default_rng(4)

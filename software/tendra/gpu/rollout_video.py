@@ -83,8 +83,8 @@ def write_video(images: list[np.ndarray], path: Path, fps: int = 21) -> Path:
         import mediapy
 
         mediapy.write_video(str(path), images, fps=fps)
-    except ImportError:
-        import imageio.v2 as imageio
+    except (ImportError, RuntimeError):  # no mediapy, or no ffmpeg binary on the PATH
+        import imageio.v2 as imageio  # imageio-ffmpeg brings its own ffmpeg
 
         imageio.mimwrite(str(path), images, fps=fps)
     return path

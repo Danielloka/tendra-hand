@@ -20,8 +20,8 @@ How it works (details in each module):
   evaluation returns NaN or the physics blows up.
 
 Outputs in `--out`: `progress.csv` (one file for the whole run), `curriculum.json`,
-`params_latest.pkl` / `params_best.pkl` (plain numpy pickles `{"steps", "success", "params"}` that
-`policy.BraxPolicy` loads without jax), `policy_latest.npz` / `policy_best.npz` (for the laptop),
+`params_latest.pkl` / `params_best.pkl` (plain numpy pickles `{"steps", "success", "params":
+{"normalizer", "policy", "value"}}`, no jax needed to load; `policy.BraxPolicy` reads them), `policy_latest.npz` / `policy_best.npz` (for the laptop),
 `config.json`, and `DONE` when the curriculum finished.
 
 Standalone like grasp_env_jax.py (Colab gets the kit files, not the repo).
@@ -40,6 +40,7 @@ import shutil
 import sys
 import tempfile
 import time
+from collections.abc import Mapping
 from dataclasses import asdict
 from pathlib import Path
 
@@ -52,6 +53,7 @@ from brax.training import networks as brax_networks
 from brax.training.agents.ppo import networks as ppo_networks
 from brax.training.agents.ppo import train as ppo
 from flax import linen
+from ml_collections.config_dict import ConfigDict
 
 try:
     from .curriculum import Curriculum, Rules
@@ -186,8 +188,37 @@ def make_networks(obs_size, action_size, preprocess_observations_fn,
     return ppo_networks.PPONetworks(policy, value, dist)
 
 
-def to_numpy(tree):
-    return jax.tree.map(lambda x: np.asarray(x), tree)
+def _plain(tree):
+    """Nested dicts / tuples with every leaf a numpy array (no jax, flax or brax classes)."""
+    if isinstance(tree, Mapping):
+        return {k: _plain(v) for k, v in tree.items()}
+    return np.asarray(tree)
+
+
+def to_plain(params) -> dict:
+    """Brax's `(normalizer, policy, value)` as plain numpy, loadable with numpy + pickle only.
+    The normaliser's `UInt64(hi, lo)` counter becomes two ints."""
+    norm, policy, value = params
+    return {
+        "normalizer": {
+            "count": {"hi": int(norm.count.hi), "lo": int(norm.count.lo)},
+            "mean": _plain(norm.mean), "summed_variance": _plain(norm.summed_variance),
+            "std": _plain(norm.std),
+        },
+        "policy": _plain(policy), "value": _plain(value),
+    }  # fmt: skip
+
+
+def from_plain(plain: dict):
+    """The inverse of `to_plain`: what `ppo.train(restore_params=...)` wants."""
+    from brax.training import types
+    from brax.training.acme import running_statistics
+
+    n = plain["normalizer"]
+    norm = running_statistics.RunningStatisticsState(
+        count=types.UInt64(hi=n["count"]["hi"], lo=n["count"]["lo"]), mean=n["mean"],
+        summed_variance=n["summed_variance"], std=n["std"])  # fmt: skip
+    return norm, plain["policy"], plain["value"]
 
 
 def _save(obj: object, path: Path) -> None:
@@ -214,8 +245,13 @@ class Trainer:
                  log=print) -> None:  # fmt: skip
         self.args, self.out, self.log, self.caches = args, out, log, caches
         self.ppo_cfg, self.num_envs, self.num_eval_envs = ppo_cfg, num_envs, num_eval_envs
-        self.has_dr = "dr_scale" in default_config()
-        self.cur = Curriculum.load_or_new(out / "curriculum.json", rules, self.has_dr, log)
+        cfg = default_config()
+        self.has_dr = "dr_level" in cfg  # optional env keys: feature-checked
+        self.has_starts = "start_probs" in cfg
+        self.start_probs_nested = self.has_starts and isinstance(cfg.start_probs, ConfigDict)
+        self.cur = Curriculum.load_or_new(
+            out / "curriculum.json", rules, self.has_dr, log, self.has_starts
+        )
         self.deadline = time.time() + args.hours * 3600
         self.last_eval_time = time.time()
         self.eval_interval = 0.0  # seconds between evaluations, measured
@@ -224,7 +260,7 @@ class Trainer:
         latest = out / "params_latest.pkl"
         if latest.exists():
             saved = _load(latest)
-            self.params = saved["params"]
+            self.params = from_plain(saved["params"])
             st = self.cur.state
             st.total_steps = max(st.total_steps, saved["steps"])  # a crash between the two saves
             log(f"resuming from {latest.name} at {saved['steps']:,} steps")
@@ -247,12 +283,24 @@ class Trainer:
 
     # --- one chunk ---
 
-    def env_overrides(self, n: int) -> dict:
+    def starts_overrides(self, probs: dict[str, float]) -> dict:
+        """`start_probs` as flattened keys when the config holds a nested ConfigDict."""
+        if self.start_probs_nested:
+            return {f"start_probs.{k}": float(v) for k, v in probs.items()}
+        return {"start_probs": dict(probs)}
+
+    def env_overrides(self, n: int, evaluation: bool = False) -> dict:
+        """Env settings of the current chunk; `evaluation`: normal starts only, no help."""
         s = self.cur.state
-        ov = {"objects": list(s.objects), "demo_prob": s.demo_prob,
-              "penalty_scale": s.penalty_scale, "naconmax": 96 * n}  # fmt: skip
+        ov = {"objects": list(s.objects), "penalty_scale": s.penalty_scale,
+              "naconmax": 96 * (self.num_eval_envs if evaluation else n)}  # fmt: skip
+        if self.has_starts:
+            probs = {"normal": 1.0, "near": 0.0, "demo": 0.0} if evaluation else s.start_probs()
+            ov.update(self.starts_overrides(probs))
+        else:
+            ov["demo_prob"] = 0.0 if evaluation else s.demo_prob
         if self.has_dr:
-            ov["dr_scale"] = s.dr_scale
+            ov["dr_level"] = s.dr_level
         return ov
 
     def run_chunk(self) -> None:
@@ -261,10 +309,10 @@ class Trainer:
         remaining = max(1, a.chunk_steps - st.chunk_steps_done)
         base_steps = st.total_steps - st.chunk_steps_done
         num_evals = max(2, round(remaining / a.eval_every) + 1)
-        ov = self.env_overrides(self.num_envs)
-        env = TendraGrasp(a.bundle, config_overrides=ov)
-        eval_env = TendraGrasp(a.bundle, config_overrides={
-            **ov, "demo_prob": 0.0, "naconmax": 96 * self.num_eval_envs})  # fmt: skip
+        env = TendraGrasp(a.bundle, config_overrides=self.env_overrides(self.num_envs))
+        eval_env = TendraGrasp(
+            a.bundle, config_overrides=self.env_overrides(self.num_envs, evaluation=True)
+        )
         eval_env.no_stagger = True
         wrap = functools.partial(wrap_for_training, stagger=not a.no_stagger)
         cfg = {**self.ppo_cfg, "learning_rate": self.ppo_cfg["learning_rate"] * st.lr_scale}
@@ -275,7 +323,7 @@ class Trainer:
 
         def policy_params(step, make_policy, p) -> None:
             if step > 0:
-                pending[:] = [step, to_numpy(p)]
+                pending[:] = [step, to_plain(p)]
 
         def progress(step: int, metrics: dict) -> None:
             m = {k: float(v) for k, v in metrics.items()
@@ -283,8 +331,8 @@ class Trainer:
             row = {"chunk": st.chunk, "kind": "start" if step == 0 else "eval",
                    "steps": base_steps + step, "time": time.strftime("%Y-%m-%d %H:%M:%S"),
                    "minutes": round((time.time() - t0) / 60, 1), "n_objects": len(st.objects),
-                   "demo_prob": st.demo_prob, "penalty_scale": st.penalty_scale,
-                   "dr_scale": st.dr_scale, "lr": cfg["learning_rate"],
+                   "demo_prob": st.demo_prob, "start_normal": st.start_normal, "penalty_scale": st.penalty_scale,
+                   "dr_level": st.dr_level, "lr": cfg["learning_rate"],
                    **{k: round(v, 5) for k, v in m.items()}}  # fmt: skip
             success = m.get("eval/episode_success", float("nan"))
             blowup = m.get("eval/episode_blowup", 0.0)
@@ -309,7 +357,7 @@ class Trainer:
             if self.cur.record_best(success):
                 _save(record, self.out / "params_best.pkl")
                 self.log(f"new best at this level: success {success:.2f}")
-            self.params = pending[1]
+            self.params = from_plain(pending[1])
             st.total_steps = steps_total
             self.cur.record_eval(step, success)  # saves curriculum.json
             now = time.time()
@@ -383,7 +431,7 @@ class Trainer:
         latest = self.out / "params_latest.pkl"
         if latest.exists():
             saved = _load(latest)
-            self.params = saved["params"]
+            self.params = from_plain(saved["params"])
             st.total_steps = saved["steps"]
             if saved["chunk"] != st.chunk:  # the good weights are from the chunk before
                 st.chunk_steps_done, st.chunk_scores = 0, []

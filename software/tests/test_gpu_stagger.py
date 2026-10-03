@@ -6,13 +6,13 @@ pytest.importorskip("jax")
 pytest.importorskip("mujoco_playground")
 pytest.importorskip("brax")
 
-import jax  # noqa: E402
-import jax.numpy as jp  # noqa: E402
-import mujoco  # noqa: E402
-from ml_collections import config_dict  # noqa: E402
-from mujoco import mjx  # noqa: E402
-from mujoco_playground._src import mjx_env  # noqa: E402
-from tendra.gpu.stagger import wrap_for_training  # noqa: E402
+import jax
+import jax.numpy as jp
+import mujoco
+from ml_collections import config_dict
+from mujoco import mjx
+from mujoco_playground._src import mjx_env
+from tendra.gpu.stagger import wrap_for_training
 
 XML = """<mujoco><worldbody><body><joint name="j" type="hinge"/>
 <geom size="0.1"/></body></worldbody></mujoco>"""

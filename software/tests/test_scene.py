@@ -13,9 +13,11 @@ from tendra.scene import (
     SIDE_GRASP_ROT,
     GraspScene,
     SceneConfig,
+    contact_sensor_name,
     mat_to_quat,
     quat_to_mat,
     scripted_grasp,
+    table_sensor_name,
 )
 
 pytest.importorskip("fast_simplification")
@@ -231,6 +233,36 @@ def test_ik_reaches_reachable_poses(scene, side):
         pos2, rot2 = ik.pose(solved)
         assert err < 1e-3 and np.linalg.norm(pos2 - pos) < 1e-3
         assert np.linalg.norm(rot2 - rot) < 0.01
+
+
+def test_contact_sensors_agree_with_the_contacts():
+    """The GPU env's contact sensors (`contact_sensors=True`) report what the CPU env's contact
+    loop finds: the same touching parts, the hand holding the object's weight, nothing on the
+    resting hand."""
+    from tendra.grasp_env import PARTS, GraspEnv, GraspEnvConfig
+
+    scene = GraspScene(SceneConfig(contact_sensors=True, lite_keep=0.05))
+    env = GraspEnv(GraspEnvConfig(randomize=False), seed=0, scene=scene)
+    m, d = scene.model, scene.data
+
+    def sensor(name: str) -> np.ndarray:
+        i = m.sensor(name).id
+        return d.sensordata[m.sensor_adr[i] : m.sensor_adr[i] + m.sensor_dim[i]]
+
+    for side in SIDES:
+        env.reset(seed=1, obj="cylinder", side=side)
+        scripted_grasp(scene, hold=0.3, **ARM_GRASP)
+        assert scene.lifted()
+        env._contacts()
+        found = [sensor(contact_sensor_name(side, p, "cylinder"))[0] > 0 for p in PARTS]
+        assert found == list(env.touch[: len(PARTS)]) and sum(found) >= 4
+        hand = sensor(contact_sensor_name(side, "hand", "cylinder"))
+        weight = m.body_mass[scene._obj_body["cylinder"]] * 9.81
+        assert hand[0] > 0 and np.allclose(hand[1:4], [0, 0, weight], atol=0.05 * weight)
+        other = "left" if side == "right" else "right"
+        assert not sensor(contact_sensor_name(other, "hand", "cylinder")).any()
+        assert sensor(table_sensor_name("cylinder"))[0] == 0  # lifted
+        assert sensor(table_sensor_name(side))[0] == 0
 
 
 @pytest.mark.parametrize("side", SIDES)

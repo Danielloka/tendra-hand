@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { siteConfig } from "@/lib/site";
+import { siteConfig, type NavItem } from "@/lib/site";
 
-export function Footer() {
+export function Footer({ items }: { items: NavItem[] }) {
   const { footer } = siteConfig;
   return (
     <footer id="site-footer" className="border-t border-border bg-bg-alt py-12">
@@ -15,7 +15,7 @@ export function Footer() {
           <p className="caption">{footer.contact}</p>
         </div>
         <nav aria-label="Footer" className="grid content-start gap-2 text-small">
-          {siteConfig.nav.map((item) => (
+          {items.map((item) => (
             <Link key={item.href} href={item.href} className="text-text-muted hover:text-text">
               {item.label}
             </Link>

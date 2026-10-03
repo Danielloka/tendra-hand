@@ -5,6 +5,7 @@
 @layer components {
   /* ---- Nav tweaks ------------------------------------------------------------ */
   .nav__brand-mark { flex: none; }
+  .nav__brand-tag { margin-left: 0.5rem; padding: 0.1rem 0.5rem; border: 1px solid var(--border); border-radius: 999px; color: var(--text-muted); font-size: 0.75rem; font-weight: 500; line-height: 1.4; }
   .nav.is-menu-open { background: var(--bg); -webkit-backdrop-filter: none; backdrop-filter: none; }
   /* ---- Menu button: two lines that turn into an X ------------------------------ */
   .nav .menu-button { display: none; }

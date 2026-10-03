@@ -51,8 +51,6 @@ def test_structure(scene):
         assert not (arm.hand_bodies & other.hand_bodies)
     with pytest.raises(KeyError):
         m.body("hand_root")  # nothing floats any more
-    with pytest.raises(NotImplementedError):
-        GraspScene(SceneConfig(contact_sensors=True))
 
 
 def test_homes_are_mirror_images(scene):

@@ -89,12 +89,54 @@ class SceneConfig:
     # while nothing touches it), which makes a step ~2x cheaper. Only for one-hand episodes: an
     # asleep arm ignores its wrist target. Set False for tasks that use both hands.
     sleep_idle: bool = True
-    # Contact sensors for the GPU training env: not ported to the arms yet (raises).
+    # Contact sensors (`contact_sensor_name`), for the GPU training env, which has no contact loop.
     contact_sensors: bool = False
     # The "view" camera: from the operator's side, both arms and the table in view.
     view_fovy: float = 60.0
     view_pos: tuple[float, float, float] = (0.0, -0.62, 0.55)
     view_lookat: tuple[float, float, float] = (0.0, 0.12, 0.15)
+
+
+# Hand parts with a contact sensor each (per side and object): (part, MuJoCo object type, body
+# without the side prefix). A finger is the subtree of its base body; the palm is the palm body
+# alone (its subtree holds the fingers); "hand" is everything from the forearm down (the CPU env's
+# "in the hand", and its "other" parts = hand minus the others).
+CONTACT_PARTS: tuple[tuple[str, mujoco.mjtObj, str], ...] = (
+    *((f, mujoco.mjtObj.mjOBJ_XBODY, f"{f}_base") for f in TIP_FINGERS),
+    ("palm", mujoco.mjtObj.mjOBJ_BODY, "palm"),
+    ("hand", mujoco.mjtObj.mjOBJ_XBODY, "forearm"),
+)
+_FOUND, _FORCE, _POS = (1 << int(mujoco.mjtConDataField.mjCONDATA_FOUND),
+                        1 << int(mujoco.mjtConDataField.mjCONDATA_FORCE),
+                        1 << int(mujoco.mjtConDataField.mjCONDATA_POS))  # fmt: skip
+_NETFORCE = 3  # contact sensor reduce mode: one net contact (force-weighted position, world frame)
+
+
+def contact_sensor_name(side: str, part: str, obj: str) -> str:
+    """Hand part (`CONTACT_PARTS`) <-> object: found, net force (3, world), position (3)."""
+    return f"{side}_touch_{part}_{obj}"
+
+
+def table_sensor_name(what: str) -> str:
+    """Table <-> an object kind, or <-> a side's hand ("right" / "left"): found (1 value)."""
+    return f"table_{what}"
+
+
+def _add_contact_sensors(scene: mujoco.MjSpec, objects: tuple[str, ...]) -> None:
+    geom = mujoco.mjtObj.mjOBJ_GEOM
+    contact = mujoco.mjtSensor.mjSENS_CONTACT
+    for obj in objects:
+        for side in SIDES:
+            for part, objtype, body in CONTACT_PARTS:
+                scene.add_sensor(name=contact_sensor_name(side, part, obj), type=contact,
+                                 objtype=objtype, objname=f"{side}_{body}", reftype=geom,
+                                 refname=obj, intprm=[_FOUND | _FORCE | _POS, _NETFORCE, 1])  # fmt: skip
+        scene.add_sensor(name=table_sensor_name(obj), type=contact, objtype=geom, objname=obj,
+                         reftype=geom, refname="table", intprm=[_FOUND, 0, 1])  # fmt: skip
+    for side in SIDES:
+        scene.add_sensor(name=table_sensor_name(side), type=contact,
+                         objtype=mujoco.mjtObj.mjOBJ_XBODY, objname=f"{side}_forearm",
+                         reftype=geom, refname="table", intprm=[_FOUND, 0, 1])  # fmt: skip
 
 
 def mat_to_quat(mat: np.ndarray) -> np.ndarray:
@@ -138,8 +180,6 @@ class GraspScene:
 
     def __init__(self, config: SceneConfig | None = None) -> None:
         self.config = config = config or SceneConfig()
-        if config.contact_sensors:
-            raise NotImplementedError("contact sensors (the GPU path) are not ported to the arms")
         for kind in config.objects:
             if kind not in OBJECTS:
                 raise ValueError(f"unknown object {kind!r}, expected one of {sorted(OBJECTS)}")
@@ -263,6 +303,8 @@ class GraspScene:
             body.add_freejoint(name=kind)
             body.add_geom(name=kind, type=gtype, size=list(size), mass=mass, rgba=list(rgba),
                           friction=list(cfg.object_friction), condim=cfg.object_condim)  # fmt: skip
+        if cfg.contact_sensors:
+            _add_contact_sensors(scene, cfg.objects)
 
         model = scene.compile()
         if cfg.lite:
@@ -620,6 +662,7 @@ def scripted_grasp(scene: GraspScene, lift: float = 0.10, hold: float = 2.0, pit
 
 __all__ = [
     "ARM_GRASP",
+    "CONTACT_PARTS",
     "OBJECTS",
     "POWER_GRASP",
     "SIDE_GRASP_OFFSET",
@@ -627,9 +670,11 @@ __all__ = [
     "ArmSide",
     "GraspScene",
     "SceneConfig",
+    "contact_sensor_name",
     "grasp_targets",
     "mat_to_quat",
     "move_wrist",
     "quat_to_mat",
     "scripted_grasp",
+    "table_sensor_name",
 ]

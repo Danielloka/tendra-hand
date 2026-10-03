@@ -1,53 +1,59 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { StatusBadge } from "@/components/ui/Tag";
-import { COLUMNS, columnLabel, columnOf, formatWhen, journey, type JourneyEvent } from "@/lib/journey";
+import { useState } from "react";
+import { COLUMNS, columnOf, formatDate, journey, trackLabel, type JourneyEvent } from "@/lib/journey";
 import "./journey.css";
 
 // Map geometry (SVG units). The SVG scales to the container width.
-const GUTTER = 176;
-const COL_W = 100;
-const TOP = 44;
-const LANE_H = 124;
-const LANE_Y = 46; // lane line, from the top of its row
-const DEAD_Y = 36; // abandoned stations hang this far below the line
-const R = 8;
+const GUTTER = 190;
+const COL_W = 120;
+const TOP = 52;
+const LANE_H = 128;
+const LANE_Y = 48; // lane line, from the top of its row
+const DEAD_Y = 40; // dropped ideas hang this far below the line
+const R = 9;
 const WIDTH = GUTTER + COLUMNS * COL_W;
 const HEIGHT = TOP + journey.tracks.length * LANE_H;
 
-type Placed = JourneyEvent & { x: number; y: number; lane: number };
+type Placed = JourneyEvent & { x: number; y: number; lane: number; index: number };
 
-/** Spread the events of one lane and one column evenly across that column. */
+/** Spread the events of one lane and one day evenly across that day's column. */
 function place(): Placed[] {
   const out: Placed[] = [];
   journey.tracks.forEach((track, lane) => {
-    const mine = journey.events.filter((e) => e.track === track.id);
     const perColumn = new Map<number, JourneyEvent[]>();
-    for (const e of mine) {
+    for (const e of journey.events.filter((ev) => ev.track === track.id)) {
       const c = columnOf(e);
       perColumn.set(c, [...(perColumn.get(c) ?? []), e]);
     }
     for (const [col, list] of perColumn) {
       list.forEach((e, i) => {
-        const pad = 14;
+        const pad = 16;
         const x = GUTTER + col * COL_W + pad + ((i + 0.5) / list.length) * (COL_W - pad * 2);
         const y = TOP + lane * LANE_H + LANE_Y + (e.status === "abandoned" ? DEAD_Y : 0);
-        out.push({ ...e, x, y, lane });
+        out.push({ ...e, x, y, lane, index: out.length });
       });
     }
   });
   return out;
 }
 
+const PLACED = place();
+const BY_ID = new Map(PLACED.map((p) => [p.id, p]));
+// The last stop on each lane's main road gets the "now" pulse.
+const LAST_ON_LANE = new Set(
+  journey.tracks.map((t) => PLACED.filter((p) => p.track === t.id && p.status === "done").sort((a, b) => b.x - a.x)[0]?.id),
+);
+
 function Station({ p, selected, onSelect }: { p: Placed; selected: boolean; onSelect: () => void }) {
   return (
     <g
       className={`jmap__station jmap__station--${p.status}${selected ? " is-selected" : ""}`}
+      style={{ ["--i" as string]: p.index }}
       transform={`translate(${p.x} ${p.y})`}
       role="button"
       tabIndex={0}
-      aria-label={`${p.title}, ${formatWhen(p)}, ${p.status.replace("-", " ")}`}
+      aria-label={`${p.title}, ${formatDate(p.date)}${p.status === "abandoned" ? ", dropped" : ""}`}
       aria-pressed={selected}
       onClick={onSelect}
       onKeyDown={(e) => {
@@ -58,79 +64,93 @@ function Station({ p, selected, onSelect }: { p: Placed; selected: boolean; onSe
       }}
     >
       <title>{p.title}</title>
-      <circle className="jmap__hit" r={R + 7} />
-      {p.status === "in-progress" && <circle className="jmap__pulse" r={R} />}
+      <circle className="jmap__hit" r={R + 8} />
+      {LAST_ON_LANE.has(p.id) && <circle className="jmap__pulse" r={R} />}
       <circle className="jmap__dot" r={R} />
-      {p.status === "done" && <path className="jmap__tick" d="M-3.4 0.2 -1 2.6 3.6 -2.4" />}
-      {p.status === "abandoned" && <path className="jmap__cross" d="M-3.2 -3.2 3.2 3.2M3.2 -3.2 -3.2 3.2" />}
+      {p.status === "done" && <path className="jmap__tick" d="M-3.6 0.2 -1 2.8 3.8 -2.6" />}
+      {p.status === "abandoned" && <path className="jmap__cross" d="M-3.4 -3.4 3.4 3.4M3.4 -3.4 -3.4 3.4" />}
     </g>
   );
 }
 
-/** Subway-style map of the project: one line per track, time left to right. */
+/** Subway-style map of the project: one coloured line per track, one column per day. */
 export function JourneyMap() {
-  const placed = useMemo(place, []);
-  const byId = useMemo(() => new Map(placed.map((p) => [p.id, p])), [placed]);
-  const [selectedId, setSelectedId] = useState(() => placed.find((p) => p.status === "in-progress")?.id ?? placed[0].id);
-  const selected = byId.get(selectedId) ?? placed[0];
+  const [selectedId, setSelectedId] = useState("h-link");
+  const selected = BY_ID.get(selectedId) ?? PLACED[0];
+  const replaced = selected.replaces ? BY_ID.get(selected.replaces) : undefined;
+  const replacedBy = PLACED.find((p) => p.replaces === selected.id);
 
-  // Lane lines join the stations that are on the main road; abandoned ones branch off.
   const lines = journey.tracks.flatMap((track, lane) => {
-    const road = placed.filter((p) => p.track === track.id && p.status !== "abandoned").sort((a, b) => a.x - b.x);
-    return road.slice(1).map((p, i) => ({ key: `${track.id}-${p.id}`, x1: road[i].x, x2: p.x, y: TOP + lane * LANE_H + LANE_Y, planned: p.status === "planned" }));
+    const road = PLACED.filter((p) => p.track === track.id && p.status !== "abandoned").sort((a, b) => a.x - b.x);
+    return road.slice(1).map((p, i) => ({ key: `${track.id}-${p.id}`, track: track.id, x1: road[i].x, x2: p.x, y: TOP + lane * LANE_H + LANE_Y }));
   });
-  // A dead end is joined to the station that replaced it.
-  const branches = placed.filter((p) => p.replaces && byId.has(p.replaces)).map((p) => ({ from: byId.get(p.replaces as string) as Placed, to: p }));
+  const branches = PLACED.filter((p) => p.replaces && BY_ID.has(p.replaces)).map((p) => ({ from: BY_ID.get(p.replaces as string) as Placed, to: p }));
 
   return (
     <div className="jmap">
-      <div className="jmap__scroll" aria-hidden={false}>
-        <svg className="jmap__svg" viewBox={`0 0 ${WIDTH} ${HEIGHT}`} role="group" aria-label="Map of the project journey. Each dot is a step; select one for details. A text list follows below.">
-          <rect className="jmap__future" x={GUTTER + (COLUMNS - 2) * COL_W} y={TOP - 8} width={2 * COL_W} height={HEIGHT - TOP + 8} rx="14" />
-          {Array.from({ length: COLUMNS }, (_, c) => (
-            <text key={c} className="jmap__col" x={GUTTER + c * COL_W + COL_W / 2} y={TOP - 18} textAnchor="middle">
-              {columnLabel(c)}
-            </text>
-          ))}
-          {journey.tracks.map((t, lane) => (
-            <text key={t.id} className="jmap__lane" x={0} y={TOP + lane * LANE_H + LANE_Y + 5}>
+      <svg className="jmap__svg" viewBox={`0 0 ${WIDTH} ${HEIGHT}`} role="group" aria-label="Map of the project journey. Each dot is a step; select one for details. The same steps are listed as text below.">
+        {journey.tracks.map((t, lane) => (
+          <g key={t.id} className={`jmap__lane-band lane--${t.id}`}>
+            <rect x={0} y={TOP + lane * LANE_H} width={WIDTH} height={LANE_H - 8} rx="18" className="jmap__band" />
+            <text className="jmap__lane" x={18} y={TOP + lane * LANE_H + LANE_Y + 5}>
               {t.label}
             </text>
-          ))}
-          {lines.map((l) => (
-            <line key={l.key} className={`jmap__line${l.planned ? " jmap__line--planned" : ""}`} x1={l.x1} x2={l.x2} y1={l.y} y2={l.y} />
-          ))}
-          {placed
-            .filter((p) => p.status === "abandoned")
-            .map((p) => (
-              <line key={`stub-${p.id}`} className="jmap__stub" x1={p.x} x2={p.x} y1={p.y} y2={p.y - DEAD_Y} />
-            ))}
-          {branches.map(({ from, to }) => (
-            <path key={`br-${to.id}`} className="jmap__branch" d={`M${from.x} ${from.y} C${from.x + 40} ${from.y} ${to.x - 40} ${to.y} ${to.x} ${to.y}`} />
-          ))}
-          {placed.map((p) => (
-            <Station key={p.id} p={p} selected={p.id === selected.id} onSelect={() => setSelectedId(p.id)} />
-          ))}
-        </svg>
-      </div>
+          </g>
+        ))}
+        {journey.days.map((d, c) => (
+          <text key={d.date} className={`jmap__col${c === COLUMNS - 1 ? " jmap__col--now" : ""}`} x={GUTTER + c * COL_W + COL_W / 2} y={TOP - 20} textAnchor="middle">
+            {c === COLUMNS - 1 ? "Today" : formatDate(d.date)}
+          </text>
+        ))}
+        {lines.map((l) => (
+          <line key={l.key} className={`jmap__line lane--${l.track}`} pathLength={1} x1={l.x1} x2={l.x2} y1={l.y} y2={l.y} />
+        ))}
+        {PLACED.filter((p) => p.status === "abandoned").map((p) => (
+          <line key={`stub-${p.id}`} className="jmap__stub" x1={p.x} x2={p.x} y1={p.y} y2={p.y - DEAD_Y} />
+        ))}
+        {branches.map(({ from, to }) => (
+          <path key={`br-${to.id}`} className={`jmap__branch lane--${to.track}`} d={`M${from.x} ${from.y} C${from.x + 44} ${from.y} ${to.x - 44} ${to.y} ${to.x} ${to.y}`} />
+        ))}
+        {PLACED.map((p) => (
+          <g key={p.id} className={`lane--${p.track}`}>
+            <Station p={p} selected={p.id === selected.id} onSelect={() => setSelectedId(p.id)} />
+          </g>
+        ))}
+      </svg>
 
-      <div className="jmap__detail" aria-live="polite">
-        <div className="jmap__detail-head">
-          <StatusBadge status={selected.status === "abandoned" ? "planned" : selected.status}>{selected.status === "abandoned" ? "Replaced" : undefined}</StatusBadge>
-          <span className="jmap__detail-when">
-            {journey.tracks.find((t) => t.id === selected.track)?.label} · {formatWhen(selected)}
-          </span>
-        </div>
+      <div className={`jmap__detail lane--${selected.track}${selected.status === "abandoned" ? " jmap__detail--dropped" : ""}`} aria-live="polite">
+        <p className="jmap__detail-meta">
+          {trackLabel(selected.track)} · {formatDate(selected.date, true)}
+          {selected.status === "abandoned" && <span className="jmap__chip">Dropped</span>}
+        </p>
         <h3 className="jmap__detail-title">{selected.title}</h3>
         <p className="jmap__detail-note">{selected.note}</p>
-        {selected.replaces && byId.get(selected.replaces) && <p className="jmap__detail-note jmap__detail-note--muted">Replaced: {byId.get(selected.replaces)?.title}</p>}
+        {selected.why && (
+          <p className="jmap__detail-why">
+            <strong>Why we dropped it.</strong> {selected.why}
+          </p>
+        )}
+        {selected.lesson && (
+          <p className="jmap__detail-why">
+            <strong>What we learned.</strong> {selected.lesson}
+          </p>
+        )}
+        {replacedBy && (
+          <button type="button" className="jmap__link" onClick={() => setSelectedId(replacedBy.id)}>
+            Replaced by: {replacedBy.title} →
+          </button>
+        )}
+        {replaced && (
+          <button type="button" className="jmap__link" onClick={() => setSelectedId(replaced.id)}>
+            ← Replaced: {replaced.title}
+          </button>
+        )}
       </div>
 
       <ul className="jmap__legend" aria-label="Legend">
         <li><span className="jmap__key jmap__key--done" aria-hidden="true" />Done</li>
-        <li><span className="jmap__key jmap__key--in-progress" aria-hidden="true" />In progress</li>
-        <li><span className="jmap__key jmap__key--planned" aria-hidden="true" />Planned</li>
-        <li><span className="jmap__key jmap__key--abandoned" aria-hidden="true" />Tried and replaced</li>
+        <li><span className="jmap__key jmap__key--abandoned" aria-hidden="true" />Tried and dropped</li>
+        <li><span className="jmap__key jmap__key--now" aria-hidden="true" />Latest step on a track</li>
       </ul>
     </div>
   );

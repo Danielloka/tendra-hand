@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getLogPost(slug);
   if (!post) return {};
   const { title, summary, date, tags, cover } = post.frontmatter;
-  const url = `/log/${slug}`;
+  const url = `/docs/log/${slug}`;
   return {
     title,
     description: summary,
@@ -56,7 +56,7 @@ export default async function LogPostPage({ params }: Props) {
         title={fm.title}
         lead={fm.summary}
         top={
-          <Link className="post-back" href="/log">
+          <Link className="post-back" href="/docs/log">
             Build log
           </Link>
         }

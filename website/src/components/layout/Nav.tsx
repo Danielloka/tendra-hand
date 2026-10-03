@@ -3,17 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { siteConfig } from "@/lib/site";
-import { isCurrent, MenuButton, MobileMenu } from "./MobileMenu";
+import { siteConfig, type NavItem } from "@/lib/site";
+import { isCurrentIn, MenuButton, MobileMenu, stripDocs } from "./MobileMenu";
 import { ScrollProgress } from "./ScrollProgress";
 import { ThemeToggle } from "./ThemeToggle";
 import "./layout.css";
 
 // Long reading pages get a progress line under the nav (the homepage tells its own story).
-const PROGRESS_ROUTES = ["/project", "/journey", "/hardware", "/software", "/contribute", "/docs/"];
-const hasProgress = (pathname: string) => PROGRESS_ROUTES.some((r) => (r.endsWith("/") ? pathname.startsWith(r) : pathname === r)) || /^\/log\/[^/]+$/.test(pathname);
+const PROGRESS_ROUTES = ["/project", "/journey", "/contribute"];
+const hasProgress = (pathname: string, docs: boolean) => (docs ? stripDocs(pathname) !== "/" : PROGRESS_ROUTES.includes(pathname));
 
-export function Nav() {
+/** `docs` = the docs header: brand links to the docs home and gets a "Docs" tag. */
+export function Nav({ items, docs = false }: { items: NavItem[]; docs?: boolean }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   // The menu remembers the page it was opened on, so it closes by itself on navigation.
@@ -32,15 +33,16 @@ export function Nav() {
     <>
       <header className={`nav${scrolled || menuOpen ? " is-scrolled" : ""}${menuOpen ? " is-menu-open" : ""}`} data-lenis-prevent={menuOpen ? "" : undefined}>
         <div className="container nav__inner">
-          <Link className="nav__brand" href="/" aria-label={`${siteConfig.name}, home`}>
+          <Link className="nav__brand" href={docs ? "/docs" : "/"} aria-label={docs ? `${siteConfig.name} docs, home` : `${siteConfig.name}, home`}>
             <span className="nav__brand-mark" aria-hidden="true" />
             {siteConfig.name}
+            {docs && <span className="nav__brand-tag">Docs</span>}
           </Link>
           <nav aria-label="Main">
             <ul className="nav__links">
-              {siteConfig.nav.map((item) => (
+              {items.map((item) => (
                 <li key={item.href}>
-                  <Link className="nav__link" href={item.href} aria-current={isCurrent(pathname, item.href) ? "page" : undefined}>
+                  <Link className="nav__link" href={item.href} aria-current={isCurrentIn(docs, pathname, item.href) ? "page" : undefined}>
                     {item.label}
                   </Link>
                 </li>
@@ -55,9 +57,9 @@ export function Nav() {
             <MenuButton open={menuOpen} onToggle={() => setMenuPath(menuOpen ? null : pathname)} />
           </div>
         </div>
-        {hasProgress(pathname) && <ScrollProgress key={pathname} />}
+        {hasProgress(pathname, docs) && <ScrollProgress key={pathname} />}
       </header>
-      <MobileMenu open={menuOpen} pathname={pathname} onClose={closeMenu} />
+      <MobileMenu open={menuOpen} pathname={pathname} onClose={closeMenu} items={items} docs={docs} />
     </>
   );
 }

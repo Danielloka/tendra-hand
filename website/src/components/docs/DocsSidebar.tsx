@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import type { DocGroup } from "@/lib/docs";
+import { stripDocs } from "@/components/layout/MobileMenu";
 import { DocsSearch } from "./DocsSearch";
 
 /**
@@ -15,7 +16,7 @@ export function DocsSidebar({ groups }: { groups: DocGroup[] }) {
   // Remember which page the menu was opened on, so it closes by itself after navigating.
   const [openOn, setOpenOn] = useState<string | null>(null);
   const open = openOn === pathname;
-  const current = groups.flatMap((g) => g.pages).find((p) => p.href === pathname);
+  const current = groups.flatMap((g) => g.pages).find((p) => stripDocs(p.href) === stripDocs(pathname));
 
   return (
     <div className="docs-sidebar__inner">
@@ -30,7 +31,7 @@ export function DocsSidebar({ groups }: { groups: DocGroup[] }) {
         </svg>
       </button>
       <nav id="docs-nav" className="docs-nav" aria-label="Docs" data-open={open ? "" : undefined} data-lenis-prevent="">
-        <Link href="/docs" className="docs-nav__link docs-nav__home" aria-current={pathname === "/docs" ? "page" : undefined}>
+        <Link href="/docs" className="docs-nav__link docs-nav__home" aria-current={stripDocs(pathname) === "/" ? "page" : undefined}>
           Overview
         </Link>
         {groups.map((group) => (
@@ -39,7 +40,7 @@ export function DocsSidebar({ groups }: { groups: DocGroup[] }) {
             <ul role="list">
               {group.pages.map((page) => (
                 <li key={page.slug}>
-                  <Link href={page.href} className="docs-nav__link" aria-current={page.href === pathname ? "page" : undefined}>
+                  <Link href={page.href} className="docs-nav__link" aria-current={stripDocs(page.href) === stripDocs(pathname) ? "page" : undefined}>
                     {page.title}
                   </Link>
                 </li>

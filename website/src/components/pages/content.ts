@@ -43,7 +43,7 @@ export const getLogPosts = cache(async (): Promise<LogPost[]> => {
     listMdxSlugs("log").map(async (slug) => {
       const { frontmatter: fm } = await loadMdx<LogFrontmatter>(`log/${slug}`);
       if (!fm?.title || !fm.date) throw new Error(`content/log/${slug}.mdx needs a "title" and a "date" in its frontmatter.`);
-      return { ...fm, slug, href: `/log/${slug}` };
+      return { ...fm, slug, href: `/docs/log/${slug}` };
     }),
   );
   return posts.sort((a, b) => b.date.localeCompare(a.date) || b.slug.localeCompare(a.slug));

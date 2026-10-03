@@ -323,7 +323,7 @@ class GraspEnv:
         self.hold = 0
         self.success = False
         self.ep_return = 0.0
-        self.spawn_xy = s.object_pose()[0][:2].copy()
+        self.spawn_xy = s.canon_pos(s.object_pose()[0])[:2]  # the right hand's view, like obj_pos
         self.finger_target = s.finger_targets()
         self.prev_action = np.zeros(self.action_dim)
         self.obs_bias = rng.normal(0, cfg.obs_noise, 3)
@@ -412,7 +412,8 @@ class GraspEnv:
     # ----- contacts -----
 
     def _contacts(self) -> None:
-        """Per-part touch of the object, contact points and forces, hand-table contact."""
+        """Per-part touch of the object, contact points (the right hand's view) and forces,
+        hand-table contact."""
         m, d = self.model, self.data
         geom = self.scene._obj_geom[self.scene.active_object]
         table = self.scene._table
@@ -438,7 +439,7 @@ class GraspEnv:
             mujoco.mj_contactForce(m, d, int(i), wrench)
             self.touch[part] = True
             self.force[part] += abs(wrench[0])
-            self.points.append((int(part), d.contact.pos[i].copy()))
+            self.points.append((int(part), self.scene.canon_pos(d.contact.pos[i])))
         hand_table = ((g1 == table) & (self._part[g2] >= 0)) | (
             (g2 == table) & (self._part[g1] >= 0)
         )

@@ -1,49 +1,43 @@
 import data from "@content/journey.json";
 
-export type JourneyStatus = "done" | "in-progress" | "planned" | "abandoned";
+export type JourneyStatus = "done" | "abandoned";
 export type JourneyEvent = {
   id: string;
   track: string;
-  /** ISO date for things that happened. Planned events use `when` instead. */
-  date?: string;
-  when?: "next" | "later";
+  date: string;
   title: string;
   status: JourneyStatus;
   note: string;
+  /** Abandoned events: why we dropped it, and what we learned. */
+  why?: string;
+  lesson?: string;
   /** Id of the abandoned event this one replaced. */
   replaces?: string;
 };
+export type JourneyDay = { date: string; title: string; blurb: string };
 export type Journey = {
   kicker: string;
   title: string;
   lead: string;
   tracks: { id: string; label: string }[];
+  days: JourneyDay[];
   events: JourneyEvent[];
 };
 
 export const journey = data as Journey;
 
-/** One map column per day since the project started, then "Next" and "Later". */
-export const START = "2026-09-26";
-export const DAYS = 8;
-export const COLUMNS = DAYS + 2;
+/** One map column per day, from the first day on. */
+export const COLUMNS = journey.days.length;
 
-const DAY_MS = 86_400_000;
 const utc = (iso: string) => Date.parse(`${iso}T00:00:00Z`);
 
 export function columnOf(e: JourneyEvent): number {
-  if (e.when) return e.when === "next" ? DAYS : DAYS + 1;
-  const day = Math.round((utc(e.date ?? START) - utc(START)) / DAY_MS);
-  return Math.min(Math.max(day, 0), DAYS - 1);
+  const i = journey.days.findIndex((d) => d.date === e.date);
+  return Math.max(i, 0);
 }
 
-export function columnLabel(col: number): string {
-  if (col === DAYS) return "Next";
-  if (col === DAYS + 1) return "Later";
-  return new Date(utc(START) + col * DAY_MS).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+export function formatDate(iso: string, long = false): string {
+  return new Date(utc(iso)).toLocaleDateString("en-GB", long ? { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" } : { day: "numeric", month: "short", timeZone: "UTC" });
 }
 
-export function formatWhen(e: JourneyEvent): string {
-  if (e.when) return e.when === "next" ? "Next" : "Later";
-  return new Date(utc(e.date ?? START)).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
-}
+export const trackLabel = (id: string) => journey.tracks.find((t) => t.id === id)?.label ?? id;

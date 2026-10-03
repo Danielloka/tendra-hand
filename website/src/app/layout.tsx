@@ -1,8 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
-import { Footer } from "@/components/layout/Footer";
-import { Nav } from "@/components/layout/Nav";
-import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
 
@@ -39,11 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip-link" href="#main">
           Skip to content
         </a>
-        <SmoothScroll>
-          <Nav />
-          <main id="main">{children}</main>
-          <Footer />
-        </SmoothScroll>
+        {children}
       </body>
     </html>
   );

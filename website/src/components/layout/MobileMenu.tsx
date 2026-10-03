@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
-import { siteConfig } from "@/lib/site";
+import { siteConfig, type NavItem } from "@/lib/site";
 import { lockScroll } from "./scrollLock";
 
 const BUTTON_ID = "menu-button";
@@ -10,6 +10,10 @@ const SHEET_ID = "menu-sheet";
 
 /** `/docs` is current on /docs and every /docs/… page. */
 export const isCurrent = (pathname: string, href: string) => pathname === href || pathname.startsWith(`${href}/`);
+
+/** On the docs host the address bar has no /docs prefix (/hardware), but links do (/docs/hardware). */
+export const stripDocs = (path: string) => path.replace(/^\/docs(?=\/|$)/, "") || "/";
+export const isCurrentIn = (docs: boolean, pathname: string, href: string) => (docs ? stripDocs(pathname) === stripDocs(href) || (stripDocs(href) !== "/" && stripDocs(pathname).startsWith(`${stripDocs(href)}/`)) : isCurrent(pathname, href));
 
 /** Menu / close button, shown below the 64rem nav breakpoint. */
 export function MenuButton({ open, onToggle }: { open: boolean; onToggle: () => void }) {
@@ -28,7 +32,7 @@ export function MenuButton({ open, onToggle }: { open: boolean; onToggle: () => 
  * is locked, the rest of the page is inert, Esc closes it (focus goes back to
  * the button). Closed, it is inert so its links can't be tabbed to.
  */
-export function MobileMenu({ open, pathname, onClose }: { open: boolean; pathname: string; onClose: () => void }) {
+export function MobileMenu({ open, pathname, onClose, items, docs = false }: { open: boolean; pathname: string; onClose: () => void; items: NavItem[]; docs?: boolean }) {
   useEffect(() => {
     if (!open) return;
     const unlock = lockScroll();
@@ -57,15 +61,15 @@ export function MobileMenu({ open, pathname, onClose }: { open: boolean; pathnam
     <div id={SHEET_ID} className="menu-sheet" data-open={open ? "" : undefined} inert={!open} data-lenis-prevent="">
       <nav aria-label="Menu" className="container menu-sheet__inner">
         <ul className="menu-sheet__links" role="list">
-          {siteConfig.nav.map((item, i) => (
+          {items.map((item, i) => (
             <li key={item.href} style={{ "--i": i } as React.CSSProperties}>
-              <Link className="menu-sheet__link" href={item.href} aria-current={isCurrent(pathname, item.href) ? "page" : undefined} onClick={onClose}>
+              <Link className="menu-sheet__link" href={item.href} aria-current={isCurrentIn(docs, pathname, item.href) ? "page" : undefined} onClick={onClose}>
                 {item.label}
               </Link>
             </li>
           ))}
         </ul>
-        <div className="menu-sheet__footer" style={{ "--i": siteConfig.nav.length } as React.CSSProperties}>
+        <div className="menu-sheet__footer" style={{ "--i": items.length } as React.CSSProperties}>
           <a className="btn btn--secondary" href={siteConfig.github}>
             View on GitHub
           </a>

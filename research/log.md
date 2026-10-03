@@ -11,6 +11,12 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** what I learned and what to try next
 ```
 
+## 2026-10-03: Journey page on the website
+**Goal:** see the road taken (hardware, software, AI, and the dropped paths) as one picture.
+**Setup:** `website/content/journey.json` (done and dropped steps only, 5 lanes, a `why` and `lesson` for each dropped idea), `JourneyMap.tsx`, `JourneyDays.tsx`, `JourneyDropped.tsx`, route `/journey`, nav and sitemap entries, link from the homepage roadmap. Also fixed `roadmap.json` (4-joint thumb).
+**Result:** typecheck, lint and build pass. Checked in Chrome on desktop. Phone layout, dark theme and reduced motion are not checked yet.
+**Conclusion / next:** keep `journey.json` in step with this log. Run the design, accessibility and code reviewers before committing.
+
 ## 2026-10-03: DIP linkage modelled in Fusion
 **Goal:** model the rigid PIP→DIP bars in the "Tendra Hand V1" design.
 **Setup:** `TendraHandV1.py` stage `linkage` (run through the Fusion MCP; the call timed out but the stage finished).

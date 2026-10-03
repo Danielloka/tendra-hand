@@ -8,13 +8,16 @@
   "nav": [
     { "label": "Project", "href": "/project" },
     { "label": "Journey", "href": "/journey" },
-    { "label": "Hardware", "href": "/hardware" },
-    { "label": "Software", "href": "/software" },
-    { "label": "Docs", "href": "/docs" },
-    { "label": "Build log", "href": "/log" },
     { "label": "Gallery", "href": "/gallery" },
     { "label": "Contribute", "href": "/contribute" },
+    { "label": "Docs", "href": "/docs" },
     { "label": "Hand lab", "href": "/dev/hand" }
+  ],
+  "docsNav": [
+    { "label": "Getting started", "href": "/docs/getting-started" },
+    { "label": "Hardware", "href": "/docs/hardware" },
+    { "label": "Software", "href": "/docs/software" },
+    { "label": "Build log", "href": "/docs/log" }
   ],
   "footer": {
     "note": "Built in the open. Every file, every line of code, every mistake.",

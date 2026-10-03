@@ -124,7 +124,7 @@ Ordered by impact per euro and hour. "Free" means firmware or a print change.
 
 These change the robot design, so they are the owner's call:
 
-1. **Stronger servos on 6 high-load joints (HLS3606M, ~US$30 each), or keep all 20 SCS0009 for V1?** Recommendation: buy **one or two HLS3606M** now and test them on the V0 index MCP rig before committing.
+1. **Stronger servos on 6 high-load joints (HLS3606M, ~US$30 each), or keep all 16 SCS0009 for V1?** Recommendation: buy **one or two HLS3606M** now and test them on the V0 index MCP rig before committing.
 2. **Couple the DIP to the PIP?** Most successful hands do it, and it frees 4 servos (20 → 16) whose budget, space and bus time could go to stronger knuckles. The cost: less independent fingertip control, which humans barely have anyway. Recommendation: try it in the sim first (`test_v1.py` + grasp RL).
 3. **MCP gear ratio 1.5 (drum 7.5 mm, spool 5 mm)?** Recommendation: yes. It's cheap strength and keeps enough speed (~400°/s with no load).
 

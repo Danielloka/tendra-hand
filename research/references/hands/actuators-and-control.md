@@ -1,6 +1,6 @@
 # Actuators and control: how the best hands move smoothly, softly and strongly (and how Tendra gets closer)
 
-Date: 2026-09-30. Scope: actuator choice, low-level control, force/compliance, and learning-based dexterity, applied to **Tendra Hand V1** (20 SCS0009 in the forearm, antagonistic tendon loops, ESP32-S3 + FE-URT-1, PC does high-level control).
+Date: 2026-09-30. Scope: actuator choice, low-level control, force/compliance, and learning-based dexterity, applied to **Tendra Hand V1** (16 SCS0009 in the forearm, finger DIPs linked to PIPs, antagonistic tendon loops, ESP32-S3 + FE-URT-1, PC does high-level control).
 
 **How to read the confidence labels**
 
@@ -143,7 +143,7 @@ From the Feetech SCSCL memory table (official FTServo_Arduino `SCSCL.h`, MIT) pl
 Each one can be tested on one finger with the `F` feedback command and a log of position vs time.
 
 1. **Stream at 100 Hz, and match the servo's speed to the ramp.** 🔴 (tuning hypothesis, cheap to test)
-   - `kGoalPeriodMs = 10`. A sync write of 20 servos × 7 bytes ≈ 150 bytes ≈ **1.5 ms** at 1 Mbps ✅ (estimate in the full-hand research), so 100 Hz uses ~15 % of the bus.
+   - `kGoalPeriodMs = 10`. A sync write of 16 servos × 7 bytes ≈ 120 bytes ≈ **1.2 ms** at 1 Mbps ✅ (estimate in the full-hand research), so 100 Hz uses ~12 % of the bus.
    - Send per servo **goal speed = |profile speed| × 1.2 + small margin** (never 0, since 0 = full speed), instead of a constant 600. The servo then travels each 10 ms step at about the speed the ramp wants, with no stop–go.
    - Alternative to test: **goal time = 1.5 × period** (15 ms) with speed ignored. The servo spreads each step over the interval (its own interpolation). Compare both with a logged step response.
 2. **Replace the trapezoid with a jerk-limited profile, or add setpoint smoothing.** 🟡
@@ -158,7 +158,7 @@ Each one can be tested on one finger with the `F` feedback command and a log of 
    - Set **max torque limit 16** to e.g. 60–80 % for MCP joints, 40–60 % for DIP/PIP (protects the tendons and the 3D-printed drums; see §3).
 4. **Faster, non-blocking feedback.** ✅ current behaviour / 🔴 new numbers
    - Set **return delay (7) to 0** if it isn't already.
-   - Read **position only** (2 bytes) at high rate and load/voltage/temp at a lower rate: position-only reads of all 20 servos ≈ 20 × ~0.2 ms ≈ 4–5 ms → **~100 Hz full position state** alongside the 100 Hz goal stream.
+   - Read **position only** (2 bytes) at high rate and load/voltage/temp at a lower rate: position-only reads of all 16 servos ≈ 16 × ~0.2 ms ≈ 3–4 ms → **~100 Hz full position state** alongside the 100 Hz goal stream.
    - Lower the reply timeout for online servos to ~1 ms (a healthy servo answers in well under 0.5 ms at 1 Mbps 🔴), and skip offline servos for longer.
 5. **Backlash / friction compensation (feedforward).** 🟡 standard technique
    - Measure per joint the **hysteresis**: sweep the joint slowly open and closed and record servo angle vs real joint angle (camera + ArUco marker, or the MuJoCo twin + a phone video). The gap on reversal = backlash + tendon stretch + friction.
@@ -307,7 +307,7 @@ So when the joint is **still** (holding or squeezing), load ‰ is roughly propo
 | `pip`, `dip`, `thumb_ip`, `thumb_mcp_flex`, 4 × `mcp_abd` | Keep **SCS0009** | Light loads; small; cheap | ✅ |
 | Everything, V1.5 | All **HLS3606M** (or STS3032) | One servo type, current sensing on every joint = force-transparent-ish hand at ~US$25/joint. Compare cost/benefit after the 6-joint test | 🔴 decision later |
 | Research option | **One BLDC+FOC test joint** (gimbal motor + small planetary, SimpleFOC) on `index_mcp_flex` | Learn what 1X-style low-ratio torque transparency feels like; compare with HLS current mode | 🔴 experiment |
-| Power | **6 V** supply (≥ 15–20 A for 20 servos) | +22 % torque vs 5 V | ✅ datasheet |
+| Power | **6 V** supply (≥ 15 A for 16 servos) | +22 % torque vs 5 V | ✅ datasheet |
 
 Before buying: measure the **real tendon force needed** per joint on the printed index (spring scale on the strand while the finger holds a known load); compare with **80 % × stall / r_spool** (SCS0009 at 6 V: 0.8 × 0.226 / 0.006 ≈ **30 N** of tendon force; SCS2332 ≈ 58 N; HLS3606M ≈ 78 N, all from the stall torque). For scale, the 1X NEO hand reaches 2.6 N·m at a finger MCP; with a 6 mm drum even the HLS3606M gives only ~0.47 N·m continuous-peak at the MCP. **Torque is Tendra's biggest gap to the leaders; smoothness and softness are fixable in software.** Check that 0.4 mm fishing line and the printed drums survive ~80 N.
 

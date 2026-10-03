@@ -227,7 +227,7 @@ The flexor carries the grasp load, so make it **stiff** (braid). Give the extens
 - makes the joint soft when *pushed closed* (toward the palm), which is harmless and a little safer;
 - costs a little force: the servo must also stretch the extensor spring by the loop travel. That's k_s·Δx ≈ 1.5 × 1 = 1.5 N extra at most, and it's constant, so it can be calibrated out.
 
-Try it on the test finger against a plain split spool before committing 20 servos.
+Try it on the test finger against a plain split spool before committing 16 servos.
 
 ### 3.5 Actuation schemes (for context)
 

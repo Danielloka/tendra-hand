@@ -93,7 +93,7 @@ The SCS0009 encoder measures the **spool**, not the joint. In between sit tendon
 | **Two I²C buses from the ESP32-S3** (it has 2 controllers) | 6 | Doubles bandwidth | Still needs muxing for fixed-address chips |
 | **SPI chain** (e.g. AS5048A daisy-chain) | 5–6 | Fast | More wires, chip-select management |
 | **Small MCU in the palm** (e.g. RP2040, STM32G0, CH32V003, or a second ESP32-C3) reads everything locally | **4** (power + one serial/CAN/RS-485 pair) | Short sensor wires, robust link, local filtering and timestamps, **scales** | Another firmware to maintain |
-| **Share the SCS servo bus** **[speculative]** | 0 extra signal wires | Palm MCU answers as extra "servo IDs" (e.g. 30+) using Feetech's packet format | Adds traffic to a 1 Mbps half-duplex bus already carrying 20 servos; risky |
+| **Share the SCS servo bus** **[speculative]** | 0 extra signal wires | Palm MCU answers as extra "servo IDs" (e.g. 30+) using Feetech's packet format | Adds traffic to a 1 Mbps half-duplex bus already carrying 16 servos; risky |
 
 **Recommendation:** a **palm (or proximal-forearm) sensor MCU** with local I²C/mux branches to each finger, and a separate UART, RS-485 or CAN link to the main ESP32-S3. It is the standard industrial pattern and keeps the servo bus clean.
 
@@ -121,7 +121,7 @@ ESP32-S3 facts used below **[background]**: two I²C controllers (any GPIO via t
 ### Stage 1: "free" force sense + one fingertip test (≈ $15–40, a weekend or two)
 **Goal:** contact detection and rough grip force now, and learn how touch data looks.
 
-1. **Servo telemetry at 50–100 Hz** (position, load, speed) for all 20 servos: firmware `F` command → streaming mode. Log it in `tendra.dataset` as state.
+1. **Servo telemetry at 50–100 Hz** (position, load, speed) for all 16 servos: firmware `F` command → streaming mode. Log it in `tendra.dataset` as state.
 2. **Bench calibration of load → tendon tension:** one strand, a luggage scale or known weights (optionally a 1–5 kg load cell + HX711, ~$5). Fit load = k·tension + friction(direction). Also measure **tendon stretch** vs tension (spool angle vs a protractor on the joint).
 3. **Contact detector in software:** compare measured load with what MuJoCo predicts for free motion; a residual above a threshold = contact. Estimate fingertip force via τ = Jᵀ F.
 4. **One DIY magnetic fingertip** (index): **TMAG5273** or **MLX90393** breakout (~$5–15) under a cast silicone dome (Smooth-On Ecoflex/Dragon Skin, ~$30 kit shared with later stages) with a 2–3 mm neodymium magnet. 3-axis field → normal + shear after calibration with a kitchen scale. I²C0 on e.g. **GPIO 8 (SDA) / GPIO 9 (SCL)**, 400 kHz, 4 wires down the finger.

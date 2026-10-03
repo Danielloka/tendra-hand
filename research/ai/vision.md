@@ -31,7 +31,7 @@ Working name: **Tendra Duo** (suggestion only, not decided).
 
 ### Key hardware questions
 
-- **Hand weight vs. arm payload.** V1 puts 20 servos in the forearm. Weigh the built hand (estimate 0.5–0.8 kg). The arm must carry the hand *plus* the object at full reach, so we need ≥ 1–1.5 kg payload. Cheap hobby arms (SO-101) can't do that; the arm needs stronger actuators (see `resources.md` → Arms).
+- **Hand weight vs. arm payload.** V1 puts 16 servos in the forearm. Weigh the built hand (estimate 0.5–0.8 kg). The arm must carry the hand *plus* the object at full reach, so we need ≥ 1–1.5 kg payload. Cheap hobby arms (SO-101) can't do that; the arm needs stronger actuators (see `resources.md` → Arms).
 - **Where do the hand's servos live?** In the forearm (V1 now, simple) or on the pole/upper arm with long Bowden-style tendons (lighter arm, but tendon friction and coupling with elbow/wrist motion). Open question in `ideas.md`.
 - **Wrist:** V1 has no wrist joint. The arm's last 3 joints act as the wrist.
 

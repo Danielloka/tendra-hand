@@ -116,7 +116,7 @@ uv run python sim/train_grasp.py --hands right --run runs/right  # one hand only
 reward term (`r_reach`, `r_lift`, ...). Watch `success` and `max_height` go up.
 
 **Speed:** physics is the limit. A free hand costs ~2 ms per control step, a hand holding an
-object ~5–7 ms (finger–finger and finger–object mesh contacts plus 40 tendons; cheaper solver
+object ~5–7 ms (finger–finger and finger–object mesh contacts plus 36 tendons; cheaper solver
 settings made the grip slip, so fidelity stays). The laptop does ~300–650 steps/s with 4
 workers, ~1–3 M steps per hour. Grasping usually needs 10–50 M steps → overnight runs, or a
 cloud machine with many CPU cores (`--workers 32 --envs 256`, same code).

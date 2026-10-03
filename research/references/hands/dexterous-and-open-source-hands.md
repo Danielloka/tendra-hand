@@ -2,8 +2,8 @@
 
 *Research note, 2026-09-30. English. License: CC BY 4.0 (see `docs/LICENSE`).*
 
-**Why this note exists.** Tendra Hand V1 is a 20-DOF, tendon-driven, 3D-printed hand with 20 Feetech
-SCS0009 servos in the forearm, one antagonistic loop (flex + extend strand) per joint on a 6 mm drum,
+**Why this note exists.** Tendra Hand V1 is a 20-DOF, tendon-driven, 3D-printed hand with 16 Feetech
+SCS0009 servos (each finger's DIP is linked to its PIP by a rigid bar) in the forearm, one antagonistic loop (flex + extend strand) per joint on a 6 mm drum,
 6 mm servo spools, 0.4 mm line in 1 × 2 mm PTFE tubes. This note surveys other hands to find what we
 should copy, what to avoid, and whether the SCS0009 is strong enough.
 

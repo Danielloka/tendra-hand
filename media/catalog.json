@@ -190,27 +190,6 @@
       ]
     },
     {
-      "file": "screenshots/2026-09-29-teleop-open-hand-with-people.png",
-      "type": "screenshot",
-      "date": "2026-09-29",
-      "hand": "v1",
-      "description": "Webcam teleop (sim/teleop.py, older on-screen text) side by side. Left: the mirrored webcam image with an open left hand and the MediaPipe hand skeleton drawn over it in green; two people are visible behind the hand, with their faces showing. Right: the white V1 MuJoCo hand copying the open pose, all five fingers spread, orange fingertip markers, dark background and checkered floor.",
-      "alt": "Webcam teleop: an open hand tracked by the camera on the left, copied by the simulated five-finger hand on the right.",
-      "caption": "Webcam teleop: the simulated hand copies an open hand.",
-      "tags": [
-        "teleop",
-        "webcam",
-        "mediapipe",
-        "sim",
-        "mujoco"
-      ],
-      "width": 1108,
-      "height": 477,
-      "used_in": [],
-      "public": false,
-      "todo": "Shows two people's faces: don't publish without their permission, or crop/blur the faces first."
-    },
-    {
       "file": "screenshots/2026-09-29-teleop-open-hand.png",
       "type": "screenshot",
       "date": "2026-09-29",

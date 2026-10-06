@@ -42,5 +42,4 @@ The TODO cells were replaced with rough, honest wording. Replace with measured v
 - Add a screenshot or short video of the digital twin (the real finger following a slider in MuJoCo).
 
 ## Site-wide
-- `content/site.json`: `url` is still `https://tendra-hand.example.com` with a `_todo_url` note (the security agent handles it); set the real domain.
-- `media/screenshots/2026-09-29-teleop-open-hand-with-people.png` is not used anywhere, but `scripts/sync-styleguide.mjs` copies all of `media/` into `public/media/`, so it is publicly reachable by URL. Check it has no faces or anyone's private space before deploying, or move it out of `media/`.
+- Domain: once you have one, set `NEXT_PUBLIC_SITE_URL` in Vercel (and `NEXT_PUBLIC_DOCS_URL` for the docs subdomain). See `DEPLOY.md`.

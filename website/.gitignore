@@ -9,3 +9,6 @@ public/styleguide/
 public/assets/
 # Copied from ../media by scripts/sync-styleguide.mjs
 public/media/
+
+# Vercel CLI link folder
+.vercel

@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { Placeholder } from "@/components/ui/Placeholder";
 
 // three.js (~270 kB gzipped) is only fetched after the first interaction (see below), never on the critical path.
 const HandCanvas = dynamic(() => import("@/components/three/HandCanvas"), { ssr: false, loading: () => null });
@@ -55,8 +54,16 @@ export function HandStage({ canvasRef, indicatorRef, chapters, motion }: Props) 
         {ready && <HandCanvas mode={motion ? "animated" : "static"} className="story-canvas__gl" />}
       </div>
       <noscript>
-        {/* TODO: replace with a static render of the hand (public/images/hand-static.webp) once the real model exists. */}
-        <Placeholder label="3D view of the hand (needs JavaScript)" ratio="auto" className="story-stage__fallback" />
+        {/* Without JavaScript there is no 3D hand, so show a photo of the prototype instead. */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- next/image needs JS to load lazily */}
+        <img
+          src="/media/photos/2026-09-29-v0-prototype-top-view.jpg"
+          alt="The thumb and index finger prototype seen from above, with the motor column and tendon spools below the palm."
+          width={1125}
+          height={2000}
+          loading="lazy"
+          className="story-stage__fallback"
+        />
       </noscript>
       {/* Where you are in the story. Not interactive, so it stays neutral. */}
       <ol ref={indicatorRef} className="story-indicator" aria-hidden="true">

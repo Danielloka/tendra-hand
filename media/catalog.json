@@ -162,7 +162,8 @@
       "width": 1125,
       "height": 2000,
       "used_in": [
-        "website/content/data/gallery.json"
+        "website/content/data/gallery.json",
+        "website/src/components/home/HandStage.tsx"
       ]
     },
     {
@@ -184,7 +185,8 @@
       "height": 468,
       "used_in": [
         "website/content/data/gallery.json",
-        "website/content/pages/software.mdx"
+        "website/content/pages/software.mdx",
+        "website/content/log/2026-09-27-python-library-digital-twin.mdx"
       ]
     },
     {
@@ -205,6 +207,7 @@
       "width": 1108,
       "height": 477,
       "used_in": [],
+      "public": false,
       "todo": "Shows two people's faces: don't publish without their permission, or crop/blur the faces first."
     },
     {
@@ -225,7 +228,8 @@
       "width": 1105,
       "height": 469,
       "used_in": [
-        "website/content/data/gallery.json"
+        "website/content/data/gallery.json",
+        "website/content/log/2026-09-26-first-mujoco-model.mdx"
       ]
     }
   ]

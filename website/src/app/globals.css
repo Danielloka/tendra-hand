@@ -36,10 +36,3 @@
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
-
-/* Placeholder SVGs (public/images/placeholders) are light-only images, so they
-   can't read tokens. In dark mode, flip their lightness but keep the blue hue,
-   so they don't glow as white boxes. Remove once real photos replace them. */
-:root[data-theme="dark"] img[src*="/images/placeholders/"] {
-  filter: invert(1) hue-rotate(180deg) brightness(1.1);
-}

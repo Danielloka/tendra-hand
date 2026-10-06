@@ -18,25 +18,6 @@
     },
     {
       "type": "image",
-      "src": "/images/placeholders/gallery-tendon-routing.svg",
-      "alt": "The back of the index finger showing the tendon cords running along it",
-      "caption": "Tendon cords run along each finger to the motors.",
-      "width": 1600,
-      "height": 1000,
-      "todo": "Close-up photo of the back of the index finger showing how the tendon loops are routed through the printed parts, landscape 16:10."
-    },
-    {
-      "type": "video",
-      "src": "/images/placeholders/gallery-video-index-close-open.svg",
-      "poster": "/images/placeholders/gallery-video-index-close-open.svg",
-      "alt": "Video of the index finger bending and straightening",
-      "caption": "First motion test: the index finger closing and opening.",
-      "width": 1920,
-      "height": 1080,
-      "todo": "Short muted video (5-10 s, 16:9) of the index finger closing and opening smoothly on the stepper firmware, plus a poster frame. Shoot after hardware bring-up."
-    },
-    {
-      "type": "image",
       "src": "/media/photos/2026-09-29-v0-forearm-motors-spools.jpg",
       "alt": "The forearm column with stepper motors and blue tendon spools, with the fingers on top.",
       "caption": "One motor and one spool per joint: each tendon loop bends the joint one way and straightens it the other.",
@@ -85,15 +66,6 @@
     },
     {
       "type": "image",
-      "src": "/images/placeholders/gallery-mujoco-viewer.svg",
-      "alt": "The simulated thumb and index finger in the MuJoCo viewer with joint sliders",
-      "caption": "The simulated hand in MuJoCo, with a slider for every joint.",
-      "width": 1600,
-      "height": 1000,
-      "todo": "Screenshot of `uv run python sim/view.py` with the hand in a pinch pose and the Control sliders visible, landscape 16:10."
-    },
-    {
-      "type": "image",
       "src": "/media/screenshots/2026-09-29-teleop-i-love-you-sign.png",
       "alt": "Webcam teleop: a hand making the 'I love you' sign, and the simulated hand making the same sign.",
       "caption": "Each finger follows on its own: the simulated hand copies an 'I love you' sign.",
@@ -107,34 +79,6 @@
       "caption": "Open your hand in front of the webcam and the simulated hand opens too.",
       "width": 1105,
       "height": 469
-    },
-    {
-      "type": "video",
-      "src": "/images/placeholders/gallery-video-digital-twin.svg",
-      "poster": "/images/placeholders/gallery-video-digital-twin.svg",
-      "alt": "Video of the real hand following a slider in the MuJoCo simulation",
-      "caption": "The digital twin: move a joint on screen and the real finger follows.",
-      "width": 1080,
-      "height": 1350,
-      "todo": "Muted video (10-15 s, portrait 4:5) with the laptop screen running `sim/twin.py --port auto` next to the real hand, showing the real joints following the sliders, plus a poster frame."
-    },
-    {
-      "type": "image",
-      "src": "/images/placeholders/gallery-pinch.svg",
-      "alt": "The thumb tip touching the index fingertip in a pinch pose",
-      "caption": "A pinch: the thumb swings across to meet the index finger.",
-      "width": 1000,
-      "height": 1250,
-      "todo": "Photo of the real hand holding a pinch pose (thumb tip meeting the index fingertip), ideally holding a small object, portrait 4:5."
-    },
-    {
-      "type": "image",
-      "src": "/images/placeholders/gallery-cad.svg",
-      "alt": "The Fusion 360 design of the thumb and index finger",
-      "caption": "The design lives in Fusion 360 and will be published as open CAD files.",
-      "width": 1600,
-      "height": 1000,
-      "todo": "Screenshot of the Fusion 360 design of the thumb + index with a clean background (optionally a section view through a joint), landscape 16:10."
     }
   ]
 }

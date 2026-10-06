@@ -30,6 +30,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
+  min-height: 2.75rem;
   font-size: 1.0625rem;
   font-weight: 600;
   letter-spacing: -0.02em;

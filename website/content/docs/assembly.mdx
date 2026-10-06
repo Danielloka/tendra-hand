@@ -4,46 +4,31 @@ description: Step-by-step assembly of the Tendra Hand thumb and index prototype.
 updated: 2026-09-27
 ---
 
-These are the main stages of putting the prototype together, in order. The outline is complete, but the detailed instructions and photos for each step are still being written as the first prototype is finished.
+These are the main stages of putting the prototype together, in order. Detailed instructions and photos for each step are still being written as the first prototype is finished.
 
 <Callout type="note" title="Work in progress">
-  Each step below says what happens and why. Exact part names, screw sizes, tendon lengths and photos will be filled in as the build is documented. If you're building along, the [research log](https://github.com/Danielloka/tendra-hand/blob/main/research/log.md) has the latest notes.
+  Each step below says what happens and why. Exact part names, screw sizes and tendon lengths will be added as the build is documented. If you're building along, the [research log](https://github.com/Danielloka/tendra-hand/blob/main/research/log.md) has the latest notes.
 </Callout>
 
 <Steps>
   <Step title="Print and clean up the parts">
     Print the palm and finger bones in PLA or PETG (see the [Build guide](/docs/build-guide#printing)). Remove supports, and make sure the joint holes and tendon channels are clear so the tendons can slide freely.
-
-    {/* TODO: photo of all printed parts laid out and labelled. */}
-    <Placeholder label="All printed parts, laid out and labelled" />
   </Step>
 
   <Step title="Assemble the finger joints">
     Join the bones with their hinge pins, one joint at a time. Each joint should swing freely through its full range with no rubbing. Friction here is felt by the motor on every move.
-
-    {/* TODO: photo of an assembled index finger, straight and bent. */}
-    <Placeholder label="Assembled index finger, straight and bent" />
   </Step>
 
   <Step title="Mount the motors">
     Fix the eight 28BYJ-48 motors in their mounts, with a 1 cm radius spool on each output shaft. Label every motor M1 to M8 now; the numbers are used everywhere (see the pin map in [Electronics](/docs/electronics#motor-and-pin-map)).
-
-    {/* TODO: photo of the motor bank with M1–M8 labels. */}
-    <Placeholder label="Motor bank with M1–M8 labels" />
   </Step>
 
   <Step title="Thread the tendons">
     For each joint, run a tendon loop from the motor's spool, along the finger, around the joint and back. One side of the loop closes the joint, the other side opens it. Tension them just enough to remove slack, with every joint straight.
-
-    {/* TODO: routing diagram per joint, tendon material and length, how to tie it off. */}
-    <Placeholder label="Tendon routing diagram for one joint" />
   </Step>
 
   <Step title="Wire the electronics">
     Connect each motor to its ULN2003 board, and each board to the ESP32-S3 pins in the pin map. Connect the separate 5 V / 2 A supply to the driver boards, and join its ground to the ESP32's ground. Leave the motor power **off** for now.
-
-    {/* TODO: wiring photo and diagram. */}
-    <Placeholder label="Wiring: ESP32-S3, ULN2003 boards and 5 V supply" />
   </Step>
 
   <Step title="First power-on, one motor at a time">

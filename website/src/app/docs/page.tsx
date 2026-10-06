@@ -1,19 +1,34 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbs, collectionPage, docsCrumbs } from "@/components/seo/schemas";
+import { docsLoc } from "@/components/seo/urls";
 import { getDocsTree } from "@/lib/docs";
 
 export const metadata: Metadata = {
   title: "Docs",
   description: "Guides for Tendra Hand: get the code running, build the thumb and index prototype, wire the electronics and run the MuJoCo simulation.",
-  alternates: { canonical: "/docs" },
+  alternates: { canonical: docsLoc("/docs") },
 };
 
 export default async function DocsHome() {
   const groups = await getDocsTree();
   const first = groups[0]?.pages[0];
+  const url = docsLoc("/docs");
 
   return (
     <div className="docs-home">
+      <JsonLd
+        data={[
+          collectionPage({
+            name: "Tendra Hand docs",
+            description: metadata.description ?? undefined,
+            url,
+            items: groups.flatMap((g) => g.pages).map((p) => ({ name: p.title, url: docsLoc(p.href) })),
+          }),
+          breadcrumbs(docsCrumbs()),
+        ]}
+      />
       <header className="docs-article__head">
         <p className="kicker">Docs</p>
         <h1 className="docs-article__title">Build it, run it, understand it.</h1>

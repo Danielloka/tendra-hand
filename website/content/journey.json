@@ -17,7 +17,8 @@
     { "date": "2026-09-30", "title": "Looking around", "blurb": "We studied the best robot hands in the world to see where we stand." },
     { "date": "2026-10-01", "title": "Fewer servos", "blurb": "Sixteen servos instead of twenty-one, by copying how a human finger works." },
     { "date": "2026-10-02", "title": "Arms and a cloud GPU", "blurb": "A better fingertip linkage, two simulated arms and the first big training run." },
-    { "date": "2026-10-03", "title": "Today", "blurb": "The linkage is modelled in CAD and this page exists." }
+    { "date": "2026-10-03", "title": "The journey page", "blurb": "The linkage is modelled in CAD and this page exists." },
+    { "date": "2026-10-05", "title": "Ready to go live", "blurb": "The website gets safe, fast and easy to find, ready for its first deploy." }
   ],
   "events": [
     { "id": "h-v0", "track": "hardware", "date": "2026-09-26", "title": "V0 thumb and index printed", "status": "done", "note": "The first prototype: 8 joints, tendon-driven, 3D printed." },
@@ -60,6 +61,7 @@
     { "id": "w-site", "track": "web", "date": "2026-09-27", "title": "Website v1", "status": "done", "note": "26 pages and a 3D hand." },
     { "id": "w-glb", "track": "web", "date": "2026-09-28", "title": "The real hand model on the site", "status": "done", "note": "Built from the CAD file." },
     { "id": "w-media", "track": "web", "date": "2026-09-29", "title": "One place for photos and video", "status": "done", "note": "Without GPS data in the pictures." },
-    { "id": "w-jour", "track": "web", "date": "2026-10-03", "title": "This journey page", "status": "done", "note": "You are here." }
+    { "id": "w-jour", "track": "web", "date": "2026-10-03", "title": "This journey page", "status": "done", "note": "You are here." },
+    { "id": "w-launch", "track": "web", "date": "2026-10-05", "title": "Website ready to launch", "status": "done", "note": "Placeholders gone, security headers on, and findable by search engines and AI assistants." }
   ]
 }

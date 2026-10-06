@@ -1,0 +1,10 @@
+# Not needed to build or serve the site.
+.next
+.next-*
+node_modules
+*.tsbuildinfo
+.vercel
+scripts/__pycache__
+scripts/*.py
+# Notes for people working on the models; would otherwise be served at /models/README.md.
+public/models/README.md

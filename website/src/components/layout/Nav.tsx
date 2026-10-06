@@ -33,7 +33,7 @@ export function Nav({ items, docs = false }: { items: NavItem[]; docs?: boolean 
     <>
       <header className={`nav${scrolled || menuOpen ? " is-scrolled" : ""}${menuOpen ? " is-menu-open" : ""}`} data-lenis-prevent={menuOpen ? "" : undefined}>
         <div className="container nav__inner">
-          <Link className="nav__brand" href={docs ? "/docs" : "/"} aria-label={docs ? `${siteConfig.name} docs, home` : `${siteConfig.name}, home`}>
+          <Link className="nav__brand" href={docs ? "/docs" : "/"} aria-label={docs ? undefined : `${siteConfig.name}, home`}>
             <span className="nav__brand-mark" aria-hidden="true" />
             {siteConfig.name}
             {docs && <span className="nav__brand-tag">Docs</span>}

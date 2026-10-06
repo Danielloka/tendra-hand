@@ -78,7 +78,7 @@
   .jday { display: flex; flex-direction: column; padding: var(--space-5) var(--space-6); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
   .jday__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-3); }
   .jday__num { padding: 0.15em 0.7em; border-radius: var(--radius-pill); background: var(--accent-soft); color: var(--accent); font-size: var(--fs-caption); font-weight: 700; }
-  .jday__date { color: var(--text-faint); font-size: var(--fs-caption); }
+  .jday__date { color: var(--text-muted); font-size: var(--fs-caption); }
   .jday__title { margin: var(--space-3) 0 var(--space-1); font-size: var(--fs-h4); }
   .jday__blurb { margin: 0 0 var(--space-4); color: var(--text-muted); }
   .jday__events { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
@@ -88,13 +88,13 @@
   .jday__event--abandoned .jday__event-title { color: var(--text-muted); }
   .jday__event-title { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0; font-weight: 600; }
   .jday__event-note { margin: var(--space-1) 0 0; color: var(--text-muted); font-size: var(--fs-small); }
-  .jday__track { color: var(--lane); font-weight: 650; }
+  .jday__track { color: var(--text); font-weight: 650; }
 
   /* ---------- dropped ideas ---------- */
   .jdrop { display: grid; gap: var(--space-5); margin: 0; padding: 0; list-style: none; }
   @media (min-width: 48rem) { .jdrop { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .jdrop__card { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-6); background: var(--surface); border: 1px solid var(--border); border-top: 6px solid var(--lane); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
-  .jdrop__meta { margin: 0; color: var(--text-faint); font-size: var(--fs-caption); }
+  .jdrop__meta { margin: 0; color: var(--text-muted); font-size: var(--fs-caption); }
   .jdrop__title { display: flex; align-items: center; gap: var(--space-3); margin: 0; font-size: var(--fs-h4); }
   .jdrop__x { display: grid; place-items: center; flex: none; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--text-faint); color: var(--surface); font-size: 1.1rem; line-height: 1; }
   .jdrop__card p { margin: 0; }

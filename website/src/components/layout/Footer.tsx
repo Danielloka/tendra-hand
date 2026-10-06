@@ -14,17 +14,17 @@ export function Footer({ items }: { items: NavItem[] }) {
           <p className="caption">{footer.note}</p>
           <p className="caption">{footer.contact}</p>
         </div>
-        <nav aria-label="Footer" className="grid content-start gap-2 text-small">
+        <nav aria-label="Footer" className="grid content-start gap-0.5 text-small">
           {items.map((item) => (
-            <Link key={item.href} href={item.href} className="text-text-muted hover:text-text">
+            <Link key={item.href} href={item.href} className="py-1 text-text-muted hover:text-text">
               {item.label}
             </Link>
           ))}
         </nav>
-        <div className="grid content-start gap-2 text-small">
-          <a href={siteConfig.github}>GitHub</a>
+        <div className="grid content-start gap-0.5 text-small">
+          <a className="py-1" href={siteConfig.github}>GitHub</a>
           {footer.licenses.map((l) => (
-            <a key={l.href} href={l.href} className="text-text-muted hover:text-text">
+            <a key={l.href} href={l.href} className="py-1 text-text-muted hover:text-text">
               {l.label}
             </a>
           ))}

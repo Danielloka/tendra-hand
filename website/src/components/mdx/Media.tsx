@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Placeholder as UiPlaceholder } from "@/components/ui/Placeholder";
 
 type FigureProps = { src: string; alt: string; caption?: React.ReactNode; width?: number; height?: number };
 
@@ -29,16 +28,6 @@ export function Video({ src, poster, caption }: { src: string; poster?: string; 
   return (
     <figure className="prose-figure">
       <video src={src} poster={poster} controls muted playsInline preload="none" />
-      {caption && <figcaption className="caption">{caption}</figcaption>}
-    </figure>
-  );
-}
-
-/** Stand-in for missing media. Always add a {/* TODO: … *\/} next to it in MDX. */
-export function Placeholder({ label, ratio, caption }: { label: string; ratio?: string; caption?: React.ReactNode }) {
-  return (
-    <figure className="prose-figure">
-      <UiPlaceholder label={label} ratio={ratio} />
       {caption && <figcaption className="caption">{caption}</figcaption>}
     </figure>
   );

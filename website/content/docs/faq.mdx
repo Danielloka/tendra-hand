@@ -22,13 +22,11 @@ The prototype has 8 joints and 8 motors (thumb and index). The full five-finger 
 
 ## What does it cost to build?
 
-We don't know yet, honestly. The current prototype uses cheap, common parts (28BYJ-48 steppers, ULN2003 boards, an ESP32-S3, PLA filament), but the smart servos in the next version cost more per joint. A costed parts list will be published on the [Hardware](/hardware) page.
-
-{/* TODO: add a cost estimate once the BOM has prices. */}
+We don't know yet, honestly. The current prototype uses cheap, common parts (28BYJ-48 steppers, ULN2003 boards, an ESP32-S3, PLA filament), but the smart servos in the next version cost more per joint. A costed parts list will be published on the [Hardware](/docs/hardware) page.
 
 ## Can I build one now?
 
-Not from instructions yet. The software runs today (see [Getting started](/docs/getting-started)), and you can explore the hand in simulation. The print files, a full parts list and step-by-step assembly are being prepared while the first prototype is finished. Follow the [build log](/log) for progress.
+Not from instructions yet. The software runs today (see [Getting started](/docs/getting-started)), and you can explore the hand in simulation. The print files, a full parts list and step-by-step assembly are being prepared while the first prototype is finished. Follow the [build log](/docs/log) for progress.
 
 ## Why steppers now and servos later?
 
@@ -36,7 +34,7 @@ The 28BYJ-48 steppers were cheap and on hand, which makes them great for a first
 
 ## Does it use AI?
 
-A little, and much more later. You can already control the simulated hand by moving your own hand in front of a webcam: an AI model finds your fingers in the camera image, and the software copies their angles to the robot ([how it works](/software#webcam-control)). You can also set joint angles directly, from Python or with sliders in the simulator. The hand doesn't learn anything by itself yet. That comes in later phases: learning from recorded demonstrations, then training in simulation before moving to the real hand. See the [roadmap](/project).
+A little, and much more later. You can already control the simulated hand by moving your own hand in front of a webcam: an AI model finds your fingers in the camera image, and the software copies their angles to the robot ([how it works](/docs/software#webcam-control)). You can also set joint angles directly, from Python or with sliders in the simulator. The hand doesn't learn anything by itself yet. That comes in later phases: learning from recorded demonstrations, then training in simulation before moving to the real hand. See the [roadmap](/project).
 
 ## Do I need a powerful computer?
 

@@ -146,6 +146,9 @@ a:hover { text-decoration: underline; text-underline-offset: 0.18em; }
   left: var(--space-4);
   top: -100px;
   z-index: 200;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
   padding: var(--space-2) var(--space-4);
   background: var(--accent);
   color: var(--on-accent);

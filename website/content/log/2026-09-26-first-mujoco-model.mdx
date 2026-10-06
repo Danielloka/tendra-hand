@@ -2,7 +2,7 @@
 title: "From a CAD export to a working simulation"
 date: "2026-09-26"
 summary: "The Fusion 360 export said the hand weighed 821 g of steel. A small converter script turned it into a 131 g plastic hand that moves correctly in MuJoCo."
-cover: /images/placeholders/log-first-mujoco-model.svg
+cover: /media/screenshots/2026-09-29-teleop-open-hand.png
 tags: ["simulation", "mujoco", "cad"]
 ---
 
@@ -26,8 +26,6 @@ uv run python sim/convert.py && uv run pytest
 
 The tests fail if the committed model is out of date, so it can't silently drift from the design.
 
-{/* TODO: replace with a real screenshot of the model in the MuJoCo viewer. */}
-<Figure src="/images/placeholders/gallery-mujoco-viewer.svg" alt="Placeholder for a screenshot of the thumb and index model in the MuJoCo viewer" caption="The thumb and index model in the MuJoCo viewer, with a slider for each joint." width={1600} height={1000} />
 
 ## Not everything is perfect
 

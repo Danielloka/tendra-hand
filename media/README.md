@@ -58,6 +58,7 @@ opening every file.
 | `poster` | Videos only: the poster frame, e.g. `photos/...-poster.jpg` |
 | `used_in` | Where it's used, e.g. `website/content/data/gallery.json` |
 | `todo` | What's still missing; remove it when the entry is complete |
+| `public` | Optional. `false` keeps the file off the website (e.g. people who haven't agreed to be online); the website only publishes files listed here |
 
 ## Using a picture
 

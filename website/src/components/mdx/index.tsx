@@ -7,7 +7,7 @@ import { Callout } from "./Callout";
 import { Card, CardGrid } from "./CardGrid";
 import { CodeBlock } from "./CodeBlock";
 import { H2, H3, H4 } from "./Heading";
-import { Figure, Placeholder, Video } from "./Media";
+import { Figure, Video } from "./Media";
 import { Step, Steps } from "./Steps";
 
 // Components available in every .mdx file without importing them (see PLAN.md →
@@ -30,7 +30,6 @@ export const mdxComponents: MDXComponents = {
   Callout,
   Figure,
   Video,
-  Placeholder,
   StatusBadge,
   CardGrid,
   Card,

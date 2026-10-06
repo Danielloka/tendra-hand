@@ -77,6 +77,10 @@
   .story-stage__fallback {
     position: absolute;
     inset: var(--space-4) var(--gutter);
+    width: calc(100% - 2 * var(--gutter));
+    height: calc(100% - 2 * var(--space-4));
+    object-fit: contain;
+    border-radius: var(--radius-lg);
   }
 
   /* Chapter indicator: decorative, neutral (not clickable). Motion layout only. */
@@ -223,7 +227,7 @@
     translate: -50% 0;
     font-size: var(--fs-caption);
     font-weight: 500;
-    color: var(--text-faint);
+    color: var(--text-muted);
     white-space: nowrap;
     visibility: hidden; /* shown by the timeline once the story starts */
   }

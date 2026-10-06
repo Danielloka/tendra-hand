@@ -41,8 +41,6 @@ The full bill of materials (with quantities and links) lives on the [Hardware](/
 - **Fingertip pads:** TPU (a flexible filament) is planned, for grip.
 - **Settings:** layer height, infill, walls, orientation and supports will be listed next to each file in `hardware/print/`.
 
-{/* TODO: add the STL/3MF files and per-part print settings once they're exported. */}
-
 <Callout type="note">
   The simulation assumes solid PLA (1240 kg/m³, about 131 g for the thumb and index). Real printed parts are lighter because of infill. Once the parts are weighed, the model will be updated.
 </Callout>
@@ -52,8 +50,6 @@ The full bill of materials (with quantities and links) lives on the [Hardware](/
 Each joint has one tendon loop wrapped around its motor's spool. The spool has a **radius of 1 cm**, so one full turn of the motor pulls about 62.8 mm of tendon.
 
 How far a joint bends for a given length of tendon depends on how far the tendon sits from the joint's hinge (its *moment arm*). That distance hasn't been measured yet, so the number of motor steps per radian is **calibrated by hand** for each joint (see [Electronics](/docs/electronics#calibrating-a-joint)).
-
-{/* TODO: tendon material, diameter, routing and pre-tension, once they're settled (Phase 3 studies friction and pre-tension). */}
 
 ## Motors
 

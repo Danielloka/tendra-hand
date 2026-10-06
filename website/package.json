@@ -4,6 +4,9 @@
   "private": true,
   "description": "Website for the Tendra Hand open-source robotic hand.",
   "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "predev": "node scripts/sync-styleguide.mjs",
     "dev": "next dev",

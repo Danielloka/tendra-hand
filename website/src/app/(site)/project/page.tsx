@@ -7,7 +7,7 @@ import "./project.css";
 export const generateMetadata = () => pageMetadata("project");
 
 const STATS = [
-  { to: 21, label: "joints in the full hand" },
+  { to: 20, label: "joints in the full hand" },
   { to: 8, label: "joints in the prototype" },
   { to: 3, label: "open licenses" },
   { to: 100, label: "% open source", suffix: "%" },

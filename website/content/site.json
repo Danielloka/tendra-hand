@@ -2,8 +2,6 @@
   "name": "Tendra Hand",
   "tagline": "An open-source, tendon-driven robotic hand.",
   "description": "Tendra Hand is a fully open-source, 3D-printed, tendon-driven robotic hand that aims to match the joints of a human hand, with every joint controlled on its own. It is the first step toward a robot that can do everyday tasks as well as a person.",
-  "url": "https://tendra-hand.example.com",
-  "_todo_url": "TODO: replace with the real domain once hosting is chosen.",
   "github": "https://github.com/Danielloka/tendra-hand",
   "nav": [
     { "label": "Project", "href": "/project" },

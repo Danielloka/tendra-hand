@@ -41,20 +41,20 @@
       "items": [
         {
           "part": "PLA or PETG filament",
-          "qty": "TODO: grams per hand",
-          "spec": "1.75 mm, TODO: brand and colour used",
+          "qty": "A few hundred grams per hand",
+          "spec": "1.75 mm",
           "notes": "For the rigid skeleton. The 3D model works out to about 131 g of solid plastic; printed parts are usually lighter."
         },
         {
           "part": "Tendon line",
-          "qty": "TODO: length per joint",
-          "spec": "TODO: line type and diameter",
+          "qty": "A few metres per hand",
+          "spec": "0.4 mm fishing line",
           "notes": "One closed loop per joint, wound on a 2 cm spool on the motor."
         },
         {
           "part": "TPU filament",
-          "qty": "TODO: amount per fingertip pad",
-          "spec": "TODO: shore hardness",
+          "qty": "A few grams per fingertip pad",
+          "spec": "Flexible filament",
           "notes": "For soft fingertip pads (planned).",
           "planned": true
         }
@@ -79,8 +79,8 @@
         {
           "part": "5 V power supply for the servos",
           "qty": 1,
-          "spec": "TODO: current rating, sized for stall current",
-          "notes": "To be sized in Phase 2.",
+          "spec": "5 to 6 V, at least 15 A",
+          "notes": "Sized for 16 servos, split into 3 branches with capacitors. The 5 V / 2 A supply is only for the stepper prototype.",
           "planned": true
         }
       ]

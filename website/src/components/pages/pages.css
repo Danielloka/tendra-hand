@@ -429,6 +429,3 @@
   /* ---- 404 --------------------------------------------------------------------- */
   .not-found { min-height: 60vh; display: grid; align-content: center; }
 }
-
-/* Unlayered: beats the Tailwind utility (bg-bg-alt) on ui/Placeholder inside grey bands. */
-.section--alt .page-prose .prose-figure > [role="img"] { background-color: var(--surface); }

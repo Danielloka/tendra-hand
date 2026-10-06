@@ -32,33 +32,29 @@ All hardware files live in the [`hardware/`](https://github.com/Danielloka/tendr
 | `hardware/electronics/` | Wiring, pin map and power budget |
 | `hardware/robot_description/` | The robot model exported from Fusion 360, used by the simulation |
 
-<Callout type="note" title="Coming soon">
-  Right now the repository holds the robot model exported from Fusion 360, including a 3D mesh of every part. The editable CAD files and print-ready files are being prepared and will be added to `hardware/cad/` and `hardware/print/`.
+<Callout type="note" title="What is in the repository today">
+  The repository holds the full hand as a STEP file (it opens in any CAD program), the Fusion 360 scripts that build the V1 design, the robot model with a 3D mesh of every part, and a spool you can print. A complete set of print-ready files is still being prepared and will be added to `hardware/print/`.
 </Callout>
-
-{/* TODO: link each STL/3MF and the .f3d/STEP files once they are committed. */}
 
 ## Bill of materials
 
-Everything needed for the thumb and index prototype, plus the planned servo upgrade. Items marked TODO haven't been measured or documented yet.
+Everything needed for the thumb and index prototype, plus the planned servo upgrade.
 
 <BomTable />
 
 ## Print settings
 
-The final settings haven't been written down yet. Until then, these are common starting points for small mechanical parts. They are **not** tested values for this hand.
+The final settings haven't been written down yet. These are common starting points for small mechanical parts, not tested values for this hand.
 
-| Setting | Starting point | Tested value |
-|---|---|---|
-| Material | PLA or PETG | TODO |
-| Nozzle | 0.4 mm | TODO |
-| Layer height | 0.2 mm (0.12 to 0.16 mm for small finger parts) | TODO |
-| Walls | 3 or more perimeters, so joint holes stay strong | TODO |
-| Infill | 20 to 40 % | TODO |
-| Supports | Only where needed; orient parts to avoid them in joint holes | TODO |
-| Orientation | Lay parts so layers don't split along the direction the tendon pulls | TODO |
-
-{/* TODO: replace the starting points with the settings actually used for the prototype, per part. */}
+| Setting | Starting point |
+|---|---|
+| Material | PLA or PETG |
+| Nozzle | 0.4 mm |
+| Layer height | 0.2 mm (0.12 to 0.16 mm for small finger parts) |
+| Walls | 3 or more perimeters, so joint holes stay strong |
+| Infill | 20 to 40 % |
+| Supports | Only where needed; orient parts to avoid them in joint holes |
+| Orientation | Lay parts so layers don't split along the direction the tendon pulls |
 
 The simulation model assumes solid plastic and works out to about 131 g. Real printed parts are lighter because they aren't solid.
 
@@ -102,5 +98,4 @@ The full pin map is in [`firmware/include/config.h`](https://github.com/Daniello
 
 ## Wiring diagram
 
-{/* TODO: replace with the real wiring diagram (public/images/placeholders/wiring-diagram.svg is a stand-in). */}
-<Placeholder label="Diagram: wiring of the ESP32-S3, 8 ULN2003 boards and the 5 V supply" ratio="16 / 10" />
+Each motor connects to its own ULN2003 board, and each board to four pins on the ESP32-S3 (see the pin map in [Electronics](/docs/electronics#motor-and-pin-map)).

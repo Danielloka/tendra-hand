@@ -135,7 +135,7 @@
   .docs-search__input::placeholder { color: var(--text-muted); }
   .docs-search__input::-webkit-search-cancel-button { display: none; }
   .docs-search__input:focus-visible {
-    outline: none;
+    outline-offset: 2px;
     border-color: var(--accent);
     background: var(--surface);
     box-shadow: 0 0 0 3px var(--accent-soft);

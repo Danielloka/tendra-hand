@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { lockScroll } from "@/components/layout/scrollLock";
-import { isPlaceholder } from "./format";
 import "./pages.css";
 
 export type GalleryItem = {
@@ -14,11 +13,8 @@ export type GalleryItem = {
   caption: string;
   width: number;
   height: number;
-  todo?: string;
 };
 
-// A "video" whose src is still an SVG stand-in shows the picture with a badge instead of a player.
-const isVideoPlaceholder = (item: GalleryItem) => item.type === "video" && item.src.endsWith(".svg");
 const thumbOf = (item: GalleryItem) => (item.type === "video" ? (item.poster ?? item.src) : item.src);
 
 function Icon({ d }: { d: string }) {
@@ -32,10 +28,9 @@ const PREV = "m15 5-7 7 7 7";
 const NEXT = "m9 5 7 7-7 7";
 const CLOSE = "M6 6l12 12M18 6 6 18";
 
-/** `placeholder`: sits below the centre so it doesn't cover the placeholder's own label. */
-function PlayBadge({ label, placeholder = false }: { label: string; placeholder?: boolean }) {
+function PlayBadge({ label }: { label: string }) {
   return (
-    <span className={placeholder ? "play-badge play-badge--low" : "play-badge"}>
+    <span className="play-badge">
       <span className="play-badge__icon">
         <svg viewBox="0 0 10 12" fill="currentColor" aria-hidden="true">
           <path d="M0 0v12l10-6z" />
@@ -106,10 +101,8 @@ export function Gallery({ items }: { items: GalleryItem[] }) {
                   setIndex(i);
                 }}
               >
-                <Image src={thumbOf(it)} alt={it.alt} width={it.width} height={it.height} sizes="(min-width: 72rem) 22rem, (min-width: 40rem) 45vw, 100vw" />
-                {/* TODO: placeholder media; replace it as described in the item's `todo` field (content/data/gallery.json). */}
-                {isPlaceholder(it.src) && <span className="tag media-flag">Placeholder</span>}
-                {it.type === "video" && <PlayBadge label={isVideoPlaceholder(it) ? "Video coming" : "Play"} placeholder={isVideoPlaceholder(it)} />}
+                <Image src={thumbOf(it)} alt={it.alt} width={it.width} height={it.height} sizes="(min-width: 72rem) 22rem, (min-width: 40rem) 45vw, 100vw" priority={i < 2} />
+                {it.type === "video" && <PlayBadge label="Play" />}
               </a>
               <figcaption className="caption">{it.caption}</figcaption>
             </figure>
@@ -148,14 +141,10 @@ export function Gallery({ items }: { items: GalleryItem[] }) {
               </button>
               <div className="lightbox__media">
                 <div className="lightbox__media-inner" key={index}>
-                  {item.type === "video" && !isVideoPlaceholder(item) ? (
+                  {item.type === "video" ? (
                     <video src={item.src} poster={item.poster} controls playsInline preload="none" aria-label={item.alt} width={item.width} height={item.height} />
                   ) : (
-                    <>
-                      <Image src={thumbOf(item)} alt={item.alt} width={item.width} height={item.height} sizes="90vw" />
-                      {isVideoPlaceholder(item) && <PlayBadge label="Video coming" placeholder />}
-                      {isPlaceholder(item.src) && <span className="tag media-flag">Placeholder</span>}
-                    </>
+                    <Image src={thumbOf(item)} alt={item.alt} width={item.width} height={item.height} sizes="90vw" />
                   )}
                 </div>
               </div>

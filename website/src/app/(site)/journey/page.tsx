@@ -4,6 +4,9 @@ import { JourneyDropped } from "@/components/pages/JourneyDropped";
 import { JourneyMap } from "@/components/pages/JourneyMap";
 import { OG_IMAGE } from "@/components/pages/content";
 import { PageHero } from "@/components/pages/PageHero";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbs, webPage } from "@/components/seo/schemas";
+import { mainLoc } from "@/components/seo/urls";
 import { SectionHead } from "@/components/ui/SectionHead";
 import { journey } from "@/lib/journey";
 import "@/components/pages/journey.css";
@@ -26,6 +29,15 @@ export default function JourneyPage() {
   ];
   return (
     <div className="page page--journey">
+      <JsonLd
+        data={[
+          webPage({ name: "The journey", description, url: mainLoc("/journey") }),
+          breadcrumbs([
+            { name: "Tendra Hand", url: mainLoc("/") },
+            { name: "The journey", url: mainLoc("/journey") },
+          ]),
+        ]}
+      />
       <PageHero kicker={journey.kicker} title={journey.title} lead={journey.lead}>
         <ul className="jstats" aria-label="The journey in numbers">
           {stats.map((s) => (

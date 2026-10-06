@@ -11,6 +11,18 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** what I learned and what to try next
 ```
 
+## 2026-10-05: Website ready for a Vercel deploy
+**Goal:** make the website safe, fast, reliable and findable (search engines and LLMs) before the first public deploy, and remove visible placeholders.
+**Setup:** agent team (content, security/Vercel, perf, seo, a11y, code review), then a local production build checked with curl and Chrome.
+**Result:**
+- Placeholders and visible TODOs removed (6 gallery items, 14 placeholder SVGs, BOM/print-setting TODO cells); what to fill in later is in `website/FILL-IN.md`.
+- Security headers + a static CSP (no nonces, pages stay static); `'wasm-unsafe-eval'` is needed because drei's GLTF loader starts the meshopt WebAssembly decoder (the browser check caught it: the 3D hand was blocked). No source maps, `X-Powered-By` off, `npm audit`: 0.
+- Site URL from env (`NEXT_PUBLIC_SITE_URL` → Vercel production URL); `vercel.json` skips builds when `website/` and `media/` are unchanged; error pages; steps in `website/DEPLOY.md`.
+- SEO/GEO: per-page canonical + OG, JSON-LD (Organization, WebSite, SoftwareSourceCode, TechArticle, FAQPage, ImageGallery), `/llms.txt` + `/llms-full.txt`, AI crawlers allowed in robots.txt; off-site steps in `website/SEO.md`.
+- Privacy: `media/screenshots/...-with-people.png` (faces) is now `"public": false` in the catalog and no longer copied to the site. It is still in the public GitHub repo's history (owner to decide).
+- Lighthouse: accessibility 100, desktop performance 93–100. Mobile performance unmeasured (laptop too loaded; re-run with PageSpeed Insights after deploy).
+**Conclusion / next:** owner imports the repo on Vercel (Root Directory `website`), then Search Console + Bing Webmaster Tools once a domain exists.
+
 ## 2026-10-03: Journey page on the website
 **Goal:** see the road taken (hardware, software, AI, and the dropped paths) as one picture.
 **Setup:** `website/content/journey.json` (done and dropped steps only, 5 lanes, a `why` and `lesson` for each dropped idea), `JourneyMap.tsx`, `JourneyDays.tsx`, `JourneyDropped.tsx`, route `/journey`, nav and sitemap entries, link from the homepage roadmap. Also fixed `roadmap.json` (4-joint thumb).

@@ -1,4 +1,3 @@
-import { Reveal } from "@/components/ui/Reveal";
 import "./pages.css";
 
 type Props = {
@@ -22,16 +21,9 @@ export function PageHero({ kicker, title, lead, actions, children, top, narrow }
         {top}
         {kicker && <p className="kicker">{kicker}</p>}
         <h1 className="page-hero__title">{title}</h1>
-        {lead && (
-          <Reveal as="p" className="lead page-hero__lead" delay={80}>
-            {lead}
-          </Reveal>
-        )}
-        {actions && (
-          <Reveal className="page-hero__actions" delay={160}>
-            {actions}
-          </Reveal>
-        )}
+        {/* Above the fold (the lead is the LCP element): visible at once, never wrapped in Reveal. */}
+        {lead && <p className="lead page-hero__lead">{lead}</p>}
+        {actions && <div className="page-hero__actions">{actions}</div>}
         {children}
       </div>
     </header>

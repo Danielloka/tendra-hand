@@ -16,27 +16,10 @@ const SpinHand = dynamic(() => import("./SpinHand"), { ssr: false, loading: () =
 export function ProjectHand({ className }: { className?: string }) {
   const spin = useStoryMotion();
   const [near, setNear] = useState(false);
-  const [awake, setAwake] = useState(false);
   const [box, setBox] = useState<HTMLDivElement | null>(null);
 
   // Mount only after the first interaction (or 10 s), and once the box is near the viewport.
   // Parsing three.js + a 1.6 MB model on load costs ~40 Lighthouse points (same rule as the homepage).
-  // Like the homepage: load three.js on the first interaction (or after 4 s), not on the critical path.
-  useEffect(() => {
-    const events = ["pointermove", "pointerdown", "touchstart", "wheel", "keydown", "scroll"] as const;
-    const wake = () => {
-      window.clearTimeout(timer);
-      events.forEach((e) => window.removeEventListener(e, wake));
-      setAwake(true);
-    };
-    const timer = window.setTimeout(wake, 4000);
-    events.forEach((e) => window.addEventListener(e, wake, { once: true, passive: true }));
-    return () => {
-      window.clearTimeout(timer);
-      events.forEach((e) => window.removeEventListener(e, wake));
-    };
-  }, []);
-
   useEffect(() => {
     if (!box) return;
     const events = ["pointermove", "pointerdown", "touchstart", "wheel", "keydown", "scroll"] as const;
@@ -65,7 +48,7 @@ export function ProjectHand({ className }: { className?: string }) {
   return (
     <div className={className}>
       <div ref={setBox} className="project-hand__stage" role="img" aria-label="3D model of the full Tendra Hand V1, with five fingers.">
-        {near && awake && <SpinHand spin={spin} />}
+        {near && <SpinHand spin={spin} />}
       </div>
       {!spin && (
         <button type="button" className="btn btn--sm btn--secondary project-hand__play" onClick={() => setMotionOptIn(true)}>

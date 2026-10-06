@@ -3,9 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLogPost, getLogPosts, OG_IMAGE } from "@/components/pages/content";
-import { isPlaceholder } from "@/components/pages/format";
 import { PostMeta } from "@/components/pages/LogCard";
 import { PageHero } from "@/components/pages/PageHero";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbs, docsCrumbs, techArticle } from "@/components/seo/schemas";
+import { docsLoc, mainLoc } from "@/components/seo/urls";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -20,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getLogPost(slug);
   if (!post) return {};
   const { title, summary, date, tags, cover } = post.frontmatter;
-  const url = `/docs/log/${slug}`;
+  const url = docsLoc(`/docs/log/${slug}`);
   return {
     title,
     description: summary,
@@ -32,8 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url,
       publishedTime: date,
       tags,
-      // SVG placeholders make poor preview images; they fall back to the site-wide one.
-      images: [cover && !isPlaceholder(cover) ? cover : OG_IMAGE],
+      images: [cover ?? OG_IMAGE],
     },
   };
 }
@@ -49,8 +50,23 @@ export default async function LogPostPage({ params }: Props) {
   const older = posts[i + 1];
   const newer = posts[i - 1];
 
+  const url = docsLoc(`/docs/log/${slug}`);
   return (
     <article className="post">
+      <JsonLd
+        data={[
+          techArticle({
+            title: fm.title,
+            description: fm.summary,
+            url,
+            published: fm.date,
+            keywords: fm.tags,
+            section: "Build log",
+            image: mainLoc(fm.cover ?? OG_IMAGE.url),
+          }),
+          breadcrumbs(docsCrumbs({ name: "Build log", url: docsLoc("/docs/log") }, { name: fm.title, url })),
+        ]}
+      />
       <PageHero
         narrow
         title={fm.title}
@@ -67,8 +83,6 @@ export default async function LogPostPage({ params }: Props) {
       {fm.cover && (
         <figure className="post-cover">
           <Image src={fm.cover} alt="" width={1600} height={900} sizes="(min-width: 64rem) 60rem, 100vw" priority />
-          {/* TODO: placeholder cover; replace with a real photo or screenshot of this step. */}
-          {isPlaceholder(fm.cover) && <figcaption className="tag media-flag">Placeholder</figcaption>}
         </figure>
       )}
 

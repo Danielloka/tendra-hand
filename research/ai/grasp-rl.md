@@ -64,8 +64,8 @@ the arm is a **stand-in** and everything is built so it can be swapped:
 - **First arm result** (right arm only, `arm_try1`, before the left arm existed): 400k steps on the
   laptop reached about 87% success.
 - **Not done:** the webcam grasp teleop (`sim/grasp_teleop.py`) is disabled (a stub that explains
-  why) until it is ported to the arm scene, and the GPU path (`software/tendra/gpu/`, floating
-  hand only) raises a clear error (`SceneConfig(contact_sensors=True)` is not implemented). Demos
+  why) until it is ported to the arm scene. (The GPU path was ported to both arms on 2026-10-03;
+  see "GPU training" below.) Demos
   come from the scripted grasps (both hands) and from RL rollouts (`eval_grasp.py --record`,
   the side is stored per episode).
 
@@ -77,7 +77,7 @@ the arm is a **stand-in** and everything is built so it can be swapped:
 | **Your own eigengrasps** | `sim/fit_synergies.py` runs PCA on your teleop recordings → `--synergies file.npz` | The robot then moves in *your* hand's main patterns |
 | **Palm-first approach, grasp zone** | Reward pulls the object into the hand's power-grasp zone (in front of the palm, at the proximal phalanges) with the palm facing it | How humans reach for a cup |
 | **Thumb opposition** | Contact reward counts the thumb as much as all fingers; extra reward when contacts are on *opposite sides* of the object (a cheap force-closure proxy) | The thumb is what makes a human grasp |
-| **Smooth, calm motion** | Penalties on action change (≈ minimum jerk) and on servo force (grip just hard enough); finger targets low-pass filtered | Humans minimise jerk and effort (Flash & Hogan 1985) |
+| **Smooth, calm motion** | Penalties on action change (wrist dims × 4) and its second difference (jerk), not reduced by the curriculum; a `still` reward for holding calmly at lift height; penalty on servo force (grip just hard enough); filtered wrist and finger commands that ramp across the physics substeps; damped arm servos; CAPS loss in GPU training. Details and why: [smooth-control.md](smooth-control.md) (2026-10-06) | Humans minimise jerk and effort (Flash & Hogan 1985); CAPS (Mysore 2021) |
 | **Care** | Penalties for pushing the object around, tilting it, pressing on the table; knocking it over ends the episode | A human doesn't bulldoze the cup |
 | **Grasp types** | `--grasp power|precision|any`: precision rewards thumb–index–middle tips and punishes palm contact; the type is an input, so one policy can do both | Feix grasp taxonomy; later an L3 planner can ask for a grasp type |
 
@@ -141,7 +141,38 @@ See `research/log.md` (2026-09-29, "Grasp RL"). Fill in each run here too:
 4. **Scale:** GPU physics for 10–100× more samples. Checked 2026-09-30: **MuJoCo Warp runs our
    scene correctly** (tendons, meshes, the grasp holds); MJX's JAX backend lacks cylinder–box
    collisions. Speed on a free Colab T4 (`sim/colab/`): **7,055 control steps/s with 4,096 hands**, ~25× the
-   laptop, grasps still hold. Next: port the env + PPO to JAX/Warp.
+   laptop, grasps still hold. Done (floating hand 2026-10-02: 77% in 49 min; two arms 2026-10-03,
+   see "GPU training" below).
+
+## GPU training (two arms, Colab)
+
+Built 2026-10-03 from the research in `gpu-training-research.md`; code in `software/tendra/gpu/`.
+- **Same task as the CPU env, on thousands of worlds:** the JAX env `TendraGrasp` gives the policy
+  exactly the CPU env's 141 observations and 28 actions (tested to 2e-7), so a policy trained on
+  the GPU runs unchanged on the laptop (`eval_grasp.py --brax`): a free sim-to-sim check.
+- **Arm IK on the GPU:** forward kinematics of each arm's 7 joints + damped least squares in
+  JAX, the same solver as `ArmIK` (joint angles within 1e-5 rad), every 25 ms.
+- **Three kinds of start** (`start_probs`): normal (hand at home), *near* (the hand already close,
+  from the approach part of scripted grasps; OmniReset idea) and *demo* (fingers around the
+  object; reverse curriculum). The near starts target the old failure: holding was learned,
+  approaching was not.
+- **Adaptive curriculum** (`curriculum.py`): train in 8 M-step chunks; after each, add an object
+  (cylinder → cube → ball) at ≥ 60% success, then stronger penalties, then fewer helped starts,
+  then wider domain randomisation (`dr_level`: mass, per-world friction, observation noise). A
+  change that drops success by > 0.2 is undone.
+- **Staggered resets:** episodes start at different times so a batch never holds only "first
+  second of the episode" data (reported 2–3× faster on ManiSkill; untested here).
+- **PPO from MuJoCo Playground's LEAP-hand config** (checked in the source; the search summary's
+  numbers were wrong), with a LayerNorm critic on privileged observations.
+- **Colab safety:** checkpoints and compile caches on Drive, resume after a disconnect, a time
+  budget, rollback on NaN/blow-ups.
+- **Bugs found on the way** (in the CPU env too): the left hand never got opposition reward and a
+  third of its episodes failed at step 1 (world vs mirrored coordinates); object friction below
+  the hand's 0.8 had no effect; the lite meshes made the hands slightly non-mirrored. All fixed
+  and covered by a step-by-step left/right test.
+- **Ideas not done yet** (ranked in the research note): a DemoGrasp-style policy that edits the
+  scripted grasp, FlashSAC/FastTD3 instead of PPO, size and servo-gain randomisation on the GPU,
+  curriculum values as live env state (each change now recompiles, ~5 min on a T4).
 5. **Style prior from demos:** an AMP-style discriminator (Peng 2021) that rewards motion that
    looks like your recorded grasps, instead of hand-written style penalties.
 6. **Touch:** servo load readings (see `ideas.md` #6) as observations, like the contact flags now.

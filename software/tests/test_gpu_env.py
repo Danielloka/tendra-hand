@@ -1,9 +1,11 @@
 """The GPU grasp env (`tendra.gpu`: JAX + MuJoCo Warp) checked against the CPU env, on the CPU.
 
-    uv run --group gpu pytest software/tests/test_gpu_env.py
+    uv run --group gpu pytest -m gpu software/tests/test_gpu_env.py                  # ~45 min
+    uv run --group gpu pytest -m gpu software/tests/test_gpu_env.py -k "not smoke"   # ~10 min
 
-Skipped without the `gpu` dependency group. Slow (several minutes): the bundle export records
-scripted grasps, and Warp compiles its kernels on first use.
+Only with `-m gpu` (the normal suite deselects them) and the `gpu` dependency group. Slow: the
+bundle export records scripted grasps, Warp compiles its kernels on first use, and the training
+smoke run compiles Brax PPO on the CPU (~35 min).
 """
 
 import subprocess
@@ -26,6 +28,7 @@ from tendra.gpu.export import export_bundle
 from tendra.grasp_env import OBJECT_KINDS, GraspEnv, GraspEnvConfig
 from tendra.scene import ARM_GRASP, GraspScene, SceneConfig, scripted_grasp
 
+pytestmark = pytest.mark.gpu
 N_WORLDS = 4
 
 # The data fields the JAX env reads, filled from a CPU MjData (shapes as in mjx.Data).
@@ -66,7 +69,10 @@ def fns(env):
         "sense": jax.jit(env.sense),
         "reward": jax.jit(env.reward),
         "observe": jax.jit(env.observe),
-        "wrist": jax.jit(env.wrist_command),
+        # action -> wrist target, through the wrist command filter (as in `step`)
+        "wrist": jax.jit(
+            lambda data, info, a: env.wrist_command(data, info, env.wrist_filter(info, a))
+        ),
         "fingers": jax.jit(env.finger_command),
         "reset": jax.jit(jax.vmap(env.reset)),
         "step": jax.jit(jax.vmap(env.step)),
@@ -80,6 +86,7 @@ def test_bundle(env, cpu):
     assert b["act"].shape == (2, 16) and b["arm_act"].shape == (2, 7)
     assert b["chain_axis"].shape == (2, 7, 3) and b["sensor_part"].shape == (2, 3, 7)
     assert (b["demo_count"] > 0).all(), "a scripted demo per side and object"
+    assert (b["near_count"] > 5).all(), "and its approach, for near starts"
     import mujoco
 
     assert not env.mj_model.opt.enableflags & int(mujoco.mjtEnableBit.mjENBL_SLEEP)
@@ -157,6 +164,8 @@ def test_obs_reward_and_commands_match_the_cpu_env(env, cpu, fns, side):
     def check() -> None:
         cpu.finger_target = scene.finger_targets()
         cpu.prev_action = rng.uniform(-1, 1, cpu.action_dim)
+        cpu.prev2_action = rng.uniform(-1, 1, cpu.action_dim)
+        cpu.wrist_cmd = rng.uniform(-1, 1, 6)
         cpu.t = 7
         a = rng.uniform(-1, 1, cpu.action_dim)
         info = {
@@ -165,6 +174,7 @@ def test_obs_reward_and_commands_match_the_cpu_env(env, cpu, fns, side):
             "rest_z": jp.array(scene.rest_height), "spawn_xy": jp.asarray(cpu.spawn_xy),
             "finger_target": jp.asarray(cpu.finger_target),
             "prev_action": jp.asarray(cpu.prev_action), "hold": jp.array(cpu.hold),
+            "prev2_action": jp.asarray(cpu.prev2_action), "wrist_cmd": jp.asarray(cpu.wrist_cmd),
             "success": jp.array(float(cpu.success)), "t": jp.array(cpu.t),
             "obs_bias": jp.zeros(3), "mass_scale": jp.array(1.0), "rng": jax.random.PRNGKey(0),
         }  # fmt: skip
@@ -214,21 +224,13 @@ def test_obs_reward_and_commands_match_the_cpu_env(env, cpu, fns, side):
 
 
 def _cpu_wrist_command(cpu: GraspEnv, a: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    """CPU GraspEnv.step's new wrist target, leaving the simulation and the env as they were."""
-    s, d = cpu.scene, cpu.data
-    saved = (d.ctrl.copy(), cpu.finger_target.copy(), cpu.prev_action.copy(), cpu.ep_return, cpu.t)
-    patched = s.__dict__.get("step")  # the scripted grasp's own wrapper, if any
-    out = {}
-    s.set_wrist_target = lambda pos, quat: out.update(pos=pos, quat=quat / np.linalg.norm(quat))
-    s.step, cpu._reward = (lambda dt: None), (lambda a: (0.0, {}, False))
+    """CPU GraspEnv.step's new wrist target (`_command`), leaving the env as it was."""
+    saved = cpu.finger_target.copy(), cpu.wrist_cmd.copy()
     try:
-        cpu.step(a)
+        pos, quat = cpu._command(a)
     finally:
-        del s.set_wrist_target, s.step, cpu._reward
-        if patched is not None:
-            s.step = patched
-        d.ctrl[:], cpu.finger_target, cpu.prev_action, cpu.ep_return, cpu.t = saved
-    return out["pos"], out["quat"]
+        cpu.finger_target, cpu.wrist_cmd = saved
+    return pos, quat / np.linalg.norm(quat)
 
 
 def _run_with_checks(cpu: GraspEnv, check) -> None:
@@ -274,6 +276,7 @@ def test_warp_matches_cpu_mujoco(env, fns, bundle):
                         "rest_z": jp.array(b["demo_rest_z"][frame]), "spawn_xy": jp.zeros(2),
                         "finger_target": jp.asarray(state[2][b["act"][si]]),
                         "prev_action": jp.zeros(env.action_size), "hold": jp.array(0),
+                        "prev2_action": jp.zeros(env.action_size), "wrist_cmd": jp.zeros(6),
                         "success": jp.array(0.0), "t": jp.array(0), "obs_bias": jp.zeros(3),
                         "mass_scale": jp.array(1.0), "rng": jax.random.PRNGKey(0)}  # fmt: skip
                 warp = forward(jp.array(oi), *map(jp.asarray, state))
@@ -285,6 +288,143 @@ def test_warp_matches_cpu_mujoco(env, fns, bundle):
                 worst = max(worst, float(np.abs(np.asarray(o_warp) - np.asarray(o_cpu)).max()))
     print(f"Warp vs CPU MuJoCo, actor obs max diff {worst:.2e}")
     assert worst < 1e-3
+
+
+def _gpu_state(env, data, info) -> "G.mjx_env.State":
+    zero = jp.array(0.0)
+    obs = {"state": jp.zeros(1), "privileged_state": jp.zeros(1)}
+    metrics = {k: zero for k in env._metric_keys()}
+    return G.mjx_env.State(data, obs, zero, zero, metrics, info)
+
+
+@pytest.mark.parametrize("side", SIDES)
+def test_motion_layer_matches_the_cpu_env(env, cpu, bundle, side):
+    """The ramps (`finger_ramp`, `wrist_ramp`) in both envs: from the same state (a scripted
+    grasp's approach, before contact: with contacts both physics drift apart chaotically, ramp or
+    not), the same actions for a few control steps, with and without the ramps: the GPU env
+    (MuJoCo Warp) ends where the CPU env does (servo and wrist targets, finger angles), and the
+    ramps change the motion by much more than that."""
+    import mujoco
+
+    b, oi = env._np, OBJECT_KINDS.index("cylinder")
+    si = SIDES.index(side)
+    frame = int(b["demo_start"][si, oi]) + 5  # approaching
+    keys = ("demo_qpos", "demo_qvel", "demo_ctrl", "demo_mocap_pos", "demo_mocap_quat")
+    state = [b[k][frame] for k in keys]
+    flat = G.TendraGrasp(bundle, config_overrides={"naconmax": 96, "obs_noise": 0.0,
+                                                   "finger_ramp": False, "wrist_ramp": False})  # fmt: skip
+    start = jax.jit(lambda *x: env.state_data(env.blank_data(), jp.array(oi), 1.0, *x))
+    actions = np.random.default_rng(si).uniform(-0.5, 0.5, (3, env.action_size))
+    out = {}
+    for ramp, e in ((True, env), (False, flat)):
+        # CPU
+        cpu.configure(finger_ramp=ramp, wrist_ramp=ramp)
+        cpu.reset(seed=3, obj="cylinder", side=side)
+        d = cpu.data
+        d.qpos, d.qvel, d.ctrl, d.mocap_pos, d.mocap_quat = state
+        mujoco.mj_forward(cpu.model, d)
+        cpu.finger_target = d.ctrl[cpu._act].copy()
+        cpu_rows = []
+        for a in actions:
+            cpu.step(a)
+            cpu_rows.append((d.ctrl[cpu._act].copy(), d.mocap_pos[b["mocap"][si]].copy(),
+                             cpu.scene.finger_positions()))  # fmt: skip
+        # GPU
+        info = {"side": jp.array(si), "flip": jp.array(side == "left"), "obj": jp.array(oi),
+                "rest_z": jp.array(b["demo_rest_z"][frame]),
+                "spawn_xy": jp.asarray(cpu.spawn_xy), "finger_target": jp.asarray(state[2][b["act"][si]]),
+                "prev_action": jp.zeros(env.action_size), "hold": jp.array(0),
+                "prev2_action": jp.zeros(env.action_size), "wrist_cmd": jp.zeros(6),
+                "success": jp.array(0.0), "t": jp.array(0), "obs_bias": jp.zeros(3),
+                "mass_scale": jp.array(1.0), "rng": jax.random.PRNGKey(0),
+                "from_demo": jp.array(1.0), "from_near": jp.array(0.0)}  # fmt: skip
+        st = _gpu_state(e, start(*map(jp.asarray, state)), info)
+        step = jax.jit(e.step)
+        gpu_rows = []
+        for a in actions:
+            st = step(st, jp.asarray(a, jp.float32))
+            gpu_rows.append((np.asarray(st.data.ctrl[b["act"][si]]),
+                             np.asarray(st.data.mocap_pos[b["mocap"][si]]),
+                             np.asarray(st.data.qpos[b["qadr"][si]])))  # fmt: skip
+        out[ramp] = cpu_rows, gpu_rows
+    cpu.configure(finger_ramp=True, wrist_ramp=True)
+    worst = {"ctrl": 0.0, "mocap": 0.0, "fingers": 0.0, "ramp_effect": 0.0}
+    for ramp in (True, False):
+        for (c_ctrl, c_moc, c_q), (g_ctrl, g_moc, g_q) in zip(*out[ramp], strict=True):
+            worst["ctrl"] = max(worst["ctrl"], float(np.abs(c_ctrl - g_ctrl).max()))
+            worst["mocap"] = max(worst["mocap"], float(np.abs(c_moc - g_moc).max()))
+            worst["fingers"] = max(worst["fingers"], float(np.abs(c_q - g_q).max()))
+    for (_, _, q_ramp), (_, _, q_flat) in zip(out[True][0], out[False][0], strict=True):
+        worst["ramp_effect"] = max(worst["ramp_effect"], float(np.abs(q_ramp - q_flat).max()))
+    print(side, {k: f"{v:.2e}" for k, v in worst.items()})
+    assert worst["ctrl"] < 1e-4 and worst["mocap"] < 1e-4
+    assert worst["fingers"] < 2e-3 and worst["ramp_effect"] > 0.01
+
+
+def test_action_delay_per_world(bundle):
+    """Servo latency: each world draws its delay in `action_delay`; until its first action is in
+    effect the finger targets hold, then the action from `delay` steps ago applies."""
+    e = G.TendraGrasp(bundle, config_overrides={"naconmax": 96 * N_WORLDS, "obs_noise": 0.0,
+                                                "action_delay": [0, 2]})  # fmt: skip
+    state = jax.jit(jax.vmap(e.reset))(jax.random.split(jax.random.PRNGKey(2), N_WORLDS * 2))
+    delay = np.asarray(state.info["delay"])
+    assert set(delay) <= {0, 1, 2} and len(set(delay)) > 1
+    a1 = np.zeros((N_WORLDS * 2, e.action_size), np.float32)
+    a1[:, 6] = 1.0  # "close"
+    step = jax.jit(jax.vmap(e.step))
+    targets = [np.asarray(state.info["finger_target"])]
+    for _ in range(3):
+        state = step(state, jp.asarray(a1))
+        targets.append(np.asarray(state.info["finger_target"]))
+    moved = [np.abs(t - targets[0]).max(axis=1) > 1e-3 for t in targets[1:]]
+    for w, dl in enumerate(delay):
+        assert [m[w] for m in moved] == [k + 1 > dl for k in range(3)], (w, dl)
+    with pytest.raises(ValueError):
+        G.TendraGrasp(bundle, config_overrides={"action_delay": [2, 1]})
+
+
+def test_auto_reset_starts_fresh_episodes(bundle):
+    """Under Playground's auto-reset (+ our staggered starts) a done world gets its cached first
+    state back but keeps its info: the env must reset the per-episode info itself. Same start,
+    same action: every episode repeats the first one step for step (time, success, wrist
+    command, finger target, reward), so a success is rewarded again in each episode."""
+    from mujoco_playground import wrapper
+    from tendra.gpu.stagger import StaggeredResets
+
+    n, length = 2 * N_WORLDS, 3
+    e = G.TendraGrasp(bundle, config_overrides={
+        "naconmax": 96 * n, "obs_noise": 0.0, "start_probs.normal": 0.0, "start_probs.demo": 1.0,
+        "hold_seconds": 0.01, "lift_height": 0.02, "action_delay": [1, 1]})  # fmt: skip
+    wrapped = StaggeredResets(wrapper.wrap_for_brax_training(e, episode_length=length), length,
+                              min_left=1)  # fmt: skip
+    state = jax.jit(wrapped.reset)(jax.random.split(jax.random.PRNGKey(3), n))
+    a = np.zeros((n, e.action_size), np.float32)
+    a[:, 6], a[:, 2] = 1.0, 0.5  # close, and lift
+    step = jax.jit(wrapped.step)
+    episodes = [[[]] for _ in range(n)]  # per world: episodes of per-step rows
+    for _ in range(8):
+        state = step(state, jp.asarray(a))
+        info = state.info
+        for w in range(n):
+            row = (int(info["t"][w]), float(state.metrics["success"][w]),
+                   np.asarray(info["wrist_cmd"][w]), np.asarray(info["finger_target"][w]),
+                   float(state.reward[w]))  # fmt: skip
+            episodes[w][-1].append(row)
+            if state.done[w]:
+                episodes[w].append([])
+    repeated_success = 0
+    for w in range(n):
+        done = [ep for ep in episodes[w] if ep]
+        assert len(done) >= 3, f"world {w}: episodes {[len(ep) for ep in done]}"
+        first = done[1]  # the first full one (episode 0 may be cut short by the stagger)
+        assert [r[0] for r in first] == list(range(1, length + 1))
+        for ep in done[2:]:
+            for r, f in zip(ep, first):
+                assert r[0] == f[0] and r[1] == f[1], (w, r[:2], f[:2])
+                assert np.allclose(r[2], f[2]) and np.allclose(r[3], f[3], atol=1e-5)
+                assert abs(r[4] - f[4]) < 1e-3
+        repeated_success += sum(r[1] for r in done[2]) > 0
+    assert repeated_success > 0, "some world should succeed again in a later episode"
 
 
 def test_random_rollout_stays_finite(env, fns):
@@ -314,6 +454,73 @@ def test_both_hands_start(bundle):
     # Same keys: the same draws, mirrored (canonical observations equal, up to the settling
     # object's last wobble, ~2e-3 rad/s).
     assert np.allclose(sides["right"].obs["state"], sides["left"].obs["state"], atol=5e-3)
+
+
+def test_start_kinds_and_dr_level(bundle):
+    """`start_probs` (flattened keys, as the trainer sends them): near starts are a scripted
+    grasp's approach, the hand close but not touching; `dr_level` 0 = the nominal object, no
+    noise (with `obs_noise_floor` 0; by default some noise stays). The old `demo_prob` still
+    gives demo starts."""
+    keys = jax.random.split(jax.random.PRNGKey(1), N_WORLDS)
+    near = G.TendraGrasp(bundle, config_overrides={
+        "naconmax": 96 * N_WORLDS, "start_probs.normal": 0.0, "start_probs.near": 1.0,
+        "dr_level": 0.0, "obs_noise_floor": 0.0})  # fmt: skip
+    state = jax.jit(jax.vmap(near.reset))(keys)
+    s = jax.vmap(near.sense)(state.data, state.info)
+    assert (np.asarray(state.info["from_near"]) == 1).all()
+    assert not np.asarray(s["in_hand"]).any()
+    gap = np.linalg.norm(np.asarray(s["root_pos"] - s["obj_pos"]), axis=1)
+    assert (gap <= 0.15 + 1e-3).all()
+    assert (
+        np.allclose(state.info["mass_scale"], 1.0) and not np.asarray(state.info["obs_bias"]).any()
+    )
+    old = G.TendraGrasp(bundle, config_overrides={"naconmax": 96 * N_WORLDS, "demo_prob": 1.0})
+    state = jax.jit(jax.vmap(old.reset))(keys)
+    assert (np.asarray(state.info["from_demo"]) == 1).all()
+    with pytest.raises(ValueError):
+        G.TendraGrasp(bundle, config_overrides={"dr_level": 1.5})
+
+
+def test_friction_per_world(env, bundle):
+    """`domain_randomizer` through Playground's training wrapper: each world has its own object
+    friction (the critic sees it), and it matters: the objects have contact priority, so a
+    slippery cylinder slides out of a grasp that holds the nominal one."""
+    import functools
+
+    from mujoco_playground import wrapper
+    from mujoco_playground._src import mjx_env
+
+    keys = jax.random.split(jax.random.PRNGKey(0), N_WORLDS)
+    wrapped = wrapper.wrap_for_brax_training(
+        env, episode_length=8, randomization_fn=functools.partial(env.domain_randomizer, rng=keys)
+    )
+    state = jax.jit(wrapped.reset)(keys)
+    state = jax.jit(wrapped.step)(state, jp.zeros((N_WORLDS, env.action_size)))
+    model_friction = np.asarray(wrapped._mjx_model_v.geom_friction[:, env._obj_geom, 0])
+    lo, hi = env._config.friction
+    assert (model_friction >= lo).all() and (model_friction <= hi).all()
+    assert np.ptp(model_friction[:, 0]) > 0.05  # differs per world
+    obj = np.asarray(state.info["obj"])
+    i = state.obs["state"].shape[-1] + 7 + 1  # critic: actor obs, 7 forces, mass, friction
+    seen = np.asarray(state.obs["privileged_state"][:, i])
+    assert np.allclose(seen, model_friction[np.arange(N_WORLDS), obj])
+
+    b, oi = env._np, OBJECT_KINDS.index("cylinder")
+    k = int(b["demo_start"][0, oi] + b["demo_count"][0, oi] - 1)  # held, right hand
+    held = [jp.asarray(b[key][k]) for key in ("demo_qpos", "demo_qvel", "demo_ctrl",
+                                              "demo_mocap_pos", "demo_mocap_quat")]  # fmt: skip
+    data = jax.jit(jax.vmap(lambda _: env.state_data(env.blank_data(), jp.array(oi), 1.0, *held)))(
+        jp.arange(2)
+    )
+    m, g = env.mjx_model, env._obj_geom[oi]
+    models = m.tree_replace(
+        {"geom_friction": jp.stack([m.geom_friction.at[g, 0].set(f) for f in (1.0, 0.05)])}
+    )
+    axes = jax.tree.map(lambda _: None, m).tree_replace({"geom_friction": 0})
+    run = jax.vmap(lambda mm, d: mjx_env.step(mm, d, d.ctrl, 150), in_axes=(axes, 0))
+    z = np.asarray(jax.jit(run)(models, data).xpos[:, b["obj_body"][oi], 2])
+    start = float(data.xpos[0, b["obj_body"][oi], 2])
+    assert abs(z[0] - start) < 0.005 and z[1] < start - 0.05, (start, z)
 
 
 def test_demo_replay_lifts_the_object(env, bundle):

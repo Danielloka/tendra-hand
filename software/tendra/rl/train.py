@@ -150,8 +150,11 @@ def train(cfg: TrainConfig, log=print) -> Path:
     # One local env: sizes, demos, and it stays out of the workers' way.
     probe = GraspEnv(cfg.env, seed=cfg.seed)
     demo_file = run / "demos.pkl"  # recording them takes ~30 s: keep them for resumes
-    if demo_file.exists():
-        demos = pickle.loads(demo_file.read_bytes())
+    demos = pickle.loads(demo_file.read_bytes()) if demo_file.exists() else None
+    if demos and any(d.qpos.shape[-1] != probe.model.nq for d in demos):
+        log(f"{demo_file.name} was recorded on another model: recording again")
+        demos = None
+    if demos is not None:
         log(f"demos: {len(demos)} from {demo_file}")
     else:
         demos = collect_demos(cfg, probe, log)

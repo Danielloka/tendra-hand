@@ -90,6 +90,14 @@ POSES: dict[str, dict[str, float]] = {
 
 TIMESTEP = 0.002  # s, the hand scene's (OpenArm uses 0.001)
 
+# Derivative gain (kv) multipliers for the arm servos. OpenArm's stock gains (shoulder kp 230 / kv
+# 2.7, elbow 190 / 2.2) are under-damped in this model: a wrist-target step overshot ~38% (damping
+# ratio ~0.3) and rang at ~4.8 Hz, which made the RL policy's wrist shake (research/ai/smooth-control.md,
+# experiments/2026-10-06-smooth-control). x4 on J1-J4 and x2 on Tendra's wrist joints give ~0 to 1%
+# overshoot for 7-14 mm steps, settling in ~0.12-0.15 s (stock: 0.19-0.36 s). kp is unchanged.
+ARM_KV_SCALE = 4.0
+WRIST_KV_SCALE = 2.0
+
 
 def joint_names(side: str) -> tuple[str, ...]:
     """The 7 arm joints of one side, e.g. `right_shoulder_pitch` (also the actuators' names)."""
@@ -209,6 +217,11 @@ def arm_spec(lite: bool = False, keep: float = KEEP, floor: bool = True) -> mujo
 
     for side in SIDES:
         _attach_hand(spec, side, hand_spec(WRIST_MODEL_PATHS[side], lite, keep), bimanual)
+    for side in SIDES:  # position actuators: force = kp (ctrl - q) - kv qdot, biasprm = (0, -kp, -kv)
+        for joint in ARM_JOINTS:
+            act = spec.actuator(f"{side}_{joint}")
+            scale = ARM_KV_SCALE if joint in OPENARM_JOINTS else WRIST_KV_SCALE
+            act.biasprm[2] *= scale
 
     if floor:
         spec.worldbody.add_light(pos=[0.5, -0.8, 2.0], dir=[-0.25, 0.4, -1.0], castshadow=False,

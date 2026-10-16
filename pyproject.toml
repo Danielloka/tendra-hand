@@ -56,6 +56,9 @@ packages = ["software/tendra"]
 [tool.pytest.ini_options]
 testpaths = ["sim/tests", "software/tests", "hardware/cad/tests"]
 cache_dir = ".venv/.pytest_cache"  # keep the repo root tidy
+# The GPU env's tests take ~45 min on the CPU; they only run when asked for: `-m gpu`.
+addopts = "-m 'not gpu'"
+markers = ["gpu: the GPU training env (needs the `gpu` dependency group; run with -m gpu)"]
 
 [tool.ruff]
 line-length = 100

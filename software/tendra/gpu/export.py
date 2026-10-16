@@ -101,6 +101,30 @@ def arm_chain(ik: ArmIK) -> dict[str, np.ndarray]:
     }
 
 
+NEAR_DISTANCE = 0.15  # m, wrist to object: a "near" start (the pre-grasp beside it is ~0.1 m)
+
+
+def _near_frames(scene: GraspScene, model: mujoco.MjModel, side: str, obj: str,
+                 demos: list) -> np.ndarray:  # fmt: skip
+    """Indices (into the demos' frames, concatenated) of the approach: before the hand first
+    touches the object, with the wrist within NEAR_DISTANCE of it."""
+    d = mujoco.MjData(model)
+    hand = model.sensor(contact_sensor_name(side, "hand", obj)).id
+    site, body = scene.sides[side].site, scene._obj_body[obj]
+    out, offset = [], 0
+    for demo in demos:
+        for k in range(len(demo)):
+            d.qpos, d.qvel, d.ctrl = demo.qpos[k], demo.qvel[k], demo.ctrl[k]
+            d.mocap_pos, d.mocap_quat = demo.mocap_pos[k], demo.mocap_quat[k]
+            mujoco.mj_forward(model, d)
+            if d.sensordata[model.sensor_adr[hand]] > 0:
+                break  # touched: the rest is the grasp itself
+            if np.linalg.norm(d.site_xpos[site] - d.xpos[body]) <= NEAR_DISTANCE:
+                out.append(offset + k)
+        offset += len(demo)
+    return np.array(out, dtype=int)
+
+
 def export_bundle(path: str | Path, demos_per_object: int = 10, seed: int = 0) -> Path:
     """Write the bundle; `demos_per_object` scripted grasps per object *and hand* are tried
     (the successful ones are kept)."""
@@ -154,6 +178,9 @@ def export_bundle(path: str | Path, demos_per_object: int = 10, seed: int = 0) -
     counts = np.array([sum(len(d) for d in frames[sk]) for sk in order])
     starts = np.concatenate([[0], np.cumsum(counts)[:-1]])
     n_side, n_obj = len(SIDES), len(OBJECT_KINDS)
+    near = [_near_frames(scene, m, side, obj, frames[side, obj]) for side, obj in order]
+    near_counts = np.array([len(f) for f in near])
+    near_frames = np.concatenate([f + s for f, s in zip(near, starts, strict=True)]).astype(int)
     sides = [scene.sides[s] for s in SIDES]
     chains = [arm_chain(a.ik) for a in sides]
     ik = sides[0].ik
@@ -235,6 +262,11 @@ def export_bundle(path: str | Path, demos_per_object: int = 10, seed: int = 0) -
         ),
         "demo_start": starts.reshape(n_side, n_obj),
         "demo_count": counts.reshape(n_side, n_obj),
+        # Near starts: demo frames before the hand touches the object, the wrist near it.
+        # [side, object] -> start / count in `near_frames` (indices into the demo arrays).
+        "near_frames": near_frames,
+        "near_start": np.concatenate([[0], np.cumsum(near_counts)[:-1]]).reshape(n_side, n_obj),
+        "near_count": near_counts.reshape(n_side, n_obj),
         "meta": np.frombuffer(
             json.dumps(
                 {

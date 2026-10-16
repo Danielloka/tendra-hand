@@ -17,8 +17,10 @@
     { "date": "2026-09-30", "title": "Looking around", "blurb": "We studied the best robot hands in the world to see where we stand." },
     { "date": "2026-10-01", "title": "Fewer servos", "blurb": "Sixteen servos instead of twenty-one, by copying how a human finger works." },
     { "date": "2026-10-02", "title": "Arms and a cloud GPU", "blurb": "A better fingertip linkage, two simulated arms and the first big training run." },
-    { "date": "2026-10-03", "title": "The journey page", "blurb": "The linkage is modelled in CAD and this page exists." },
-    { "date": "2026-10-05", "title": "Ready to go live", "blurb": "The website gets safe, fast and easy to find, ready for its first deploy." }
+    { "date": "2026-10-03", "title": "Two arms in the cloud", "blurb": "The linkage is modelled in CAD, this page exists, and both arms can train on a GPU." },
+    { "date": "2026-10-04", "title": "The first cloud run", "blurb": "The first two-arm training run on a real GPU." },
+    { "date": "2026-10-05", "title": "Ready to go live", "blurb": "The website gets safe, fast and easy to find, ready for its first deploy." },
+    { "date": "2026-10-06", "title": "Why it shakes", "blurb": "The first trained hand lifts things but trembles. We find out why and plan a calm one." }
   ],
   "events": [
     { "id": "h-v0", "track": "hardware", "date": "2026-09-26", "title": "V0 thumb and index printed", "status": "done", "note": "The first prototype: 8 joints, tendon-driven, 3D printed." },
@@ -54,6 +56,10 @@
     { "id": "a-sota", "track": "ai", "date": "2026-09-30", "title": "Study of the best robot hands", "status": "done", "note": "The biggest gap: fingertip force." },
     { "id": "a-gpu", "track": "ai", "date": "2026-10-02", "title": "77% grasp success in 49 minutes", "status": "done", "note": "A cloud GPU, simulating many hands at once. It used the older hand design, so we will repeat it." },
     { "id": "a-arm", "track": "ai", "date": "2026-10-02", "title": "Training the hand on the arm", "status": "done", "note": "The arm brings the hand to the object (about 87%)." },
+    { "id": "a-gpu2", "track": "ai", "date": "2026-10-03", "title": "Cloud GPU training for both arms", "status": "done", "note": "Thousands of two-armed robots practise at once, with a curriculum that adapts by itself." },
+    { "id": "a-gpu3", "track": "ai", "date": "2026-10-04", "title": "First two-arm run on a cloud GPU", "status": "done", "note": "1,024 robots trained at once on a free Colab GPU, until the free time ran out." },
+    { "id": "a-calm", "track": "ai", "date": "2026-10-06", "title": "Found why the trained hand shakes", "status": "done", "note": "Twitchy wrist commands on a springy arm, and a reward that never paid for being calm." },
+    { "id": "a-calm2", "track": "ai", "date": "2026-10-06", "title": "A calmer training setup", "status": "done", "note": "Gentler commands, a damped arm, a reward for holding still, and a bug fixed that paid the success bonus only once." },
 
     { "id": "w-repo", "track": "web", "date": "2026-09-26", "title": "Public repo and licenses", "status": "done", "note": "Code Apache-2.0, hardware CERN-OHL-S-2.0, docs CC BY 4.0." },
     { "id": "w-dark", "track": "web", "date": "2026-09-27", "title": "A dark, robotic look", "status": "abandoned", "note": "The first website direction.", "why": "It felt cold and nerdy. The project wants to be friendly to anyone who is curious, not only to engineers.", "lesson": "Design for the person you want to invite in." },

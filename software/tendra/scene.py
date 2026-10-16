@@ -301,8 +301,12 @@ class GraspScene:
             gtype, size, mass, rgba = OBJECTS[kind]
             body = world.add_body(name=kind, pos=self._park_pos(i), gravcomp=1.0)
             body.add_freejoint(name=kind)
+            # priority: contacts with the object use the object's friction (MuJoCo otherwise
+            # takes the larger of the two geoms', and the hand's 0.8 would hide every lower
+            # randomised value). The nominal contacts are the same either way.
             body.add_geom(name=kind, type=gtype, size=list(size), mass=mass, rgba=list(rgba),
-                          friction=list(cfg.object_friction), condim=cfg.object_condim)  # fmt: skip
+                          friction=list(cfg.object_friction), condim=cfg.object_condim,
+                          priority=1)  # fmt: skip
         if cfg.contact_sensors:
             _add_contact_sensors(scene, cfg.objects)
 

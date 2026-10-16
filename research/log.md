@@ -11,6 +11,35 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** what I learned and what to try next
 ```
 
+## 2026-10-06: Calm control built (Steps 0–3), and a GPU reset bug found
+**Goal:** implement the plan in `research/ai/smooth-control.md` so the next training run is calm.
+**Setup:** agent team (arm damping, CAPS loss, motion layer, deploy-time calm filter) + an independent review; CPU eval on the old CPU policy `runs/arm_right`.
+**Result:**
+- Eval (`sim/eval_grasp.py`) now reports shaking directly: `wshake` / `fshake` = back-and-forth motion per step while holding (second difference), plus jerk, CAPS `fft` score and a 95 % interval on success. Eval and video run a policy in the conditions it trained in (`trained_settings`).
+- Baseline (old policy, damped arm): wrist moves 2.3–3.2 mm per step while holding, 1.0–1.5 mm of it shaking; the fingers' back-and-forth is larger than their net motion (nearly all shaking).
+- Both envs: smaller filtered wrist commands, harder finger filtering, `action_rate` 0.5 (wrist × 4) + `jerk` 0.2 outside the curriculum, a `still` reward, observation-noise floor, targets ramped over the 4 ms physics steps (finger peak acceleration −47 %). Old saved configs load with legacy values.
+- Arm servos damped (`ARM_KV_SCALE` 4): wrist-step overshoot 29–48 % → 0–1 %, settling 0.11–0.15 s.
+- CAPS (temporal + spatial smoothness loss) hooked into Brax PPO, on by default.
+- **Bug (old):** on the GPU an episode end reset only the physics, not the env's per-episode memory. The policy's time input grew without bound, and the +30 success bonus fired only once per world per training chunk. Fixed (`new_episode`); the 18 M policy trained with it.
+- A deploy-time calm filter (deadband, rate limit, hold latch) neither hurts nor calms the old policy once its wrist bug was fixed: filtering a shaky policy's commands does not fix it. Kept for the firmware.
+- Mirror test: a finger 0.3–0.5 mm from the cylinder touches on one side and not the other with the damped arm; the test now ignores touch flags within 0.5 mm.
+**Conclusion / next:** train run `calm1` on Colab with the new kit (`runs/colab/tendra_gpu_kit_c9b3d006.zip`, notebook `train_grasp_gpu.ipynb`), then compare `wshake` / `fshake` with the baseline.
+
+---
+
+## 2026-10-06: Why the grasp policy shakes, and a plan for calm, reliable control
+**Goal:** the 18 M-step Colab policy lifts objects but shakes, even when it should be still. Find out why, and how the best robots get smooth, steady and reliable.
+**Setup:** agent team: three web researchers (smooth RL, state of the art, the control layer) and a read-only code diagnosis with experiments on the CPU `GraspEnv` (nominal model, right hand, cylinder). The trained policy itself is on Drive, not on the laptop, so it was not measured yet.
+**Result:**
+- The physics is calm: zero action and a constant holding action are still (< 0.01 mm per step). The shaking comes from the policy's step-to-step changes, amplified by the setup.
+- Wrist actions are big (one full action = 14.4 mm / 5.5° per 50 ms step) on an under-damped arm (38 % overshoot, rings at 4.8 Hz); a "correct the full error" controller goes into a 2 cm, 4.8 Hz wobble.
+- The reward pays almost nothing for calm: action rate 0.1 × `penalty_scale` 0.3 makes visible jitter cost ~1e-4 per step against ~9 per step for holding; no reward for being still; nothing to aim for after success.
+- The viewers add noise training never had: `rollout_video.py` uses `dr_level` 1.0 and `eval_grasp.py` always adds 3 mm observation noise, while training was still at `dr_level` 0.
+- Research: leading systems stack layers (slow "brain", fast chunked policy, a motion layer with interpolation and a hold latch, gentle servos) and measure reliability with regression suites and confidence intervals. DPPO reports a plain PPO policy at 88 % in sim that failed on the real robot from jitter.
+**Conclusion / next:** plan in `research/ai/smooth-control.md`; notes and scripts in `research/experiments/2026-10-06-smooth-control/`. Next: download `policy_best.npz`, run `jitter_probe.py`, add calm metrics to the eval, then retrain "calm v2" (smaller, filtered wrist actions, damped arm, stronger action-rate + jerk penalties, a hold-still reward, observation noise from the start, CAPS).
+
+---
+
 ## 2026-10-05: Website ready for a Vercel deploy
 **Goal:** make the website safe, fast, reliable and findable (search engines and LLMs) before the first public deploy, and remove visible placeholders.
 **Setup:** agent team (content, security/Vercel, perf, seo, a11y, code review), then a local production build checked with curl and Chrome.
@@ -22,6 +51,31 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 - Privacy: `media/screenshots/...-with-people.png` (faces) is now `"public": false` in the catalog and no longer copied to the site. It is still in the public GitHub repo's history (owner to decide).
 - Lighthouse: accessibility 100, desktop performance 93–100. Mobile performance unmeasured (laptop too loaded; re-run with PageSpeed Insights after deploy).
 **Conclusion / next:** owner imports the repo on Vercel (Root Directory `website`), then Search Console + Bing Webmaster Tools once a domain exists.
+
+## 2026-10-04: First two-arm run on a Colab T4 (gpu3)
+**Goal:** run the 2026-10-03 kit on free Colab and measure speed and learning.
+**Setup:** Colab free tier, Tesla T4 (15 GB; JAX sees 10.9 GB), notebook `train_grasp_gpu.ipynb`, run `gpu3`, 1,024 envs (eval 256).
+**Result:**
+- Fixes needed on Colab (all in `make_train_notebook.py` / `train_brax.py` / `grasp_env_jax.py`; the local kit `tendra_gpu_kit_f63ef07f.zip` has them, the one on Drive does not):
+  - Colab ships jax 0.11 with a CUDA 13 plugin, which clashes with jax 0.9.2 ("PJRT_Api already exists"). The notebook now uninstalls `jax-cuda13-plugin` and `jax-cuda13-pjrt`.
+  - Warp ran out of memory at 2,048, 1,024 and even 512 envs. Its mesh-collision (CCD) scratch arrays are sized by `naccdmax`, which defaults to `naconmax`. Fix: per world 64 contacts, 40 CCD contacts and 300 constraints; JAX preallocation off; eval 256 envs; T4 1,024 envs.
+  - Stopping a Colab cell sends Ctrl-C to the whole process group, so it killed the background trainer. The trainer now starts with `start_new_session=True`.
+  - The smoke cell takes ~15 min (each curriculum chunk recompiles), not 1–3.
+- Timing: first eval after 3.5 min, the training step compiled in ~13 min, and the first training eval came at 2.29 M steps after 18.4 min. Return was 19.4 → 57.8; success 0, lift 0.02 cm (expected this early). No blow-ups.
+- Colab disconnected the runtime ~2 min later, at ~22 min of training. It would not reconnect, probably because the free tier's daily GPU quota was used up after a day of setup runs. `params_latest.pkl` at 2.29 M steps is on Drive, and running the same command resumes from it.
+**Conclusion / next:** the pipeline works on a GPU. Free Colab is too short for long runs, since each start pays ~15 min of install and compile. Next: upload the f63ef07f kit and the new notebook, and resume when the quota resets (or use Colab Pro / an L4). Measure steady-state steps/s from `progress.csv`. Possibly raise Warp's EPA horizon (warning "EPA horizon = 24 isn't large enough").
+
+## 2026-10-03: GPU training on Colab for the two-arm robot
+**Goal:** owner: a strong, fast training setup on Google Colab with the two OpenArm arms and the hands (focus on the hand; the arms move it), using the latest research. Built by an agent team: researcher (Sonnet), env port (Opus), laptop bridge (Sonnet), trainer + notebook (Sonnet).
+**Setup:** research note `research/ai/gpu-training-research.md`. Code in `software/tendra/gpu/`: `export.py` (bundle v2), `grasp_env_jax.py` (two-arm `TendraGrasp`), `train_brax.py` + `curriculum.py` + `stagger.py` + `rollout_video.py`, `policy.py` (numpy-only Brax policy for the laptop). Kit + notebook: `sim/colab/make_train_notebook.py --run gpu3` → `runs/colab/tendra_gpu_kit_d5308291.zip`, `train_grasp_gpu.ipynb`. Pins: jax[cuda12] 0.9.2, brax 0.14.2, mujoco/mjx/mujoco-warp 3.14.0, warp-lang 1.17.0, playground 0.2.0.
+**Result:**
+- GPU env vs CPU env on 276 states along scripted grasps (both hands): actor obs ≤ 2e-7, reward ≤ 4.4e-6, touch flags identical, opposition differs in 1 state. JAX arm IK vs `ArmIK`: joints ≤ 1e-5 rad. Replaying the scripted grasp in Warp with the JAX IK lifts the cylinder 9.7 / 7.9 cm (right / left).
+- Brax policy on the laptop (`BraxPolicy`) vs real Brax inference: max diff 9.5e-7.
+- New in training: adaptive curriculum in 8 M-step chunks (objects → penalties → start mix → DR), three start kinds (normal / near / demo), `dr_level` (mass, per-world friction, obs noise), staggered resets, Playground LEAP PPO settings (the search summary had them wrong; checked in the source) with a LayerNorm critic, envs picked from GPU memory, compile caches on Drive, time budget, NaN rollback. The old driver used `num_resets_per_eval=0`, so each phase had only 2,048 distinct start states; now 1.
+- Bugs fixed on the way (CPU env too): the left hand's `spawn_xy` and contact points were in world coordinates but compared with mirrored ones: 10/30 left episodes failed at step 1 and the left hand never got opposition (0/4 vs 4/4). Object friction below the hand's 0.8 had no effect (MuJoCo takes the larger one); objects now have contact priority. The lite meshes were simplified per hand (5 of 54 pairs differed); the left ones are now reflections. A step-by-step left/right test guards all of it.
+- Tests: normal suite 354 passed; GPU suite 12 passed on the laptop CPU (`uv run --group gpu pytest -m gpu`); the training smoke (4 curriculum chunks, save, npz export) ran end to end on the CPU from a kit exported before the object-priority change; the rerun on the final kit was stopped by low laptop memory (the notebook's smoke cell runs it on Colab first).
+**Not checked:** speed on a real GPU with both arms simulated (Warp has no sleeping, so the idle arm costs compute), EGL video on Colab, whether staggered resets help here. Not done: size and servo-gain DR on the GPU; curriculum changes recompile (~5 min on a T4).
+**Conclusion / next:** owner uploads the kit and runs the notebook (T4 free, L4 better). Note the steps/s and success curve; compare with the floating run (77% at 11 M). Then the ideas in the research note (DemoGrasp-style residual on the scripted grasp, FlashSAC).
 
 ## 2026-10-03: Journey page on the website
 **Goal:** see the road taken (hardware, software, AI, and the dropped paths) as one picture.

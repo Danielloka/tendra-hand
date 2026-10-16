@@ -10,6 +10,11 @@ How it works (details in each module):
   and saved in `curriculum.json`.
 - **Staggered resets** (`stagger.py`, on by default, `--no-stagger` to turn off): envs start at
   different points of the episode, so rollout batches are not all the same slice of time.
+- **CAPS** (`caps.py`, on by default): two extra loss terms that make the policy itself smooth,
+  `--caps-temporal` (lambda_T, consecutive actions close, default 0.1) and `--caps-spatial`
+  (lambda_S, a noisy observation gives the same action, default 0.05) with `--caps-sigma` (noise
+  std in normalised observation units, default 0.05). 0 turns a term off. Logged as
+  `caps_temporal` / `caps_spatial` in `progress.csv`.
 - **PPO settings** follow MuJoCo Playground's tuned dexterous-hand configs (LeapCubeReorient in
   `mujoco_playground/config/manipulation_params.py`): see `PPO` / `POLICY_HIDDEN` below.
 - **Colab robustness**: `--envs` is picked from the GPU (override with the flag; halves itself on
@@ -46,6 +51,9 @@ from pathlib import Path
 
 # Set before jax/warp are imported (the cache and precision settings below read them).
 os.environ.setdefault("JAX_DEFAULT_MATMUL_PRECISION", "highest")  # TF32 hurt Playground results
+# MuJoCo Warp allocates its own GPU buffers (contacts, collision scratch) outside JAX. By default
+# JAX grabs 75% of the GPU at start, and Warp then failed to allocate on a T4 (2026-10-04).
+os.environ.setdefault("XLA_PYTHON_CLIENT_PREALLOCATE", "false")
 
 import jax
 import numpy as np
@@ -56,11 +64,15 @@ from flax import linen
 from ml_collections.config_dict import ConfigDict
 
 try:
+    from .caps import CapsConfig
+    from .caps import patched as caps_patched
     from .curriculum import Curriculum, Rules
     from .grasp_env_jax import TendraGrasp, default_config
     from .policy import export_npz
     from .stagger import wrap_for_training
 except ImportError:  # run as a plain script next to the other files (Colab)
+    from caps import CapsConfig
+    from caps import patched as caps_patched
     from curriculum import Curriculum, Rules
     from grasp_env_jax import TendraGrasp, default_config
     from policy import export_npz
@@ -81,7 +93,12 @@ PPO = {
 }  # fmt: skip
 POLICY_HIDDEN = (512, 256, 128)
 VALUE_HIDDEN = (512, 256, 128)
-MIN_ENVS = 512
+MIN_ENVS = 256
+# Per-world collision buffers (CPU MuJoCo on the demo states, both arms: <= 33 contacts, <= 138
+# constraint rows). naccdmax (mesh contacts) defaults to the whole contact buffer, and Warp
+# allocates several naccdmax-sized scratch arrays every step: that was the T4's OOM.
+CONTACTS_PER_WORLD = 64
+CCD_PER_WORLD = 40
 
 
 class OutOfTime(Exception):
@@ -107,12 +124,16 @@ def gpu_info() -> dict:
 
 
 def pick_num_envs(info: dict) -> int:
-    """Parallel worlds for this GPU: 2048 on a 16 GB T4, 4096 on a 24 GB L4, 8192 on 40+ GB.
-    Must divide batch_size * num_minibatches (8192). Too many only costs an OOM retry."""
+    """Parallel worlds for this GPU: 1024 on a 16 GB T4, 2048 on a 24 GB L4, 4096 on 40+ GB.
+    The two-arm scene's collision buffers ran a T4 out of memory at 2048 (2026-10-04); the T4
+    benchmark gave 6,146 steps/s at 1024 vs 7,055 at 4096, so little is lost. Too many only
+    costs an OOM retry (halving down to MIN_ENVS)."""
     mem = info.get("memory_gb") or 0
-    if info["platform"] != "gpu" or mem < 18:
-        return 2048 if info["platform"] == "gpu" else 8
-    return 4096 if mem < 30 else 8192
+    if info["platform"] != "gpu":
+        return 8
+    if mem < 18:
+        return 1024
+    return 2048 if mem < 30 else 4096
 
 
 def _mirror(src: Path, dst: Path) -> None:
@@ -142,8 +163,7 @@ class Caches:
         try:
             import warp as wp
 
-            wp.config.kernel_cache_dir = str(local / "warp")
-            wp.build.init_kernel_cache(str(local / "warp"))
+            wp.config.kernel_cache_dir = str(local / "warp")  # read at wp.init(), still lazy
         except Exception as e:  # noqa: BLE001 - the cache is an optimisation only
             print(f"warp kernel cache not set ({e})")
 
@@ -233,7 +253,12 @@ def _load(path: Path):
 
 def _is_oom(e: BaseException) -> bool:
     s = str(e).lower()
-    return "resource_exhausted" in s or "out of memory" in s or "cuda_error_out_of_memory" in s
+    return (
+        "resource_exhausted" in s
+        or "out of memory" in s
+        or "cuda_error_out_of_memory" in s
+        or "failed to allocate" in s
+    )  # fmt: skip  (the last one: Warp's own allocator)
 
 
 # ----- the trainer -----
@@ -242,8 +267,9 @@ def _is_oom(e: BaseException) -> bool:
 class Trainer:
     def __init__(self, args: argparse.Namespace, out: Path, rules: Rules, ppo_cfg: dict,
                  num_envs: int, num_eval_envs: int, caches: Caches | None = None,
-                 log=print) -> None:  # fmt: skip
+                 log=print, caps: CapsConfig | None = None) -> None:  # fmt: skip
         self.args, self.out, self.log, self.caches = args, out, log, caches
+        self.caps = caps or CapsConfig(temporal=0.0, spatial=0.0)
         self.ppo_cfg, self.num_envs, self.num_eval_envs = ppo_cfg, num_envs, num_eval_envs
         cfg = default_config()
         self.has_dr = "dr_level" in cfg  # optional env keys: feature-checked
@@ -293,7 +319,8 @@ class Trainer:
         """Env settings of the current chunk; `evaluation`: normal starts only, no help."""
         s = self.cur.state
         ov = {"objects": list(s.objects), "penalty_scale": s.penalty_scale,
-              "naconmax": 96 * (self.num_eval_envs if evaluation else n)}  # fmt: skip
+              "naconmax": CONTACTS_PER_WORLD * (self.num_eval_envs if evaluation else n),
+              "naccdmax": CCD_PER_WORLD * (self.num_eval_envs if evaluation else n)}  # fmt: skip
         if self.has_starts:
             probs = {"normal": 1.0, "near": 0.0, "demo": 0.0} if evaluation else s.start_probs()
             ov.update(self.starts_overrides(probs))
@@ -334,6 +361,9 @@ class Trainer:
                    "demo_prob": st.demo_prob, "start_normal": st.start_normal, "penalty_scale": st.penalty_scale,
                    "dr_level": st.dr_level, "lr": cfg["learning_rate"],
                    **{k: round(v, 5) for k, v in m.items()}}  # fmt: skip
+            for k in ("caps_temporal", "caps_spatial"):  # training metrics (none at step 0)
+                v = metrics.get(f"training/{k}")
+                row[k] = "" if v is None else round(float(v), 6)
             success = m.get("eval/episode_success", float("nan"))
             blowup = m.get("eval/episode_blowup", 0.0)
             self.log(f"[{st.chunk}] {row['steps']:>12,} steps {row['minutes']:6.1f} min | "
@@ -368,15 +398,17 @@ class Trainer:
             if now + 1.1 * self.eval_interval > self.deadline:
                 raise OutOfTime()
 
-        ppo.train(
-            environment=env, eval_env=eval_env, num_timesteps=remaining,
-            episode_length=env._config.episode_length, wrap_env_fn=wrap,
-            network_factory=functools.partial(make_networks,
-                                              critic_layer_norm=not self.args.plain_critic),
-            progress_fn=progress, policy_params_fn=policy_params, restore_params=self.params,
-            seed=a.seed + 1000 * st.chunk + st.rollbacks, num_evals=num_evals,
-            num_eval_envs=self.num_eval_envs, deterministic_eval=True,
-            num_envs=self.num_envs, **cfg)  # fmt: skip
+        with caps_patched(self.caps):  # the CAPS loss for this ppo.train call only
+            ppo.train(
+                environment=env, eval_env=eval_env, num_timesteps=remaining,
+                episode_length=env._config.episode_length, wrap_env_fn=wrap,
+                network_factory=functools.partial(make_networks,
+                                                  critic_layer_norm=not self.args.plain_critic),
+                progress_fn=progress, policy_params_fn=policy_params, restore_params=self.params,
+                seed=a.seed + 1000 * st.chunk + st.rollbacks, num_evals=num_evals,
+                num_eval_envs=self.num_eval_envs, deterministic_eval=True,
+                randomization_fn=getattr(env, "domain_randomizer", None),  # per-world friction
+                num_envs=self.num_envs, **cfg)  # fmt: skip
 
     def watchdog(self, m: dict) -> str:
         """A reason to roll back, or ''."""
@@ -467,7 +499,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--bundle", default="tendra_gpu.npz")
     p.add_argument("--out", type=Path, required=True, help="run folder (on Drive for Colab)")
     p.add_argument("--envs", type=int, default=0, help="parallel worlds (0 = pick from the GPU)")
-    p.add_argument("--eval-envs", type=int, default=512)
+    p.add_argument("--eval-envs", type=int, default=256)
     p.add_argument("--chunk-steps", type=int, default=8_000_000, help="steps per curriculum chunk")
     p.add_argument("--eval-every", type=int, default=2_000_000, help="steps between evaluations")
     p.add_argument("--max-steps", type=int, default=400_000_000)
@@ -480,6 +512,12 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--no-stagger", action="store_true", help="all envs reset together")
     p.add_argument("--plain-critic", action="store_true", help="no LayerNorm in the critic")
     p.add_argument("--max-rollbacks", type=int, default=3)
+    p.add_argument("--caps-temporal", type=float, default=CapsConfig.temporal,
+                   help="CAPS lambda_T: consecutive actions close (0 = off)")  # fmt: skip
+    p.add_argument("--caps-spatial", type=float, default=CapsConfig.spatial,
+                   help="CAPS lambda_S: noisy observation, same action (0 = off)")  # fmt: skip
+    p.add_argument("--caps-sigma", type=float, default=CapsConfig.sigma,
+                   help="CAPS spatial noise std, normalised observation units (0 = off)")  # fmt: skip
     p.add_argument("--rules", default="{}", help='JSON overrides of curriculum.Rules, e.g. '
                    '\'{"add_object_at": 0.7}\'')  # fmt: skip
     p.add_argument("--allow-cpu", action="store_true", help="run without a GPU (very slow)")
@@ -499,6 +537,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     rules = Rules(**json.loads(args.rules))
+    caps = CapsConfig(temporal=args.caps_temporal, spatial=args.caps_spatial, sigma=args.caps_sigma)
     ppo_cfg = {**PPO, "entropy_cost": args.entropy, "learning_rate": args.lr}
     num_envs, eval_envs = args.envs or pick_num_envs(info), args.eval_envs
     if args.smoke:
@@ -524,11 +563,12 @@ def main(argv: list[str] | None = None) -> int:
     (out / "config.json").write_text(json.dumps({
         "args": {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
         "ppo": ppo_cfg, "policy_hidden": POLICY_HIDDEN, "value_hidden": VALUE_HIDDEN,
-        "rules": asdict(rules), "gpu": info, "versions": versions(),
+        "rules": asdict(rules), "caps": caps.to_dict(), "gpu": info, "versions": versions(),
+        "env": default_config().to_dict(),  # what `policy.trained_settings` reads
         "num_envs": num_envs}, indent=2))  # fmt: skip
     print(f"device {info}, {num_envs} envs (eval {eval_envs}), output {out}")
 
-    trainer = Trainer(args, out, rules, ppo_cfg, num_envs, eval_envs, caches)
+    trainer = Trainer(args, out, rules, ppo_cfg, num_envs, eval_envs, caches, caps=caps)
     why = trainer.run()
     caches.push()
     st = trainer.cur.state

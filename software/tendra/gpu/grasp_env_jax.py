@@ -16,18 +16,34 @@ CPU env unchanged:
   exported arm chain, `ArmIK`'s damped least squares, refreshed every `arm_ik_dt` inside the
   physics substeps like `GraspScene.step`) turns it into the working arm's servo targets; the
   idle arm holds its start pose;
+- the motion layer (`finger_ramp`, `wrist_ramp`, `action_delay`, as the CPU env's): finger servo
+  targets ramp linearly over the physics substeps, the wrist target over the IK updates, and the
+  action can take effect late (servo latency, drawn per world);
 - human-like reward with the arm-limit penalty; asymmetric observations ("state" for the policy,
-  "privileged_state" for the critic); demo-state starts with either hand.
+  "privileged_state" for the critic);
+- episode starts (`start_probs`): normal, "near" (a scripted grasp's approach, before contact)
+  or "demo" (a scripted grasp's frame, mostly holding), with either hand; one domain-
+  randomisation difficulty `dr_level` for automatic DR.
 Differences:
 - power grasp only;
 - contacts come from contact sensors (one net contact per hand part and object): touch flags
   are exact, but contact forces are |net force| (CPU: sum of normal forces) and opposition uses
   each part's force-weighted contact centre (CPU: every contact point);
 - one model for all worlds: the active object gets gravity as an applied force, the others
-  float parked far away; object mass randomisation scales that force (inertia unchanged); size,
-  friction and servo stiffness are not randomised;
+  float parked far away; object mass randomisation scales that force (inertia unchanged);
+  object friction is a per-world model field (`domain_randomizer`, for Brax's
+  `randomization_fn`); size and servo stiffness are not randomised;
 - no sleeping (MuJoCo Warp has none): the idle arm is simulated, held by its servos;
 - curriculum settings (objects, demo_prob, penalty_scale) are fixed per training phase.
+
+Episodes under Playground's auto-reset (`wrap_for_brax_training`, `full_reset=False`): a done
+world gets its cached first `data` and `obs` back, but NOT its `info`. So `step` starts a new
+episode itself: when the wrapper's step counter `info["steps"]` is 0 (it zeroes it after a done),
+the per-episode keys go back to their `reset` values (time, hold, success, the previous actions,
+the wrist command, the finger target, the action queue) and the observation noise gets a new
+stream. The keys of the cached first state (side, object, rest height, spawn, mass, bias, start
+kind) stay. Without this, `t` grew without bound and the success bonus paid once per world per
+training run (fixed 2026-10-06).
 """
 
 from __future__ import annotations
@@ -50,6 +66,7 @@ MAX_OBJECT_SPEED = 3.0  # m/s; faster = a physics blow-up
 NUM_PARTS = 6  # thumb, index, middle, ring, little, palm (the sensors add "hand" = all of it)
 SIDES = ("right", "left")
 BUNDLE_VERSION = 2
+NORMAL, NEAR, DEMO = 0, 1, 2  # episode start kinds (`start_probs`)
 
 
 def default_config() -> config_dict.ConfigDict:
@@ -60,24 +77,53 @@ def default_config() -> config_dict.ConfigDict:
         impl="warp",
         # Contact buffer for ALL worlds: set to 96 x num_envs. Constraint rows per world. (CPU
         # MuJoCo on the demo states, both arms: <= 33 contacts, <= 138 rows per world.)
-        naconmax=96 * 2048,
-        njmax=600,
+        naconmax=64 * 1024,
+        naccdmax=40 * 1024,  # mesh (CCD) contacts, all worlds; Warp's default = naconmax
+        njmax=300,
         hands="any",  # "right", "left" or "any" (random per world)
         objects=["cylinder", "cube", "ball"],  # allowed objects (curriculum)
-        demo_prob=0.0,
+        # Episode starts, relative weights (normalised; a kind without frames for the world's
+        # hand and object is skipped): normal = arms at home, object settled on the table;
+        # near = a scripted grasp's approach (hand near the object, before contact); demo = any
+        # frame of a scripted grasp (mostly holding it). The curriculum moves them.
+        start_probs=config_dict.create(normal=1.0, near=0.0, demo=0.0),
+        demo_prob=0.0,  # old callers: used only while start_probs is all "normal"
         penalty_scale=1.0,
         lift_height=0.06,
         hold_seconds=0.5,
-        wrist_speed=0.3,
-        wrist_turn_speed=2.0,
+        # Calm control (research/ai/smooth-control.md): small wrist steps (|a| = 1 is 7.2 mm and
+        # 2.2 deg per step), the wrist velocity command low-pass filtered like the fingers (1.0 =
+        # unfiltered, the old behaviour), and the fingers filtered harder (~1 Hz corner).
+        wrist_speed=0.15,
+        wrist_turn_speed=0.8,
+        wrist_smoothing=0.4,
         wrist_lead=0.03,
         wrist_turn_lead=0.3,
         arm_ik_dt=0.025,
         settle=0.2,  # s simulated at reset so the object comes to rest
-        finger_smoothing=0.4,
+        finger_smoothing=0.25,
         residual_scale=0.25,
         obs_noise=0.003,
+        # Share of `obs_noise` used even at dr_level 0, so the policy learns to filter a noisy
+        # object position from the start (0 = noise only with DR, the old behaviour).
+        obs_noise_floor=0.5,
+        # True = the smoothness terms (action_rate, jerk) are scaled by the curriculum's
+        # `penalty_scale` (the old behaviour: they were ~0 for most of training).
+        smoothness_curriculum=False,
+        # Motion layer (`tendra.grasp_env` docs): ramp the finger targets over the substeps and
+        # the wrist target over the IK updates (False = a jump per control step, the old way).
+        finger_ramp=True,
+        wrist_ramp=True,
+        # Servo latency for domain randomisation: the action takes effect this many control
+        # steps late, drawn per world in [lo, hi]; the targets hold until then. [0, 0] = at once.
+        action_delay=[0, 0],
         mass_scale=[0.5, 2.0],
+        friction=[0.6, 1.2],  # object sliding friction, per world (`domain_randomizer`)
+        # Domain-randomisation difficulty in [0, 1] (for automatic DR): scales the mass and
+        # friction ranges from nominal (0: mass x 1, friction 1.0) to `mass_scale` and
+        # `friction` (1), and the object position noise from `obs_noise_floor` x `obs_noise`
+        # to `obs_noise`. (Size and servo gains are not randomised.)
+        dr_level=1.0,
         rewards=config_dict.create(
             reach=1.0,
             tips=0.5,
@@ -87,7 +133,10 @@ def default_config() -> config_dict.ConfigDict:
             lift=4.0,
             held=2.0,
             success=30.0,
-            action_rate=0.1,
+            action_rate=0.5,  # squared action change, mean over the action
+            action_rate_wrist=4.0,  # factor on the 6 wrist dims in action_rate and jerk
+            jerk=0.2,  # squared second difference of the action (back-and-forth)
+            still=1.0,  # holding at lift height with the wrist and object calm
             residual=0.2,
             effort=0.05,
             knock=0.3,
@@ -161,6 +210,16 @@ def axis_angle(axis: jax.Array, angle: jax.Array) -> jax.Array:
 def rot6d(mat: jax.Array) -> jax.Array:
     """The first two columns (as `tendra.grasp_env.rot6d`)."""
     return mat[:, :2].T.ravel()
+
+
+def blend_pose(pos_a: jax.Array, quat_a: jax.Array, pos_b: jax.Array, quat_b: jax.Array,
+               f: float) -> tuple[jax.Array, jax.Array]:  # fmt: skip
+    """The pose the fraction `f` of the way from a to b (as `tendra.grasp_env._blend_pose`)."""
+    if f >= 1.0:
+        return pos_b, quat_b
+    quat_b = jp.where(jp.dot(quat_a, quat_b) >= 0, quat_b, -quat_b)
+    q = quat_a + f * (quat_b - quat_a)
+    return pos_a + f * (pos_b - pos_a), q / jp.linalg.norm(q)
 
 
 def limit_lead(target: jax.Array, actual: jax.Array, max_angle: float) -> jax.Array:
@@ -288,14 +347,35 @@ class TendraGrasp(mjx_env.MjxEnv):
         if cfg.hands not in (*SIDES, "any"):
             raise ValueError(f"hands must be one of {SIDES} or 'any'")
         self._allowed = jp.array([k in cfg.objects for k in kinds], dtype=float)
+        self._obj_geom = jp.asarray(self._mj_model.body_geomadr[b["obj_body"]])
         self._n_obj = len(kinds)
         self._k = b["syn_basis"].shape[1]
         self._n_joints = b["qadr"].shape[1]
         self._action_size = 6 + self._k + self._n_joints
         self._hold_steps = max(1, round(cfg.hold_seconds / cfg.ctrl_dt))
+        # Per-dim weights of the smoothness terms: the wrist dims count `action_rate_wrist` x.
+        self._rate_weights = jp.concatenate([jp.full(6, cfg.rewards.action_rate_wrist),
+                                             jp.ones(self._k + self._n_joints)])  # fmt: skip
+        if not 0.0 <= cfg.dr_level <= 1.0:
+            raise ValueError(f"dr_level must be in [0, 1], not {cfg.dr_level}")
+        floor = cfg.obs_noise_floor
+        self._obs_noise = cfg.obs_noise * (floor + (1.0 - floor) * cfg.dr_level)
+        sp = cfg.start_probs
+        weights = [sp.normal, sp.near, sp.demo]
+        if weights[1:] == [0.0, 0.0] and cfg.demo_prob > 0:  # the old demo_prob, see the config
+            weights = [1.0 - cfg.demo_prob, 0.0, cfg.demo_prob]
+        if min(weights) < 0 or sum(weights) <= 0:
+            raise ValueError(f"start_probs must be >= 0 and not all 0: {weights}")
+        self._start_weights = jp.array(weights, dtype=float)
+        if "near_frames" not in b:
+            raise ValueError(f"bundle {bundle} has no near starts: re-export it")
         chunk = max(1, round(cfg.arm_ik_dt / cfg.sim_dt))
         self._chunks = chunks(self.n_substeps, chunk)
         self._settle_chunks = chunks(max(1, round(cfg.settle / cfg.sim_dt)), chunk)
+        lo, hi = (int(x) for x in cfg.action_delay)
+        if not 0 <= lo <= hi:
+            raise ValueError(f"action_delay must be [lo, hi] with 0 <= lo <= hi: {[lo, hi]}")
+        self._delay = (lo, hi)
         self._ik = {k: float(v) for k, v in self.meta["ik"].items()}
         self._ik["iters"] = int(self._ik["iters"])
         self._chain = {k.removeprefix("chain_"): v for k, v in self._b.items()
@@ -327,6 +407,22 @@ class TendraGrasp(mjx_env.MjxEnv):
     def mjx_model(self) -> mjx.Model:
         return self._mjx_model
 
+    def domain_randomizer(self, model: mjx.Model, rng: jax.Array) -> tuple[mjx.Model, Any]:
+        """Per-world model fields, for Brax's `randomization_fn` (one key per world in `rng`):
+        each object's sliding friction, uniform in `friction` scaled by `dr_level` (nominal
+        1.0). The objects have contact priority, so their friction is what the hand feels.
+        Drawn once per `ppo.train` call (each world keeps its values)."""
+        cfg = self._config
+        lo, hi = (1.0 + cfg.dr_level * (f - 1.0) for f in cfg.friction)
+
+        def one(key: jax.Array) -> jax.Array:
+            f = jax.random.uniform(key, (self._n_obj,), minval=lo, maxval=hi)
+            return model.geom_friction.at[self._obj_geom, 0].set(f)
+
+        friction = jax.vmap(one)(rng)
+        in_axes = jax.tree.map(lambda _: None, model).tree_replace({"geom_friction": 0})
+        return model.tree_replace({"geom_friction": friction}), in_axes
+
     # ----- the arm in the physics loop -----
 
     def _side_chain(self, side: jax.Array) -> dict[str, jax.Array]:
@@ -338,19 +434,41 @@ class TendraGrasp(mjx_env.MjxEnv):
         return arm_ik(self._side_chain(side), q, pos, rot, b["arm_lo"][side], b["arm_hi"][side],
                       b["ready"][side], self._ik)  # fmt: skip
 
-    def physics(self, data: mjx.Data, ctrl: jax.Array, side: jax.Array,
-                steps: tuple[int, ...]) -> tuple[mjx.Data, jax.Array]:  # fmt: skip
+    def physics(self, data: mjx.Data, ctrl: jax.Array, side: jax.Array, steps: tuple[int, ...],
+                fingers_from: jax.Array | None = None,
+                wrist_from: tuple[jax.Array, jax.Array] | None = None) -> tuple[mjx.Data, jax.Array]:  # fmt: skip
         """Simulate `steps` substep chunks; before each, the working arm's IK turns its wrist
-        target (mocap) into servo targets (`GraspScene.step`). The idle arm keeps its targets."""
+        target (mocap) into servo targets (`GraspScene.step`). The idle arm keeps its targets.
+        The motion layer's ramps (`GraspEnv._physics`): with `fingers_from` the working hand's
+        finger targets move linearly from there to `ctrl`'s over the substeps; with `wrist_from`
+        (position, quaternion) each IK update aims at its share of the way from there to the
+        mocap target."""
         b = self._b
-        m_id = b["mocap"][side]
-        pos = data.mocap_pos[m_id]
-        rot = quat_to_mat(data.mocap_quat[m_id])
+        m_id, act = b["mocap"][side], b["act"][side]
+        pos_to, quat_to = data.mocap_pos[m_id], data.mocap_quat[m_id]
+        fingers_to = ctrl[act]
+        total, start = sum(steps), 0
         err = jp.array(0.0)
         for n in steps:
-            q, err = self.solve_ik(side, data.qpos[b["arm_qadr"][side]], pos, rot)
+            pos, quat = pos_to, quat_to
+            if wrist_from is not None:
+                pos, quat = blend_pose(*wrist_from, pos_to, quat_to, (start + n) / total)
+                data = data.replace(mocap_pos=data.mocap_pos.at[m_id].set(pos),
+                                    mocap_quat=data.mocap_quat.at[m_id].set(quat))  # fmt: skip
+            q, err = self.solve_ik(side, data.qpos[b["arm_qadr"][side]], pos, quat_to_mat(quat))
             ctrl = ctrl.at[b["arm_act"][side]].set(q)
-            data = mjx_env.step(self._mjx_model, data, ctrl, n)
+            if fingers_from is None:
+                data = mjx_env.step(self._mjx_model, data, ctrl, n)
+            else:
+                f = jp.arange(start + 1, start + n + 1) / total
+                rows = fingers_from + f[:, None] * (fingers_to - fingers_from)
+                ctrls = jp.tile(ctrl, (n, 1)).at[:, act].set(rows)
+
+                def substep(d: mjx.Data, c: jax.Array) -> tuple[mjx.Data, None]:
+                    return mjx.step(self._mjx_model, d.replace(ctrl=c)), None
+
+                data = jax.lax.scan(substep, data, ctrls)[0]
+            start += n
         return data, err
 
     # ----- reset -----
@@ -358,6 +476,7 @@ class TendraGrasp(mjx_env.MjxEnv):
     def blank_data(self) -> mjx.Data:
         cfg = self._config
         return mjx_env.make_data(self._mj_model, impl=cfg.impl, naconmax=cfg.naconmax,
+                                 naccdmax=min(cfg.naccdmax, cfg.naconmax),  # Warp: must be <=
                                  njmax=cfg.njmax)  # fmt: skip
 
     def state_data(self, blank: mjx.Data, obj: jax.Array, mass_scale: jax.Array, qpos, qvel, ctrl,
@@ -374,7 +493,7 @@ class TendraGrasp(mjx_env.MjxEnv):
 
     def reset(self, rng: jax.Array) -> mjx_env.State:
         cfg, b = self._config, self._b
-        keys = jax.random.split(rng, 10)
+        keys = jax.random.split(rng, 12)
         if cfg.hands == "any":
             side = jax.random.randint(keys[9], (), 0, len(SIDES))
         else:
@@ -395,37 +514,50 @@ class TendraGrasp(mjx_env.MjxEnv):
         z = b["obj_half_height"][obj] + 0.001
         obj_q = jp.array([xyz[0], xyz[1], z, jp.cos(yaw / 2), 0.0, 0.0, jp.sin(yaw / 2)])
         qpos = b["home_qpos"].at[b["obj_qadr"][obj] + jp.arange(7)].set(obj_q)
-        mass_scale = jax.random.uniform(keys[6], minval=cfg.mass_scale[0],
-                                        maxval=cfg.mass_scale[1])  # fmt: skip
+        lo, hi = (1.0 + cfg.dr_level * (s - 1.0) for s in cfg.mass_scale)  # nominal = 1
+        mass_scale = jax.random.uniform(keys[6], minval=lo, maxval=hi)
         normal = start(qpos, jp.zeros(self._mj_model.nv), b["home_ctrl"], *self._home_mocap,
                        mass_scale)  # fmt: skip
         normal, _ = self.physics(normal, b["home_ctrl"], side, self._settle_chunks)
 
-        # Demo start: a random frame of a successful scripted grasp of the same object with the
-        # same hand, with the nominal mass (as recorded). Only the inputs are selected: a
-        # tree-wide select of two Warp datas leaks tracers under vmap.
-        count = b["demo_count"][side, obj]
-        frame = b["demo_start"][side, obj] + jax.random.randint(keys[4], (), 0,
-                                                               jp.maximum(count, 1))  # fmt: skip
-        use_demo = (jax.random.uniform(keys[5]) < cfg.demo_prob) & (count > 0)
+        # Or a frame of a successful scripted grasp of the same object with the same hand:
+        # "near" = from its approach (before contact), "demo" = any frame (mostly grasped; with
+        # the nominal mass, as recorded). Only the inputs are selected: a tree-wide select of two
+        # Warp datas leaks tracers under vmap.
+        avail = jp.array([True, b["near_count"][side, obj] > 0, b["demo_count"][side, obj] > 0])
+        p = self._start_weights * avail
+        p = jp.where(p.sum() > 0, p, jp.array([1.0, 0.0, 0.0]))  # nothing recorded: normal
+        kind = jax.random.choice(keys[10], 3, p=p / p.sum())
+        near = b["near_frames"][b["near_start"][side, obj] + jax.random.randint(
+            keys[11], (), 0, jp.maximum(b["near_count"][side, obj], 1))]  # fmt: skip
+        frame = jp.where(kind == NEAR, near, b["demo_start"][side, obj] + jax.random.randint(
+            keys[4], (), 0, jp.maximum(b["demo_count"][side, obj], 1)))  # fmt: skip
         demo = (b["demo_qpos"][frame], b["demo_qvel"][frame], b["demo_ctrl"][frame],
-                b["demo_mocap_pos"][frame], b["demo_mocap_quat"][frame], 1.0)  # fmt: skip
+                b["demo_mocap_pos"][frame], b["demo_mocap_quat"][frame],
+                jp.where(kind == DEMO, 1.0, mass_scale))  # fmt: skip
         settled = (normal.qpos, normal.qvel, normal.ctrl, normal.mocap_pos, normal.mocap_quat,
                    mass_scale)  # fmt: skip
-        inputs = [jp.where(use_demo, d, n) for d, n in zip(demo, settled, strict=True)]
+        inputs = [jp.where(kind == NORMAL, n, d) for d, n in zip(demo, settled, strict=True)]
         data = start(*inputs)
         mass_scale = inputs[-1]
         obj_pos = canon_pos(data.xpos[body], flip, b["mirror_x"])
-        rest_z = jp.where(use_demo, b["demo_rest_z"][frame], obj_pos[2])
+        rest_z = jp.where(kind == NORMAL, obj_pos[2], b["demo_rest_z"][frame])
 
         info = {
             "rng": keys[7], "side": side, "flip": flip, "obj": obj, "rest_z": rest_z,
             "spawn_xy": obj_pos[:2], "finger_target": data.ctrl[b["act"][side]],
-            "prev_action": jp.zeros(self._action_size), "hold": jp.array(0),
+            "prev_action": jp.zeros(self._action_size), "prev2_action": jp.zeros(self._action_size),
+            "wrist_cmd": jp.zeros(6), "hold": jp.array(0),
             "success": jp.array(0.0), "t": jp.array(0),
-            "obs_bias": cfg.obs_noise * jax.random.normal(keys[8], (3,)),
-            "mass_scale": mass_scale, "from_demo": use_demo.astype(float),
+            "obs_bias": self._obs_noise * jax.random.normal(keys[8], (3,)),
+            "mass_scale": mass_scale, "from_demo": (kind == DEMO).astype(float),
+            "from_near": (kind == NEAR).astype(float),
         }  # fmt: skip
+        lo, hi = self._delay
+        if hi > 0:  # servo latency: the actions not yet in effect, newest first
+            info["action_queue"] = jp.zeros((hi, self._action_size))
+            info["delay"] = (jax.random.randint(jax.random.fold_in(rng, 1), (), lo, hi + 1)
+                             if hi > lo else jp.array(lo))  # fmt: skip
         sense = self.sense(data, info)
         obs = self.observe(data, info, sense)
         metrics = {k: jp.array(0.0) for k in self._metric_keys()}
@@ -433,28 +565,39 @@ class TendraGrasp(mjx_env.MjxEnv):
 
     @staticmethod
     def _metric_keys() -> tuple[str, ...]:
-        return ("success", "held", "lift_cm", "from_demo", "blowup", "fail", "left", "ik_err_mm",
+        return ("success", "held", "lift_cm", "from_demo", "from_near", "blowup", "fail", "left",
+                "ik_err_mm",
                 "reach", "tips", "palm_facing", "contact", "opposition", "lift", "held_r",
-                "action_rate", "residual", "effort", "knock", "tilt", "table", "arm_limits")  # fmt: skip
+                "action_rate", "jerk", "still", "residual", "effort", "knock", "tilt", "table",
+                "arm_limits")  # fmt: skip
 
     # ----- step -----
 
     def step(self, state: mjx_env.State, action: jax.Array) -> mjx_env.State:
         b, data, info = self._b, state.data, state.info
+        cfg = self._config
+        if "steps" in info:  # under Playground's auto-reset: maybe a new episode (module docs)
+            info = self.new_episode(data, info, info["steps"] == 0)
         a = jp.clip(action, -1.0, 1.0)
         side = info["side"]
         m_id = b["mocap"][side]
-        pos, quat = self.wrist_command(data, info, a)
-        target = self.finger_command(info, a)
+        applied, fresh, queue = self.delayed(info, a)
+        wrist_cmd = jp.where(fresh, self.wrist_filter(info, applied), info["wrist_cmd"])
+        pos, quat = self.wrist_command(data, info, wrist_cmd)
+        target = jp.where(fresh, self.finger_command(info, applied), info["finger_target"])
         ctrl = data.ctrl.at[b["act"][side]].set(target)
+        # The ramps start where the targets are now.
+        fingers_from = info["finger_target"] if cfg.finger_ramp else None
+        wrist_from = (data.mocap_pos[m_id], data.mocap_quat[m_id]) if cfg.wrist_ramp else None
         data = data.replace(mocap_pos=data.mocap_pos.at[m_id].set(pos),
                             mocap_quat=data.mocap_quat.at[m_id].set(quat))  # fmt: skip
-        data, ik_err = self.physics(data, ctrl, side, self._chunks)
+        data, ik_err = self.physics(data, ctrl, side, self._chunks, fingers_from, wrist_from)
 
-        info = {**info, "finger_target": target, "t": info["t"] + 1}
+        info = {**info, **queue, "finger_target": target, "wrist_cmd": wrist_cmd,
+                "t": info["t"] + 1}  # fmt: skip
         sense = self.sense(data, info)
         reward, terms, fail, blowup, new_success = self.reward(data, info, sense, a)
-        info = {**info, "prev_action": a, "hold": sense["hold"],
+        info = {**info, "prev_action": a, "prev2_action": info["prev_action"], "hold": sense["hold"],
                 "success": jp.maximum(info["success"], new_success)}  # fmt: skip
         obs = self.observe(data, info, sense)
         done = (fail | blowup).astype(float)
@@ -463,7 +606,8 @@ class TendraGrasp(mjx_env.MjxEnv):
             **{key: terms[key] for key in self._metric_keys() if key in terms and key != "held"},
             "held_r": terms["held"], "success": new_success, "held": sense["held"].astype(float),
             "lift_cm": 100 * jp.clip(sense["height"], 0.0, 0.4) / n,
-            "from_demo": info["from_demo"] / n, "left": info["flip"].astype(float) / n,
+            "from_demo": info["from_demo"] / n, "from_near": info["from_near"] / n,
+            "left": info["flip"].astype(float) / n,
             "ik_err_mm": 1000 * jp.clip(jp.nan_to_num(ik_err), 0.0, 1.0) / n,
             "blowup": blowup.astype(float), "fail": fail.astype(float),
         }  # fmt: skip
@@ -471,10 +615,40 @@ class TendraGrasp(mjx_env.MjxEnv):
         return state.replace(data=data, obs=obs, reward=reward, done=done, metrics=metrics,
                              info=info)  # fmt: skip
 
+    def new_episode(self, data: mjx.Data, info: dict, new: jax.Array) -> dict:
+        """`info` with the per-episode keys back at their `reset` values where `new` (the
+        auto-reset swapped in the cached first `data`, but kept the old episode's info)."""
+        zeros = jp.zeros(self._action_size)
+        fresh = {
+            "t": jp.zeros_like(info["t"]), "hold": jp.zeros_like(info["hold"]),
+            "success": jp.zeros_like(info["success"]), "prev_action": zeros,
+            "prev2_action": zeros, "wrist_cmd": jp.zeros(6),
+            "finger_target": data.ctrl[self._b["act"][info["side"]]],
+            "rng": jax.random.fold_in(info["rng"], 0x5E7),  # new observation noise
+        }  # fmt: skip
+        if "action_queue" in info:
+            fresh["action_queue"] = jp.zeros_like(info["action_queue"])
+        return {**info, **{k: jp.where(new, v, info[k]) for k, v in fresh.items()}}
+
+    def delayed(self, info: dict, a: jax.Array) -> tuple[jax.Array, jax.Array, dict]:
+        """Servo latency (`action_delay`): the action in effect (the one `info["delay"]` steps
+        old), whether there is one yet (else the targets hold), and the updated queue for
+        `info`. Without latency: `a`, True, nothing."""
+        if self._delay[1] == 0:
+            return a, jp.array(True), {}
+        past = jp.concatenate([a[None], info["action_queue"]])  # past[k] = k steps old
+        fresh = info["t"] >= info["delay"]
+        return past[info["delay"]], fresh, {"action_queue": past[:-1]}
+
+    def wrist_filter(self, info: dict, a: jax.Array) -> jax.Array:
+        """The wrist velocity command in effect (6): the action's wrist part, low-pass filtered
+        (`wrist_smoothing`; 1 = the action itself)."""
+        return info["wrist_cmd"] + self._config.wrist_smoothing * (a[:6] - info["wrist_cmd"])
+
     def wrist_command(self, data: mjx.Data, info: dict, a: jax.Array):
-        """The working hand's new wrist target (world position, quaternion): velocity command,
-        never far ahead of the real wrist, in the workspace; all in the right hand's view
-        (`GraspEnv.step`)."""
+        """The working hand's new wrist target (world position, quaternion) from the wrist
+        velocity command `a` (6, `wrist_filter`), never far ahead of the real wrist, in the
+        workspace; all in the right hand's view (`GraspEnv.step`)."""
         cfg, b = self._config, self._b
         side, flip, mx = info["side"], info["flip"], b["mirror_x"]
         m_id, site = b["mocap"][side], b["wrist_site"][side]
@@ -580,7 +754,17 @@ class TendraGrasp(mjx_env.MjxEnv):
         t["success"] = w.success * new_success
 
         p = cfg.penalty_scale
-        t["action_rate"] = -p * w.action_rate * jp.mean((a - info["prev_action"]) ** 2)
+        ps = p if cfg.smoothness_curriculum else 1.0
+        wgt = self._rate_weights
+        t["action_rate"] = -ps * w.action_rate * jp.mean(wgt * (a - info["prev_action"]) ** 2)
+        t["jerk"] = (
+            -ps * w.jerk * jp.mean(wgt * (a - 2 * info["prev_action"] + info["prev2_action"]) ** 2)
+        )
+        # Calm hold: at lift height, the wrist and the object (nearly) still.
+        calm = jp.exp(-jp.sum(s["wrist_vel"][:3] ** 2) / 0.02**2
+                      - jp.sum(s["wrist_vel"][3:] ** 2) / 0.2**2
+                      - jp.sum(s["obj_vel"][:3] ** 2) / 0.02**2)  # fmt: skip
+        t["still"] = w.still * (s["held"] & (s["height"] >= cfg.lift_height)) * calm
         t["residual"] = -p * w.residual * jp.mean(a[6 + self._k :] ** 2)
         frc = data.actuator_force[b["act"][side]] / b["frc_max"][side]
         t["effort"] = -p * w.effort * jp.mean(frc**2)
@@ -611,7 +795,7 @@ class TendraGrasp(mjx_env.MjxEnv):
         lo, hi = b["lower"], b["upper"]
         mid, half = (hi + lo) / 2, (hi - lo) / 2
         obj, side = info["obj"], info["side"]
-        noise = info["obs_bias"] + cfg.obs_noise * jax.random.normal(
+        noise = info["obs_bias"] + self._obs_noise * jax.random.normal(
             jax.random.fold_in(info["rng"], info["t"]), (3,))  # fmt: skip
 
         def object_view(p: jax.Array) -> list[jax.Array]:
@@ -627,12 +811,15 @@ class TendraGrasp(mjx_env.MjxEnv):
         tail = [rot6d(s["obj_mat"]), s["obj_vel"], s["found"].astype(float),
                 jax.nn.one_hot(obj, self._n_obj), b["obj_size"][obj],
                 jp.array([1.0, 0.0]),  # grasp type one-hot: power
-                info["prev_action"], jp.array([info["t"] / cfg.episode_length, s["height"]])]  # fmt: skip
+                # The command in effect: the filtered wrist command, then the previous action.
+                jp.concatenate([info["wrist_cmd"], info["prev_action"][6:]]),
+                jp.array([info["t"] / cfg.episode_length, s["height"]])]  # fmt: skip
         actor = jp.concatenate([*common, *object_view(s["obj_pos"] + noise), *tail])
         clean = jp.concatenate([*common, *object_view(s["obj_pos"]), *tail])
         privileged = jp.concatenate([
             clean, s["force"],
-            jp.array([info["mass_scale"], b["obj_friction"][obj], s["table_obj"],
+            jp.array([info["mass_scale"], self._mjx_model.geom_friction[self._obj_geom[obj], 0],
+                      s["table_obj"],
                       s["table_hand"], s["opposed"], s["hold"] / self._hold_steps]),
             s["obj_pos"][:2] - info["spawn_xy"],
         ])  # fmt: skip

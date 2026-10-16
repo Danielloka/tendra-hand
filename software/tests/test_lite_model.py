@@ -43,3 +43,35 @@ def test_sim_hand_lite():
     sim.set_targets(np.full(sim.num_joints, 0.3))
     sim.wait()
     assert np.allclose(sim.positions(), sim.targets(), atol=0.05)
+
+
+def test_left_lite_meshes_are_reflected_right_ones():
+    """Simplification is not mirror-symmetric, so the left hand's lite meshes must be the right
+    ones reflected (same vertex count, positions and faces), or the physics would differ."""
+    import sys
+
+    from tendra.arm import WRIST_MODEL_PATHS
+    from tendra.lite_model import MIRROR_X_MM, lite_mesh, read_stl
+
+    root = V1.model_path.parents[2] / "hardware" / "robot_description"
+    right_dir, left_dir = root / "v1_export", root / "v1_export_left"
+    sys.path.insert(0, str(root.parent / "cad"))
+    import mirror_export
+
+    assert mirror_export.MIRROR_X_MM == MIRROR_X_MM
+    files = sorted(p.name for p in (right_dir / "meshes").glob("*.stl"))
+    assert files
+    for name in files:
+        rv, rf = lite_mesh(right_dir / "meshes" / name)
+        lv, lf = lite_mesh(left_dir / "meshes" / name)
+        assert len(lv) == len(rv) and len(lf) == len(rf), name
+        assert np.allclose(lv[:, 0], 2 * MIRROR_X_MM - rv[:, 0]), name
+        assert np.array_equal(lv[:, 1:], rv[:, 1:]), name
+        assert np.array_equal(lf, rf[:, [0, 2, 1]]), name  # reversed winding
+    # The reflection is the exported left STL (same plane): same vertices up to float32 noise.
+    mirrored = mirror_export.mirror_mesh(read_stl(right_dir / "meshes" / files[0])).reshape(-1, 3)
+    exported = read_stl(left_dir / "meshes" / files[0]).reshape(-1, 3)
+    assert np.allclose(mirrored.min(0), exported.min(0), atol=1e-3)
+    assert np.allclose(mirrored.max(0), exported.max(0), atol=1e-3)
+    assert np.allclose(mirrored.mean(0), exported.mean(0), atol=1e-3)
+    assert WRIST_MODEL_PATHS["left"].exists()

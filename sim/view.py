@@ -5,6 +5,7 @@
     uv run python sim/view.py --wrist  # v1 on its forearm: + forearm twist and 2-way wrist
     uv run python sim/view.py --arm    # both arms: OpenArm shoulder + elbow, forearm, wrist, v1 hand
     uv run python sim/view.py --v1 --left   # the mirrored left hand (also with --wrist)
+    uv run python sim/view.py --file PATH   # any MJCF/URDF; a URDF gets a motor slider per joint
 
 Move the joints with the sliders in the right-hand panel under "Control" (one per motor/servo, in
 ID order). In v1 each slider is a servo angle (rad); the servo pulls the joint's tendon loop.
@@ -30,6 +31,32 @@ MODEL_V1_PATH = MODELS / "tendra_hand_v1.xml"
 MODEL_WRIST_PATH = MODELS / "tendra_hand_v1_wrist.xml"
 
 
+def load_with_motors(path: Path, kp: float = 10.0) -> mujoco.MjModel:
+    """Load a model; if it has no actuators (e.g. a URDF), add a stiff position motor per joint.
+
+    Each motor holds its joint at the slider's angle, so the model stays still until moved.
+    Collisions are switched off too: MuJoCo collides meshes as convex hulls, and a palm's hull
+    swallows the finger bases, which would jam the joints.
+    Joints that copy another joint (URDF "mimic", a joint equality) get no motor of their own.
+    """
+    spec = mujoco.MjSpec.from_file(str(path))
+    if not spec.actuators:
+        spec.option.disableflags |= mujoco.mjtDisableBit.mjDSBL_CONTACT
+        spec.option.integrator = mujoco.mjtIntegrator.mjINT_IMPLICITFAST  # stable stiff motors
+        followers = {eq.name1 for eq in spec.equalities if eq.type == mujoco.mjtEq.mjEQ_JOINT}
+        movable = (mujoco.mjtJoint.mjJNT_HINGE, mujoco.mjtJoint.mjJNT_SLIDE)
+        for joint in spec.joints:
+            if joint.type not in movable or joint.name in followers:
+                continue
+            motor = spec.add_actuator(name=joint.name, target=joint.name)
+            motor.trntype = mujoco.mjtTrn.mjTRN_JOINT
+            motor.set_to_position(kp=kp, kv=0.1 * kp)
+            if joint.range[0] < joint.range[1]:
+                motor.ctrlrange = joint.range
+                motor.ctrllimited = mujoco.mjtLimited.mjLIMITED_TRUE
+    return spec.compile()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     which = parser.add_mutually_exclusive_group()
@@ -38,9 +65,15 @@ def main() -> None:
     which.add_argument(
         "--arm", action="store_true", help="both arms (OpenArm shoulder and elbow) with v1 hands"
     )
+    which.add_argument("--file", type=Path, help="open any MJCF (.xml) or URDF file")
     parser.add_argument("--left", action="store_true", help="the left hand (with --v1 or --wrist)")
     args = parser.parse_args()
-    if args.arm:
+    if args.file:
+        path = args.file.expanduser().resolve()
+        if not path.is_file():
+            parser.error(f"file not found: {path}")
+        name, model = path.name, load_with_motors(path)
+    elif args.arm:
         from tendra.arm import load_arm_model
 
         name, model = "Tendra arms", load_arm_model()

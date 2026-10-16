@@ -23,10 +23,10 @@ import numpy as np
 
 try:
     from .grasp_env_jax import TendraGrasp
-    from .policy import BraxPolicy
+    from .policy import BraxPolicy, trained_settings
 except ImportError:  # plain script next to the other files (Colab)
     from grasp_env_jax import TendraGrasp
-    from policy import BraxPolicy
+    from policy import BraxPolicy, trained_settings
 
 
 def rollout(env: TendraGrasp, policy: BraxPolicy, episodes: int, seed: int = 0) -> list[dict]:
@@ -93,10 +93,16 @@ def write_video(images: list[np.ndarray], path: Path, fps: int = 21) -> Path:
 def film(bundle: str | Path, params: str | Path, out: str | Path, episodes: int = 4,
          seed: int = 0, objects: list[str] | None = None, width: int = 640,
          height: int = 480) -> tuple[Path, list[dict]]:  # fmt: skip
-    """Policy file -> mp4. Returns the path and the episode summaries."""
+    """Policy file -> mp4. Returns the path and the episode summaries. Objects and
+    randomisation as the run was training (`trained_settings`), so the video shows the policy in
+    the conditions it learned, not extra noise or objects it never saw."""
     overrides = {"demo_prob": 0.0, "naconmax": 96 * 8}
-    if objects:
-        overrides["objects"] = objects
+    trained = trained_settings(params)
+    if "dr_level" in trained:
+        overrides["dr_level"] = trained["dr_level"]
+    overrides.update(trained.get("env", {}))
+    if objects or trained.get("objects"):
+        overrides["objects"] = objects or trained["objects"]
     env = TendraGrasp(bundle, config_overrides=overrides)
     policy = BraxPolicy.load(params)
     eps = rollout(env, policy, episodes, seed)

@@ -37,13 +37,17 @@ CODE = (
     "stagger.py",
     "rollout_video.py",
     "policy.py",
+    "caps.py",
 )
 # Exact pins from research/ai/gpu-training-research.md (checked on PyPI 2026-10-03): Brax 0.14.2
 # calls jax.device_put_replicated, removed in jax 0.10; mujoco-mjx 3.14 pins warp-lang 1.17.0.
 PIP = (
     '!pip install -q "jax[cuda12]==0.9.2" "brax==0.14.2" "mujoco==3.14.0" '
     '"mujoco-mjx==3.14.0" "mujoco-warp==3.14.0" "warp-lang==1.17.0" "playground==0.2.0" '
-    '"orbax-checkpoint>=0.11.22" mediapy'
+    '"orbax-checkpoint>=0.11.22" mediapy\n'
+    # Colab ships jax 0.11 with a CUDA 13 plugin; left installed, it fails to load next to jax 0.9's
+    # CUDA 12 plugin ("PJRT_Api already exists", seen 2026-10-04).
+    "!pip uninstall -y -q jax-cuda13-plugin jax-cuda13-pjrt"
 )
 
 INTRO = """
@@ -62,7 +66,8 @@ printed and saved (`curriculum.json`), and the weights are saved after every tes
 lost if Colab disconnects.
 
 **Which GPU?** *Runtime > Change runtime type*:
-- **T4 (free tier)**: works, about 4,000 simulation steps per second, so ~100 M steps take 7 h.
+- **T4 (free tier)**: works. The floating hand trained at ~4,000 steps per second; the two-arm
+  robot simulates both arms, so expect less (the log prints `sps`; please note it down).
   Free sessions last up to ~12 h but can end earlier, and a GPU is not always available.
 - **L4 (Colab Pro)**: the sweet spot. Newer, 24 GB, so the trainer uses 4,096 worlds; costs
   about 1.4x the T4 in compute units.
@@ -106,14 +111,15 @@ print(sorted(os.listdir("/content")))
 """
 
 ABOUT_SMOKE = """
-**Smoke test (1-3 minutes).** A tiny run with 8 worlds that goes through everything once:
-compile, train, evaluate, save, change the curriculum, export the policy. If this fails, stop
-here and fix it; a real run would fail the same way, only later. The first compile of the real
-run takes about 5 minutes (it is cached on Drive afterwards, so a reconnect is fast).
+**Smoke test (~15 minutes on a T4, mostly compiling).** A tiny run with 8 worlds: compile, train,
+evaluate, save, change the curriculum. Once the first `curriculum: decision` line appears, the
+whole pipeline has worked: you may stop the cell (square button) to save time, since every later
+chunk only recompiles (~10 min each). If it fails, stop here and fix it; a real run would fail
+the same way, only later. The real run's first compile also takes ~10 min.
 """
 
 SMOKE = """
-!cd /content && python -u train_brax.py --bundle "$BUNDLE" --out /content/smoke_run --smoke 2>&1 | grep --line-buffered -v -E "^Module|^Warp|^   "
+!cd /content && python -u train_brax.py --bundle "$BUNDLE" --out /content/smoke_run --smoke 2>&1 | grep --line-buffered -v -E "^Module|^Warp"
 """
 
 ABOUT_TRAINING = """
@@ -140,7 +146,10 @@ if running:
 else:
     cmd = (f'cd /content && exec python -u train_brax.py --bundle "{BUNDLE}" --out "{RUN}" '
            f'--hours {HOURS} --envs {ENVS} {EXTRA}')
-    subprocess.Popen(["bash", "-c", cmd], stdout=open(LOG, "a"), stderr=subprocess.STDOUT)
+    # Own session: stopping another cell sends Ctrl+C to the notebook's whole process group, which
+    # killed the trainer once (2026-10-04).
+    subprocess.Popen(["bash", "-c", cmd], stdout=open(LOG, "a"), stderr=subprocess.STDOUT,
+                     start_new_session=True)
     print("started; log:", LOG)
 """
 
@@ -207,8 +216,10 @@ display(Video(mp4, embed=True, width=640))
 ABOUT_EXPORT = """
 **Export for the laptop.** `policy_best.npz` (written by the trainer, refreshed here) is the policy
 as plain numbers: the laptop needs neither jax nor brax. Download it, put it in the Tendra repo's
-`runs/` folder and load it with `tendra.gpu.policy.BraxPolicy.load("runs/policy_best.npz")`.
-`params_best.pkl` has the full weights for resuming or later fine-tuning.
+`runs/` folder and watch it in the normal MuJoCo viewer:
+`uv run python sim/eval_grasp.py --brax runs/policy_best.npz --bundle runs/colab/tendra_gpu.npz --watch`
+(`--video x.mp4` films it, no `--watch` just measures success on the CPU physics: a sim-to-sim
+check). `params_best.pkl` has the full weights for resuming or later fine-tuning.
 """
 
 EXPORT = """

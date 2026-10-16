@@ -7,7 +7,7 @@ from itertools import pairwise
 
 import numpy as np
 import pytest
-from tendra.gpu.policy import BraxPolicy, export_npz
+from tendra.gpu.policy import LEGACY_ENV, BraxPolicy, export_npz, trained_settings
 
 OBS, ACT = 7, 3
 SIZES = (OBS, 16, 8, 2 * ACT)
@@ -168,3 +168,22 @@ def test_matches_real_brax(tmp_path):
     diff = np.abs(pol(obs) - want).max()
     print("max abs diff vs brax:", diff)
     assert diff < 1e-4
+
+
+def test_trained_settings_old_and_new_runs(tmp_path):
+    """Watching a policy uses the conditions it trained in: old runs (no env config saved) get
+    the old env's action settings, new runs their own; the noise follows dr_level and the floor."""
+    import json
+
+    assert trained_settings(tmp_path / "params_best.pkl") == {}  # no curriculum.json
+    (tmp_path / "curriculum.json").write_text(
+        json.dumps({"objects": ["cylinder"], "dr_level": 0.5})
+    )
+    old = trained_settings(tmp_path / "params_best.pkl")
+    assert old["objects"] == ["cylinder"] and old["env"] == LEGACY_ENV
+    assert old["obs_noise"] == pytest.approx(0.0015)
+    env = {"obs_noise": 0.004, "obs_noise_floor": 0.5, "wrist_speed": 0.15, "naconmax": 1}
+    (tmp_path / "config.json").write_text(json.dumps({"env": env}))
+    new = trained_settings(tmp_path / "params_best.pkl")
+    assert new["env"] == {"obs_noise": 0.004, "obs_noise_floor": 0.5, "wrist_speed": 0.15}
+    assert new["obs_noise"] == pytest.approx(0.004 * 0.75)

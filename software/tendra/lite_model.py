@@ -13,6 +13,7 @@ are slightly coarser). The model files in the repo are never touched.
     model = load_lite_model(path)            # MjModel, ~15 % of the triangles
 """
 
+import functools
 import struct
 from pathlib import Path
 
@@ -21,6 +22,8 @@ import numpy as np
 
 KEEP = 0.15  # fraction of triangles to keep
 MIN_FACES = 1000  # meshes smaller than this are left alone
+MIRROR_X_MM = -33.5  # the left hand's mirror plane, as in hardware/cad/mirror_export.py
+LEFT_SUFFIX = "_left"  # the left export directory is the right one's name + this
 
 
 def read_stl(path: Path) -> np.ndarray:
@@ -48,6 +51,28 @@ def simplify(tris: np.ndarray, keep: float = KEEP) -> tuple[np.ndarray, np.ndarr
     return verts.astype(float), faces
 
 
+@functools.lru_cache(maxsize=256)
+def simplify_cached(path: Path, keep: float) -> tuple[np.ndarray, np.ndarray]:
+    return simplify(read_stl(path), keep)
+
+
+def lite_mesh(path: Path, keep: float = KEEP) -> tuple[np.ndarray, np.ndarray]:
+    """(vertices, faces) of the STL at `path`, simplified. A mesh of the left export
+    (`<dir>_left/`, made by `mirror_export.py`) is the *reflection* of its right counterpart's
+    simplified mesh, not simplified on its own: simplification is not mirror-symmetric, and the
+    two hands must have identical physics."""
+    path = Path(path)
+    parts = list(path.parts)
+    for i, part in enumerate(parts[:-1]):
+        right = Path(*parts[:i], part.removesuffix(LEFT_SUFFIX), *parts[i + 1 :])
+        if part.endswith(LEFT_SUFFIX) and right.exists():
+            verts, faces = simplify_cached(right, keep)
+            verts = verts.copy()
+            verts[:, 0] = 2 * MIRROR_X_MM - verts[:, 0]
+            return verts, faces[:, [0, 2, 1]]
+    return simplify_cached(path, keep)
+
+
 def simplify_meshes(spec: mujoco.MjSpec, mesh_dir: Path, keep: float = KEEP) -> None:
     """Replace every STL mesh of `spec` (files in `mesh_dir`) by a simplified copy, in place.
 
@@ -57,7 +82,7 @@ def simplify_meshes(spec: mujoco.MjSpec, mesh_dir: Path, keep: float = KEEP) -> 
     for mesh in spec.meshes:
         if not mesh.file.lower().endswith(".stl"):
             continue
-        verts, faces = simplify(read_stl(Path(mesh_dir) / mesh.file), keep)
+        verts, faces = lite_mesh(Path(mesh_dir) / mesh.file, keep)
         mesh.file = ""
         mesh.uservert = verts.ravel().tolist()
         mesh.userface = faces.ravel().astype(int).tolist()

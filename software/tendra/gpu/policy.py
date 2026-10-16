@@ -194,6 +194,41 @@ class BraxPolicy:
         return np.tanh(loc).astype(np.float32)
 
 
+# Env settings that change what an action does or what the policy sees (`grasp_env_jax`), and
+# their values in runs from before the calm-control change (2026-10-06), which saved no env
+# config. A policy must run with the values it was trained with.
+ACTION_KEYS = ("wrist_speed", "wrist_turn_speed", "wrist_smoothing", "wrist_lead",
+               "wrist_turn_lead", "finger_smoothing", "residual_scale", "obs_noise",
+               "obs_noise_floor", "finger_ramp", "wrist_ramp", "action_delay")  # fmt: skip
+LEGACY_ENV = {"wrist_speed": 0.3, "wrist_turn_speed": 2.0, "wrist_smoothing": 1.0,
+              "finger_smoothing": 0.4, "obs_noise": 0.003, "obs_noise_floor": 0.0,
+              "finger_ramp": False, "wrist_ramp": False, "action_delay": [0, 0]}  # fmt: skip
+
+
+def trained_settings(policy_path: str | Path) -> dict[str, Any]:
+    """How the policy's run was training, from `curriculum.json` and `config.json` next to it
+    (what `train_brax.py` writes; empty if missing): `objects` and `dr_level` (the curriculum's
+    latest, a good guess for `params_best` too), and `obs_noise`, the object position noise the
+    env added at that level (m; runs before 2026-10-06 saved no env config: their env's 3 mm x
+    `dr_level`), and `env`: its `ACTION_KEYS` settings (`LEGACY_ENV` for old runs). Watch and
+    evaluate a policy with these, or it acts and sees differently from how it trained. With
+    neither file next to the policy nothing is known: {} (the caller should warn)."""
+    folder = Path(policy_path).parent
+    cur, cfg = folder / "curriculum.json", folder / "config.json"
+    if not (cur.exists() or cfg.exists()):
+        return {}
+    out: dict[str, Any] = {}
+    if cur.exists():
+        state = json.loads(cur.read_text())
+        out.update({k: state[k] for k in ("objects", "dr_level") if k in state})
+    env = (json.loads(cfg.read_text()).get("env") if cfg.exists() else None) or LEGACY_ENV
+    out["env"] = {k: env[k] for k in ACTION_KEYS if k in env}
+    floor = env.get("obs_noise_floor", 0.0)
+    level = out.get("dr_level", 0.0)
+    out["obs_noise"] = env.get("obs_noise", 0.003) * (floor + (1.0 - floor) * level)
+    return out
+
+
 def export_npz(src: str | Path | Any, npz: str | Path, obs_key: str = "state",
                activation: str = "swish") -> BraxPolicy:  # fmt: skip
     """Convert Brax params to the plain `.npz` format (safe to share and load). `src` is a

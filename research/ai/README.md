@@ -11,6 +11,7 @@ This folder is the research base for that goal. It is a living set of notes: add
 | [math.md](math.md) | The maths and theory, in learning order, with where each topic is used in this project |
 | [resources.md](resources.md) | Books, courses, papers, open-source projects, datasets, simulators, hardware |
 | [grasp-rl.md](grasp-rl.md) | The RL system that teaches the hand to grasp by itself in simulation: design, research basis, how to run, results |
+| [smooth-control.md](smooth-control.md) | Why the grasp policy shakes, how the best robots get calm and reliable, and the step-by-step plan to get there |
 | [ideas.md](ideas.md) | Creative bets and open questions: things that could give Tendra an edge |
 
 ## The one-paragraph version

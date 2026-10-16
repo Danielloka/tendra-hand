@@ -20,6 +20,14 @@ fingers twice as often. (Both hands at once, each with its own object, is the ne
 Fingers get *absolute* posture targets, low-pass filtered (`finger_smoothing`) like a human's
 smooth muscle response; the wrist gets velocity commands (it has to travel).
 
+**Motion layer** (research/ai/smooth-control.md, Step 3): the policy decides every 48 ms, the
+physics runs every 4 ms. With `finger_ramp` the finger servo targets don't jump once per decision:
+they move in a straight line from the previous target to the new one, a little every physics
+step (a set-point generator, as a servo's own motion profile would). With `wrist_ramp` the wrist
+target does the same at each inverse-kinematics update (every `arm_ik_dt`). `action_delay`
+(control steps, drawn per episode) makes the action take effect late, like servo and bus latency;
+a domain-randomisation knob for sim-to-real, off by default.
+
 **Observation**: `reset`/`step` return `(actor_obs, critic_obs)`. The actor sees what the real
 robot could know (joint angles, wrist pose, an object pose estimate with noise, which fingers
 touch). The critic also gets privileged simulator facts (clean object pose, contact forces,
@@ -98,7 +106,10 @@ class RewardWeights:
     lift: float = 4.0  # height toward `lift_height`, while held
     held: float = 2.0  # off the table, in the hand
     success: float = 30.0  # once, when held at `lift_height` for `hold_seconds`
-    action_rate: float = 0.1  # squared change of the action (smoothness)
+    action_rate: float = 0.5  # squared change of the action (smoothness), mean over the action
+    action_rate_wrist: float = 4.0  # factor on the 6 wrist dims in action_rate and jerk
+    jerk: float = 0.2  # squared second difference of the action (back-and-forth)
+    still: float = 1.0  # holding at lift height with the wrist and the object calm
     residual: float = 0.2  # squared per-joint residual (stay in the synergy space)
     effort: float = 0.05  # squared servo force / force limit (grip just hard enough)
     knock: float = 0.3  # object speed while not grasped (pushing it around)
@@ -117,8 +128,11 @@ class GraspEnvConfig:
     episode_seconds: float = 5.0
     lift_height: float = 0.06  # m above the resting height = success height
     hold_seconds: float = 0.5
-    wrist_speed: float = 0.3  # m/s at |action| = 1
-    wrist_turn_speed: float = 2.0  # rad/s at |action| = 1
+    # Calm control (research/ai/smooth-control.md): small wrist steps, the wrist velocity command
+    # low-pass filtered like the fingers (1.0 = unfiltered), the fingers filtered harder.
+    wrist_speed: float = 0.15  # m/s at |action| = 1
+    wrist_turn_speed: float = 0.8  # rad/s at |action| = 1
+    wrist_smoothing: float = 0.4  # per step: command += smoothing * (wrist action - command)
     wrist_lead: float = 0.03  # the target may run at most this far ahead of the real wrist (m)
     wrist_turn_lead: float = 0.3  # the target's orientation may lead the wrist's (rad)
     hands: str = "any"  # which hand picks up the object: "right", "left" or "any" (random)
@@ -127,7 +141,7 @@ class GraspEnvConfig:
     # forward and sideways a hand's width.
     workspace_lo: tuple[float, float, float] = (-0.10, -0.25, -0.05)
     workspace_hi: tuple[float, float, float] = (0.25, 0.10, 0.20)
-    finger_smoothing: float = 0.4  # per step: target += smoothing * (commanded - target)
+    finger_smoothing: float = 0.25  # per step: target += smoothing * (commanded - target)
     residual_scale: float = 0.25  # rad at |residual action| = 1
     synergies: str | None = None  # .npz from `Synergies.save` (e.g. fit on teleop); None = default
     # Randomisation (each episode, uniform in these ranges); False = the nominal model.
@@ -142,6 +156,17 @@ class GraspEnvConfig:
     # trainer starts low so a clumsy beginner still dares to touch the object (with full
     # penalties the first policy learned to keep the hand up and away), then raises it.
     penalty_scale: float = 1.0
+    # True = the smoothness terms (action_rate, jerk) are scaled by penalty_scale too (the old
+    # behaviour; they were ~0 for most of training, and the policy shook).
+    smoothness_curriculum: bool = False
+    # Motion layer (module docs): ramp the finger targets over the physics steps and the wrist
+    # target over the IK updates, instead of a jump per control step. False = the old jumps.
+    finger_ramp: bool = True
+    wrist_ramp: bool = True
+    # Servo latency (domain randomisation, for later sim-to-real): the action takes effect this
+    # many control steps late, drawn per episode in [lo, hi] (lo if `randomize` is off). Until
+    # the first action arrives, the targets hold. (0, 0) = at once.
+    action_delay: tuple[int, int] = (0, 0)
     rewards: RewardWeights = field(default_factory=RewardWeights)
 
 
@@ -155,6 +180,17 @@ def _quat_mul(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     out = np.zeros(4)
     mujoco.mju_mulQuat(out, a, b)
     return out
+
+
+def _blend_pose(a: tuple[np.ndarray, np.ndarray], b: tuple[np.ndarray, np.ndarray],
+                f: float) -> tuple[np.ndarray, np.ndarray]:  # fmt: skip
+    """The pose (position, quaternion wxyz) the fraction `f` of the way from `a` to `b`: linear
+    in position, normalised linear in rotation (the steps are small). `f` = 1 gives `b`."""
+    if f >= 1.0:
+        return b
+    qa, qb = a[1], b[1] if np.dot(a[1], b[1]) >= 0 else -b[1]
+    q = qa + f * (qb - qa)
+    return a[0] + f * (b[0] - a[0]), q / np.linalg.norm(q)
 
 
 def _limit_lead(target: np.ndarray, actual: np.ndarray, max_angle: float) -> np.ndarray:
@@ -205,6 +241,10 @@ class GraspEnv:
         m.opt.timestep = cfg.sim_timestep
         self.substeps = max(1, round(1.0 / (cfg.control_hz * cfg.sim_timestep)))
         self.dt = self.substeps * cfg.sim_timestep
+        # The control step's physics steps in IK chunks (first step, count), as `GraspScene.step`.
+        ik_chunk = max(1, round(self.scene.config.arm_ik_dt / cfg.sim_timestep))
+        self._chunks = [(i, min(ik_chunk, self.substeps - i))
+                        for i in range(0, self.substeps, ik_chunk)]  # fmt: skip
         self.syn = Synergies.load(cfg.synergies) if cfg.synergies else default_synergies()
         self.action_dim = 6 + self.syn.k + V1.num_joints
         self.rng = np.random.default_rng(seed)
@@ -326,7 +366,12 @@ class GraspEnv:
         self.spawn_xy = s.canon_pos(s.object_pose()[0])[:2]  # the right hand's view, like obj_pos
         self.finger_target = s.finger_targets()
         self.prev_action = np.zeros(self.action_dim)
+        self.prev2_action = np.zeros(self.action_dim)
+        self.wrist_cmd = np.zeros(6)
         self.obs_bias = rng.normal(0, cfg.obs_noise, 3)
+        lo, hi = cfg.action_delay
+        self.delay = int(rng.integers(lo, hi + 1)) if hi > lo and cfg.randomize else int(lo)
+        self._queue: list[np.ndarray] = []  # actions not yet in effect (with `action_delay`)
         self.max_height = 0.0
         self.blew_up = False
         self._contacts()
@@ -359,40 +404,22 @@ class GraspEnv:
 
     def step(self, action: np.ndarray) -> tuple[tuple[np.ndarray, np.ndarray], float, bool, bool,
                                                  dict[str, Any]]:  # fmt: skip
-        cfg, s = self.config, self.scene
+        s, d = self.scene, self.data
         a = np.clip(np.asarray(action, dtype=float), -1.0, 1.0)
-        k = self.syn.k
-
-        # Wrist: move the target, but never far ahead of the real wrist, inside the workspace. All in
-        # the right hand's view: for the left hand the scene's mirror maps in and out.
-        pos, quat = s.wrist_target()
-        wrist, wrist_quat = s.wrist_pose()
-        pos, wrist = s.canon_pos(pos), s.canon_pos(wrist)
-        pos = pos + a[0:3] * cfg.wrist_speed * self.dt
-        lead = pos - wrist
-        dist = np.linalg.norm(lead)
-        if dist > cfg.wrist_lead:
-            pos = wrist + lead * (cfg.wrist_lead / dist)
-        pos = s.canon_pos(np.clip(pos, self._ws_lo, self._ws_hi))
-        turn = s.canon_axial(a[3:6]) * cfg.wrist_turn_speed * self.dt
-        angle = np.linalg.norm(turn)
-        if angle > 1e-9:
-            dq = np.concatenate([[np.cos(angle / 2)], np.sin(angle / 2) * turn / angle])
-            quat = _quat_mul(dq, quat)  # world-frame turn
-        # An arm can't follow a target that turned far ahead of it.
-        quat = _limit_lead(quat, wrist_quat, cfg.wrist_turn_lead)
-        s.set_wrist_target(pos, quat)
-
-        # Fingers: synergy posture + residual, smoothed.
-        q_cmd = self.syn.posture(a[6 : 6 + k]) + cfg.residual_scale * a[6 + k :]
-        q_cmd = np.clip(q_cmd, V1.lower, V1.upper)
-        self.finger_target += cfg.finger_smoothing * (q_cmd - self.finger_target)
+        # Servo latency: the action in effect is `delay` steps old (none yet: the targets hold).
+        self._queue.append(a)
+        fresh = len(self._queue) > self.delay
+        applied = self._queue.pop(0) if fresh else a
+        # Where the targets are now: the ramps start here.
+        fingers_from = d.ctrl[self._act].copy()
+        wrist_from = (d.mocap_pos[s.arm.mocap].copy(), d.mocap_quat[s.arm.mocap].copy())
+        s.set_wrist_target(*self._command(applied, fresh))
         s.set_finger_targets(self.finger_target)
-
-        s.step(self.dt)  # the arm's inverse kinematics runs inside (a plain mj_step without it)
+        self._physics(fingers_from, wrist_from)
         self.t += 1
 
         reward, terms, fail = self._reward(a)
+        self.prev2_action = self.prev_action
         self.prev_action = a
         # Success does NOT end the episode: holding on keeps earning. (When it did, run try2
         # learned to hover just below the success height, where the holding reward never stops.)
@@ -408,6 +435,67 @@ class GraspEnv:
                 "unstable": self.blew_up, "side": self.side,
             }  # fmt: skip
         return self._observe(), reward, terminated, truncated, info
+
+    def _command(self, a: np.ndarray, fresh: bool = True) -> tuple[np.ndarray, np.ndarray]:
+        """The action in effect `a` -> the new wrist target (world position, quaternion), and
+        `self.finger_target`. `fresh` = False: no action in effect yet (`action_delay`), the
+        wrist command and the finger target hold."""
+        cfg, s, k = self.config, self.scene, self.syn.k
+        if fresh:
+            self.wrist_cmd = self.wrist_cmd + cfg.wrist_smoothing * (a[:6] - self.wrist_cmd)
+            # Fingers: synergy posture + residual, smoothed.
+            q_cmd = self.syn.posture(a[6 : 6 + k]) + cfg.residual_scale * a[6 + k :]
+            q_cmd = np.clip(q_cmd, V1.lower, V1.upper)
+            self.finger_target = self.finger_target + cfg.finger_smoothing * (
+                q_cmd - self.finger_target
+            )
+
+        # Wrist: move the target, but never far ahead of the real wrist, inside the workspace. All in
+        # the right hand's view: for the left hand the scene's mirror maps in and out.
+        pos, quat = s.wrist_target()
+        wrist, wrist_quat = s.wrist_pose()
+        pos, wrist = s.canon_pos(pos), s.canon_pos(wrist)
+        v = self.wrist_cmd
+        pos = pos + v[0:3] * cfg.wrist_speed * self.dt
+        lead = pos - wrist
+        dist = np.linalg.norm(lead)
+        if dist > cfg.wrist_lead:
+            pos = wrist + lead * (cfg.wrist_lead / dist)
+        pos = s.canon_pos(np.clip(pos, self._ws_lo, self._ws_hi))
+        turn = s.canon_axial(v[3:6]) * cfg.wrist_turn_speed * self.dt
+        angle = np.linalg.norm(turn)
+        if angle > 1e-9:
+            dq = np.concatenate([[np.cos(angle / 2)], np.sin(angle / 2) * turn / angle])
+            quat = _quat_mul(dq, quat)  # world-frame turn
+        # An arm can't follow a target that turned far ahead of it.
+        quat = _limit_lead(quat, wrist_quat, cfg.wrist_turn_lead)
+        return pos, quat
+
+    def _physics(self, fingers_from: np.ndarray,
+                 wrist_from: tuple[np.ndarray, np.ndarray]) -> None:  # fmt: skip
+        """One control step of physics, as `GraspScene.step` (the arms' IK refreshed every
+        `arm_ik_dt`), with the motion layer's ramps from where the targets were (`fingers_from`,
+        `wrist_from`) to the new ones set in the scene. The ramps write the simulator's ctrl and
+        mocap directly, so wrappers of the scene's setters (`tendra.calm`) still see one call per
+        control step."""
+        cfg, s, m, d = self.config, self.scene, self.model, self.data
+        if not (cfg.finger_ramp or cfg.wrist_ramp):
+            s.step(self.dt)
+            return
+        mocap, act, n_all = s.arm.mocap, self._act, self.substeps
+        fingers_to = d.ctrl[act].copy()
+        wrist_to = (d.mocap_pos[mocap].copy(), d.mocap_quat[mocap].copy())
+        for start, n in self._chunks:
+            if cfg.wrist_ramp:  # this IK update aims at its share of the way
+                f = (start + n) / n_all
+                d.mocap_pos[mocap], d.mocap_quat[mocap] = _blend_pose(wrist_from, wrist_to, f)
+            if not cfg.finger_ramp:
+                s.step(n * m.opt.timestep)  # one IK update, n physics steps
+                continue
+            s.drive_arms()
+            for j in range(start + 1, start + n + 1):
+                d.ctrl[act] = fingers_from + (j / n_all) * (fingers_to - fingers_from)
+                mujoco.mj_step(m, d)
 
     # ----- contacts -----
 
@@ -530,9 +618,24 @@ class GraspEnv:
             self.success = True
             terms["success"] = w.success
 
-        # Human-likeness and care (scaled by the curriculum's penalty_scale).
+        # Calm hold: at lift height, the wrist and the object (nearly) still.
+        if held and height >= cfg.lift_height:
+            wv = s.wrist_velocity()
+            calm = np.exp(-np.sum(wv[:3] ** 2) / 0.02**2 - np.sum(wv[3:] ** 2) / 0.2**2
+                          - np.sum(obj_vel**2) / 0.02**2)  # fmt: skip
+            terms["still"] = w.still * float(calm)
+
+        # Human-likeness and care (scaled by the curriculum's penalty_scale; smoothness only
+        # with `smoothness_curriculum`).
         k = cfg.penalty_scale
-        terms["action_rate"] = -k * w.action_rate * float(np.mean((a - self.prev_action) ** 2))
+        ks = k if cfg.smoothness_curriculum else 1.0
+        wgt = np.ones(self.action_dim)
+        wgt[:6] = w.action_rate_wrist
+        terms["action_rate"] = (
+            -ks * w.action_rate * float(np.mean(wgt * (a - self.prev_action) ** 2))
+        )
+        jerk = a - 2 * self.prev_action + self.prev2_action
+        terms["jerk"] = -ks * w.jerk * float(np.mean(wgt * jerk**2))
         res = a[6 + self.syn.k :]
         terms["residual"] = -k * w.residual * float(np.mean(res**2))
         frc = d.actuator_force[self._act] / self._frc_max
@@ -587,7 +690,9 @@ class GraspEnv:
             (self.finger_target - mid) / half,
             root_pos - self._home,
             rot6d(root_quat),
-            np.concatenate([s.canon_vec(s.wrist_velocity()[:3]), s.canon_axial(s.wrist_velocity()[3:])]),
+            np.concatenate(
+                [s.canon_vec(s.wrist_velocity()[:3]), s.canon_axial(s.wrist_velocity()[3:])]
+            ),
         ]
         # What a real arm reports: joint angles (0 = middle of the range) and speeds.
         lo, hi = self._arm_range
@@ -599,7 +704,8 @@ class GraspEnv:
             np.eye(len(OBJECT_KINDS))[OBJECT_KINDS.index(kind)],
             size,
             np.eye(len(GRASP_TYPES))[GRASP_TYPES.index(self.grasp_type)],
-            self.prev_action,
+            # The command in effect: the filtered wrist command, then the previous action.
+            np.concatenate([self.wrist_cmd, self.prev_action[6:]]),
             [self.t / self.max_steps, obj_pos[2] - s.rest_height],
         ]
         actor = np.concatenate([*common, *object_view(obj_pos + noise), *tail])
@@ -687,9 +793,20 @@ def config_dict(config: GraspEnvConfig) -> dict[str, Any]:
     return asdict(config)
 
 
+# What a config saved before the calm-control settings (2026-10-06) meant by a missing key, so
+# old bundles and checkpoints load as they were trained.
+LEGACY_CONFIG = {
+    "wrist_smoothing": 1.0,
+    "smoothness_curriculum": True,
+    "finger_ramp": False,
+    "wrist_ramp": False,
+}
+LEGACY_REWARDS = {"action_rate_wrist": 1.0, "jerk": 0.0, "still": 0.0}
+
+
 def config_from_dict(d: dict[str, Any]) -> GraspEnvConfig:
-    d = dict(d)
-    rewards = RewardWeights(**d.pop("rewards", {}))
+    d = {**LEGACY_CONFIG, **d}
+    rewards = RewardWeights(**{**LEGACY_REWARDS, **d.pop("rewards", {})})
     tuples = {k: tuple(v) for k, v in d.items() if isinstance(v, list)}
     return GraspEnvConfig(**{**d, **tuples, "rewards": rewards})
 

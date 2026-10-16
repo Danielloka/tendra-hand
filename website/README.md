@@ -20,7 +20,7 @@ npm run lint && npm run typecheck
 |---|---|
 | Homepage text, story sections, stats, CTA | `content/home.json` |
 | Roadmap | `content/roadmap.json` |
-| Project / Hardware / Software / Gallery / Build log / Contribute pages | `content/pages/*.mdx` |
+| Project / Hardware / Software / Gallery / Build log / Contact pages | `content/pages/*.mdx` |
 | Docs (sidebar order in `_nav.json`) | `content/docs/*.mdx` |
 | Build-log posts (newest first by `date`) | `content/log/YYYY-MM-DD-slug.mdx` |
 | Parts list, gallery items | `content/data/bom.json`, `content/data/gallery.json` |

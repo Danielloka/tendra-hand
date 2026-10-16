@@ -29,8 +29,8 @@ website/
   content/                   ALL editable text lives here
     site.json                name, url, GitHub, nav, footer            (lead)
     home.json                homepage copy + story sections + stats + CTA
-    roadmap.json             roadmap phases (home + project page)
-    pages/<page>.mdx         project, hardware, software, gallery, log, contribute (frontmatter + body)
+    roadmap.json             big milestones (home + project page)
+    pages/<page>.mdx         project, hardware, software, gallery, log, contact (frontmatter + body)
     data/bom.json            bill of materials
     data/gallery.json        gallery items
     log/<yyyy-mm-dd-slug>.mdx build-log posts
@@ -41,7 +41,7 @@ website/
     app/                     routes
       layout.tsx globals.css (lead)
       page.tsx               home
-      project/ hardware/ software/ gallery/ contribute/ log/ log/[slug]/
+      project/ hardware/ software/ gallery/ contact/ log/ log/[slug]/
       docs/ docs/[...slug]/
       dev/hand/              "hand lab": sliders for every HandState field (noindex, not in sitemap)
       template.tsx           route transition
@@ -79,7 +79,7 @@ website/
     "cta": { "title": "", "lead": "", "label": "", "href": "" }
   }
   ```
-- `content/roadmap.json`: `{ "kicker", "title", "lead", "phases": [ { "id", "title", "summary", "status": "done" | "in-progress" | "planned", "items": [string] } ] }`
+- `content/roadmap.json`: `{ "kicker", "title", "lead", "milestones": [ { "id", "title", "summary", "status": "done" | "in-progress" | "planned" } ] }` (only the ~5 big milestones to the goal, no item lists)
 - `content/data/bom.json`: `{ "updated": "YYYY-MM-DD", "groups": [ { "name", "items": [ { "part", "qty", "spec", "notes", "link"? , "status": "have" | "planned" } ] } ] }`
 - `content/data/gallery.json`: `{ "items": [ { "type": "image" | "video", "src", "poster"?, "alt", "caption", "width", "height", "todo" } ] }` — `todo` says what real photo/video should replace the placeholder.
 - Real media: files in the repo's `media/` folder (see `media/README.md`, described in `media/catalog.json`), copied to `public/media/` by `scripts/sync-styleguide.mjs` and referenced as `/media/photos/…`. Replace a placeholder by pointing `src` there and removing its `todo`.
@@ -143,7 +143,7 @@ An agent edits **only** files it owns. Shared files are owned by the lead; ask t
 | 1 | **3D** | `src/components/three/**`, `src/app/dev/hand/**`, `public/models/**` | `/dev/hand` shows the placeholder hand; every HandState field visibly works via sliders; tsc + eslint clean |
 | 1 | **Docs** | `src/app/docs/**`, `src/components/docs/**`, `src/components/mdx/**`, `src/lib/docs.ts`, `src/styles/prose.css`, `content/docs/**` | `/docs` with sidebar, search, TOC, prev/next and starter pages; all MDX components in the table above (except wave-2 ones) work |
 | 2 | **Scroll** | `src/app/page.tsx`, `src/components/home/**`, `src/lib/scroll/**`, `src/components/layout/SmoothScroll.tsx` | homepage story works on desktop, mobile and reduced motion; stats, roadmap, CTA |
-| 2 | **Pages** | `src/app/{project,hardware,software,gallery,contribute,log}/**`, `src/app/{template,not-found,sitemap,robots,opengraph-image}.*`, `src/components/pages/**`, `src/components/layout/**` (not SmoothScroll), and takes over `src/components/mdx/index.tsx` | all pages render from `content/`; mobile menu; scroll progress bar; route transitions; OG images; sitemap |
+| 2 | **Pages** | `src/app/{project,hardware,software,gallery,contact,log}/**`, `src/app/{template,not-found,sitemap,robots,opengraph-image}.*`, `src/components/pages/**`, `src/components/layout/**` (not SmoothScroll), and takes over `src/components/mdx/index.tsx` | all pages render from `content/`; mobile menu; scroll progress bar; route transitions; OG images; sitemap |
 | 3 | Design review → Accessibility → Performance → Code review | (sequential, so fixes never collide) | see `.claude/agents/*.md` |
 
 ### Working rules for build agents

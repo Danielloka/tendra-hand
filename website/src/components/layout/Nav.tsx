@@ -10,7 +10,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import "./layout.css";
 
 // Long reading pages get a progress line under the nav (the homepage tells its own story).
-const PROGRESS_ROUTES = ["/project", "/journey", "/contribute"];
+const PROGRESS_ROUTES = ["/project", "/journey", "/contact"];
 const hasProgress = (pathname: string, docs: boolean) => (docs ? stripDocs(pathname) !== "/" : PROGRESS_ROUTES.includes(pathname));
 
 /** `docs` = the docs header: brand links to the docs home and gets a "Docs" tag. */

@@ -2,7 +2,7 @@ import homeData from "@content/home.json";
 import type { StoryId } from "@/lib/scroll/storyTimeline";
 
 export type StorySectionData = { id: StoryId; kicker: string; title: string; body: string[]; points?: string[] };
-export type DiagramNode = { id: "pc" | "esp32" | "motors"; label: string; detail: string };
+export type DiagramNode = { id: "see" | "think" | "act"; label: string; detail: string };
 export type DiagramData = { nodes: DiagramNode[]; caption: string };
 type Cta = { label: string; href: string };
 

@@ -8,7 +8,7 @@ How the Tendra Hand site is set up to be found by search engines and cited by AI
 - **Structured data (JSON-LD)** in `src/components/seo/`:
   - every page: Organization, WebSite and SoftwareSourceCode (links the GitHub repo and the three licenses);
   - docs and build-log posts: TechArticle + BreadcrumbList; the FAQ also gets FAQPage (built from `content/docs/faq.mdx`, so every `## Question` becomes a Q&A);
-  - `/gallery`: ImageGallery; `/docs` and `/docs/log`: CollectionPage; `/journey`, `/contribute`: WebPage.
+  - `/gallery`: ImageGallery; `/docs` and `/docs/log`: CollectionPage; `/journey`, `/contact`: WebPage.
 - **`/llms.txt`** (llmstxt.org): a short Markdown map with key facts and a link plus one-line description for every page, doc and log post. **`/llms-full.txt`**: all docs, reference pages, the roadmap and log posts as one Markdown file. Both are generated at build time from `content/`. The "Key facts" list is in `src/components/seo/llms.ts` (`KEY_FACTS`): update it when the hardware or status changes.
 - **robots.txt allows AI crawlers**, `sitemap.xml` lists every public page.
 - All text on the home and project pages is server-rendered HTML, so crawlers that do not run JavaScript still read it.

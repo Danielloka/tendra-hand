@@ -1,124 +1,37 @@
 {
   "kicker": "Roadmap",
-  "title": "From two fingers to a robot that helps at home.",
-  "lead": "The end goal is a robot that can cook, do chores and use tools as well as a person. It starts with the hardest part: the hand.",
-  "phases": [
+  "title": "Five steps from a hand to a helper.",
+  "lead": "Each one is necessary. Together they lead to a robot that can do what we do.",
+  "milestones": [
     {
-      "id": "phase-0",
-      "title": "Phase 0: Foundation",
-      "summary": "Set up the project and get the hand model moving in simulation.",
-      "status": "done",
-      "items": [
-        "Project structure, public repo and licenses",
-        "Checked the Fusion 360 export and wrote down its problems",
-        "Converter from the CAD export to a MuJoCo simulation model",
-        "Simulation viewer with a slider for every joint",
-        "Simulated motions checked against the real hand"
-      ]
+      "id": "hand",
+      "title": "A hand as capable as ours",
+      "summary": "Five fingers and 20 joints that can pinch, grip and turn things the way a human hand does.",
+      "status": "in-progress"
     },
     {
-      "id": "phase-1",
-      "title": "Phase 1: V0 prototype, thumb and index",
-      "summary": "A first start: make the 8-joint thumb and index prototype move cleanly on stepper motors, controlled from the computer.",
-      "status": "in-progress",
-      "items": [
-        "Firmware with smooth speed-up and slow-down for all 8 motors (tested on the computer)",
-        "Motors switch off when idle to stay within the power supply",
-        "Python control library that works on the simulation and the real hand",
-        "Digital twin software: move a slider on screen and the real joint follows (not yet tried on the hand)",
-        "Still to do: first power-on, motor direction checks and calibration of each joint",
-        "Still to do: basic motions like open, close, pinch and point"
-      ]
+      "id": "senses",
+      "title": "Senses",
+      "summary": "Touch in the fingertips and eyes on the world, so it can feel and see what it holds.",
+      "status": "planned"
     },
     {
-      "id": "phase-2",
-      "title": "Phase 2: Tendra Hand V1, the first full hand",
-      "summary": "Five fingers and 20 joints, moved by 16 smart servos that report their own position (each fingertip joint follows its middle joint, like in a human finger). This is the first real Tendra Hand.",
-      "status": "in-progress",
-      "items": [
-        "Middle, ring and little fingers, copied from the index and sized like a human hand (designed in Fusion 360)",
-        "A thumb with 4 joints (a fifth was tried and dropped)",
-        "All 16 servos in the forearm, with every tendon in its own channel through the palm and wrist",
-        "Full-hand simulation model: 20 joints and 36 tendons",
-        "Firmware for the servo bus, ready for all 16 servos, with the same Python code as V0",
-        "Still to do: electronics and a power supply big enough for 16 servos",
-        "Still to do: wire all 16 servos on one shared data cable, through an FE-URT-1 adapter",
-        "Still to do: print a test section of the tendon channels, then print and assemble the whole hand",
-        "Still to do: read back position, load and temperature, and show the measured positions live in the digital twin",
-        "Still to do: compare the V0 steppers with the V1 servos for speed, precision, force and noise"
-      ]
+      "id": "skills",
+      "title": "Learned skills",
+      "summary": "Skills learned from practice and from people: pouring, cutting, folding, using tools.",
+      "status": "planned"
     },
     {
-      "id": "phase-3",
-      "title": "Phase 3: Mechanics and a realistic simulation",
-      "summary": "Make V1 robust and the simulation behave like the real thing.",
-      "status": "planned",
-      "items": [
-        "Study tendon routing, friction and tension, and model the tendons in simulation",
-        "Soft TPU fingertip pads",
-        "Measure real speed, friction and play, and tune the simulation to match",
-        "Weigh the printed parts and update the model"
-      ]
+      "id": "understanding",
+      "title": "Understanding tasks",
+      "summary": "Ask for something in plain words, and it plans the steps and carries them out.",
+      "status": "planned"
     },
     {
-      "id": "phase-4",
-      "title": "Phase 4: Sensing",
-      "summary": "Give the hand a sense of touch and a camera.",
-      "status": "planned",
-      "items": [
-        "Touch and force sensing in the fingertips",
-        "A camera to see the hand and what it holds",
-        "Sensor data in the Python library and the simulation"
-      ]
-    },
-    {
-      "id": "phase-5",
-      "title": "Phase 5: AI control",
-      "summary": "Teach the hand to move by itself.",
-      "status": "planned",
-      "items": [
-        "Control the hand by moving your own hand in front of a webcam",
-        "Learn from recorded demonstrations",
-        "Train in simulation on cloud GPUs, then transfer to the real hand",
-        "Optional: larger-scale training in NVIDIA Isaac Sim or Isaac Lab"
-      ]
-    },
-    {
-      "id": "phase-6",
-      "title": "Phase 6: Seeing and grasping",
-      "summary": "Use the camera to find objects and handle them.",
-      "status": "planned",
-      "items": [
-        "Detect objects with the camera and plan how to grasp them",
-        "Harder tasks: turning objects in the hand, using tools, everyday objects",
-        "Publish benchmarks and results"
-      ]
-    },
-    {
-      "id": "phase-7",
-      "title": "Phase 7: Understanding tasks",
-      "summary": "Go from \"do this motion\" to \"do this job\".",
-      "status": "planned",
-      "items": [
-        "Tell the hand what to do in plain words, and it works out the actions from what the camera sees",
-        "Break a long task, like making a sandwich, into steps and pick the right skill for each",
-        "Notice when something goes wrong, like a dropped object, and try again",
-        "Learn a new task from a few human demonstrations",
-        "An open dataset of hand demonstrations for household tasks"
-      ]
-    },
-    {
-      "id": "phase-8",
-      "title": "Phase 8: Arm, body and real chores",
-      "summary": "Take the hand out of the workshop and into a home.",
-      "status": "planned",
-      "items": [
-        "Put the hand on a robot arm, then use two hands together",
-        "Kitchen tasks: cut, stir, pour, crack an egg, cook a simple meal",
-        "Chores: fold laundry, load the dishwasher, tidy up",
-        "A body that can move from room to room",
-        "Safe around people: gentle forces and stopping on unexpected touch"
-      ]
+      "id": "home",
+      "title": "At work in a real home",
+      "summary": "Two arms and two hands helping with cooking and chores, safely, around people.",
+      "status": "planned"
     }
   ]
 }

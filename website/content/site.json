@@ -1,28 +1,89 @@
 {
   "name": "Tendra Hand",
-  "tagline": "An open-source, tendon-driven robotic hand.",
-  "description": "Tendra Hand is a fully open-source, 3D-printed, tendon-driven robotic hand that aims to match the joints of a human hand, with every joint controlled on its own. It is the first step toward a robot that can do everyday tasks as well as a person.",
+  "tagline": "The first step toward a robot that can do what you do.",
+  "description": "Tendra Hand is building toward a robot that can cook, clean and use tools as well as a person, starting with an open-source robotic hand as capable as a human one. Every design, line of code and research note is shared, so anyone can learn from it and build on it.",
   "github": "https://github.com/Danielloka/tendra-hand",
   "nav": [
-    { "label": "Project", "href": "/project" },
-    { "label": "Journey", "href": "/journey" },
-    { "label": "Gallery", "href": "/gallery" },
-    { "label": "Contribute", "href": "/contribute" },
-    { "label": "Docs", "href": "/docs" }
+    {
+      "label": "Project",
+      "href": "/project"
+    },
+    {
+      "label": "Journey",
+      "href": "/journey"
+    },
+    {
+      "label": "Gallery",
+      "href": "/gallery"
+    },
+    {
+      "label": "Contact",
+      "href": "/contact"
+    },
+    {
+      "label": "Docs",
+      "href": "/docs"
+    }
   ],
   "docsNav": [
-    { "label": "Getting started", "href": "/docs/getting-started" },
-    { "label": "Hardware", "href": "/docs/hardware" },
-    { "label": "Software", "href": "/docs/software" },
-    { "label": "Build log", "href": "/docs/log" }
+    {
+      "label": "Getting started",
+      "href": "/docs/getting-started"
+    },
+    {
+      "label": "Hardware",
+      "href": "/docs/hardware"
+    },
+    {
+      "label": "Software",
+      "href": "/docs/software"
+    },
+    {
+      "label": "Build log",
+      "href": "/docs/log"
+    }
   ],
   "footer": {
-    "note": "Built in the open. Every file, every line of code, every mistake.",
-    "contact": "Questions or ideas? Open an issue or a discussion on GitHub.",
+    "note": "Built in the open, for anyone who wants to go further. Every file, every line of code, every mistake.",
+    "contact": "Ideas or questions? Reach out on the Contact page.",
     "licenses": [
-      { "label": "Code: Apache-2.0", "href": "https://github.com/Danielloka/tendra-hand/blob/main/LICENSE" },
-      { "label": "Hardware: CERN-OHL-S-2.0", "href": "https://github.com/Danielloka/tendra-hand/blob/main/hardware/LICENSE" },
-      { "label": "Docs: CC BY 4.0", "href": "https://github.com/Danielloka/tendra-hand/blob/main/docs/LICENSE" }
+      {
+        "label": "Code: Apache-2.0",
+        "href": "https://github.com/Danielloka/tendra-hand/blob/main/LICENSE"
+      },
+      {
+        "label": "Hardware: CERN-OHL-S-2.0",
+        "href": "https://github.com/Danielloka/tendra-hand/blob/main/hardware/LICENSE"
+      },
+      {
+        "label": "Docs: CC BY 4.0",
+        "href": "https://github.com/Danielloka/tendra-hand/blob/main/docs/LICENSE"
+      }
+    ]
+  },
+  "contact": {
+    "items": [
+      {
+        "id": "x",
+        "label": "X",
+        "handle": "TODO: X handle",
+        "href": "",
+        "blurb": "Short updates and build progress."
+      },
+      {
+        "id": "instagram",
+        "label": "Instagram",
+        "handle": "TODO: Instagram handle",
+        "href": "",
+        "blurb": "Photos and videos of the hand."
+      },
+      {
+        "id": "email",
+        "label": "Email",
+        "handle": "TODO: email address",
+        "href": "",
+        "blurb": "Questions, ideas, or just to say hello."
+      }
     ]
   }
 }

@@ -8,8 +8,8 @@ export const generateMetadata = () => pageMetadata("project");
 
 const STATS = [
   { to: 20, label: "joints in the full hand" },
-  { to: 8, label: "joints in the prototype" },
-  { to: 3, label: "open licenses" },
+  { to: 5, label: "big steps to a robot at home" },
+  { to: 2, label: "hands on the first robot" },
   { to: 100, label: "% open source", suffix: "%" },
 ];
 

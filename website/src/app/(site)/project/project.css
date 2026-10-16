@@ -5,6 +5,10 @@
 
 @layer components {
   .page--project {
+    /* One calm blue family only (no violet, pink or teal), so the page matches the rest of the site. */
+    --vivid-violet: var(--vivid-blue);
+    --vivid-pink: var(--vivid-blue);
+    --vivid-teal: var(--vivid-blue);
     --grad: linear-gradient(100deg, var(--vivid-blue), var(--vivid-violet) 55%, var(--vivid-pink));
     counter-reset: band;
     overflow-x: clip;
@@ -313,7 +317,7 @@
     background:
       radial-gradient(50% 60% at 85% 10%, color-mix(in srgb, var(--vivid-pink) 55%, transparent), transparent 70%),
       radial-gradient(50% 60% at 10% 90%, color-mix(in srgb, var(--vivid-teal) 40%, transparent), transparent 70%),
-      linear-gradient(135deg, #0a3a99, #4a35d6 60%, #7a2fbf);
+      linear-gradient(135deg, color-mix(in srgb, var(--accent) 62%, black), color-mix(in srgb, var(--accent) 82%, black));
   }
   .page--project .page-band[data-band="open-source-all-of-it"]::before { display: none; }
   .page--project .page-band[data-band="open-source-all-of-it"] :where(h2, p, li, strong) { color: #fff; }

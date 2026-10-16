@@ -28,9 +28,10 @@
     justify-items: center;
   }
   .story-hero__title {
-    max-width: 14ch;
+    /* Wide enough for a two-line headline on tablets and desktops (text-wrap: balance evens the lines). */
+    max-width: 30ch;
     margin-top: var(--space-4);
-    font-size: clamp(2.25rem, 1.4rem + 4vw, 4.75rem);
+    font-size: clamp(2.25rem, 1.2rem + 3.6vw, 4rem);
   }
   .story-hero__lead {
     max-width: 36rem;
@@ -220,7 +221,11 @@
     bottom: var(--space-4);
     left: 50%;
     display: flex;
-    gap: var(--space-4);
+    flex-wrap: wrap;
+    justify-content: center;
+    width: max-content;
+    max-width: calc(100vw - 2rem);
+    gap: var(--space-1) var(--space-4);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -363,6 +368,11 @@
   .home-roadmap__layout {
     display: grid;
     gap: var(--space-7);
+  }
+  .home-roadmap__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
   }
   .home-roadmap__head .section-head {
     margin-bottom: var(--space-6);

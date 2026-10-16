@@ -1,75 +1,47 @@
 ---
 title: The project
 kicker: About Tendra Hand
-lead: "Tendra Hand is an open-source, 3D-printed, tendon-driven robotic hand with the same joints as a human hand, as the first step toward a robot that can do what people do. Built step by step, and shared completely."
-description: "Why Tendra Hand exists, the design decisions behind it, where the project stands today and where it is going next."
+lead: "A robot that can cook, clean and use tools as well as a person. That is where Tendra Hand is heading, and it starts with a hand as capable as yours. Built step by step, in the open."
+description: "Why Tendra Hand exists, the future it aims at, the ideas behind the design and the five big steps from a hand to a robot that helps at home."
 ---
 
-## The goal
+## Why this matters
 
-The big goal is a robot that can do what people do, just as well: cook a meal, fold the laundry, load the dishwasher, use everyday tools. Not only pick things up, but understand a task and carry it out, step by step.
+Think about everything you did with your hands today. Made breakfast. Opened a door. Typed, tied, poured, carried. We don't notice it, but our hands do thousands of small, skilled things every day.
 
-The hand is where it starts. Almost everything useful we do goes through our hands, and a hand that is as skilled as a human one is still the hardest part of building a helpful robot. So Tendra Hand first aims to do what your hand does: pinch a coin, turn a key, hold a pen. To get there, it needs the same joints as a human hand, and every one of them has to move on its own. Then come touch and vision, AI that learns skills and understands tasks, and finally an arm and a body to use it in a real home.
+Robots can't do most of them yet. They are strong and precise in factories, where every part arrives in the same place every time. But a kitchen or a living room changes every minute, and the hardest part to get right is the hand.
 
-A human hand can make more than 20 separate motions. Each one is called a degree of freedom (DOF). The full Tendra Hand (V1) has 20 of them, driven by 16 servos: each fingertip joint follows its middle joint, like in a human finger. The current prototype is the first step: a thumb and an index finger with 8 joints.
+Tendra Hand is aiming for the whole thing: a robot that can do what people do, just as well. Not only pick things up, but understand a task like "make a sandwich", break it into steps and carry them out. The hand comes first, because without a capable hand nothing else works.
 
-<Figure src="/media/photos/2026-09-29-v0-fingers-three-quarter.jpg" alt="The blue index finger and thumb of the prototype seen from a three-quarter angle." caption="The current prototype: a thumb and an index finger, mounted on a printed palm." width={1125} height={2000} />
+<Figure src="/media/photos/2026-09-29-v0-fingers-three-quarter.jpg" alt="The blue index finger and thumb of the prototype seen from a three-quarter angle." caption="Where it started: a thumb and an index finger, mounted on a printed palm." width={1125} height={2000} />
 
-And all of it is open source. The 3D design, the printable parts, the firmware, the control software, the simulation, future AI models and the research notes are free to use, change and build on.
-
-## Design decisions
+## The ideas behind it
 
 <CardGrid>
-  <Card icon="tendon" title="Why tendons?" kicker="Mechanics">
-    Motors are heavy and bulky. Putting them inside the fingers makes the fingers thick and clumsy. With tendons (thin cords that pull on the joints, like the ones in your arm), the motors can sit further back and the fingers stay slim.
+  <Card icon="tendon" title="Built like a human hand" kicker="Tendons">
+    Your finger muscles sit in your forearm and pull on long cords. Tendra Hand works the same way, so the fingers stay slim and the motors stay out of the way.
   </Card>
-  <Card icon="motor" title="Why one motor per joint?" kicker="Control">
-    Many hands use one motor to curl a whole finger. That is simpler, but every joint then moves in a fixed pattern. Giving each joint its own motor makes the hand harder to build, but it can do much more: bend just the fingertip, hold a pinch, or roll an object between fingers.
+  <Card icon="motor" title="Free joints, real skill" kicker="Dexterity">
+    Many robot hands curl a whole finger with one motor. Tendra gives almost every joint its own, so it can pinch, hold and roll things the way you do.
   </Card>
-  <Card icon="servo" title="Why steppers now, servos next?" kicker="Motors">
-    The 28BYJ-48 stepper motors are cheap and easy to get, which makes them good for a first prototype. But they can't tell where they are, so every joint has to be straightened by hand before power-up. Feetech SCS0009 smart servos report their own position and share one data cable, so they are the next step.
+  <Card icon="chip" title="Learn in simulation first" kicker="AI">
+    A virtual copy of the hand can practise millions of times without breaking anything. The skills it learns there are meant to carry over to the real one.
   </Card>
-  <Card icon="chip" title="Why a computer and a microcontroller?" kicker="Electronics">
-    The computer is the brain: it plans the motions and will later run the AI. The ESP32-S3 microcontroller is the spinal cord: it only turns joint angles into smooth motor motion. This split keeps the fast, time-critical work on the ESP32 and the heavy thinking on the computer.
+  <Card icon="servo" title="Made to be rebuilt" kicker="Open">
+    The parts print on an ordinary 3D printer, and the same code runs the simulated hand and the real one. Anyone can make a copy and try their own ideas.
   </Card>
 </CardGrid>
 
-A few more choices shape the whole project:
+## Where we are
 
-- **Printed in PLA or PETG.** Anyone with an ordinary 3D printer can make the parts.
-- **Simulation first.** A virtual copy of the hand in [MuJoCo](https://mujoco.org/) (a free physics simulator) runs on any laptop. It lets us test ideas before touching the hardware, and later train AI safely.
-- **The same code for sim and real.** A script written for the simulated hand runs unchanged on the real one.
-- **Angles, not motor steps.** The computer always talks in joint angles. Only the ESP32 knows about motors, so swapping steppers for servos doesn't change anything above it.
-
-## Where it stands
-
-The project is early. Here is an honest snapshot.
-
-| Part | Status |
-|---|---|
-| Thumb and index finger design, 8 joints | <StatusBadge status="done" /> |
-| Simulation model in MuJoCo, checked against the real hand | <StatusBadge status="done" /> |
-| Firmware with smooth motion, tested on the computer | <StatusBadge status="done" /> |
-| Python control library and digital twin software | <StatusBadge status="done" /> |
-| Finishing the physical prototype, first power-on and calibration of each joint | <StatusBadge status="in-progress" /> |
-| Tendra Hand V1: five fingers, 20 joints, 16 smart servos. Designed and simulated, not built yet | <StatusBadge status="in-progress" /> |
-| Touch sensing, camera and AI control | <StatusBadge status="planned" /> |
-| Understanding tasks, an arm and real chores | <StatusBadge status="planned" /> |
-
-<Callout type="note" title="Not tested on the real hand yet">
-  The firmware and the control software have been tested against a software stand-in for the hand, not the real motors. Hardware bring-up comes next, and we will share how it goes in the build log.
-</Callout>
+It's early, and we'd rather say so. A thumb and index finger prototype is built and being brought to life. The full five-finger hand, with 20 joints, is designed and moves in simulation, where it is also learning to pick things up. Nothing has been tested on the full real hand yet. Follow each step in the [build log](/docs/log).
 
 ## Roadmap
 
 <Roadmap />
 
-## Open source, all of it
+## Open, so others can go further
 
-Everything is published under open licenses that allow commercial use:
+Everything is shared: the 3D design, the printable parts, the code, the simulation and the research notes, including the ideas that didn't work. Use it to learn how a robot hand works, borrow an idea for your own project, or build something better on top of it. Commercial use is welcome too; the details are in the [licenses on GitHub](https://github.com/Danielloka/tendra-hand#license).
 
-- **Apache-2.0** for code (firmware, Python, simulation, AI code and models)
-- **CERN-OHL-S-2.0** for hardware (CAD, print files, electronics, robot model). If you share a changed hardware design, share its files under the same license.
-- **CC BY 4.0** for docs and research. Use them freely, just credit the project.
-
-Want to help? See [how to contribute](/contribute).
+Have an idea or a question? [Get in touch](/contact).

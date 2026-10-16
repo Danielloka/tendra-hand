@@ -20,7 +20,7 @@
     grid-template-columns: var(--rm-marker) minmax(0, 1fr);
     gap: var(--rm-gap);
   }
-  /* The line joining the markers: green up to the phase in progress. */
+  /* The line joining the markers: green up to the milestone in progress. */
   .roadmap__phase:not(:last-child)::after {
     content: "";
     position: absolute;
@@ -68,7 +68,7 @@
     padding: var(--space-5) var(--space-5) var(--space-5) 0;
     border-radius: var(--radius-lg);
   }
-  /* The phase in progress is the one to look at: raised card. */
+  /* The milestone in progress is the one to look at: raised card. */
   .roadmap__phase--in-progress .roadmap__card {
     padding-left: var(--space-5);
     margin-left: calc(var(--space-3) * -1);
@@ -97,44 +97,7 @@
   .roadmap__phase--planned .roadmap__title { color: var(--text); }
   .roadmap__summary { color: var(--text-muted); font-size: 0.9875rem; line-height: 1.55; }
 
-  .roadmap__items {
-    display: grid;
-    gap: 0.45rem;
-    margin: var(--space-2) 0 0;
-    padding: 0;
-    list-style: none;
-    font-size: var(--fs-small);
-    line-height: 1.5;
-  }
-  .roadmap__item {
-    position: relative;
-    padding-left: 1.5rem;
-    color: var(--text-muted);
-  }
-  /* open item: small ring; done item: check */
-  .roadmap__item::before {
-    content: "";
-    position: absolute;
-    left: 0.2rem;
-    top: 0.42em;
-    width: 0.6rem;
-    height: 0.6rem;
-    border-radius: 50%;
-    border: 1.5px solid var(--border-strong);
-  }
-  .roadmap__item--done { color: var(--text); }
-  .roadmap__item--done::before {
-    left: 0.25rem;
-    top: 0.3em;
-    width: 0.4rem;
-    height: 0.7rem;
-    border: solid var(--success);
-    border-width: 0 2px 2px 0;
-    border-radius: 0;
-    rotate: 45deg;
-  }
-
-  /* Compact (homepage): tighter, no item lists except the phase in progress. */
+  /* Compact (homepage): tighter spacing. */
   .roadmap--compact { --rm-marker: 1.5rem; --rm-gap: var(--space-4); gap: 0; }
   .roadmap--compact .roadmap__card { padding-block: var(--space-4); }
   .roadmap--compact .roadmap__marker { margin-top: var(--space-4); }

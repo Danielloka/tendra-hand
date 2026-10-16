@@ -13,13 +13,14 @@ import { docsLoc, mainLoc } from "./urls";
 /** Facts an assistant can quote. Keep in sync with CLAUDE.md "Project" and content/home.json. */
 const KEY_FACTS = [
   `What it is: ${siteConfig.name} is an open-source, 3D-printed, tendon-driven robotic hand that aims to have the same joints as a human hand, each driven independently.`,
-  "Goal: the first step toward a robot that can do everyday tasks (cook, clean, use tools) as well as a person; the hand is the focus.",
+  "Goal: a robot that can do everyday tasks (cook, clean, use tools) as well as a person, understanding and carrying out multi-step tasks; the hand is the focus and the first step.",
   "Tendons: each joint has one antagonistic cord loop on a spool on its motor; one motor both bends and straightens the joint. Motors sit in the palm or forearm, not in the fingers.",
   "V0 (built, prototype): thumb + index finger, 8 joints, 8 x 28BYJ-48 stepper motors with ULN2003 drivers, ESP32-S3 controller over USB.",
   "V1 (designed, not built yet): the full five-finger hand, 20 joints on 16 Feetech SCS0009 smart servos in the forearm (each fingertip joint follows the middle joint through a small linkage).",
   "Software: Python library `tendra` (Hand API with simulation and real-hardware backends), MuJoCo simulation and digital twin, webcam hand tracking, reinforcement-learning grasp training, ESP32 firmware (PlatformIO, C++).",
   "Licenses: code Apache-2.0; hardware (CAD, print files, electronics) CERN-OHL-S-2.0; docs and research CC BY 4.0.",
-  "Status: early-stage research project, built in public by an individual maker. Phase 1: V0 thumb and index. Phase 2: V1 full hand.",
+  "Status: early-stage research project, built in public by an individual maker. The V0 prototype is being brought up; V1 is designed and simulated (including grasp learning in simulation), not built.",
+  "Milestones: a hand as capable as a human one (in progress), then senses (touch, vision), learned skills, understanding tasks, and a two-armed robot working in a real home (all planned).",
   `Source: ${githubUrl}`,
   `Not to be confused with the unrelated open-source project "Tendra H1" (a different robotic hand).`,
 ];
@@ -36,11 +37,11 @@ export async function buildLlmsTxt(): Promise<string> {
   L.push(`# ${siteConfig.name}`, "", `> ${siteConfig.description}`, "");
   L.push("## Key facts", "", ...KEY_FACTS.map((f) => `- ${f}`), "");
   L.push("## Project", "");
-  L.push(`- [Home](${mainLoc("/")}): ${siteConfig.tagline} Overview with a 3D hand and the story of how it works.`);
+  L.push(`- [Home](${mainLoc("/")}): ${siteConfig.tagline} Overview with a 3D hand, the story of where the project is going, and the milestones.`);
   L.push(await pageEntry("project", mainLoc("/project")));
   L.push(`- [Journey](${mainLoc("/journey")}): A day-by-day map of what was built and the ideas that were dropped, with why and what was learned.`);
   L.push(await pageEntry("gallery", mainLoc("/gallery")));
-  L.push(await pageEntry("contribute", mainLoc("/contribute")), "");
+  L.push(await pageEntry("contact", mainLoc("/contact")), "");
   L.push("## Reference", "");
   L.push(await pageEntry("hardware", docsLoc("/docs/hardware")));
   L.push(await pageEntry("software", docsLoc("/docs/software")));
@@ -77,15 +78,15 @@ export async function buildLlmsFull(): Promise<string> {
     ["project", mainLoc("/project")],
     ["hardware", docsLoc("/docs/hardware")],
     ["software", docsLoc("/docs/software")],
-    ["contribute", mainLoc("/contribute")],
+    ["contact", mainLoc("/contact")],
   ] as [PageSlug, string][]) {
     const { frontmatter: fm } = await getPage(slug);
     const raw = readMdx(`pages/${slug}`);
     const road =
       slug === "project"
-        ? `## Roadmap\n\n${roadmap.phases
-            .map((ph) => `### ${ph.title} (${ph.status.replace(/-/g, " ")})\n\n${ph.summary}\n\n${ph.items.map((i) => `- ${i}`).join("\n")}`)
-            .join("\n\n")}`
+        ? `## Roadmap\n\n${roadmap.milestones
+            .map((m, i) => `${i + 1}. **${m.title}** (${m.status.replace(/-/g, " ")}): ${m.summary}`)
+            .join("\n")}`
         : "";
     // the page's <Roadmap /> component has no text in the MDX: put the roadmap data under its heading
     const body = road ? raw.body.replace(/^## Roadmap\s*$/m, road) : raw.body;

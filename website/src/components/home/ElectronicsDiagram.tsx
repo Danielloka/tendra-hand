@@ -2,29 +2,31 @@ import type { DiagramData, DiagramNode } from "./content";
 
 /* Simple line icons (24×24, stroke = currentColor). */
 const ICONS: Record<DiagramNode["id"], React.ReactNode> = {
-  pc: (
+  see: (
     <>
-      <rect x="3" y="4" width="18" height="12" rx="2" />
-      <path d="M8 20h8M12 16v4" />
+      <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" />
+      <circle cx="12" cy="12" r="3" />
     </>
   ),
-  esp32: (
+  think: (
     <>
-      <rect x="6" y="6" width="12" height="12" rx="2" />
-      <path d="M9 6V3M12 6V3M15 6V3M9 21v-3M12 21v-3M15 21v-3M6 9H3M6 12H3M6 15H3M21 9h-3M21 12h-3M21 15h-3" />
-    </>
-  ),
-  motors: (
-    <>
-      <circle cx="12" cy="12" r="7.5" />
       <circle cx="12" cy="12" r="2.5" />
-      <path d="M12 4.5v2M12 17.5v2M4.5 12h2M17.5 12h2" />
+      <circle cx="5" cy="6" r="1.75" />
+      <circle cx="19" cy="6" r="1.75" />
+      <circle cx="5" cy="18" r="1.75" />
+      <circle cx="19" cy="18" r="1.75" />
+      <path d="m6.4 7.1 3.7 3.2M17.6 7.1l-3.7 3.2M6.4 16.9l3.7-3.2M17.6 16.9l-3.7-3.2" />
+    </>
+  ),
+  act: (
+    <>
+      <path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 11V4a1.5 1.5 0 0 1 3 0v7M14 11V5.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-.5a6 6 0 0 1-4.6-2.2L3.2 15.6a1.5 1.5 0 0 1 2.3-1.9L8 16" />
     </>
   ),
 };
 
 /**
- * PC → ESP32-S3 → motors, from content/home.json `diagram`. Plain HTML/SVG, fully
+ * Sense → think → act, from content/home.json `diagram` (the "Intelligence" chapter). Plain HTML/SVG, fully
  * readable without JS or animation; ScrollStory draws the connectors on
  * (`data-diagram-link`) and fades the nodes in (`data-diagram-node`) as it scrolls in.
  */

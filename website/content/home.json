@@ -1,100 +1,94 @@
 {
   "hero": {
-    "kicker": "Open-source robotic hand",
-    "title": "A human hand, rebuilt in the open.",
-    "lead": "Tendra Hand is an open-source, 3D-printed, tendon-driven robotic hand, built in public on GitHub. It aims to move like yours: the first step toward a robot that can cook, clean and use tools as well as you. Code is Apache-2.0, hardware CERN-OHL-S-2.0, docs CC BY 4.0.",
+    "kicker": "Open-source robotics",
+    "title": "A hand built for the complexity of everyday life.",
+    "lead": "Cook a meal. Fold the laundry. Pick up a tool and use it. Tendra Hand is the first step toward a robot that does everyday work as well as a person, starting with the hardest part: the hand. Built in the open, so anyone can learn from it and build on it.",
     "primaryCta": { "label": "Explore the project", "href": "/project" },
     "secondaryCta": { "label": "View on GitHub", "href": "https://github.com/Danielloka/tendra-hand" }
   },
   "story": [
     {
       "id": "intro",
-      "kicker": "The idea",
-      "title": "Every joint, its own motor.",
+      "kicker": "The goal",
+      "title": "Robots that do what we do.",
       "body": [
-        "Many robotic hands take a shortcut: one motor curls a whole finger, and the fingers can only open and close together. That is fine for grabbing a cup, but not for turning a key or picking up a coin.",
-        "Tendra Hand gives every joint its own motor, so each one can move on its own, just like in a real hand. The first prototype is a thumb and an index finger, with 8 joints between them."
+        "Most robots today work in factories, behind fences, doing one job over and over. A home is different. Every kitchen, every drawer and every task is a little new.",
+        "The goal is a robot that can cook, clean and use tools as well as a person. Not by following a script, but by understanding the job and carrying it out, step by step."
       ],
       "points": [
-        "Thumb and index finger first",
-        "8 joints, 8 motors",
-        "Printed in PLA or PETG"
+        "Everyday tasks, not factory tasks",
+        "Understands the job, not just the motion",
+        "Gets better with every try"
       ]
     },
     {
       "id": "tendons",
-      "kicker": "Tendons",
-      "title": "Pulled by cords, like your own fingers.",
+      "kicker": "Why the hand",
+      "title": "Everything starts with the hand.",
       "body": [
-        "Most of the muscles that move your fingers sit in your forearm. They pull on long cords, called tendons, that run along the bones. Tendra Hand works the same way, which is what \"tendon-driven\" means.",
-        "Each joint has one closed loop of cord wrapped around a small spool on its motor. Turn the spool one way and the joint bends. Turn it back and the joint straightens. One motor does both."
+        "Almost everything useful we do goes through our hands. Cracking an egg, turning a key, holding a knife. A simple two-claw gripper can't do any of it well.",
+        "So we build the hand first, and we build it like ours: slim fingers pulled by cords called tendons, with the motors further back in the forearm, just like our muscles."
       ],
       "points": [
-        "One cord loop per joint",
-        "One motor bends and straightens",
-        "Motors stay out of the fingers"
+        "Slim fingers, motors in the forearm",
+        "Pulled by tendons, like your own"
       ]
     },
     {
       "id": "joints",
-      "kicker": "Joints",
-      "title": "The same joints as a human finger.",
+      "kicker": "Dexterity",
+      "title": "Every joint, free to move.",
       "body": [
-        "A finger has three bending joints: the knuckle (MCP), the middle joint (PIP) and the joint near the tip (DIP). The knuckle can also move a little from side to side. The index finger copies all four motions.",
-        "The thumb has a base that swings it across the palm, plus three joints that bend. Each motion a joint can make is called a degree of freedom, or DOF. The prototype has 8 of them."
+        "Your hand can make more than 20 separate motions. Tendra Hand V1 is designed with 20 joints, and almost every one has its own motor, so a fingertip can bend while the rest of the hand stays still.",
+        "That freedom is what turns grabbing into skill: a careful pinch, a firm grip, an object rolled between the fingers. Today a thumb and index finger prototype exists, and the full hand moves in simulation."
       ],
       "points": [
-        "Index: side-to-side, MCP, PIP, DIP",
-        "Thumb: base rotation, CMC, MCP, IP",
-        "Positive angle means closing the hand"
+        "Pinch, grip, roll, turn",
+        "20 joints in the full hand",
+        "Prototype first, full hand next"
       ]
     },
     {
       "id": "exploded",
-      "kicker": "Parts",
-      "title": "Made on an ordinary 3D printer.",
+      "kicker": "Open",
+      "title": "Open, down to the last part.",
       "body": [
-        "The skeleton is a set of printed parts in PLA or PETG, the two most common printing plastics. No machining, no special tools.",
-        "The design lives in Fusion 360. The CAD, the printable files and the robot model will all be published, so you can print it, change it and share it back. Softer TPU fingertip pads are planned for a better grip."
+        "Big ideas move faster when everyone can see how they work. Every part of Tendra Hand, from the 3D design to the code to the notes on what went wrong, is shared in public.",
+        "Take it apart. Learn how a robot hand works. Borrow an idea for your own project, or build on it. The parts print on an ordinary 3D printer."
       ]
     },
     {
       "id": "electronics",
-      "kicker": "Electronics",
-      "title": "A brain and a spinal cord.",
+      "kicker": "Intelligence",
+      "title": "A hand that learns.",
       "body": [
-        "A computer does the thinking. It decides where each joint should go and sends the angles over a USB cable. Later, this is where the AI will run.",
-        "A small ESP32-S3 microcontroller does the reflexes. It turns each angle into smooth motor motion, speeding up and slowing down gently so nothing jerks. Today the motors are small 28BYJ-48 steppers. Next come Feetech SCS0009 smart servos, which can report where they are."
-      ],
-      "points": [
-        "Joint angles sent in radians over USB",
-        "Smooth speed-up and slow-down",
-        "Motors switch off when idle to save power"
+        "Building the hand is half the work. The other half is teaching it. A virtual copy of the hand is already practising how to pick things up in simulation, learning by trial and error long before the real one is ready.",
+        "Next it gets senses: touch in the fingertips and eyes to see the world. Then AI that understands what you ask, plans the steps and learns from every try."
       ]
     }
   ],
   "diagram": {
     "nodes": [
-      { "id": "pc", "label": "Computer", "detail": "Python: planning, simulation and, later, AI" },
-      { "id": "esp32", "label": "ESP32-S3", "detail": "Firmware: smooth, safe motor control" },
-      { "id": "motors", "label": "8 motors", "detail": "Steppers today, smart servos next" }
+      { "id": "see", "label": "Sense", "detail": "Eyes and touch show what is there" },
+      { "id": "think", "label": "Think", "detail": "AI understands the task and plans each step" },
+      { "id": "act", "label": "Act", "detail": "Two hands carry it out, carefully" }
     ],
-    "caption": "The computer sends joint angles over USB. The ESP32-S3 turns them into motor steps. Each motor pulls a tendon that moves one joint."
+    "caption": "The idea: sense, think, act, and learn from every try. Learning in simulation has started. The senses come next."
   },
   "stats": {
-    "kicker": "By the numbers",
-    "title": "Small today. Built to grow.",
+    "kicker": "The plan in numbers",
+    "title": "Early days. Big ambition.",
     "items": [
-      { "value": 8, "unit": "", "label": "joints in the prototype, each with its own motor" },
-      { "value": 20, "unit": "", "label": "joints in the full hand (V1), driven by 16 servos" },
-      { "value": 100, "unit": "%", "label": "open source: design, code and research" },
-      { "value": 131, "unit": "g", "label": "of printed plastic, calculated from the 3D model" }
+      { "value": 20, "unit": "", "label": "joints in the full hand, close to a human hand" },
+      { "value": 5, "unit": "", "label": "big steps from a hand to a robot at home" },
+      { "value": 2, "unit": "", "label": "hands working together on the first robot" },
+      { "value": 100, "unit": "%", "label": "open: every design, every line of code, every note" }
     ]
   },
   "cta": {
-    "title": "Build it, change it, share it.",
-    "lead": "The design, firmware, simulation and research notes are all on GitHub. Download them, try the hand in simulation on your own computer, or help build the next finger.",
-    "label": "Get the files on GitHub",
+    "title": "The future gets built in the open.",
+    "lead": "Follow the project as it grows. Read the code, learn how a robot hand works, take an idea for your own build, or get in touch and share yours.",
+    "label": "Explore on GitHub",
     "href": "https://github.com/Danielloka/tendra-hand"
   },
   "motionToggle": {

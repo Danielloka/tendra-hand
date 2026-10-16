@@ -5,7 +5,7 @@ import { docsLoc, mainLoc } from "@/components/seo/urls";
 
 // Every public route. /dev/* (internal tools) and /styleguide are left out on purpose.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const pages = ["", "/project", "/journey", "/gallery", "/contribute"];
+  const pages = ["", "/project", "/journey", "/gallery", "/contact"];
   const docsPages = ["/docs", "/docs/hardware", "/docs/software", "/docs/log"];
   const posts = await getLogPosts();
 

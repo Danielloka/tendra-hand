@@ -41,7 +41,8 @@ const isBlank = (n: ReactNode) => n == null || typeof n === "boolean" || (typeof
  */
 function splitSections(Content: (props: object) => ReactNode): { intro: ReactNode[]; bands: Band[] } {
   const tree = Content({});
-  const nodes = isValidElement<{ children?: ReactNode }>(tree) && tree.type === Fragment ? Children.toArray(tree.props.children) : [tree];
+  // Children.toArray also keys the nodes (a one-paragraph page has no fragment to unwrap).
+  const nodes = Children.toArray(isValidElement<{ children?: ReactNode }>(tree) && tree.type === Fragment ? tree.props.children : tree);
   const intro: ReactNode[] = [];
   const bands: Band[] = [];
   for (const node of nodes) {

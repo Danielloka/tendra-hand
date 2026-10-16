@@ -112,6 +112,8 @@ const nextConfig: NextConfig = {
     return [
       // docs host: /docs/x -> /x (the address stays short; the rewrite above serves it)
       { source: "/docs/:path*", has: onDocsHost, destination: "/:path*", permanent: true },
+      // the old Contribute page became Contact
+      { source: "/contribute", destination: "/contact", permanent: true },
       // the pages that moved into the docs
       { source: "/hardware", missing: onDocsHost, destination: `${docsUrl}${docsUrl ? "" : "/docs"}/hardware`, permanent: true },
       { source: "/software", missing: onDocsHost, destination: `${docsUrl}${docsUrl ? "" : "/docs"}/software`, permanent: true },

@@ -23,6 +23,13 @@ export function Footer({ items }: { items: NavItem[] }) {
         </nav>
         <div className="grid content-start gap-0.5 text-small">
           <a className="py-1" href={siteConfig.github}>GitHub</a>
+          {siteConfig.contact.items
+            .filter((c) => c.href)
+            .map((c) => (
+              <a key={c.id} className="py-1" href={c.href}>
+                {c.label}
+              </a>
+            ))}
           {footer.licenses.map((l) => (
             <a key={l.href} href={l.href} className="py-1 text-text-muted hover:text-text">
               {l.label}

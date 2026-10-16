@@ -8,7 +8,7 @@ import { listMdxSlugs, loadMdx } from "@/lib/mdx";
  */
 
 export type PageFrontmatter = { title: string; kicker?: string; lead?: string; description?: string };
-export type PageSlug = "project" | "hardware" | "software" | "gallery" | "log" | "contribute";
+export type PageSlug = "project" | "hardware" | "software" | "gallery" | "log" | "contact";
 
 export type LogFrontmatter = { title: string; date: string; summary: string; cover?: string; tags?: string[] };
 export type LogPost = LogFrontmatter & { slug: string; href: string };

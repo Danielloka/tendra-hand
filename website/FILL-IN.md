@@ -34,9 +34,8 @@ The TODO cells were replaced with rough, honest wording. Replace with measured v
 - `content/docs/build-guide.mdx`: add the STL/3MF files with per-part print settings (Printing section), and tendon material, diameter, routing and pre-tension (Tendons section).
 - `content/docs/faq.mdx`: add a cost estimate in "What does it cost to build?" once the BOM has prices.
 
-## Contribute page (`content/pages/contribute.mdx`)
-- Add `CONTRIBUTING.md` to the repository (code style, tests, commit messages) and link it.
-- Adopt a code of conduct (e.g. Contributor Covenant), add `CODE_OF_CONDUCT.md` and link it.
+## Contact page (`content/site.json` → `contact.items`)
+- Fill in the X handle, the Instagram handle and the email address: set each item's `handle` and `href` (e.g. `https://x.com/you`, `https://instagram.com/you`, `mailto:you@example.com`). Items with an empty `href` show as "Coming soon".
 
 ## Software page (`content/pages/software.mdx`)
 - Add a screenshot or short video of the digital twin (the real finger following a slider in MuJoCo).

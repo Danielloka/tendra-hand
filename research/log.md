@@ -11,6 +11,19 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** what I learned and what to try next
 ```
 
+## 2026-10-17: The Tendra logo
+**Goal:** a logo for the website, Google results and social links that joins the vision (a robot that does what people do, hand first) with the project.
+**Setup:** four rounds of concepts on a comparison page (light, dark, app tile, wordmark, mock Google result, real 48/32/16 px sizes); marks drawn on a 64 × 64 grid, rendered with resvg.
+**Result:**
+- Round 1: open jointed hand, finger + thumb around a ball, a "T" whose stem is a curling finger. The owner liked the open hand best.
+- Round 2 (open hand variants): fanned fingers reaching for a dot looked like the middle finger being shown; all three phalanges per finger was too busy.
+- Round 3 (vision-first, no joints): sunrise hand, cupped hands with a ball, hand in an orbit. None liked. A smooth hand with a circle in the palm was dropped before showing: it looks like a hamsa.
+- Round 4 (six versions of the first hand): **C2 "Wave" chosen**: four fingers with a knuckle gap each and the thumb swung out, tilted 14° forward, as if it is moving.
+- Built into the site: `website/scripts/make-brand.py` (single source of the geometry) writes `public/brand/` (mark in dark/blue/white SVG, app icon SVG + 512 px PNG) and the Next.js icons `src/app/icon.svg`, `apple-icon.png`, `favicon.ico` (16/32/48). Nav mark = white hand on the blue tile (CSS data URI). JSON-LD `Organization.logo` → the 512 px PNG (Google wants raster ≥ 112 px). The share image shows the logo top-left and large on the right.
+**Conclusion / next:** simple beats clever at 16 px: keep a shape people recognise and change one thing. Still open: X/Instagram profile pictures (use `tendra-icon-512.png`), and a wordmark file if print or slides need one.
+
+---
+
 ## 2026-10-06: Calm control built (Steps 0–3), and a GPU reset bug found
 **Goal:** implement the plan in `research/ai/smooth-control.md` so the next training run is calm.
 **Setup:** agent team (arm damping, CAPS loss, motion layer, deploy-time calm filter) + an independent review; CPU eval on the old CPU policy `runs/arm_right`.

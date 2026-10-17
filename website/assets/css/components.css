@@ -37,11 +37,14 @@
   color: var(--text);
 }
 .nav__brand:hover { text-decoration: none; }
+/* Logo: the white "Wave" hand on the blue tile. Made by scripts/make-brand.py (re-run it, don't edit the URI). */
 .nav__brand-mark {
-  width: 22px;
-  height: 22px;
-  border-radius: 7px;
-  background: linear-gradient(135deg, var(--accent), #5aa9ff);
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background:
+    url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"%3E%3Cg fill="%23fff"%3E%3Cg transform="translate%283.95 -4.48%29 scale%280.9524%29"%3E%3Cg transform="rotate%2814 36 40%29"%3E%3Crect x="21.5" y="40.88" width="7" height="15.12" rx="3.5"/%3E%3Crect x="21.5" y="20.0" width="7" height="18.68" rx="3.5"/%3E%3Crect x="30.5" y="39.62" width="7" height="16.38" rx="3.5"/%3E%3Crect x="30.5" y="17.0" width="7" height="20.42" rx="3.5"/%3E%3Crect x="39.5" y="40.46" width="7" height="15.54" rx="3.5"/%3E%3Crect x="39.5" y="19.0" width="7" height="19.26" rx="3.5"/%3E%3Crect x="48.5" y="42.98" width="7" height="13.02" rx="3.5"/%3E%3Crect x="48.5" y="25.0" width="7" height="15.78" rx="3.5"/%3E%3Cg transform="rotate%28-38 18.8 56.5%29"%3E%3Crect x="15.3" y="40.0" width="7" height="16.0" rx="3.5"/%3E%3Crect x="15.3" y="26.8" width="7" height="11.0" rx="3.5"/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E') center / 76% no-repeat,
+    linear-gradient(135deg, var(--accent), #5aa9ff);
 }
 .nav__inner > nav { margin-left: auto; }
 .nav__links {

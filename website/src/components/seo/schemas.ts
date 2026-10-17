@@ -24,7 +24,8 @@ export function siteGraph() {
         "@id": orgId(),
         name: siteConfig.name,
         url: mainLoc("/"),
-        logo: mainLoc("/icon.svg"),
+        // Google wants a raster logo of at least 112 px (made by scripts/make-brand.py).
+        logo: mainLoc("/brand/tendra-icon-512.png"),
         description: siteConfig.description,
         sameAs: [githubUrl],
         founder: author,

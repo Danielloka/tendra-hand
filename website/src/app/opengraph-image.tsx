@@ -11,28 +11,18 @@ export const contentType = "image/png";
 // --text-muted, --accent, --accent-soft, --border).
 const C = { bg: "#ffffff", bgAlt: "#f5f5f7", text: "#1d1d1f", muted: "#6e6e73", accent: "#0066cc", accentSoft: "#e8f1fd", border: "#e3e3e8" };
 
-/** Simple line drawing of a hand: palm, four fingers and a thumb, with tendon lines. */
-function HandMark() {
-  const fingers = [
-    { x: 118, top: 40, h: 150 },
-    { x: 168, top: 20, h: 170 },
-    { x: 218, top: 34, h: 156 },
-    { x: 268, top: 64, h: 126 },
-  ];
+/** The logo's hand ("Wave"); same geometry as scripts/make-brand.py. Called as a function: satori only accepts plain SVG elements inside <svg>. */
+function brandHand() {
+  const fingers = [[21.5, 40.88, 15.12], [21.5, 20, 18.68], [30.5, 39.62, 16.38], [30.5, 17, 20.42], [39.5, 40.46, 15.54], [39.5, 19, 19.26], [48.5, 42.98, 13.02], [48.5, 25, 15.78]];
+  const thumb = [[15.3, 40, 16], [15.3, 26.8, 11]];
+  const rect = ([x, y, h]: number[]) => <rect key={`${x}-${y}`} x={x} y={y} width="7" height={h} rx="3.5" />;
   return (
-    <svg width="380" height="400" viewBox="-40 0 380 400" fill="none">
-      <rect x="44" y="190" width="36" height="150" rx="18" fill={C.bg} stroke={C.text} strokeWidth="8" transform="rotate(-38 62 265)" />
-      <line x1="40" y1="222" x2="112" y2="316" stroke={C.accent} strokeWidth="4" strokeLinecap="round" />
-      <rect x="100" y="178" width="200" height="190" rx="56" fill={C.bg} stroke={C.text} strokeWidth="8" />
-      {fingers.map((f) => (
-        <g key={f.x}>
-          <rect x={f.x - 18} y={f.top} width="36" height={f.h + 30} rx="18" fill={C.bg} stroke={C.text} strokeWidth="8" />
-          <line x1={f.x} y1={f.top + 22} x2={f.x} y2="330" stroke={C.accent} strokeWidth="4" strokeLinecap="round" />
-          <circle cx={f.x} cy={f.top + f.h * 0.35} r="5" fill={C.text} />
-          <circle cx={f.x} cy={f.top + f.h * 0.7} r="5" fill={C.text} />
-        </g>
-      ))}
-    </svg>
+    <g transform="translate(3.95 -4.48) scale(0.9524)">
+      <g transform="rotate(14 36 40)">
+        {fingers.map(rect)}
+        <g transform="rotate(-38 18.8 56.5)">{thumb.map(rect)}</g>
+      </g>
+    </g>
   );
 }
 
@@ -42,7 +32,18 @@ export default function OpenGraphImage() {
       <div style={{ width: "100%", height: "100%", display: "flex", background: C.bg, padding: 72, fontFamily: "sans-serif" }}>
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", flex: 1, paddingRight: 40 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 32, fontWeight: 600, color: C.text }}>
-            <div style={{ width: 36, height: 36, borderRadius: 11, background: C.accent }} />
+            <svg width="44" height="44" viewBox="0 0 64 64">
+              <defs>
+                <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stopColor={C.accent} />
+                  <stop offset="1" stopColor="#5aa9ff" />
+                </linearGradient>
+              </defs>
+              <rect width="64" height="64" rx="14" fill="url(#g)" />
+              <g fill="#fff" transform="translate(8.32 8.32) scale(0.74)">
+                {brandHand()}
+              </g>
+            </svg>
             {siteConfig.name}
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -58,7 +59,9 @@ export default function OpenGraphImage() {
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 400, borderRadius: 40, background: C.accentSoft }}>
-          <HandMark />
+          <svg width="300" height="300" viewBox="0 0 64 64">
+            <g fill={C.accent}>{brandHand()}</g>
+          </svg>
         </div>
       </div>
     ),

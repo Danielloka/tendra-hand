@@ -35,7 +35,7 @@ The TODO cells were replaced with rough, honest wording. Replace with measured v
 - `content/docs/faq.mdx`: add a cost estimate in "What does it cost to build?" once the BOM has prices.
 
 ## Contact page (`content/site.json` → `contact.items`)
-- Fill in the X handle, the Instagram handle and the email address: set each item's `handle` and `href` (e.g. `https://x.com/you`, `https://instagram.com/you`, `mailto:you@example.com`). Items with an empty `href` show as "Coming soon".
+- Done (2026-10-19): X `@DanielLoka07`, Instagram `@tendrahand`, email. Items with an empty `href` show as "Coming soon".
 
 ## Software page (`content/pages/software.mdx`)
 - Add a screenshot or short video of the digital twin (the real finger following a slider in MuJoCo).

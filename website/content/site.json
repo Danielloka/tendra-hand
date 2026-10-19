@@ -66,22 +66,22 @@
       {
         "id": "x",
         "label": "X",
-        "handle": "TODO: X handle",
-        "href": "",
+        "handle": "@DanielLoka07",
+        "href": "https://x.com/DanielLoka07",
         "blurb": "Short updates and build progress."
       },
       {
         "id": "instagram",
         "label": "Instagram",
-        "handle": "TODO: Instagram handle",
-        "href": "",
+        "handle": "@tendrahand",
+        "href": "https://instagram.com/tendrahand",
         "blurb": "Photos and videos of the hand."
       },
       {
         "id": "email",
         "label": "Email",
-        "handle": "TODO: email address",
-        "href": "",
+        "handle": "tendrahand@gmail.com",
+        "href": "mailto:tendrahand@gmail.com",
         "blurb": "Questions, ideas, or just to say hello."
       }
     ]

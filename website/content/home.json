@@ -2,7 +2,7 @@
   "hero": {
     "kicker": "Open-source robotics",
     "title": "A hand built for the complexity of everyday life.",
-    "lead": "Cook a meal. Fold the laundry. Pick up a tool and use it. Tendra Hand is the first step toward a robot that does everyday work as well as a person, starting with the hardest part: the hand. Built in the open, so anyone can learn from it and build on it.",
+    "lead": "Cook a meal. Fold the laundry. Pick up a tool and use it. Tendra Hand is the first step toward a robot that does everyday work as well as a person, starting with the hardest part:\nThe hand.",
     "primaryCta": { "label": "Explore the project", "href": "/project" },
     "secondaryCta": { "label": "View on GitHub", "href": "https://github.com/Danielloka/tendra-hand" }
   },

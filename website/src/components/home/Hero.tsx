@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Fragment } from "react";
 import { Tag } from "@/components/ui/Tag";
 import { home, isExternal } from "./content";
 
@@ -26,7 +27,15 @@ export function Hero() {
           {title}
         </h1>
         <div className="story-hero__body">
-          <p className="lead story-hero__lead">{lead}</p>
+          <p className="lead story-hero__lead">
+            {/* A "\n" in the content starts a new line. */}
+            {lead.split("\n").map((line, i) => (
+              <Fragment key={i}>
+                {i > 0 && <br />}
+                {line}
+              </Fragment>
+            ))}
+          </p>
           <div className="story-hero__cta">
             <Link className="btn btn--primary btn--lg" href={primaryCta.href}>
               {primaryCta.label}

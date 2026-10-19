@@ -43,10 +43,10 @@ Pushes that change nothing in `website/` or `media/` skip the build (`ignoreComm
 5. Check that `/docs` on the main domain redirects to the docs subdomain, and that the docs' "Main site"
    link goes back.
 
-## Current domain state (2026-10-17)
+## Current domain state (2026-10-19)
 
 - `www.tendrahand.com` should redirect to the apex `tendrahand.com`. In Vercel → Domains, choose the **permanent (308)** redirect option, not a temporary one.
-- `docs.tendrahand.com` has no domain attached in Vercel yet (it returns 404). The docs live at `/docs` on the main domain until the owner decides; do not set `NEXT_PUBLIC_DOCS_URL` before attaching it.
+- **Docs live at `tendrahand.com/docs`** (owner, 2026-10-19: one host keeps all search ranking in one place). `docs.tendrahand.com` is attached to the project and, while `NEXT_PUBLIC_DOCS_URL` is unset, `next.config.ts` 308-redirects every docs.* path to `<main>/docs/<path>`. To move the docs to their own host later, set `NEXT_PUBLIC_DOCS_URL` and redeploy.
 
 ## Notes
 

@@ -111,9 +111,20 @@ const nextConfig: NextConfig = {
   async redirects() {
     const onDocsHost = [{ type: "host" as const, value: "docs\\..+" }];
     const docsUrl = (process.env.NEXT_PUBLIC_DOCS_URL ?? "").replace(/\/$/, "");
+    // Main site address (same order as siteUrl in src/lib/site.ts).
+    const prodHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+    const mainUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "") || (prodHost ? `https://${prodHost}` : "http://localhost:3000");
     return [
-      // docs host: /docs/x -> /x (the address stays short; the rewrite above serves it)
-      { source: "/docs/:path*", has: onDocsHost, destination: "/:path*", permanent: true },
+      ...(docsUrl
+        ? // docs host: /docs/x -> /x (the address stays short; the rewrite above serves it)
+          [{ source: "/docs/:path*", has: onDocsHost, destination: "/:path*", permanent: true }]
+        : // no docs domain chosen: the docs live at <main>/docs, so docs.<domain>/x -> <main>/docs/x
+          // (one host for search engines; old or typed docs.* links still land on the right page)
+          [
+            { source: "/", has: onDocsHost, destination: `${mainUrl}/docs`, permanent: true },
+            { source: "/docs/:path*", has: onDocsHost, destination: `${mainUrl}/docs/:path*`, permanent: true },
+            { source: "/:path*", has: onDocsHost, destination: `${mainUrl}/docs/:path*`, permanent: true },
+          ]),
       // the old Contribute page became Contact
       { source: "/contribute", destination: "/contact", permanent: true },
       // the pages that moved into the docs

@@ -1,4 +1,4 @@
-"""Tendra Hand V1: build the full 5-finger, 21-DOF hand from the thumb + index prototype.
+"""Tendra Hand V1: build the full 5-finger hand (20 joints, 16 servos; built as 21-DOF, the 5th thumb joint was later removed by stage `thumb_unhinge`) from the thumb + index prototype.
 
 Run on the "Tendra Hand V1" design (a copy of "Hand assebly"), with every joint at 0. The script works
 in stages, and each stage skips itself if it has already been applied:

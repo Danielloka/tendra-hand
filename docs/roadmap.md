@@ -18,7 +18,7 @@ Each phase has a clear **"done when"** so progress is measurable. Phases can ove
 
 ---
 
-## Phase 0: Foundation ✅ in progress
+## Phase 0: Foundation ✅ done
 Set up the project so everything after it is easy.
 
 - [x] Project structure, CLAUDE.md, READMEs

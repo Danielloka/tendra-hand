@@ -4,7 +4,7 @@ There are two hands ("variants"), each described by a `HandSpec`:
 
 - `V0`: the 8-joint prototype (index + thumb) on 28BYJ-48 steppers, firmware config.h.
 - `V1`: the full hand on 16 Feetech SCS0009 servos, firmware config_v1.h. It has 20 joints: each
-  finger's DIP is coupled to its PIP by a passive tendon (`couplings`), so it has no servo.
+  finger's DIP is coupled to its PIP by a rigid linkage bar (`couplings`), so it has no servo.
 
 Order = motor order M1..MN = firmware protocol order = MuJoCo actuator order (v1: = servo ID).
 Coupled joints (no motor) are not in that order; see `HandSpec.all_joint_names`.

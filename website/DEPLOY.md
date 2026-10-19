@@ -47,6 +47,7 @@ Pushes that change nothing in `website/` or `media/` skip the build (`ignoreComm
 
 - `www.tendrahand.com` should redirect to the apex `tendrahand.com`. In Vercel → Domains, choose the **permanent (308)** redirect option, not a temporary one.
 - **Docs live at `docs.tendrahand.com`** (owner, 2026-10-19). Production env: `NEXT_PUBLIC_DOCS_URL=https://docs.tendrahand.com`, `NEXT_PUBLIC_SITE_URL=https://tendrahand.com`; `tendrahand.com/docs/*` 308-redirects to the docs host. Removing `NEXT_PUBLIC_DOCS_URL` (and redeploying) moves the docs back to `/docs`, and docs.* then redirects there.
+- **Env var changes need a new build** (`NEXT_PUBLIC_*` values are baked in at build time). Vercel skips commits that change nothing under `website/`, so an empty commit does not rebuild; push a change in `website/` or use Deployments → Redeploy.
 
 ## Notes
 

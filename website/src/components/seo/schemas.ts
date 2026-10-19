@@ -1,4 +1,5 @@
 import { githubUrl, siteConfig } from "@/lib/site";
+import { HOME_DESCRIPTION } from "./social";
 import { docsLoc, mainLoc } from "./urls";
 
 /** schema.org builders. Pure functions, no React. */
@@ -14,7 +15,13 @@ const author = { "@type": "Person", name: "Danielloka", url: "https://github.com
 const orgId = () => `${mainLoc("/")}#organization`;
 const siteId = () => `${mainLoc("/")}#website`;
 
-/** Organization + WebSite + the open-source project itself. Safe to render on every page. */
+/** Real profile links from site.json (skips empty and TODO entries; email is not a profile) plus GitHub. */
+const sameAs = [
+  githubUrl,
+  ...siteConfig.contact.items.map((i) => i.href).filter((h) => /^https?:\/\//.test(h) && !h.includes("TODO")),
+];
+
+/** Organization + WebSite. Safe to render on every page. */
 export function siteGraph() {
   return {
     "@context": "https://schema.org",
@@ -27,8 +34,10 @@ export function siteGraph() {
         // Google wants a raster logo of at least 112 px (made by scripts/make-brand.py).
         logo: mainLoc("/brand/tendra-icon-512.png"),
         description: siteConfig.description,
-        sameAs: [githubUrl],
+        foundingDate: "2026-09-26",
+        sameAs,
         founder: author,
+        disambiguatingDescription: 'Tendra Hand is an independent open-source robotic hand. It is not related to the "Tendra H1" project.',
       },
       {
         "@type": "WebSite",
@@ -39,20 +48,25 @@ export function siteGraph() {
         inLanguage: "en",
         publisher: { "@id": orgId() },
       },
-      {
-        "@type": "SoftwareSourceCode",
-        "@id": `${mainLoc("/")}#source`,
-        name: `${siteConfig.name}: firmware, software, simulation and CAD`,
-        description: siteConfig.description,
-        codeRepository: githubUrl,
-        url: mainLoc("/project"),
-        programmingLanguage: ["Python", "C++"],
-        runtimePlatform: "ESP32-S3, MuJoCo",
-        license: [LICENSES.code, LICENSES.hardware, LICENSES.docs],
-        author,
-        keywords: "robotic hand, tendon-driven, open source, 3D printed, humanoid, dexterous manipulation, MuJoCo, ESP32",
-      },
     ],
+  };
+}
+
+/** The open-source project itself (repo, languages, licenses). Home page only. */
+export function sourceCodeSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    "@id": `${mainLoc("/")}#source`,
+    name: `${siteConfig.name}: firmware, software, simulation and CAD`,
+    description: HOME_DESCRIPTION,
+    codeRepository: githubUrl,
+    url: mainLoc("/project"),
+    programmingLanguage: ["Python", "C++"],
+    runtimePlatform: "ESP32-S3, MuJoCo",
+    license: [LICENSES.code, LICENSES.hardware, LICENSES.docs],
+    author,
+    keywords: "robotic hand, tendon-driven, open source, 3D printed, humanoid, dexterous manipulation, MuJoCo, ESP32",
   };
 }
 
@@ -115,13 +129,14 @@ export const imageGallery = (o: { name: string; description?: string; url: strin
   })),
 });
 
-export const webPage = (o: { name: string; description?: string; url: string; type?: string }) => ({
+export const webPage = (o: { name: string; description?: string; url: string; type?: string; dateModified?: string }) => ({
   "@context": "https://schema.org",
   "@type": o.type ?? "WebPage",
   name: o.name,
   description: o.description,
   url: o.url,
   inLanguage: "en",
+  dateModified: o.dateModified,
   isPartOf: { "@id": siteId() },
 });
 

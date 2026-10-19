@@ -1,6 +1,7 @@
 import { DocsSidebar } from "@/components/docs/DocsSidebar";
 import { Footer } from "@/components/layout/Footer";
 import { Nav } from "@/components/layout/Nav";
+import { SiteJsonLd } from "@/components/seo/SiteJsonLd";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { getDocsTree, type DocGroup } from "@/lib/docs";
 import { docsNav, siteConfig } from "@/lib/site";
@@ -19,6 +20,7 @@ export default async function DocsLayout({ children }: { children: React.ReactNo
   const groups = [...(await getDocsTree()), reference];
   return (
     <SmoothScroll>
+      <SiteJsonLd />
       <Nav items={docsNav} docs />
       <main id="main">
         <div className="docs">

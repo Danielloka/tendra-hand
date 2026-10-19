@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getLogPost, getLogPosts, OG_IMAGE } from "@/components/pages/content";
+import { getLogPost, getLogPosts } from "@/components/pages/content";
 import { PostMeta } from "@/components/pages/LogCard";
 import { PageHero } from "@/components/pages/PageHero";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { OG_IMAGE, socialMeta } from "@/components/seo/social";
 import { breadcrumbs, docsCrumbs, techArticle } from "@/components/seo/schemas";
 import { docsLoc, mainLoc } from "@/components/seo/urls";
 
@@ -23,20 +24,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) return {};
   const { title, summary, date, tags, cover } = post.frontmatter;
   const url = docsLoc(`/docs/log/${slug}`);
-  return {
+  return socialMeta({
     title,
     description: summary,
-    alternates: { canonical: url },
-    openGraph: {
-      type: "article",
-      title,
-      description: summary,
-      url,
-      publishedTime: date,
-      tags,
-      images: [cover ?? OG_IMAGE],
-    },
-  };
+    url,
+    image: cover ? { url: cover, alt: title } : OG_IMAGE,
+    article: { publishedTime: date, tags },
+  });
 }
 
 export default async function LogPostPage({ params }: Props) {

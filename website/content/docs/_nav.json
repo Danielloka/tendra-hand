@@ -1,6 +1,6 @@
 {
   "groups": [
-    { "title": "Start here", "pages": ["getting-started"] },
+    { "title": "Start here", "pages": ["getting-started", "specs"] },
     { "title": "Build", "pages": ["build-guide", "assembly", "electronics"] },
     { "title": "Software", "pages": ["simulation-setup"] },
     { "title": "Help", "pages": ["faq"] },

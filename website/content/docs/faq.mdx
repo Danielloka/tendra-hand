@@ -1,8 +1,25 @@
 ---
 title: FAQ
+seoTitle: "FAQ: Open-Source Robotic Hand Questions"
 description: Honest answers to common questions about Tendra Hand, from why it uses tendons and one motor per joint to cost, licenses, AI and how to help.
-updated: 2026-09-28
+updated: 2026-10-17
 ---
+
+## What is Tendra Hand?
+
+Tendra Hand is an open-source, tendon-driven, 3D-printed robotic hand with the same joints as a human hand. It is the first step toward a robot that can do everyday tasks as well as a person. See the [specifications](/docs/specs).
+
+## Is Tendra Hand open source?
+
+Yes. The CAD files, firmware, Python code, simulation and research notes are all public on [GitHub](https://github.com/Danielloka/tendra-hand). Code is Apache-2.0, hardware is CERN-OHL-S-2.0 and docs are CC BY 4.0.
+
+## How many joints does Tendra Hand have?
+
+The full V1 design has **20 joints**: 4 in each of the four fingers and 4 in the thumb. They are driven by 16 servos, because each finger's fingertip joint follows its middle joint through a small linkage. V1 is designed and simulated, not built yet; the built V0 prototype (thumb and index) has 8 joints.
+
+## How does a tendon-driven robotic hand work?
+
+Thin cords (tendons) run from motors to the finger joints, and pulling a cord bends or straightens the joint, much like the muscles in your forearm pull on your fingers. In Tendra Hand each joint has one cord loop wound on a spool on its motor, so one motor both closes and opens the joint.
 
 ## What is the end goal?
 
@@ -22,7 +39,15 @@ The prototype has 8 joints and 8 motors (thumb and index). The full five-finger 
 
 ## What does it cost to build?
 
-We don't know yet, honestly. The current prototype uses cheap, common parts (28BYJ-48 steppers, ULN2003 boards, an ESP32-S3, PLA filament), but the smart servos in the next version cost more per joint. A costed parts list will be published on the [Hardware](/docs/hardware) page.
+We don't know yet, honestly: there is no full parts list yet. The V0 prototype uses cheap, common parts (28BYJ-48 steppers, ULN2003 boards, an ESP32-S3, PLA filament), while V1 uses 16 Feetech SCS0009 servos, which cost more per joint. A parts list with prices is coming and will be published on the [Hardware](/docs/hardware) page.
+
+## How is Tendra Hand different from LEAP Hand or InMoov?
+
+LEAP Hand (Carnegie Mellon) is an open-source hand with 16 degrees of freedom that puts Dynamixel motors directly at the joints. InMoov is an open-source, 3D-printed humanoid whose hand pulls the fingers with cords driven by servos. Tendra Hand aims to drive each joint on its own with tendons, keeping the motors out of the fingers, and to pair the hand with simulation and AI learning. Both projects are listed on the [Resources](/docs/resources) page.
+
+## Is Tendra Hand related to Tendra H1?
+
+No. "Tendra H1" is an unrelated open-source robotic hand project that happens to share a similar name.
 
 ## Can I build one now?
 

@@ -2,14 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbs, collectionPage, docsCrumbs } from "@/components/seo/schemas";
+import { socialMeta } from "@/components/seo/social";
 import { docsLoc } from "@/components/seo/urls";
 import { getDocsTree } from "@/lib/docs";
 
-export const metadata: Metadata = {
-  title: "Docs",
-  description: "Guides for Tendra Hand: get the code running, build the thumb and index prototype, wire the electronics and run the MuJoCo simulation.",
-  alternates: { canonical: docsLoc("/docs") },
-};
+export const metadata: Metadata = socialMeta({
+  title: "Docs: Build an Open-Source Robotic Hand",
+  description: "Guides for Tendra Hand, an open-source robotic hand: run the code, build the thumb and index prototype, wire the electronics and use the MuJoCo simulation.",
+  url: docsLoc("/docs"),
+});
 
 export default async function DocsHome() {
   const groups = await getDocsTree();

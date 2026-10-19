@@ -1,5 +1,10 @@
 import { ContentPage } from "@/components/pages/ContentPage";
-import { pageMetadata } from "@/components/pages/content";
+import { getPage, pageMetadata } from "@/components/pages/content";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { gitLastModified } from "@/components/seo/lastmod";
+import { breadcrumbs, webPage } from "@/components/seo/schemas";
+import { mainLoc } from "@/components/seo/urls";
+import { siteConfig } from "@/lib/site";
 import { ProjectHand } from "@/components/three/ProjectHand";
 import { CountUp } from "@/components/ui/CountUp";
 import "./project.css";
@@ -13,12 +18,23 @@ const STATS = [
   { to: 100, label: "% open source", suffix: "%" },
 ];
 
-export default function ProjectPage() {
+export default async function ProjectPage() {
+  const { title, description } = (await getPage("project")).frontmatter;
+  const url = mainLoc("/project");
   return (
     <ContentPage
       slug="project"
       heroExtra={
         <>
+          <JsonLd
+            data={[
+              webPage({ name: title, description, url, type: "AboutPage", dateModified: gitLastModified("content/pages/project.mdx") }),
+              breadcrumbs([
+                { name: siteConfig.name, url: mainLoc("/") },
+                { name: title, url },
+              ]),
+            ]}
+          />
           <ProjectHand className="project-hand" />
           <ul className="project-stats" aria-label="Project at a glance">
             {STATS.map((s) => (

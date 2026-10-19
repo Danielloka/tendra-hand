@@ -1,0 +1,90 @@
+---
+title: Specifications
+seoTitle: "Robotic Hand Specs: Joints, Servos and Tendons"
+description: "Tendra Hand specs: an open-source tendon-driven robotic hand with 20 joints on 16 servos (V1), compared with the V0 prototype and a human hand."
+updated: 2026-10-17
+---
+
+Tendra Hand is an open-source, tendon-driven, 3D-printed robotic hand with the same joints as a human hand: 20 joints driven by 16 servos in the V1 design. This page collects the numbers in one place. Only **V0** (thumb and index finger) is built; **V1** (the full five-finger hand) is designed and simulated, not built yet.
+
+## Key facts
+
+| Item | Value |
+|---|---|
+| What it is | Open-source, tendon-driven, 3D-printed robotic hand |
+| Goal | A hand as capable as a human one, as the first step toward a robot that does everyday tasks |
+| Joints (V1) | 20 joints: 4 per finger and 4 in the thumb |
+| Actuators (V1) | 16 Feetech SCS0009 smart servos (the fingertip joint of each finger has no servo) |
+| Actuation | Tendons: one antagonistic cord loop per servo joint, motors in the palm and forearm |
+| Controller | ESP32-S3 over USB-C, talking to the servos through an FE-URT-1 signal converter (V1) |
+| Material | 3D-printed rigid skeleton (PLA or PETG); TPU fingertip pads are planned |
+| Tendon | 0.4 mm fishing line |
+| Status | V0 built and being brought to life; V1 designed and simulated, not built |
+| Licenses | Apache-2.0 (code), CERN-OHL-S-2.0 (hardware), CC BY 4.0 (docs and research) |
+| Parts list and prices | A costed parts list is coming; see the [FAQ](/docs/faq#how-much-does-it-cost-to-build) |
+
+## V0 vs V1 vs a human hand
+
+| | V0 (built) | V1 (designed, simulated) | Human hand |
+|---|---|---|---|
+| Fingers | Thumb + index | Thumb + 4 fingers | Thumb + 4 fingers |
+| Joints | 8 | 20 | Over 20 degrees of freedom (the thumb alone has 5) |
+| Independently actuated joints | 8 | 16 | n/a |
+| Actuators | 8 x 28BYJ-48 stepper motors with ULN2003 drivers | 16 x Feetech SCS0009 smart servos | Muscles, mostly in the forearm |
+| Controller | ESP32-S3 over USB-C | ESP32-S3 over USB-C, with an FE-URT-1 converter to the servo bus | Nervous system |
+| Position feedback | None (open loop, joints straightened by hand before power-on) | Yes, each servo reports its position | Yes |
+| Status | Prototype, being brought to life | Not built | n/a |
+
+## V1 joints
+
+Sign convention: positive means closing the hand, and zero means the joint is straight.
+
+| Finger | Joint | What it does |
+|---|---|---|
+| Index, middle, ring, little | `mcp_abd` | Spreads the finger sideways at the knuckle |
+| | `mcp_flex` | Bends the finger at the knuckle |
+| | `pip` | Bends the middle joint |
+| | `dip` | Bends the fingertip joint. No servo: a rigid bar couples it to the middle joint, so it bends about 0.75 times as much as `pip` |
+| Thumb | `cmc_rot` | Swings the thumb across the palm (opposition) |
+| | `cmc_flex` | Bends the thumb at its base |
+| | `mcp_flex` | Bends the thumb's middle joint |
+| | `ip` | Bends the thumb tip, with its own servo |
+
+That is 4 joints x 4 fingers + 4 in the thumb = 20 joints, driven by 3 servos per finger (12) + 4 in the thumb = 16 servos.
+
+## Tendon system
+
+| Item | Value |
+|---|---|
+| Principle | Each servo joint has one antagonistic loop: one strand closes the joint, the other opens it, both on one spool |
+| Spool on every servo | 5 mm radius |
+| Drum on the joint | 7 mm for finger `mcp_flex`, 7.5 mm for `thumb_cmc_rot`, 6 mm for all others |
+| Line | 0.4 mm fishing line |
+| Channels | Each of the 32 strands has its own channel through the palm, with PTFE tubes (1 x 2 mm) and bends of at least 15 mm radius |
+| Fingertip joint | Coupled to the middle joint by one rigid bar per finger, with no tendon, so there is nothing to tension or stretch |
+
+## Software stack
+
+| Layer | What |
+|---|---|
+| Firmware | ESP32-S3, PlatformIO, Arduino framework, C++17, text protocol over USB |
+| PC library | Python package `tendra` with one `Hand` interface and simulated and real backends |
+| Simulation | MuJoCo, with a digital twin that mirrors the real hand |
+| Control | Webcam hand tracking that copies your finger angles to the hand |
+| Learning | Reinforcement-learning grasp training in simulation |
+
+More in [Software](/docs/software) and [Simulation setup](/docs/simulation-setup).
+
+## Licenses
+
+| What | License |
+|---|---|
+| Code (firmware, Python, simulation, AI) | Apache-2.0 |
+| Hardware (CAD, print files, electronics) | CERN-OHL-S-2.0 |
+| Docs and research | CC BY 4.0 |
+
+## How to cite
+
+```text title="Citation"
+Tendra Hand contributors. "Tendra Hand: an open-source tendon-driven robotic hand." 2026. https://tendrahand.com. Source: https://github.com/Danielloka/tendra-hand
+```

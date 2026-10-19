@@ -4,7 +4,7 @@ description: The ESP32-S3 controller, ULN2003 motor drivers, the motor-to-pin ma
 updated: 2026-09-27
 ---
 
-The electronics have one job: turn joint angles from your PC into smooth motor motion. The PC does the thinking (control, simulation, later AI); the microcontroller only moves the motors.
+The electronics of Tendra Hand, an open-source tendon-driven robotic hand, have one job: turn joint angles from your PC into smooth motor motion. The PC does the thinking (control, simulation, later AI); the microcontroller only moves the motors.
 
 ```text title="Signal path"
 PC (Python)  --USB-C-->  ESP32-S3  -->  8 × ULN2003  -->  8 × 28BYJ-48  -->  tendons  -->  joints

@@ -12,7 +12,7 @@ import { loadMdx } from "./mdx";
  * content/docs/<slug>.mdx with frontmatter: title, description, updated? (YYYY-MM-DD).
  */
 
-export type DocFrontmatter = { title: string; description: string; updated?: string };
+export type DocFrontmatter = { title: string; description: string; /** <title> when the H1 is not the best search title (no brand). */ seoTitle?: string; updated?: string };
 export type DocLink = { slug: string; href: string; title: string; description: string; group: string };
 export type DocGroup = { title: string; pages: DocLink[] };
 export type TocItem = { id: string; text: string; depth: 2 | 3 };

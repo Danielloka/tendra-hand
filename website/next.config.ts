@@ -16,13 +16,15 @@ const isPreview = process.env.VERCEL_ENV === "preview";
  * - script-src 'wasm-unsafe-eval': drei's useGLTF sets up three's meshopt decoder, a WebAssembly
  *   module bundled inline (no CDN). Without it the 3D hand never loads. It allows WebAssembly only, not eval().
  * - style-src 'unsafe-inline': React style props, Shiki token colours, GSAP inline transforms.
+ * - Vercel Web Analytics (<Analytics /> in the root layout) is same-origin in production
+ *   (/_vercel/insights/*); in dev it loads its debug script from va.vercel-scripts.com.
  * - img-src data: blob:: inline SVG data URIs in CSS; three.js GLTFLoader turns embedded textures into blob: URLs.
  */
 function csp(extra: { style?: string[]; font?: string[] } = {}) {
   const vercel = isPreview ? ["https://vercel.live"] : [];
   const directives: Record<string, string[]> = {
     "default-src": ["'self'"],
-    "script-src": ["'self'", "'unsafe-inline'", "'wasm-unsafe-eval'", ...(isDev ? ["'unsafe-eval'"] : []), ...vercel],
+    "script-src": ["'self'", "'unsafe-inline'", "'wasm-unsafe-eval'", ...(isDev ? ["'unsafe-eval'", "https://va.vercel-scripts.com"] : []), ...vercel],
     "style-src": ["'self'", "'unsafe-inline'", ...(extra.style ?? []), ...vercel],
     "img-src": ["'self'", "data:", "blob:", ...(isPreview ? ["https://vercel.live", "https://vercel.com"] : [])],
     "font-src": ["'self'", "data:", ...(extra.font ?? []), ...(isPreview ? ["https://vercel.live", "https://assets.vercel.com"] : [])],

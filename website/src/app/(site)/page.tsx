@@ -7,14 +7,12 @@ import { HomeRoadmap } from "@/components/home/HomeRoadmap";
 import { ScrollStory } from "@/components/home/ScrollStory";
 import { Stats } from "@/components/home/Stats";
 import { StorySection } from "@/components/home/StorySection";
-import { siteConfig } from "@/lib/site";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { sourceCodeSchema } from "@/components/seo/schemas";
+import { HOME_DESCRIPTION, HOME_TITLE, socialMeta } from "@/components/seo/social";
 import "@/components/home/home.css";
 
-export const metadata: Metadata = {
-  title: { absolute: `${siteConfig.name}: ${home.hero.title.replace(/\.$/, "").toLowerCase()}` },
-  description: siteConfig.description,
-  alternates: { canonical: "/" },
-};
+export const metadata: Metadata = socialMeta({ title: HOME_TITLE, description: HOME_DESCRIPTION, url: "/", absoluteTitle: true });
 
 /*
  * Homepage: hero → scroll story (sticky 3D hand + five chapters) → stats →
@@ -25,6 +23,7 @@ export default function Home() {
   const chapters = home.story.map((s) => ({ id: s.id, label: s.kicker }));
   return (
     <>
+      <JsonLd data={sourceCodeSchema()} />
       <ScrollStory hero={<Hero />} chapters={chapters}>
         {home.story.map((section) => (
           <StorySection key={section.id} section={section}>

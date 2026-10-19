@@ -2,23 +2,20 @@ import type { Metadata } from "next";
 import { JourneyDays } from "@/components/pages/JourneyDays";
 import { JourneyDropped } from "@/components/pages/JourneyDropped";
 import { JourneyMap } from "@/components/pages/JourneyMap";
-import { OG_IMAGE } from "@/components/pages/content";
 import { PageHero } from "@/components/pages/PageHero";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { gitLastModified } from "@/components/seo/lastmod";
 import { breadcrumbs, webPage } from "@/components/seo/schemas";
+import { socialMeta } from "@/components/seo/social";
 import { mainLoc } from "@/components/seo/urls";
 import { SectionHead } from "@/components/ui/SectionHead";
 import { journey } from "@/lib/journey";
 import "@/components/pages/journey.css";
 
-const description = "A map of the road so far across hardware, firmware, simulation, AI and the website, including the ideas we dropped and what we learned from them.";
+const TITLE = "Journey: Building an Open-Source Robotic Hand";
+const description = "The story of building Tendra Hand, an open-source robotic hand: what worked, the ideas we dropped and what each one taught us.";
 
-export const metadata: Metadata = {
-  title: "The journey",
-  description,
-  alternates: { canonical: "/journey" },
-  openGraph: { type: "website", title: "The journey", description, url: "/journey", images: [OG_IMAGE] },
-};
+export const metadata: Metadata = socialMeta({ title: TITLE, description, url: "/journey" });
 
 export default function JourneyPage() {
   const stats = [
@@ -31,7 +28,7 @@ export default function JourneyPage() {
     <div className="page page--journey">
       <JsonLd
         data={[
-          webPage({ name: "The journey", description, url: mainLoc("/journey") }),
+          webPage({ name: TITLE, description, url: mainLoc("/journey"), dateModified: gitLastModified("content/journey.json") }),
           breadcrumbs([
             { name: "Tendra Hand", url: mainLoc("/") },
             { name: "The journey", url: mainLoc("/journey") },

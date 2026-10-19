@@ -8,6 +8,8 @@ import { mainNav } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Page not found",
   description: "This page doesn't exist. Head back to the homepage or look through the docs.",
+  // Replaces the root "index, follow" robots, so only noindex is emitted.
+  robots: { index: false, googleBot: { index: false } },
 };
 
 export default function NotFound() {

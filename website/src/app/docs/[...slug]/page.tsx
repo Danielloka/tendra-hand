@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { DocsPager } from "@/components/docs/DocsPager";
 import { DocsToc } from "@/components/docs/DocsToc";
-import { OG_IMAGE } from "@/components/pages/content";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { h2Sections, plain, readMdx } from "@/components/seo/mdxText";
+import { socialMeta } from "@/components/seo/social";
 import { breadcrumbs, docsCrumbs, faqPage, techArticle } from "@/components/seo/schemas";
 import { docsLoc } from "@/components/seo/urls";
 import { docHref, getAllDocSlugs, getDoc, getPrevNext, getToc } from "@/lib/docs";
@@ -21,14 +21,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const slug = (await params).slug.join("/");
   const doc = await getDoc(slug);
   if (!doc) return {};
-  const { title, description } = doc.frontmatter;
+  const { title, seoTitle, description } = doc.frontmatter;
   const url = docsLoc(docHref(slug));
-  return {
-    title,
-    description,
-    alternates: { canonical: url },
-    openGraph: { type: "article", title, description, url, modifiedTime: doc.frontmatter.updated, images: [OG_IMAGE] },
-  };
+  return socialMeta({ title: seoTitle ?? title, description, url, article: { modifiedTime: doc.frontmatter.updated } });
 }
 
 /** The FAQ page's "## Question" sections as question/answer pairs (FAQPage schema). */

@@ -1,76 +1,156 @@
 {
   "kicker": "The journey",
-  "title": "The road so far, and the detours.",
-  "lead": "Everything we have built and learned, one line per track. The grey crosses are ideas we tried and dropped, and we wrote down why, so you don't have to repeat them.",
-  "tracks": [
-    { "id": "hardware", "label": "Hardware" },
-    { "id": "firmware", "label": "Firmware and electronics" },
-    { "id": "sim", "label": "Simulation and software" },
-    { "id": "ai", "label": "AI" },
-    { "id": "web", "label": "Website and open source" }
+  "title": "Building a hand that can do what ours can.",
+  "lead": "A robot that cooks, cleans and uses tools needs hands as capable as ours. This is how far we have come, and where we are going next.",
+  "now": {
+    "milestone": "hand",
+    "kicker": "Where we are",
+    "title": "Step 1 of 5: the hand.",
+    "text": "The first prototype works and the full hand is designed. Right now it is learning to grasp in simulation. Next, we build it for real.",
+    "steps": [
+      {
+        "label": "First prototype built",
+        "status": "done"
+      },
+      {
+        "label": "Full hand designed",
+        "status": "done"
+      },
+      {
+        "label": "Learning to grasp in simulation",
+        "status": "current"
+      },
+      {
+        "label": "Full hand built",
+        "status": "next"
+      },
+      {
+        "label": "Grasping in the real world",
+        "status": "next"
+      }
+    ]
+  },
+  "chaptersHead": {
+    "kicker": "What we have built",
+    "title": "Four big steps so far."
+  },
+  "chapters": [
+    {
+      "id": "first-hand",
+      "when": "September 2026",
+      "title": "The first hand",
+      "text": "A 3D-printed thumb and index finger, moved by tendons the way your muscles move your fingers.",
+      "highlights": [
+        "8 joints, each moved by its own motor",
+        "Tendons cross every joint on its axis, so moving one joint never pulls another",
+        "Nothing moves until it is told to: safe from the first line of code"
+      ],
+      "image": {
+        "src": "/media/photos/2026-09-29-v0-fingers-three-quarter.jpg",
+        "alt": "The blue index finger and thumb of the prototype seen from a three-quarter angle.",
+        "width": 1125,
+        "height": 2000
+      }
+    },
+    {
+      "id": "full-hand",
+      "when": "September – October 2026",
+      "title": "A full hand, designed",
+      "text": "Five fingers and 20 joints. The motors sit in the forearm, just like the muscles of a human arm.",
+      "highlights": [
+        "20 joints moved by 16 smart motors that know where they are",
+        "A small rigid bar bends each fingertip together with the middle joint, as in your own finger",
+        "Every tendon has its own channel through the palm and the wrist"
+      ],
+      "image": {
+        "src": "/media/screenshots/2026-10-19-v1-hand-render.png",
+        "alt": "The white five-finger Tendra Hand V1 in simulation, palm forward, fingers slightly curled and the thumb swung out.",
+        "width": 1600,
+        "height": 1200
+      }
+    },
+    {
+      "id": "digital-twin",
+      "when": "September – October 2026",
+      "title": "A digital twin",
+      "text": "A simulated copy of the hand that behaves like the real one, so we can try ideas in minutes instead of days.",
+      "highlights": [
+        "Physics for every joint and tendon",
+        "Copies your hand live from an ordinary webcam",
+        "Two arms with two hands: the first robot body"
+      ],
+      "image": {
+        "src": "/media/screenshots/2026-09-29-teleop-open-hand.png",
+        "alt": "Webcam teleop: an open, spread hand on the left, copied by the simulated five-finger hand on the right.",
+        "width": 1105,
+        "height": 469,
+        "fit": "contain"
+      }
+    },
+    {
+      "id": "grasping",
+      "when": "October 2026",
+      "title": "Learning to grasp",
+      "text": "The hand teaches itself to pick things up, by trial and error, thousands of times over in simulation.",
+      "highlights": [
+        "77% of grasps succeeded after 49 minutes of practice",
+        "Training on cloud GPUs, with both arms",
+        "Now: calm, steady movements instead of shaky ones"
+      ],
+      "image": {
+        "src": "/media/screenshots/2026-10-19-sim-grasp-cylinder.png",
+        "alt": "In simulation, a robot arm's white five-finger hand wraps around a red cylinder above a wooden table.",
+        "width": 1600,
+        "height": 1200
+      }
+    }
   ],
-  "days": [
-    { "date": "2026-09-26", "title": "The start", "blurb": "A public repo, the first firmware and the first simulated hand." },
-    { "date": "2026-09-27", "title": "Becoming a project", "blurb": "A website, a Python library and a smarter way to route the tendons." },
-    { "date": "2026-09-28", "title": "Thinking big", "blurb": "The full five-finger hand is designed, the AI plan is written, and a webcam moves the hand." },
-    { "date": "2026-09-29", "title": "Learning from the real hand", "blurb": "The first test on real hardware, a fix for the knuckle and the first grasp learning." },
-    { "date": "2026-09-30", "title": "Looking around", "blurb": "We studied the best robot hands in the world to see where we stand." },
-    { "date": "2026-10-01", "title": "Fewer servos", "blurb": "Sixteen servos instead of twenty-one, by copying how a human finger works." },
-    { "date": "2026-10-02", "title": "Arms and a cloud GPU", "blurb": "A better fingertip linkage, two simulated arms and the first big training run." },
-    { "date": "2026-10-03", "title": "Two arms in the cloud", "blurb": "The linkage is modelled in CAD, this page exists, and both arms can train on a GPU." },
-    { "date": "2026-10-04", "title": "The first cloud run", "blurb": "The first two-arm training run on a real GPU." },
-    { "date": "2026-10-05", "title": "Ready to go live", "blurb": "The website gets safe, fast and easy to find, ready for its first deploy." },
-    { "date": "2026-10-06", "title": "Why it shakes", "blurb": "The first trained hand lifts things but trembles. We find out why and plan a calm one." },
-    { "date": "2026-10-17", "title": "A face for Tendra", "blurb": "Tendra gets its logo: an open, jointed hand leaning forward, on its way." }
+  "lessonsHead": {
+    "kicker": "What we learned",
+    "title": "Ideas we dropped, so you don't have to try them.",
+    "lead": "Every mistake is written down. Here are the ones that taught us the most."
+  },
+  "lessons": [
+    {
+      "id": "fewer-motors",
+      "tried": "One motor for every joint",
+      "why": "Twenty-one motors needed a huge power supply and left no room in the forearm for the tendons.",
+      "lesson": "Count the power and the space before you count the joints."
+    },
+    {
+      "id": "feedback",
+      "tried": "Cheap motors that can't feel their position",
+      "why": "Someone had to straighten the hand by hand before every start.",
+      "lesson": "A motor that knows where it is is worth paying for."
+    },
+    {
+      "id": "stiff-link",
+      "tried": "A tendon to bend the fingertip",
+      "why": "Tendons stretch and go slack, and the fingertip has no motor of its own to pull the slack out.",
+      "lesson": "When nothing can take up slack, use something stiff."
+    },
+    {
+      "id": "reward",
+      "tried": "Rewarding the AI for reaching the goal",
+      "why": "It learned to hover just short of the goal, because reaching it ended the game and the points.",
+      "lesson": "Check what your reward really pays for, not what you meant it to."
+    }
   ],
-  "events": [
-    { "id": "h-v0", "track": "hardware", "date": "2026-09-26", "title": "V0 thumb and index printed", "status": "done", "note": "The first prototype: 8 joints, tendon-driven, 3D printed." },
-    { "id": "h-pinch", "track": "hardware", "date": "2026-09-27", "title": "Tendons cross each joint on its axis", "status": "done", "note": "New routing for the index knuckle and middle joint, designed in CAD (not printed yet)." },
-    { "id": "h-21servo", "track": "hardware", "date": "2026-09-28", "title": "21 joints, 21 servos", "status": "abandoned", "note": "The first V1 plan: one servo for every joint.", "why": "Every servo draws current and takes space in the forearm. Twenty-one of them needed a huge power supply and left no room for the tendon channels.", "lesson": "Count the power and the space before you count the joints." },
-    { "id": "h-v1", "track": "hardware", "date": "2026-09-28", "title": "V1: five fingers, servos in the forearm", "status": "done", "note": "The full hand designed in CAD, with human finger proportions." },
-    { "id": "h-thumb5", "track": "hardware", "date": "2026-09-28", "title": "A 5-joint thumb", "status": "abandoned", "note": "We added a fifth thumb joint, like a human thumb, and removed it a day later.", "why": "The extra joint needed another hinge and more tendon channels in the most crowded part of the hand. It was not worth the complexity for a first full hand.", "lesson": "Copy the human hand where it matters, not everywhere at once." },
-    { "id": "h-thumb4", "track": "hardware", "date": "2026-09-29", "title": "Back to a 4-joint thumb", "status": "done", "note": "A simpler thumb, with the tendon routing reworked.", "replaces": "h-thumb5" },
-    { "id": "h-spool", "track": "hardware", "date": "2026-09-29", "title": "5 mm spool for the index knuckle", "status": "done", "note": "The knuckle bent easily but extended weakly. A smaller spool pulls twice as hard." },
-    { "id": "h-16", "track": "hardware", "date": "2026-10-01", "title": "16 servos for 20 joints", "status": "done", "note": "Each finger's last joint follows the middle joint, so it needs no servo.", "replaces": "h-21servo" },
-    { "id": "h-coupt", "track": "hardware", "date": "2026-10-01", "title": "Coupling the fingertip with a tendon", "status": "abandoned", "note": "The first idea for making the fingertip joint follow the middle joint: a second tendon.", "why": "A tendon has to be tensioned, stretches over time and goes slack. The fingertip joint has no servo of its own to pull the slack out.", "lesson": "When nothing can take up slack, use something stiff." },
-    { "id": "h-link", "track": "hardware", "date": "2026-10-02", "title": "Coupling with a rigid bar", "status": "done", "note": "A small bar per finger keeps the fingertip within 0.6 degrees of the target.", "replaces": "h-coupt" },
-    { "id": "h-model", "track": "hardware", "date": "2026-10-03", "title": "The finger linkage modelled in CAD", "status": "done", "note": "Bars and plates for all four fingers, with no collisions." },
-
-    { "id": "f-v01", "track": "firmware", "date": "2026-09-26", "title": "Firmware v0.1 for 8 steppers", "status": "done", "note": "Smooth speed-up and slow-down, motors switch off when idle, text protocol over USB." },
-    { "id": "f-step", "track": "firmware", "date": "2026-09-28", "title": "Steppers as the final motor", "status": "abandoned", "note": "Cheap stepper motors drove the first prototype. We decided V1 would not use them.", "why": "A stepper has no idea where it is, so someone must straighten the hand by hand before every start. Eight of them also use up nearly every pin on the controller.", "lesson": "Position feedback is worth paying for." },
-    { "id": "f-scs", "track": "firmware", "date": "2026-09-28", "title": "Smart-servo driver", "status": "done", "note": "Feetech SCS0009 on one shared bus, with position feedback.", "replaces": "f-step" },
-    { "id": "f-rig", "track": "firmware", "date": "2026-09-29", "title": "First V0 test rig", "status": "done", "note": "The index finger wired to an ESP32-S3." },
-    { "id": "f-16", "track": "firmware", "date": "2026-10-01", "title": "Firmware 0.4.0 for 16 servos", "status": "done", "note": "Torque off at boot, nothing moves before a command." },
-
-    { "id": "s-mjcf", "track": "sim", "date": "2026-09-26", "title": "First MuJoCo model", "status": "done", "note": "Converted from the CAD export, checked against the real hand." },
-    { "id": "s-pkg", "track": "sim", "date": "2026-09-27", "title": "Python library and digital twin", "status": "done", "note": "One Hand interface for the simulation and the real hand." },
-    { "id": "s-tele", "track": "sim", "date": "2026-09-28", "title": "Webcam control of the hand", "status": "done", "note": "Your own hand moves the simulated one." },
-    { "id": "s-v1", "track": "sim", "date": "2026-09-28", "title": "V1 model with 20 joints", "status": "done", "note": "Every tendon is simulated." },
-    { "id": "s-lin", "track": "sim", "date": "2026-10-02", "title": "36 tendons and the finger linkage", "status": "done", "note": "The simulation matches the 16-servo design." },
-    { "id": "s-arm", "track": "sim", "date": "2026-10-02", "title": "A simulated arm", "status": "done", "note": "OpenArm's shoulder and elbow stand in until we build our own." },
-    { "id": "s-two", "track": "sim", "date": "2026-10-02", "title": "Two arms, mirrored left hand", "status": "done", "note": "The first body: two arms on a pole." },
-
-    { "id": "a-hub", "track": "ai", "date": "2026-09-28", "title": "AI research hub and the big goal", "status": "done", "note": "A robot that does what humans do, with the hand as the focus." },
-    { "id": "a-rl", "track": "ai", "date": "2026-09-29", "title": "Grasp learning system", "status": "done", "note": "Reinforcement learning in simulation, with a human-like reward." },
-    { "id": "a-hack", "track": "ai", "date": "2026-09-29", "title": "Reward hacking: hovering beat winning", "status": "abandoned", "note": "The first reward ended the episode on success.", "why": "The robot learned that hovering just below the success height scored more than finishing, because finishing ended the game. A learner finds every loophole in its reward.", "lesson": "Read what your reward really pays for, not what you meant it to pay for." },
-    { "id": "a-fix", "track": "ai", "date": "2026-09-29", "title": "A reward that pays for holding", "status": "done", "note": "Success no longer ends the episode, so holding the object is what counts.", "replaces": "a-hack" },
-    { "id": "a-sota", "track": "ai", "date": "2026-09-30", "title": "Study of the best robot hands", "status": "done", "note": "The biggest gap: fingertip force." },
-    { "id": "a-gpu", "track": "ai", "date": "2026-10-02", "title": "77% grasp success in 49 minutes", "status": "done", "note": "A cloud GPU, simulating many hands at once. It used the older hand design, so we will repeat it." },
-    { "id": "a-arm", "track": "ai", "date": "2026-10-02", "title": "Training the hand on the arm", "status": "done", "note": "The arm brings the hand to the object (about 87%)." },
-    { "id": "a-gpu2", "track": "ai", "date": "2026-10-03", "title": "Cloud GPU training for both arms", "status": "done", "note": "Thousands of two-armed robots practise at once, with a curriculum that adapts by itself." },
-    { "id": "a-gpu3", "track": "ai", "date": "2026-10-04", "title": "First two-arm run on a cloud GPU", "status": "done", "note": "1,024 robots trained at once on a free Colab GPU, until the free time ran out." },
-    { "id": "a-calm", "track": "ai", "date": "2026-10-06", "title": "Found why the trained hand shakes", "status": "done", "note": "Twitchy wrist commands on a springy arm, and a reward that never paid for being calm." },
-    { "id": "a-calm2", "track": "ai", "date": "2026-10-06", "title": "A calmer training setup", "status": "done", "note": "Gentler commands, a damped arm, a reward for holding still, and a bug fixed that paid the success bonus only once." },
-
-    { "id": "w-repo", "track": "web", "date": "2026-09-26", "title": "Public repo and licenses", "status": "done", "note": "Code Apache-2.0, hardware CERN-OHL-S-2.0, docs CC BY 4.0." },
-    { "id": "w-dark", "track": "web", "date": "2026-09-27", "title": "A dark, robotic look", "status": "abandoned", "note": "The first website direction.", "why": "It felt cold and nerdy. The project wants to be friendly to anyone who is curious, not only to engineers.", "lesson": "Design for the person you want to invite in." },
-    { "id": "w-ds", "track": "web", "date": "2026-09-27", "title": "Design system: clean, open, friendly", "status": "done", "note": "Light by default, one blue accent.", "replaces": "w-dark" },
-    { "id": "w-site", "track": "web", "date": "2026-09-27", "title": "Website v1", "status": "done", "note": "26 pages and a 3D hand." },
-    { "id": "w-glb", "track": "web", "date": "2026-09-28", "title": "The real hand model on the site", "status": "done", "note": "Built from the CAD file." },
-    { "id": "w-media", "track": "web", "date": "2026-09-29", "title": "One place for photos and video", "status": "done", "note": "Without GPS data in the pictures." },
-    { "id": "w-jour", "track": "web", "date": "2026-10-03", "title": "This journey page", "status": "done", "note": "You are here." },
-    { "id": "w-launch", "track": "web", "date": "2026-10-05", "title": "Website ready to launch", "status": "done", "note": "Placeholders gone, security headers on, and findable by search engines and AI assistants." },
-    { "id": "w-logo", "track": "web", "date": "2026-10-17", "title": "The Tendra logo", "status": "done", "note": "An open hand with a joint in every finger, tilted forward as if it is moving. It is the site icon, the Google logo and the share image." },
-    { "id": "w-logo-ideas", "track": "web", "date": "2026-10-17", "title": "Clever logo ideas", "status": "abandoned", "note": "A hand around a ball, a T made of a finger, a sunrise hand, cupped hands, a hand in an orbit and more.", "why": "Each told a nice story but needed explaining, and at 16 pixels, the size of a browser tab, the story was gone. One version with a long finger pointing at a dot looked like a rude gesture.", "lesson": "A logo is seen tiny and for a second. Keep the shape people recognise and change one thing." }
-  ]
+  "next": {
+    "kicker": "What's next",
+    "title": "Build the full hand, and let it grasp for real.",
+    "text": "After that come touch and sight, learned skills, and a robot that understands what you ask.",
+    "actions": [
+      {
+        "label": "Read about the project",
+        "href": "/project",
+        "variant": "primary"
+      },
+      {
+        "label": "Read the docs",
+        "href": "/docs",
+        "variant": "secondary"
+      }
+    ]
+  }
 }

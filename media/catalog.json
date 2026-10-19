@@ -58,7 +58,8 @@
       "height": 2000,
       "used_in": [
         "website/content/data/gallery.json",
-        "website/content/pages/project.mdx"
+        "website/content/pages/project.mdx",
+        "website/content/journey.json"
       ]
     },
     {
@@ -208,7 +209,51 @@
       "height": 469,
       "used_in": [
         "website/content/data/gallery.json",
-        "website/content/log/2026-09-26-first-mujoco-model.mdx"
+        "website/content/log/2026-09-26-first-mujoco-model.mdx",
+        "website/content/journey.json"
+      ]
+    },
+    {
+      "file": "screenshots/2026-10-19-v1-hand-render.png",
+      "type": "screenshot",
+      "date": "2026-10-19",
+      "hand": "v1",
+      "description": "MuJoCo render of the full Tendra Hand V1 model (sim/models/tendra_hand_v1.xml) on a plain light-grey background, seen from the palm side: four white fingers pointing up, slightly curled, the thumb swung out to the left across the palm, and the forearm with its rows of servo slots below. Tendons and marker sites hidden.",
+      "alt": "The white five-finger Tendra Hand V1 in simulation, palm forward, fingers slightly curled and the thumb swung out.",
+      "caption": "Tendra Hand V1: five fingers and 20 joints, designed and ready to build.",
+      "tags": [
+        "v1",
+        "render",
+        "sim",
+        "mujoco",
+        "full-hand"
+      ],
+      "width": 1600,
+      "height": 1200,
+      "used_in": [
+        "website/content/journey.json"
+      ]
+    },
+    {
+      "file": "screenshots/2026-10-19-sim-grasp-cylinder.png",
+      "type": "screenshot",
+      "date": "2026-10-19",
+      "hand": "v1",
+      "description": "MuJoCo render of the two-arm grasp scene (tendra.scene.GraspScene, scripted power grasp): seen from the front of the table, the right Tendra hand on the dark OpenArm-based arm wraps its fingers around a red cylinder above a wooden table; the second arm and hand rest on the right edge. Tendons and marker sites hidden.",
+      "alt": "In simulation, a robot arm's white five-finger hand wraps around a red cylinder above a wooden table.",
+      "caption": "In simulation, the hand closes around a cylinder and lifts it.",
+      "tags": [
+        "v1",
+        "render",
+        "sim",
+        "mujoco",
+        "grasp",
+        "arm"
+      ],
+      "width": 1600,
+      "height": 1200,
+      "used_in": [
+        "website/content/journey.json"
       ]
     }
   ]

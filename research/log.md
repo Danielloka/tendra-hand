@@ -11,6 +11,16 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** what I learned and what to try next
 ```
 
+## 2026-10-19: Journey page rebuilt as a big-picture story
+
+**Goal:** The owner found `/journey` too messy (44 events on a 5-lane subway map plus day-by-day chapters) and did not want to say what was done every day. Show instead what has been built overall and where we are on the roadmap, about the hand only.
+
+**Setup:** `website/content/journey.json` rewritten (`now`, `chapters`, `lessons`, `next`; `tracks`/`days`/`events` removed); new `JourneyProgress`, `JourneyChapters`, `JourneyLessons`; `JourneyMap/Days/Dropped` deleted. Two new MuJoCo renders in `media/screenshots/` (V1 hand, scripted grasp of a cylinder), made with an offscreen `mujoco.Renderer` (light skybox, tendons and sites hidden).
+
+**Result:** Hero (the goal) → the 5 roadmap milestones with "We are here" on step 1 and its sub-steps (prototype built ✓, full hand designed ✓, learning to grasp in sim = now, build V1 and real grasping = next) → 4 chapters (first hand, full hand designed, digital twin, learning to grasp) → 4 lessons (fewer motors, position feedback, stiff fingertip link, reward hacking) → what's next. Website, design and logo work left out. Typecheck, lint and production build pass.
+
+**Conclusion / next:** Update the journey only when a milestone step changes or a big chapter is reached, not with every log entry (rule changed in `CLAUDE.md`). Replace the sim renders with photos of the built V1 when it exists.
+
 ## 2026-10-17: The Tendra logo
 **Goal:** a logo for the website, Google results and social links that joins the vision (a robot that does what people do, hand first) with the project.
 **Setup:** four rounds of concepts on a comparison page (light, dark, app tile, wordmark, mock Google result, real 48/32/16 px sizes); marks drawn on a 64 × 64 grid, rendered with resvg.

@@ -39,7 +39,7 @@ export async function buildLlmsTxt(): Promise<string> {
   L.push("## Project", "");
   L.push(`- [Home](${mainLoc("/")}): ${siteConfig.tagline} Overview with a 3D hand, the story of where the project is going, and the milestones.`);
   L.push(await pageEntry("project", mainLoc("/project")));
-  L.push(`- [Journey](${mainLoc("/journey")}): A day-by-day map of what was built and the ideas that were dropped, with why and what was learned.`);
+  L.push(`- [Journey](${mainLoc("/journey")}): Where the project is on its five-step roadmap, the big steps built so far (first prototype, full hand design, digital twin, learning to grasp) and the ideas that were dropped, with the lesson from each.`);
   L.push(await pageEntry("gallery", mainLoc("/gallery")));
   L.push(await pageEntry("contact", mainLoc("/contact")), "");
   L.push("## Reference", "");

@@ -99,8 +99,8 @@ const nextConfig: NextConfig = {
     return {
       beforeFiles: [
         { source: "/", has: onDocsHost, destination: "/docs" },
-        // everything except /docs itself and the app's own assets
-        { source: "/:path((?!docs/|docs$|_next/|media/|models/|styleguide|icon|opengraph-image|robots\\.txt|sitemap\\.xml|llms\\.txt|llms-full\\.txt).+)", has: onDocsHost, destination: "/docs/:path" },
+        // everything except /docs itself, the app's own assets and the IndexNow key file (<hex>.txt)
+        { source: "/:path((?!docs/|docs$|_next/|media/|models/|styleguide|icon|opengraph-image|robots\\.txt|sitemap\\.xml|llms\\.txt|llms-full\\.txt|[0-9a-f]+\\.txt$).+)", has: onDocsHost, destination: "/docs/:path" },
       ],
       // public/ doesn't serve index.html for a folder; the style guide's relative ../assets links work from /styleguide.
       afterFiles: [{ source: "/styleguide", destination: "/styleguide/index.html" }],

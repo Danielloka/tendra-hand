@@ -50,13 +50,18 @@ if (!urlList.length) {
   process.exit(0);
 }
 
-const host = new URL(site).host;
-const body = { host, key, keyLocation: `${site}/${key}.txt`, urlList };
-console.log(`Host ${host}, key ${key}, ${urlList.length} URL(s)${since ? ` changed after ${since.toISOString()}` : ""}.`);
+// IndexNow wants one request per host (the docs live on docs.<domain>); the key file is served on every host.
+const byHost = new Map();
+for (const u of urlList) {
+  const h = new URL(u).host;
+  byHost.set(h, [...(byHost.get(h) ?? []), u]);
+}
+const bodies = [...byHost].map(([host, urls]) => ({ host, key, keyLocation: `https://${host}/${key}.txt`, urlList: urls }));
+for (const b of bodies) console.log(`Host ${b.host}, key ${key}, ${b.urlList.length} URL(s)${since ? ` changed after ${since.toISOString()}` : ""}.`);
 
 if (dryRun) {
-  console.log("Dry run, nothing sent. Payload:");
-  console.log(JSON.stringify(body, null, 2));
+  console.log("Dry run, nothing sent. Payloads:");
+  console.log(JSON.stringify(bodies, null, 2));
   process.exit(0);
 }
 
@@ -68,10 +73,14 @@ const meanings = {
   422: "Unprocessable: URLs do not belong to the host, or the key is invalid.",
   429: "Too many requests: slow down.",
 };
-const res = await fetch("https://api.indexnow.org/indexnow", {
-  method: "POST",
-  headers: { "Content-Type": "application/json; charset=utf-8" },
-  body: JSON.stringify(body),
-});
-console.log(`HTTP ${res.status}: ${meanings[res.status] ?? res.statusText}`);
-process.exit(res.status === 200 || res.status === 202 ? 0 : 1);
+let ok = true;
+for (const b of bodies) {
+  const res = await fetch("https://api.indexnow.org/indexnow", {
+    method: "POST",
+    headers: { "Content-Type": "application/json; charset=utf-8" },
+    body: JSON.stringify(b),
+  });
+  console.log(`${b.host}: HTTP ${res.status}: ${meanings[res.status] ?? res.statusText}`);
+  ok &&= res.status === 200 || res.status === 202;
+}
+process.exit(ok ? 0 : 1);

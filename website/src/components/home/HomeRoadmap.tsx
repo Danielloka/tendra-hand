@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { RoadmapTimeline, roadmap } from "@/components/pages/RoadmapTimeline";
 import { SectionHead } from "@/components/ui/SectionHead";
 

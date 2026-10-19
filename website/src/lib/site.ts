@@ -26,6 +26,17 @@ export const siteUrl =
 /** Public address of a docs path ("/docs/hardware"): on the docs host the /docs prefix is dropped. */
 export const docsAbsolute = (path: string) => (docsUrl ? `${docsUrl}${path.replace(/^\/docs(?=\/|$)/, "")}` : path);
 
+/**
+ * Where an in-app link ("/docs/faq", "/contact") should point. With a docs host, the docs and the
+ * main site are different hosts of the same app, so a bare path would land on the wrong one:
+ * docs paths become docs-host URLs and main paths become main-site URLs. Without one, paths stay as they are.
+ */
+export function resolveHref(href: string): string {
+  if (!docsUrl || !href.startsWith("/") || href.startsWith("//")) return href;
+  if (/^\/docs(?=[/?#]|$)/.test(href)) return docsUrl + (href.replace(/^\/docs/, "") || "/");
+  return mainUrl ? `${mainUrl}${href}` : href;
+}
+
 export type NavItem = { label: string; href: string };
 
 /** Main-site nav: the "Docs" link points at the docs host once there is one. */

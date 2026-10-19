@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import type { SearchDoc } from "@/lib/docs";
+import { resolveHref } from "@/lib/site";
 import { search, type SearchHit } from "./search";
 
 let indexPromise: Promise<SearchDoc[]> | null = null;
@@ -60,7 +61,7 @@ export function DocsSearch() {
     setOpen(false);
     setQuery("");
     inputRef.current?.blur();
-    router.push(hit.href);
+    router.push(resolveHref(hit.href));
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import type { DocLink } from "@/lib/docs";
 import { siteConfig } from "@/lib/site";
 

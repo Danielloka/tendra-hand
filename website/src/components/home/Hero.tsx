@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { Fragment } from "react";
 import { Tag } from "@/components/ui/Tag";
 import { home, isExternal } from "./content";

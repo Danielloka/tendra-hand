@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { notFound } from "next/navigation";
 import { getLogPost, getLogPosts } from "@/components/pages/content";
 import { PostMeta } from "@/components/pages/LogCard";

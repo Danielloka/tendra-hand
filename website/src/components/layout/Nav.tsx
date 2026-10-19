@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { siteConfig, type NavItem } from "@/lib/site";

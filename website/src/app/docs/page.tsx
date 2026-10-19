@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbs, collectionPage, docsCrumbs } from "@/components/seo/schemas";
 import { socialMeta } from "@/components/seo/social";

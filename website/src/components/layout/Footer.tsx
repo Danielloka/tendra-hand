@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { siteConfig, type NavItem } from "@/lib/site";
 
 export function Footer({ items }: { items: NavItem[] }) {

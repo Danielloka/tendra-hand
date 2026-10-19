@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { Tag } from "@/components/ui/Tag";
 import type { LogPost } from "./content";
 import { formatDate } from "./format";

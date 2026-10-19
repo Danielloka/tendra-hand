@@ -1,5 +1,5 @@
 import type { MDXComponents } from "mdx/types";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { BomTable } from "@/components/pages/BomTable";
 import { RoadmapTimeline } from "@/components/pages/RoadmapTimeline";
 import { StatusBadge } from "@/components/ui/Tag";

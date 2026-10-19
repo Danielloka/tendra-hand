@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 
 /** Responsive grid of <Card>s. */
 export function CardGrid({ children, min = "15rem" }: { children: React.ReactNode; min?: string }) {

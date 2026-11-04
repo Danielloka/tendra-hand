@@ -11,6 +11,12 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** what I learned and what to try next
 ```
 
+## 2026-11-04: V1 wrist study (bend + wave, all tendons through)
+**Goal:** what a 2-DOF wrist needs so all 32 servo strands (16 loops) cross it cleanly and strongly.
+**Setup:** 4-agent research team; reports, maths script and summary in `cloud-claude/2026-11-04-v1-wrist/`.
+**Result:** bare strands are hopeless (up to 25° finger motion from wave); PTFE sheaths with both ends clamped remove the coupling. Bundle ≈ 13–15 mm → hollow oval cardan with a ≈ 22 × 14 mm opening, wrist gap ≥ 30 mm (tube bend radius 24 mm), tube slack up to ~7 mm. Torque target ≈ 1.3 N·m continuous / 2.5 peak (hand 0.20 N·m alone); SCS0009/SCS2332 too weak, 2 × STS3215 + 2:1 belt suggested. Friction at full bend leaves 73–88 % of the force (43–71 % for the worst thumb strand).
+**Conclusion / next:** owner decisions (motors, controller/protocol, ranges, error budget), then router bundle routing + a printed test wrist before the sim and Fusion rebuild.
+
 ## 2026-10-19: Journey page rebuilt as a big-picture story
 
 **Goal:** The owner found `/journey` too messy (44 events on a 5-lane subway map plus day-by-day chapters) and did not want to say what was done every day. Show instead what has been built overall and where we are on the roadmap, about the hand only.

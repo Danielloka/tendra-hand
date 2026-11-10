@@ -34,16 +34,18 @@ PIN_D_BIG = 3.0  # thumb base, wrist
 # human MCP has them nearly coincident; designers may shrink it).
 # lengths: proximal (MCP->PIP), middle (PIP->DIP), distal (DIP->tip) in mm. width/height of the phalanx.
 FINGERS = {
-    "index": {"mcp": (20.0, -4.0, 92.0), "lengths": (42.0, 24.0, 23.0), "width": 18.0, "height": 16.0},
-    "middle": {"mcp": (0.0, -4.0, 96.0), "lengths": (45.0, 27.0, 24.0), "width": 18.0, "height": 16.0},
-    "ring": {"mcp": (-19.5, -4.0, 93.0), "lengths": (43.0, 26.0, 23.0), "width": 17.0, "height": 15.5},
-    "little": {"mcp": (-38.0, -4.0, 85.0), "lengths": (34.0, 20.0, 21.0), "width": 15.5, "height": 14.0},
+    "index": {"mcp": (20.0, -2.0, 92.0), "lengths": (42.0, 24.0, 23.0), "width": 18.0, "height": 16.0},
+    "middle": {"mcp": (0.0, -2.0, 96.0), "lengths": (45.0, 27.0, 24.0), "width": 18.0, "height": 16.0},
+    "ring": {"mcp": (-19.5, -2.0, 93.0), "lengths": (43.0, 26.0, 23.0), "width": 17.0, "height": 15.5},
+    "little": {"mcp": (-38.0, -2.0, 85.0), "lengths": (34.0, 20.0, 21.0), "width": 15.5, "height": 14.0},
 }
 ABD_OFFSET_DEFAULT = 11.5  # integrator 2026-11-10: finger request (palmar abd boss clears the proximal at 90 deg)
 KNUCKLE_MIN_W = 17.0  # MCP knuckle (yoke + drum) width is max(width, 17): little finger keeps 1.2 mm drum flanges
-# Finger MCPs stay at y = -4 (thumb opposition was optimised against it). The palmar abd pin (hand y -16.5..-13.25)
-# sits below the -14 palm face, so the palm bulges locally at the knuckle row (human distal palmar pad):
-PALM_KNUCKLE_BULGE = {"palmar_y": -18.1, "dorsal_y": 15.6}  # pin ends + 1.6 wall
+# Fix round: finger MCPs moved to y = -2 (were -4). The palmar abd dowel then ends at y -14.5, held in a LOCAL boss
+# (dia 9.2) that reaches y -16.1, flush with the 2 mm TPU palm pad (face -16): no continuous knuckle bulge any
+# more (it blocked the thumb's ring/little opposition). Dorsal dowel ends at +16.0 -> local dorsal knuckle bosses.
+PALM_KNUCKLE_BULGE = {"palmar_y": -16.1, "dorsal_y": 17.6, "boss_d": 9.2}  # local bosses only
+PALM_PAD_FACE_Y = -16.0  # palm surface incl. the TPU pad (thumb optimiser's palm slab)
 # MCP spacing kept (19.5-20 mm). 18 mm fingers are ~2 mm apart and their tips ~107 mm from the abd pivot, so
 # neighbours touch after ~1 deg of relative adduction (checked: -7/+7 already collides at mcp 0 and 90).
 # Software rule (like a human hand, adduction ends when fingers touch): neighbours may only spread apart:

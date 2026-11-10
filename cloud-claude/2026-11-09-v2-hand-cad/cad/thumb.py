@@ -65,6 +65,17 @@ SLEEVE_Z = (-25.4, -17.2)  # printed journal sleeve of the base (OD 20) in the b
 CAP_Z = (-26.6, -25.4)  # base cap: holds the lower inner race, carries the top neck eyelet
 NECK_Z = -26.0  # top neck (PTFE eyelet, 1.6 mm hole) on the rot axis, turns with the base
 NECK_R = 0.45  # strand offsets inside the neck
+NECK_HOLE_R = 0.8
+# Integrator fix round ("spinneret"): the twist zone neck -> sheath ends is unchanged (parallel to a1, hex r 2.3,
+# so the cmc_rot coupling stays 0.109 mm), but the 6 sheath ends become a FIXED PTFE spinneret plate at
+# SHEATH_END_Z in which each strand turns ~60 deg (rounded hole, fixed geometry = no coupling) into a sheath that
+# leaves along g: FAN_DOWN_DEG below horizontal, azimuth toward FAN_TARGET_XY (the wrist clamp). From there the
+# PTFE reaches the clamp with R >= 15 in one ~50 deg arc (the bore in the mount follows the routed path; the
+# integrator's palm module cuts it). None = the original layout (sheaths along -a1).
+FAN_DOWN_DEG = 5.0
+FAN_TARGET_XY = (4.0, -1.0)
+SOCKET_L = 6.0
+EXIT_L = 4.0  # spinneret -> where the routed path starts (inside the mount)
 SHEATH_END_Z = -32.0  # the 6 sheaths end here in a hex bundle (r 2.3), clamped in the mount
 BUNDLE_R = 2.3
 MOUNT_Z = (-37.0, -17.2)
@@ -307,6 +318,34 @@ def _spin_pt(name, z, angle_off=0.0, r=BUNDLE_R):
     return to_world(J0["C"], [r * np.cos(a), r * np.sin(a), z])
 
 
+def fan_dir():
+    """World direction g of the sheaths leaving the spinneret (None -> -a1)."""
+    o, x, y, z = J0["C"]
+    if FAN_DOWN_DEG is None:
+        return -z
+    n = o + z * SHEATH_END_Z
+    h = np.array([FAN_TARGET_XY[0] - n[0], FAN_TARGET_XY[1] - n[1], 0.0])
+    h /= np.linalg.norm(h)
+    a = np.radians(FAN_DOWN_DEG)
+    return h * np.cos(a) + np.array([0, 0, -1.0]) * np.sin(a)
+
+
+def _fan_pt(name, dist, angle_off, r=BUNDLE_R):
+    """Point dist mm from the neck centre along g, offset r in the plane normal to g (spin angle as before)."""
+    o, x, y, z = J0["C"]
+    g = fan_dir()
+    e1 = x - (x @ g) * g
+    e1 /= np.linalg.norm(e1)
+    e2 = np.cross(g, e1)
+    a = np.radians(SPIN_ANG[name] + angle_off)
+    return o + z * NECK_Z + g * dist + r * (np.cos(a) * e1 + np.sin(a) * e2)
+
+
+def _fan_ctr(dist):
+    o, x, y, z = J0["C"]
+    return o + z * NECK_Z + fan_dir() * dist
+
+
 def node(st, lab):
     return next(n for n in st["nodes"] if n["lab"] == lab)
 
@@ -350,8 +389,11 @@ def strand_layout():
         role = name.rsplit("_", 1)[1]
         key = name
         nodes = [
-            {"type": "pt", "body": "mount", "lab": "exit", "p": _spin_pt(key, MOUNT_Z[0], ROT_MID, BUNDLE_R)},
-            {"type": "pt", "body": "mount", "lab": "socket", "p": _spin_pt(key, SHEATH_END_Z, ROT_MID, BUNDLE_R)},
+            {"type": "pt", "body": "mount", "lab": "exit",
+             "p": _spin_pt(key, MOUNT_Z[0], ROT_MID, BUNDLE_R) if FAN_DOWN_DEG is None else
+             _spin_pt(key, SHEATH_END_Z, ROT_MID, BUNDLE_R) + fan_dir() * EXIT_L},
+            {"type": "pt", "body": "mount", "lab": "socket",
+             "p": _spin_pt(key, SHEATH_END_Z, ROT_MID, BUNDLE_R)},
             {"type": "pt", "body": "base", "lab": "neck", "p": _spin_pt(key, NECK_Z, 0.0, NECK_R)},
         ]
         if j in ("mcp_flex", "ip"):
@@ -554,8 +596,10 @@ def make_mount():
         e, k = to_local(C, node(st, "exit")["p"]), to_local(C, node(st, "socket")["p"])
         if st["joint"] == "cmc_rot":
             tools.append(cyl_ab(e + 2.0 * K.unit(e - k), k, P.SHEATH_BORE / 2))
-        else:
+        elif FAN_DOWN_DEG is None:
             tools.append(cyl_ab(e - np.array([0, 0, 0.5]), k, P.SHEATH_BORE / 2))
+        else:  # the bore continues beyond 'exit' along the routed path (cut by the integrator's palm module)
+            tools.append(cyl_ab(e + 0.5 * K.unit(e - k), k, P.SHEATH_BORE / 2))
     # clear the base drum and the rot strands' path inside the block radius
     tools.append(cyl_z(ROT_SOCKET_W[0], MOUNT_Z[1], STOP_TOP + 1))
     s = cut(s, *tools)
@@ -569,7 +613,7 @@ def make_cap():
 
 def make_neck():
     """PTFE eyelet on the rot axis (all 6 strands pass its 1.6 mm hole), pressed into the cap."""
-    return place(cut(cyl_z(3.0, *CAP_Z), cyl_z(0.8, CAP_Z[0] - 1, CAP_Z[1] + 1)), J0["C"])
+    return place(cut(cyl_z(3.0, *CAP_Z), cyl_z(NECK_HOLE_R, CAP_Z[0] - 1, CAP_Z[1] + 1)), J0["C"])
 
 
 def make_bearing(z):

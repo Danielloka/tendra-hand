@@ -1,5 +1,5 @@
 warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
-build q=0: 17 parts in 3.1 s
+build q=0: 17 parts in 3.3 s
 == drive ==
   ok: True
   unreachable: 0
@@ -54,4 +54,4 @@ build q=0: 17 parts in 3.1 s
   flex    50 dev   -30: wrist_ring x palm_proxy=254.601; wrist_base x palm_proxy=138.672; pin_dev_f x palm_proxy=15.733
   flex    50 dev     0: wrist_ring x palm_proxy=254.601; wrist_base x palm_proxy=137.726; pin_dev_f x palm_proxy=15.733
   flex    50 dev    20: wrist_ring x palm_proxy=254.601; wrist_base x palm_proxy=137.884; pin_dev_f x palm_proxy=15.733
-done in 162 s
+done in 92 s

@@ -195,360 +195,70 @@
   }
  ],
  "adjuster_min_spacing": 5.0,
- "static_interference": [
-  [
-   "forearm_shell_back",
-   "W_wrist_rod_R",
-   79.105
-  ],
-  [
-   "forearm_shell_back",
-   "W_wrist_rod_L",
-   63.781
-  ],
-  [
-   "forearm_frame",
-   "W_wrist_rod_R",
-   41.277
-  ],
-  [
-   "forearm_shell_back",
-   "W_wrist_crank_R",
-   40.334
-  ],
-  [
-   "forearm_frame",
-   "W_wrist_rod_L",
-   39.92
-  ],
-  [
-   "forearm_shell_back",
-   "W_wrist_crank_L",
-   34.908
-  ],
-  [
-   "adjuster_block",
-   "forearm_frame",
-   5.651
-  ],
-  [
-   "sheath_10f",
-   "W_wrist_gears_R",
-   0.506
-  ],
-  [
-   "sheath_16f",
-   "W_wrist_gears_L",
-   0.506
-  ]
- ],
+ "static_interference": [],
  "moving": [
   {
    "q": [
     -52.0,
     -32.0
    ],
-   "hits": [
-    [
-     "forearm_frame",
-     "M_wrist_rod_L",
-     85.902
-    ],
-    [
-     "forearm_frame",
-     "M_wrist_rod_R",
-     39.665
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_R",
-     28.44
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_crank_R",
-     16.144
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_L",
-     7.326
-    ]
-   ]
+   "hits": []
   },
   {
    "q": [
     -52.0,
     0
    ],
-   "hits": [
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_L",
-     77.292
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_R",
-     53.407
-    ],
-    [
-     "forearm_frame",
-     "M_wrist_rod_L",
-     53.032
-    ],
-    [
-     "forearm_frame",
-     "M_wrist_rod_R",
-     52.991
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_crank_L",
-     40.121
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_crank_R",
-     31.486
-    ]
-   ]
+   "hits": []
   },
   {
    "q": [
     -52.0,
     22.0
    ],
-   "hits": [
-    [
-     "forearm_frame",
-     "M_wrist_rod_R",
-     52.67
-    ],
-    [
-     "forearm_frame",
-     "M_wrist_rod_L",
-     36.159
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_L",
-     30.887
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_crank_L",
-     16.449
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_R",
-     7.326
-    ]
-   ]
+   "hits": []
   },
   {
    "q": [
     0,
     -32.0
    ],
-   "hits": [
-    [
-     "forearm_frame",
-     "M_wrist_rod_L",
-     53.377
-    ],
-    [
-     "forearm_frame",
-     "M_wrist_rod_R",
-     52.904
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_L",
-     25.261
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_crank_L",
-     15.275
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_R",
-     7.326
-    ]
-   ]
+   "hits": []
   },
   {
    "q": [
     0,
     0
    ],
-   "hits": [
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_R",
-     79.105
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_L",
-     63.781
-    ],
-    [
-     "forearm_frame",
-     "M_wrist_rod_R",
-     41.277
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_crank_R",
-     40.334
-    ],
-    [
-     "forearm_frame",
-     "M_wrist_rod_L",
-     39.92
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_crank_L",
-     34.908
-    ]
-   ]
+   "hits": []
   },
   {
    "q": [
     0,
     22.0
    ],
-   "hits": [
-    [
-     "forearm_frame",
-     "M_wrist_rod_R",
-     52.77
-    ],
-    [
-     "forearm_frame",
-     "M_wrist_rod_L",
-     52.674
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_R",
-     16.02
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_crank_R",
-     8.777
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_L",
-     7.326
-    ]
-   ]
+   "hits": []
   },
   {
    "q": [
     52.0,
     -32.0
    ],
-   "hits": [
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_L",
-     72.594
-    ],
-    [
-     "forearm_frame",
-     "M_wrist_rod_L",
-     54.085
-    ],
-    [
-     "forearm_frame",
-     "M_wrist_rod_R",
-     53.25
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_crank_L",
-     38.589
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_R",
-     7.326
-    ]
-   ]
+   "hits": []
   },
   {
    "q": [
     52.0,
     0
    ],
-   "hits": [
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_R",
-     55.636
-    ],
-    [
-     "forearm_frame",
-     "M_wrist_rod_L",
-     35.382
-    ],
-    [
-     "forearm_frame",
-     "M_wrist_rod_R",
-     29.4
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_crank_R",
-     27.662
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_L",
-     11.872
-    ]
-   ]
+   "hits": []
   },
   {
    "q": [
     52.0,
     22.0
    ],
-   "hits": [
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_R",
-     71.433
-    ],
-    [
-     "forearm_frame",
-     "M_wrist_rod_L",
-     53.138
-    ],
-    [
-     "forearm_frame",
-     "M_wrist_rod_R",
-     47.591
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_crank_R",
-     38.19
-    ],
-    [
-     "forearm_shell_back",
-     "M_wrist_rod_L",
-     7.326
-    ]
-   ]
+   "hits": []
   }
  ],
  "interface": {
@@ -1390,12 +1100,12 @@
   },
   "envelope": {
    "x": [
-    -45.0,
-    45.0
+    -47.5,
+    47.5
    ],
    "y": [
-    -32.0,
-    32.0
+    -33.0,
+    33.0
    ],
    "z": [
     -230.0,

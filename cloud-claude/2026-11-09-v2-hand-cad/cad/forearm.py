@@ -53,7 +53,7 @@ Z_DECK = (-121.0, -118.0)
 Z_TRAY = (-216.0, -214.0)
 Z_FLANGE = (-230.0, -225.0)
 SHELL = (47.5, 33.0, 2.0)  # outer half x, half y, wall (95 x 66: the wrist cranks set the width)
-SHELL_TOP = (32.0, 29.5)  # half sizes at the top (z -18); wide enough that the rod balls stay outside
+SHELL_TOP = (36.0, 29.5)  # half sizes at the top (z -18); wide enough that the rod balls stay outside
 Z_SHELL_TOP, Z_SHELL_WIDE = -18.0, -48.0
 ARM_PCD, ARM_BOLTS, ARM_BOLT_D, ARM_BORE = 50.0, 4, 4.5, 24.0  # OpenArm J5 stand-in (verify)
 
@@ -307,6 +307,9 @@ def make_frame(wrist_iface):
     ox, oy, w = SHELL
     tx, ty = SHELL_TOP
     top = rrect(2 * 16.0, 2 * (ty - w), 3, 4.0, Z_SHELL_TOP - 4.0)  # narrow: the push rods pass beside it
+    for sx in (-1, 1):
+        x0, x1 = sorted((sx * 12.0, sx * 20.0))
+        top = top.cut(box(x0, x1, -12.5, 12.5, Z_SHELL_TOP - 6, Z_SHELL_TOP + 1))
     top = top.cut(rrect(2 * WR.BASE_OPEN[0] + 4, 2 * WR.BASE_OPEN[1] + 4, 4, 10, Z_SHELL_TOP - 6))
     for bx, by in wrist_iface["forearm_top"]["bolts"]:
         top = top.cut(cyl((bx, by, Z_SHELL_TOP - 5), (bx, by, Z_SHELL_TOP + 1), 2.0))  # M3 insert

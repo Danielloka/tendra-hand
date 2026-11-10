@@ -260,9 +260,9 @@ def make_crank(side, phi):
     _, A = K.drive_points(DR, side)
     C = K.crank_pin(DR, side, phi)
     y0, y1 = A[1] - 1.5, A[1] + 1.5
-    arm = cyl((A[0], y0, A[2]), (A[0], y1, A[2]), 5.0).union(cyl((C[0], y0, C[2]), (C[0], y1, C[2]), 4.0))
+    arm = cyl((A[0], y0, A[2]), (A[0], y1, A[2]), 5.0).union(cyl((C[0], y0, C[2]), (C[0], y1, C[2]), 3.0))
     d = np.array([C[0] - A[0], C[2] - A[2]])
-    n = np.array([-d[1], d[0]]) / np.linalg.norm(d) * 3.0
+    n = np.array([-d[1], d[0]]) / np.linalg.norm(d) * 2.5
     pts = [(A[0] + n[0], A[2] + n[1]), (C[0] + n[0], C[2] + n[1]), (C[0] - n[0], C[2] - n[1]), (A[0] - n[0], A[2] - n[1])]
     arm = arm.union(cq.Workplane("XZ", origin=(0, y1, 0)).polyline(pts).close().extrude(y1 - y0))
     return arm

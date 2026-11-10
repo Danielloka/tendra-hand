@@ -1,0 +1,548 @@
+{
+ "drive": {
+  "ok": true,
+  "unreachable": 0,
+  "min_flex_Nm_stall": 3.6267446090018955,
+  "median_flex_Nm_stall": 5.084144990528202,
+  "min_dev_Nm_stall": 16.123831575595315,
+  "median_dev_Nm_stall": 17.89737802622732,
+  "min_flex_Nm_cont": 1.1102279415311926,
+  "min_dev_Nm_cont": 4.9358668088557085,
+  "min_transmission_deg": 30.232600507100106,
+  "crank_range_deg": [
+   24.26308294516245,
+   138.61306442704208
+  ],
+  "servo_range_deg": [
+   -144.1176768309325,
+   149.76177557749813
+  ],
+  "max_rod_force_N_per_Nm": 186.84995508513967,
+  "rod_length": 84.73200242065951,
+  "sign_detA": [
+   1
+  ]
+ },
+ "bundle": {
+  "tube_min_bend_radius": 24.39462479625591,
+  "worst_pose": [
+   -50.0,
+   -30.0,
+   9
+  ],
+  "centreline_min_radius": 21.682406739157436,
+  "tube_dL_min": [
+   -6.4,
+   -5.2,
+   -5.16,
+   -5.97,
+   -5.88,
+   -4.68,
+   -3.48,
+   -3.36,
+   -4.16,
+   -4.96,
+   -4.15,
+   -2.95,
+   -1.75,
+   -1.55,
+   -2.35,
+   -3.15,
+   -4.15,
+   -2.95,
+   -1.75,
+   -1.55,
+   -2.35,
+   -3.15,
+   -5.88,
+   -4.68,
+   -3.48,
+   -3.36,
+   -4.16,
+   -4.96,
+   -6.4,
+   -5.2,
+   -5.16,
+   -5.97
+  ],
+  "tube_dL_max": [
+   5.5,
+   4.69,
+   4.68,
+   5.86,
+   4.49,
+   3.68,
+   2.88,
+   2.91,
+   4.12,
+   5.33,
+   2.68,
+   1.87,
+   1.07,
+   1.18,
+   2.39,
+   3.6,
+   2.68,
+   1.87,
+   1.07,
+   1.18,
+   2.39,
+   3.6,
+   4.49,
+   3.68,
+   2.88,
+   2.91,
+   4.12,
+   5.33,
+   5.5,
+   4.69,
+   4.68,
+   5.86
+  ],
+  "free_span_q0": 74.0
+ },
+ "stops": {
+  "flex+": 9.565,
+  "flex-": 9.565,
+  "dev+": 1.738,
+  "dev-": 1.738
+ },
+ "collisions": {
+  "-50,-30": [],
+  "-50,-15": [],
+  "-50,0": [],
+  "-50,20": [],
+  "-25,-30": [],
+  "-25,-15": [],
+  "-25,0": [],
+  "-25,20": [],
+  "0,-30": [],
+  "0,-15": [],
+  "0,0": [],
+  "0,20": [],
+  "25,-30": [],
+  "25,-15": [],
+  "25,0": [],
+  "25,20": [],
+  "50,-30": [],
+  "50,-15": [],
+  "50,0": [],
+  "50,20": []
+ },
+ "collisions_plain_palm": {
+  "-50,-30": [
+   [
+    "wrist_ring",
+    "palm_proxy",
+    254.601
+   ],
+   [
+    "wrist_base",
+    "palm_proxy",
+    138.672
+   ],
+   [
+    "pin_dev_b",
+    "palm_proxy",
+    15.733
+   ]
+  ],
+  "-50,0": [
+   [
+    "wrist_ring",
+    "palm_proxy",
+    254.601
+   ],
+   [
+    "wrist_base",
+    "palm_proxy",
+    137.726
+   ],
+   [
+    "pin_dev_b",
+    "palm_proxy",
+    15.733
+   ]
+  ],
+  "-50,20": [
+   [
+    "wrist_ring",
+    "palm_proxy",
+    254.601
+   ],
+   [
+    "wrist_base",
+    "palm_proxy",
+    137.884
+   ],
+   [
+    "pin_dev_b",
+    "palm_proxy",
+    15.733
+   ]
+  ],
+  "0,-30": [],
+  "0,0": [],
+  "0,20": [],
+  "50,-30": [
+   [
+    "wrist_ring",
+    "palm_proxy",
+    254.601
+   ],
+   [
+    "wrist_base",
+    "palm_proxy",
+    138.672
+   ],
+   [
+    "pin_dev_f",
+    "palm_proxy",
+    15.733
+   ]
+  ],
+  "50,0": [
+   [
+    "wrist_ring",
+    "palm_proxy",
+    254.601
+   ],
+   [
+    "wrist_base",
+    "palm_proxy",
+    137.726
+   ],
+   [
+    "pin_dev_f",
+    "palm_proxy",
+    15.733
+   ]
+  ],
+  "50,20": [
+   [
+    "wrist_ring",
+    "palm_proxy",
+    254.601
+   ],
+   [
+    "wrist_base",
+    "palm_proxy",
+    137.884
+   ],
+   [
+    "pin_dev_f",
+    "palm_proxy",
+    15.733
+   ]
+  ]
+ },
+ "interface": {
+  "palm_flange": {
+   "face_z": 15.0,
+   "bolts": [
+    {
+     "xy": [
+      -17.0,
+      -9.5
+     ],
+     "type": "M3 heat-set insert in the flange, screw from inside the palm",
+     "depth": 5.0
+    },
+    {
+     "xy": [
+      -17.0,
+      9.5
+     ],
+     "type": "M3 heat-set insert in the flange, screw from inside the palm",
+     "depth": 5.0
+    },
+    {
+     "xy": [
+      17.0,
+      -9.5
+     ],
+     "type": "M3 heat-set insert in the flange, screw from inside the palm",
+     "depth": 5.0
+    },
+    {
+     "xy": [
+      17.0,
+      9.5
+     ],
+     "type": "M3 heat-set insert in the flange, screw from inside the palm",
+     "depth": 5.0
+    }
+   ],
+   "outline_xy": {
+    "half_x": 21.5,
+    "half_y": 12.5,
+    "corner_r": 5.0
+   },
+   "bundle_opening": {
+    "half_x": 8.0,
+    "half_y": 8.0,
+    "corner_r": 3.0
+   },
+   "sheath_clamp": {
+    "z": [
+     14.0,
+     19.0
+    ],
+    "keepout_box": [
+     [
+      -11.075,
+      11.075
+     ],
+     [
+      -8.575,
+      8.575
+     ],
+     [
+      15.0,
+      19.0
+     ]
+    ],
+    "tube_cells_xy": [
+     [
+      -3.225,
+      -5.375
+     ],
+     [
+      -1.075,
+      -5.375
+     ],
+     [
+      1.075,
+      -5.375
+     ],
+     [
+      3.225,
+      -5.375
+     ],
+     [
+      -5.375,
+      -3.225
+     ],
+     [
+      -3.225,
+      -3.225
+     ],
+     [
+      -1.075,
+      -3.225
+     ],
+     [
+      1.075,
+      -3.225
+     ],
+     [
+      3.225,
+      -3.225
+     ],
+     [
+      5.375,
+      -3.225
+     ],
+     [
+      -5.375,
+      -1.075
+     ],
+     [
+      -3.225,
+      -1.075
+     ],
+     [
+      -1.075,
+      -1.075
+     ],
+     [
+      1.075,
+      -1.075
+     ],
+     [
+      3.225,
+      -1.075
+     ],
+     [
+      5.375,
+      -1.075
+     ],
+     [
+      -5.375,
+      1.075
+     ],
+     [
+      -3.225,
+      1.075
+     ],
+     [
+      -1.075,
+      1.075
+     ],
+     [
+      1.075,
+      1.075
+     ],
+     [
+      3.225,
+      1.075
+     ],
+     [
+      5.375,
+      1.075
+     ],
+     [
+      -5.375,
+      3.225
+     ],
+     [
+      -3.225,
+      3.225
+     ],
+     [
+      -1.075,
+      3.225
+     ],
+     [
+      1.075,
+      3.225
+     ],
+     [
+      3.225,
+      3.225
+     ],
+     [
+      5.375,
+      3.225
+     ],
+     [
+      -3.225,
+      5.375
+     ],
+     [
+      -1.075,
+      5.375
+     ],
+     [
+      1.075,
+      5.375
+     ],
+     [
+      3.225,
+      5.375
+     ]
+    ],
+    "note": "sheaths leave the clamp top (z 21) straight up into the palm; cell index = bundle slot"
+   },
+   "sensor_cable": {
+    "xy": [
+     0.0,
+     -6.575
+    ],
+    "d": 3.0
+   },
+   "palm_keepout": "see report 03: rounded heel (palm material must not enter the sweep of the forearm dev lugs)"
+  },
+  "forearm_top": {
+   "face_z": -18.0,
+   "bolts": [
+    [
+     -12.5,
+     -18.0
+    ],
+    [
+     -12.5,
+     18.0
+    ],
+    [
+     12.5,
+     -18.0
+    ],
+    [
+     12.5,
+     18.0
+    ]
+   ],
+   "bundle_opening": {
+    "half_x": 10.0,
+    "half_y": 12.0
+   },
+   "comb_z": -60.0
+  },
+  "drive": {
+   "servo_shaft": {
+    "R": [
+     26.0,
+     9.0,
+     -61.6
+    ],
+    "L": [
+     -26.0,
+     9.0,
+     -61.6
+    ]
+   },
+   "crank_axle": {
+    "R": [
+     22.04,
+     26.79,
+     -79.02
+    ],
+    "L": [
+     -22.04,
+     26.79,
+     -79.02
+    ]
+   },
+   "crank_r": 19.91,
+   "gear_ratio": 2.57,
+   "rod_length": 84.73200242065951,
+   "servo_box": {
+    "L": 45.2,
+    "W": 24.7,
+    "H": 35.0
+   }
+  }
+ },
+ "joints": {
+  "wrist_dev": {
+   "point": [
+    0,
+    0,
+    0
+   ],
+   "axis": [
+    0,
+    1,
+    0
+   ],
+   "range_deg": [
+    -30.0,
+    20.0
+   ],
+   "parent": "forearm",
+   "child": "wrist_ring",
+   "order": 1
+  },
+  "wrist_flex": {
+   "point": [
+    0,
+    0,
+    0
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "range_deg": [
+    -50.0,
+    50.0
+   ],
+   "parent": "wrist_ring",
+   "child": "palm",
+   "order": 2,
+   "note": "axis along X of the ring (rotated by wrist_dev); R_palm = Ry(dev) @ Rx(flex)"
+  }
+ }
+}

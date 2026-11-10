@@ -105,6 +105,7 @@ docs/       roadmap and guides
 research/   log.md, experiments, references
 website/    project website (Next.js app + design system)
 media/      photos, videos, screenshots, diagrams + catalog.json (the one place for project pictures)
+cloud-claude/ studies by Claude agent teams in cloud sessions (dated folders; not decisions). 2026-11-04-v1-wrist/ = 2-DOF wrist research
 ```
 
 Every folder has a README explaining what goes there. Keep them current.

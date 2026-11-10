@@ -1,0 +1,233 @@
+{
+ "a_open": {
+  "index": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 0.0,
+   "pip": 0.0
+  },
+  "middle": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 0.0,
+   "pip": 0.0
+  },
+  "ring": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 0.0,
+   "pip": 0.0
+  },
+  "little": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 0.0,
+   "pip": 0.0
+  },
+  "thumb": {
+   "cmc_rot": 26.159454041771934,
+   "cmc_flex": 2.107786023490517,
+   "mcp_flex": 39.750333551017995,
+   "ip": 47.53588414945834
+  },
+  "wrist": {
+   "wrist_flex": 0.0,
+   "wrist_dev": 0.0
+  }
+ },
+ "b_fist": {
+  "index": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 90.0,
+   "pip": 95.0
+  },
+  "middle": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 90.0,
+   "pip": 95.0
+  },
+  "ring": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 90.0,
+   "pip": 95.0
+  },
+  "little": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 90.0,
+   "pip": 95.0
+  },
+  "thumb": {
+   "cmc_rot": 102.88217853552469,
+   "cmc_flex": -29.785054438881197,
+   "mcp_flex": 54.80004800280083,
+   "ip": -14.999999999999998
+  },
+  "wrist": {
+   "wrist_flex": 0.0,
+   "wrist_dev": 0.0
+  }
+ },
+ "c_tip_pinch": {
+  "index": {
+   "mcp_abd": 12.354266292247582,
+   "mcp_flex": 31.831225923885395,
+   "pip": 31.136248409751094
+  },
+  "middle": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 15.0,
+   "pip": 20.0
+  },
+  "ring": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 15.0,
+   "pip": 20.0
+  },
+  "little": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 15.0,
+   "pip": 20.0
+  },
+  "thumb": {
+   "cmc_rot": 19.8449155548443,
+   "cmc_flex": 29.429122283791404,
+   "mcp_flex": 25.88045804346666,
+   "ip": 35.22459979031575
+  },
+  "wrist": {
+   "wrist_flex": 0.0,
+   "wrist_dev": 0.0
+  }
+ },
+ "d_thumb_little": {
+  "index": {
+   "mcp_abd": 12.0,
+   "mcp_flex": 0.0,
+   "pip": 0.0
+  },
+  "middle": {
+   "mcp_abd": 13.0,
+   "mcp_flex": 10.0,
+   "pip": 10.0
+  },
+  "ring": {
+   "mcp_abd": 14.0,
+   "mcp_flex": 25.0,
+   "pip": 25.0
+  },
+  "little": {
+   "mcp_abd": 14.999999999999996,
+   "mcp_flex": 31.51531809712064,
+   "pip": 25.000000000000004
+  },
+  "thumb": {
+   "cmc_rot": -22.017854627871685,
+   "cmc_flex": 54.333140458402525,
+   "mcp_flex": -9.999999999999979,
+   "ip": -14.999999999999977
+  },
+  "wrist": {
+   "wrist_flex": 0.0,
+   "wrist_dev": 0.0
+  }
+ },
+ "e_power55": {
+  "index": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 12.5,
+   "pip": 10.0
+  },
+  "middle": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 27.5,
+   "pip": 40.0
+  },
+  "ring": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 52.5,
+   "pip": 32.5
+  },
+  "little": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 72.5,
+   "pip": 7.5
+  },
+  "thumb": {
+   "cmc_rot": 42.94492841899009,
+   "cmc_flex": 37.29531284431788,
+   "mcp_flex": 33.441960518972486,
+   "ip": 37.591200134760506
+  },
+  "wrist": {
+   "wrist_flex": 0.0,
+   "wrist_dev": 0.0
+  },
+  "object": {
+   "cylinder": {
+    "d": 55.0,
+    "gamma": 49.26537507837593,
+    "zc": 82.19600774680849
+   }
+  }
+ },
+ "f_flex50_pinch": {
+  "index": {
+   "mcp_abd": 12.354266292247582,
+   "mcp_flex": 31.831225923885395,
+   "pip": 31.136248409751094
+  },
+  "middle": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 15.0,
+   "pip": 20.0
+  },
+  "ring": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 15.0,
+   "pip": 20.0
+  },
+  "little": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 15.0,
+   "pip": 20.0
+  },
+  "thumb": {
+   "cmc_rot": 19.8449155548443,
+   "cmc_flex": 29.429122283791404,
+   "mcp_flex": 25.88045804346666,
+   "ip": 35.22459979031575
+  },
+  "wrist": {
+   "wrist_flex": 50.0,
+   "wrist_dev": 0.0
+  }
+ },
+ "g_dev-30": {
+  "index": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 0.0,
+   "pip": 0.0
+  },
+  "middle": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 0.0,
+   "pip": 0.0
+  },
+  "ring": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 0.0,
+   "pip": 0.0
+  },
+  "little": {
+   "mcp_abd": 0.0,
+   "mcp_flex": 0.0,
+   "pip": 0.0
+  },
+  "thumb": {
+   "cmc_rot": 26.159454041771934,
+   "cmc_flex": 2.107786023490517,
+   "mcp_flex": 39.750333551017995,
+   "ip": 47.53588414945834
+  },
+  "wrist": {
+   "wrist_flex": 0.0,
+   "wrist_dev": -30.0
+  }
+ }
+}

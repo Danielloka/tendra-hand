@@ -703,6 +703,9 @@ def _nip_pins(j, half_len):
     return holes, pins
 
 
+LUG_TRIM = {"cmc_flex": (-10.0, 0.0)}  # empirical (flex, ext) lug angle trims from stop_check() (deg)
+
+
 def _stop_lugs(j, hub_r, xspan, face_z):
     """Two lugs on the child hub (joint frame of j) that hit the parent's end face (plane z = face_z, i.e.
     -(hub_r + gap) in the parent joint frame) at the range limits. Angles from +y toward +z."""
@@ -714,7 +717,7 @@ def _stop_lugs(j, hub_r, xspan, face_z):
     # lug's leading edge reaches -90 +/- psi.
     for lim, sgn in ((hi, +1), (lo, -1)):
         edge = (-90.0 - psi) if sgn > 0 else (-90.0 + psi)  # flex lug comes from the -z/-y side
-        lead = edge - lim
+        lead = edge - lim + LUG_TRIM.get(j, (0.0, 0.0))[0 if sgn > 0 else 1]
         a0, a1 = (lead - 8.0, lead) if sgn > 0 else (lead, lead + 8.0)
         for x0, x1 in (xspan, (-xspan[1], -xspan[0])):
             out.append(_sector_ring_x(hub_r - 0.5, Rl, x0, x1, a0, a1))
@@ -901,7 +904,7 @@ def interface():
     bolts = []
     for b in range(3):
         a = np.radians(W_ANG + 180 + (b - 1) * 100)
-        bolts.append({"point": to_world(C, [16.5 * np.cos(a), 16.5 * np.sin(a), -34.0]).tolist(),
+        bolts.append({"point": to_world(C, [BOLT_R * np.cos(a), BOLT_R * np.sin(a), FLANGE_Z[0]]).tolist(),
                       "axis": z.tolist(), "size": "M3 (clearance 3.4 in the flange, heat-set insert in the palm)"})
     exits = {}
     for name, st in STRANDS.items():
@@ -911,7 +914,10 @@ def interface():
     return {
         "mount": {"part": "thumb_mount", "bore_axis_point": o.tolist(), "bore_axis": z.tolist(),
                   "housing": {"od": MOUNT_OD, "z_local": MOUNT_Z, "frame": "C (origin P, z = cmc_rot axis)"},
-                  "flange": {"od": 40.0, "z_local": (-34.0, -30.0)}, "bolts": bolts},
+                  "flange": {"od": FLANGE_OD, "z_local": FLANGE_Z}, "bolts": bolts,
+                  "bearings": f"2 x {BEARING['name']} (20 x 27 x 4)"},
+        "rest_pose_note": "q = 0: thumb straight (MCP, IP 0), standing out in front of the thenar in a C-ready "
+                          "posture; out-of-the-way 'flat' pose = " + str(DESIGN_JSON["eval"]["flat"]["q_thumb"]),
         "cmc_centre": o.tolist(),
         "strand_exits": exits,
         "envelope_stl": str((OUT / "thumb_envelope_hull.stl").relative_to(HERE.parent)),
@@ -1007,6 +1013,32 @@ def collision_sweep(quick=False):
         pairs = interference(parts, threshold=0.5, ignore=IGNORE)
         out.append((q, pairs))
         print("  q", {k: round(v) for k, v in q.items()}, "->", pairs if pairs else "clear", flush=True)
+    return out
+
+
+def stop_check(step=2.0, beyond=30.0):
+    """First contact between each joint's child and parent bodies when driven past its limits (others 0).
+    A good hard stop touches 0-6 deg past the soft limit."""
+    from tools.checks import interference
+    out = {}
+    groups = {"cmc_rot": (["thumb_mount"], ["thumb_base", "base_cap"]),
+              "cmc_flex": (["thumb_base"], ["thumb_metacarpal", "thenar_pad"]),
+              "mcp_flex": (["thumb_metacarpal"], ["thumb_proximal"]),
+              "ip": (["thumb_proximal"], ["thumb_distal", "thumb_pad"])}
+    for j, (par, ch) in groups.items():
+        res = {}
+        for end, sgn in ((RANGES[j][1], +1), (RANGES[j][0], -1)):
+            hit = None
+            for d in np.arange(-6.0, beyond + 0.1, step):
+                q = {j: end + sgn * d}
+                parts = {k: v for k, v in build(q)["parts"].items() if k in par + ch}
+                pairs = [p for p in interference(parts, threshold=0.05) if (p[0] in par) != (p[1] in par)]
+                if pairs:
+                    hit = float(d)
+                    break
+            res["max" if sgn > 0 else "min"] = hit
+        out[j] = res
+        print(f"  stop {j}: first contact {res} deg past the limit (None = no stop within {beyond})", flush=True)
     return out
 
 
@@ -1164,6 +1196,9 @@ def main():
     if "--no-render" not in sys.argv:
         print("renders...")
         render_all()
+    print("hard stops:")
+    stops = stop_check(3.0 if quick else 2.0)
+    (OUT / "stops.json").write_text(json.dumps(stops, indent=1))
     print("collisions:")
     col = collision_sweep(quick)
     (OUT / "collisions.json").write_text(json.dumps([(q, p) for q, p in col], indent=1))

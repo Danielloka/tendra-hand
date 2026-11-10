@@ -1,0 +1,25 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+build: 80 parts in 53.6 s
+forearm sheath fan: min bend radius 22.2 mm (limit 15.0)
+adjuster heads: min spacing at the same height 5.00 mm (head 4.5)
+invalid solids: none
+  static interference (4 s): 
+    forearm_shell_back x W_wrist_rod_R = 79.105
+    forearm_shell_back x W_wrist_rod_L = 63.781
+    forearm_frame x W_wrist_rod_R = 41.277
+    forearm_shell_back x W_wrist_crank_R = 40.334
+    forearm_frame x W_wrist_rod_L = 39.92
+    forearm_shell_back x W_wrist_crank_L = 34.908
+    adjuster_block x forearm_frame = 5.651
+    sheath_10f x W_wrist_gears_R = 0.506
+    sheath_16f x W_wrist_gears_L = 0.506
+  wrist flex  -52 dev  -32: forearm_frame x M_wrist_rod_L=85.902; forearm_frame x M_wrist_rod_R=39.665; forearm_shell_back x M_wrist_rod_R=28.44; forearm_shell_back x M_wrist_crank_R=16.144; forearm_shell_back x M_wrist_rod_L=7.326
+  wrist flex  -52 dev    0: forearm_shell_back x M_wrist_rod_L=77.292; forearm_shell_back x M_wrist_rod_R=53.407; forearm_frame x M_wrist_rod_L=53.032; forearm_frame x M_wrist_rod_R=52.991; forearm_shell_back x M_wrist_crank_L=40.121; forearm_shell_back x M_wrist_crank_R=31.486
+  wrist flex  -52 dev   22: forearm_frame x M_wrist_rod_R=52.67; forearm_frame x M_wrist_rod_L=36.159; forearm_shell_back x M_wrist_rod_L=30.887; forearm_shell_back x M_wrist_crank_L=16.449; forearm_shell_back x M_wrist_rod_R=7.326
+  wrist flex    0 dev  -32: forearm_frame x M_wrist_rod_L=53.377; forearm_frame x M_wrist_rod_R=52.904; forearm_shell_back x M_wrist_rod_L=25.261; forearm_shell_back x M_wrist_crank_L=15.275; forearm_shell_back x M_wrist_rod_R=7.326
+  wrist flex    0 dev    0: forearm_shell_back x M_wrist_rod_R=79.105; forearm_shell_back x M_wrist_rod_L=63.781; forearm_frame x M_wrist_rod_R=41.277; forearm_shell_back x M_wrist_crank_R=40.334; forearm_frame x M_wrist_rod_L=39.92; forearm_shell_back x M_wrist_crank_L=34.908
+  wrist flex    0 dev   22: forearm_frame x M_wrist_rod_R=52.77; forearm_frame x M_wrist_rod_L=52.674; forearm_shell_back x M_wrist_rod_R=16.02; forearm_shell_back x M_wrist_crank_R=8.777; forearm_shell_back x M_wrist_rod_L=7.326
+  wrist flex   52 dev  -32: forearm_shell_back x M_wrist_rod_L=72.594; forearm_frame x M_wrist_rod_L=54.085; forearm_frame x M_wrist_rod_R=53.25; forearm_shell_back x M_wrist_crank_L=38.589; forearm_shell_back x M_wrist_rod_R=7.326
+  wrist flex   52 dev    0: forearm_shell_back x M_wrist_rod_R=55.636; forearm_frame x M_wrist_rod_L=35.382; forearm_frame x M_wrist_rod_R=29.4; forearm_shell_back x M_wrist_crank_R=27.662; forearm_shell_back x M_wrist_rod_L=11.872
+  wrist flex   52 dev   22: forearm_shell_back x M_wrist_rod_R=71.433; forearm_frame x M_wrist_rod_L=53.138; forearm_frame x M_wrist_rod_R=47.591; forearm_shell_back x M_wrist_crank_R=38.19; forearm_shell_back x M_wrist_rod_L=7.326
+done in 83 s

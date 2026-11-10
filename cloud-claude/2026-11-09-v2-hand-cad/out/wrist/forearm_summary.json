@@ -1,0 +1,1407 @@
+{
+ "sheath_min_bend": 22.20499249079993,
+ "sheaths": [
+  {
+   "id": 1,
+   "strand": "flex",
+   "cell": 14,
+   "min_r": 71.3
+  },
+  {
+   "id": 1,
+   "strand": "ext",
+   "cell": 15,
+   "min_r": 37.1
+  },
+  {
+   "id": 2,
+   "strand": "flex",
+   "cell": 30,
+   "min_r": 23.0
+  },
+  {
+   "id": 2,
+   "strand": "ext",
+   "cell": 26,
+   "min_r": 36.9
+  },
+  {
+   "id": 3,
+   "strand": "flex",
+   "cell": 20,
+   "min_r": 46.2
+  },
+  {
+   "id": 3,
+   "strand": "ext",
+   "cell": 21,
+   "min_r": 87.8
+  },
+  {
+   "id": 4,
+   "strand": "flex",
+   "cell": 9,
+   "min_r": 45.1
+  },
+  {
+   "id": 4,
+   "strand": "ext",
+   "cell": 3,
+   "min_r": 26.6
+  },
+  {
+   "id": 5,
+   "strand": "flex",
+   "cell": 25,
+   "min_r": 62.2
+  },
+  {
+   "id": 5,
+   "strand": "ext",
+   "cell": 19,
+   "min_r": 98.3
+  },
+  {
+   "id": 6,
+   "strand": "flex",
+   "cell": 13,
+   "min_r": 125.8
+  },
+  {
+   "id": 6,
+   "strand": "ext",
+   "cell": 8,
+   "min_r": 50.0
+  },
+  {
+   "id": 7,
+   "strand": "flex",
+   "cell": 7,
+   "min_r": 45.9
+  },
+  {
+   "id": 7,
+   "strand": "ext",
+   "cell": 2,
+   "min_r": 27.8
+  },
+  {
+   "id": 8,
+   "strand": "flex",
+   "cell": 6,
+   "min_r": 45.9
+  },
+  {
+   "id": 8,
+   "strand": "ext",
+   "cell": 1,
+   "min_r": 27.8
+  },
+  {
+   "id": 9,
+   "strand": "flex",
+   "cell": 12,
+   "min_r": 125.8
+  },
+  {
+   "id": 9,
+   "strand": "ext",
+   "cell": 11,
+   "min_r": 41.1
+  },
+  {
+   "id": 10,
+   "strand": "flex",
+   "cell": 31,
+   "min_r": 22.2
+  },
+  {
+   "id": 10,
+   "strand": "ext",
+   "cell": 27,
+   "min_r": 33.9
+  },
+  {
+   "id": 11,
+   "strand": "flex",
+   "cell": 5,
+   "min_r": 42.2
+  },
+  {
+   "id": 11,
+   "strand": "ext",
+   "cell": 0,
+   "min_r": 26.6
+  },
+  {
+   "id": 12,
+   "strand": "flex",
+   "cell": 24,
+   "min_r": 62.2
+  },
+  {
+   "id": 12,
+   "strand": "ext",
+   "cell": 18,
+   "min_r": 98.3
+  },
+  {
+   "id": 13,
+   "strand": "flex",
+   "cell": 10,
+   "min_r": 106.0
+  },
+  {
+   "id": 13,
+   "strand": "ext",
+   "cell": 4,
+   "min_r": 43.2
+  },
+  {
+   "id": 14,
+   "strand": "flex",
+   "cell": 17,
+   "min_r": 46.2
+  },
+  {
+   "id": 14,
+   "strand": "ext",
+   "cell": 16,
+   "min_r": 87.8
+  },
+  {
+   "id": 15,
+   "strand": "flex",
+   "cell": 29,
+   "min_r": 23.0
+  },
+  {
+   "id": 15,
+   "strand": "ext",
+   "cell": 23,
+   "min_r": 36.9
+  },
+  {
+   "id": 16,
+   "strand": "flex",
+   "cell": 28,
+   "min_r": 22.2
+  },
+  {
+   "id": 16,
+   "strand": "ext",
+   "cell": 22,
+   "min_r": 33.9
+  }
+ ],
+ "adjuster_min_spacing": 5.0,
+ "static_interference": [
+  [
+   "forearm_shell_back",
+   "W_wrist_rod_R",
+   79.105
+  ],
+  [
+   "forearm_shell_back",
+   "W_wrist_rod_L",
+   63.781
+  ],
+  [
+   "forearm_frame",
+   "W_wrist_rod_R",
+   41.277
+  ],
+  [
+   "forearm_shell_back",
+   "W_wrist_crank_R",
+   40.334
+  ],
+  [
+   "forearm_frame",
+   "W_wrist_rod_L",
+   39.92
+  ],
+  [
+   "forearm_shell_back",
+   "W_wrist_crank_L",
+   34.908
+  ],
+  [
+   "adjuster_block",
+   "forearm_frame",
+   5.651
+  ],
+  [
+   "sheath_10f",
+   "W_wrist_gears_R",
+   0.506
+  ],
+  [
+   "sheath_16f",
+   "W_wrist_gears_L",
+   0.506
+  ]
+ ],
+ "moving": [
+  {
+   "q": [
+    -52.0,
+    -32.0
+   ],
+   "hits": [
+    [
+     "forearm_frame",
+     "M_wrist_rod_L",
+     85.902
+    ],
+    [
+     "forearm_frame",
+     "M_wrist_rod_R",
+     39.665
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_R",
+     28.44
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_crank_R",
+     16.144
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_L",
+     7.326
+    ]
+   ]
+  },
+  {
+   "q": [
+    -52.0,
+    0
+   ],
+   "hits": [
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_L",
+     77.292
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_R",
+     53.407
+    ],
+    [
+     "forearm_frame",
+     "M_wrist_rod_L",
+     53.032
+    ],
+    [
+     "forearm_frame",
+     "M_wrist_rod_R",
+     52.991
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_crank_L",
+     40.121
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_crank_R",
+     31.486
+    ]
+   ]
+  },
+  {
+   "q": [
+    -52.0,
+    22.0
+   ],
+   "hits": [
+    [
+     "forearm_frame",
+     "M_wrist_rod_R",
+     52.67
+    ],
+    [
+     "forearm_frame",
+     "M_wrist_rod_L",
+     36.159
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_L",
+     30.887
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_crank_L",
+     16.449
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_R",
+     7.326
+    ]
+   ]
+  },
+  {
+   "q": [
+    0,
+    -32.0
+   ],
+   "hits": [
+    [
+     "forearm_frame",
+     "M_wrist_rod_L",
+     53.377
+    ],
+    [
+     "forearm_frame",
+     "M_wrist_rod_R",
+     52.904
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_L",
+     25.261
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_crank_L",
+     15.275
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_R",
+     7.326
+    ]
+   ]
+  },
+  {
+   "q": [
+    0,
+    0
+   ],
+   "hits": [
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_R",
+     79.105
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_L",
+     63.781
+    ],
+    [
+     "forearm_frame",
+     "M_wrist_rod_R",
+     41.277
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_crank_R",
+     40.334
+    ],
+    [
+     "forearm_frame",
+     "M_wrist_rod_L",
+     39.92
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_crank_L",
+     34.908
+    ]
+   ]
+  },
+  {
+   "q": [
+    0,
+    22.0
+   ],
+   "hits": [
+    [
+     "forearm_frame",
+     "M_wrist_rod_R",
+     52.77
+    ],
+    [
+     "forearm_frame",
+     "M_wrist_rod_L",
+     52.674
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_R",
+     16.02
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_crank_R",
+     8.777
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_L",
+     7.326
+    ]
+   ]
+  },
+  {
+   "q": [
+    52.0,
+    -32.0
+   ],
+   "hits": [
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_L",
+     72.594
+    ],
+    [
+     "forearm_frame",
+     "M_wrist_rod_L",
+     54.085
+    ],
+    [
+     "forearm_frame",
+     "M_wrist_rod_R",
+     53.25
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_crank_L",
+     38.589
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_R",
+     7.326
+    ]
+   ]
+  },
+  {
+   "q": [
+    52.0,
+    0
+   ],
+   "hits": [
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_R",
+     55.636
+    ],
+    [
+     "forearm_frame",
+     "M_wrist_rod_L",
+     35.382
+    ],
+    [
+     "forearm_frame",
+     "M_wrist_rod_R",
+     29.4
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_crank_R",
+     27.662
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_L",
+     11.872
+    ]
+   ]
+  },
+  {
+   "q": [
+    52.0,
+    22.0
+   ],
+   "hits": [
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_R",
+     71.433
+    ],
+    [
+     "forearm_frame",
+     "M_wrist_rod_L",
+     53.138
+    ],
+    [
+     "forearm_frame",
+     "M_wrist_rod_R",
+     47.591
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_crank_R",
+     38.19
+    ],
+    [
+     "forearm_shell_back",
+     "M_wrist_rod_L",
+     7.326
+    ]
+   ]
+  }
+ ],
+ "interface": {
+  "servos": {
+   "1": {
+    "joint": "index_pip",
+    "side": "R",
+    "level": 1,
+    "column_y": -6.75,
+    "hls_room": false,
+    "spool_centre": [
+     10.8,
+     -6.75,
+     -141.0
+    ],
+    "spool_axis": [
+     -1.0,
+     0,
+     0
+    ],
+    "flex": {
+     "tangent": [
+      9.700000000000001,
+      -1.75,
+      -141.0
+     ],
+     "clamp": [
+      9.700000000000001,
+      -1.75,
+      -115.5
+     ],
+     "bundle_cell": 14
+    },
+    "ext": {
+     "tangent": [
+      11.9,
+      -11.75,
+      -141.0
+     ],
+     "clamp": [
+      11.9,
+      -11.75,
+      -115.5
+     ],
+     "bundle_cell": 15
+    }
+   },
+   "2": {
+    "joint": "index_mcp_flex",
+    "side": "R",
+    "level": 2,
+    "column_y": 20.25,
+    "hls_room": true,
+    "spool_centre": [
+     5.8,
+     20.25,
+     -175.0
+    ],
+    "spool_axis": [
+     -1.0,
+     0,
+     0
+    ],
+    "flex": {
+     "tangent": [
+      4.699999999999999,
+      25.25,
+      -175.0
+     ],
+     "clamp": [
+      4.699999999999999,
+      25.25,
+      -115.5
+     ],
+     "bundle_cell": 30
+    },
+    "ext": {
+     "tangent": [
+      6.9,
+      15.25,
+      -175.0
+     ],
+     "clamp": [
+      6.9,
+      15.25,
+      -115.5
+     ],
+     "bundle_cell": 26
+    }
+   },
+   "3": {
+    "joint": "index_mcp_abd",
+    "side": "R",
+    "level": 1,
+    "column_y": 6.75,
+    "hls_room": false,
+    "spool_centre": [
+     10.8,
+     6.75,
+     -141.0
+    ],
+    "spool_axis": [
+     -1.0,
+     0,
+     0
+    ],
+    "flex": {
+     "tangent": [
+      9.700000000000001,
+      11.75,
+      -141.0
+     ],
+     "clamp": [
+      9.700000000000001,
+      11.75,
+      -121.5
+     ],
+     "bundle_cell": 20
+    },
+    "ext": {
+     "tangent": [
+      11.9,
+      1.75,
+      -141.0
+     ],
+     "clamp": [
+      11.9,
+      1.75,
+      -121.5
+     ],
+     "bundle_cell": 21
+    }
+   },
+   "4": {
+    "joint": "thumb_ip",
+    "side": "R",
+    "level": 1,
+    "column_y": -20.25,
+    "hls_room": false,
+    "spool_centre": [
+     10.8,
+     -20.25,
+     -141.0
+    ],
+    "spool_axis": [
+     -1.0,
+     0,
+     0
+    ],
+    "flex": {
+     "tangent": [
+      9.700000000000001,
+      -15.25,
+      -141.0
+     ],
+     "clamp": [
+      9.700000000000001,
+      -15.25,
+      -121.5
+     ],
+     "bundle_cell": 9
+    },
+    "ext": {
+     "tangent": [
+      11.9,
+      -25.25,
+      -141.0
+     ],
+     "clamp": [
+      11.9,
+      -25.25,
+      -121.5
+     ],
+     "bundle_cell": 3
+    }
+   },
+   "5": {
+    "joint": "thumb_mcp_flex",
+    "side": "R",
+    "level": 2,
+    "column_y": 6.75,
+    "hls_room": false,
+    "spool_centre": [
+     5.8,
+     6.75,
+     -175.0
+    ],
+    "spool_axis": [
+     -1.0,
+     0,
+     0
+    ],
+    "flex": {
+     "tangent": [
+      4.699999999999999,
+      11.75,
+      -175.0
+     ],
+     "clamp": [
+      4.699999999999999,
+      11.75,
+      -121.5
+     ],
+     "bundle_cell": 25
+    },
+    "ext": {
+     "tangent": [
+      6.9,
+      1.75,
+      -175.0
+     ],
+     "clamp": [
+      6.9,
+      1.75,
+      -121.5
+     ],
+     "bundle_cell": 19
+    }
+   },
+   "6": {
+    "joint": "thumb_cmc_flex",
+    "side": "R",
+    "level": 2,
+    "column_y": -6.75,
+    "hls_room": true,
+    "spool_centre": [
+     5.8,
+     -6.75,
+     -175.0
+    ],
+    "spool_axis": [
+     -1.0,
+     0,
+     0
+    ],
+    "flex": {
+     "tangent": [
+      4.699999999999999,
+      -1.75,
+      -175.0
+     ],
+     "clamp": [
+      4.699999999999999,
+      -1.75,
+      -115.5
+     ],
+     "bundle_cell": 13
+    },
+    "ext": {
+     "tangent": [
+      6.9,
+      -11.75,
+      -175.0
+     ],
+     "clamp": [
+      6.9,
+      -11.75,
+      -115.5
+     ],
+     "bundle_cell": 8
+    }
+   },
+   "7": {
+    "joint": "thumb_cmc_rot",
+    "side": "R",
+    "level": 2,
+    "column_y": -20.25,
+    "hls_room": true,
+    "spool_centre": [
+     5.8,
+     -20.25,
+     -175.0
+    ],
+    "spool_axis": [
+     -1.0,
+     0,
+     0
+    ],
+    "flex": {
+     "tangent": [
+      4.699999999999999,
+      -15.25,
+      -175.0
+     ],
+     "clamp": [
+      4.699999999999999,
+      -15.25,
+      -121.5
+     ],
+     "bundle_cell": 7
+    },
+    "ext": {
+     "tangent": [
+      6.9,
+      -25.25,
+      -175.0
+     ],
+     "clamp": [
+      6.9,
+      -25.25,
+      -121.5
+     ],
+     "bundle_cell": 2
+    }
+   },
+   "8": {
+    "joint": "middle_pip",
+    "side": "L",
+    "level": 2,
+    "column_y": -20.25,
+    "hls_room": false,
+    "spool_centre": [
+     -5.8,
+     -20.25,
+     -175.0
+    ],
+    "spool_axis": [
+     1.0,
+     0,
+     0
+    ],
+    "flex": {
+     "tangent": [
+      -4.699999999999999,
+      -15.25,
+      -175.0
+     ],
+     "clamp": [
+      -4.699999999999999,
+      -15.25,
+      -121.5
+     ],
+     "bundle_cell": 6
+    },
+    "ext": {
+     "tangent": [
+      -6.9,
+      -25.25,
+      -175.0
+     ],
+     "clamp": [
+      -6.9,
+      -25.25,
+      -121.5
+     ],
+     "bundle_cell": 1
+    }
+   },
+   "9": {
+    "joint": "middle_mcp_flex",
+    "side": "L",
+    "level": 2,
+    "column_y": -6.75,
+    "hls_room": true,
+    "spool_centre": [
+     -5.8,
+     -6.75,
+     -175.0
+    ],
+    "spool_axis": [
+     1.0,
+     0,
+     0
+    ],
+    "flex": {
+     "tangent": [
+      -4.699999999999999,
+      -1.75,
+      -175.0
+     ],
+     "clamp": [
+      -4.699999999999999,
+      -1.75,
+      -115.5
+     ],
+     "bundle_cell": 12
+    },
+    "ext": {
+     "tangent": [
+      -6.9,
+      -11.75,
+      -175.0
+     ],
+     "clamp": [
+      -6.9,
+      -11.75,
+      -115.5
+     ],
+     "bundle_cell": 11
+    }
+   },
+   "10": {
+    "joint": "middle_mcp_abd",
+    "side": "R",
+    "level": 1,
+    "column_y": 20.25,
+    "hls_room": false,
+    "spool_centre": [
+     10.8,
+     20.25,
+     -141.0
+    ],
+    "spool_axis": [
+     -1.0,
+     0,
+     0
+    ],
+    "flex": {
+     "tangent": [
+      9.700000000000001,
+      25.25,
+      -141.0
+     ],
+     "clamp": [
+      9.700000000000001,
+      25.25,
+      -115.5
+     ],
+     "bundle_cell": 31
+    },
+    "ext": {
+     "tangent": [
+      11.9,
+      15.25,
+      -141.0
+     ],
+     "clamp": [
+      11.9,
+      15.25,
+      -115.5
+     ],
+     "bundle_cell": 27
+    }
+   },
+   "11": {
+    "joint": "ring_pip",
+    "side": "L",
+    "level": 1,
+    "column_y": -20.25,
+    "hls_room": false,
+    "spool_centre": [
+     -10.8,
+     -20.25,
+     -141.0
+    ],
+    "spool_axis": [
+     1.0,
+     0,
+     0
+    ],
+    "flex": {
+     "tangent": [
+      -9.700000000000001,
+      -15.25,
+      -141.0
+     ],
+     "clamp": [
+      -9.700000000000001,
+      -15.25,
+      -121.5
+     ],
+     "bundle_cell": 5
+    },
+    "ext": {
+     "tangent": [
+      -11.9,
+      -25.25,
+      -141.0
+     ],
+     "clamp": [
+      -11.9,
+      -25.25,
+      -121.5
+     ],
+     "bundle_cell": 0
+    }
+   },
+   "12": {
+    "joint": "ring_mcp_flex",
+    "side": "L",
+    "level": 2,
+    "column_y": 6.75,
+    "hls_room": true,
+    "spool_centre": [
+     -5.8,
+     6.75,
+     -175.0
+    ],
+    "spool_axis": [
+     1.0,
+     0,
+     0
+    ],
+    "flex": {
+     "tangent": [
+      -4.699999999999999,
+      11.75,
+      -175.0
+     ],
+     "clamp": [
+      -4.699999999999999,
+      11.75,
+      -121.5
+     ],
+     "bundle_cell": 24
+    },
+    "ext": {
+     "tangent": [
+      -6.9,
+      1.75,
+      -175.0
+     ],
+     "clamp": [
+      -6.9,
+      1.75,
+      -121.5
+     ],
+     "bundle_cell": 18
+    }
+   },
+   "13": {
+    "joint": "ring_mcp_abd",
+    "side": "L",
+    "level": 1,
+    "column_y": -6.75,
+    "hls_room": false,
+    "spool_centre": [
+     -10.8,
+     -6.75,
+     -141.0
+    ],
+    "spool_axis": [
+     1.0,
+     0,
+     0
+    ],
+    "flex": {
+     "tangent": [
+      -9.700000000000001,
+      -1.75,
+      -141.0
+     ],
+     "clamp": [
+      -9.700000000000001,
+      -1.75,
+      -115.5
+     ],
+     "bundle_cell": 10
+    },
+    "ext": {
+     "tangent": [
+      -11.9,
+      -11.75,
+      -141.0
+     ],
+     "clamp": [
+      -11.9,
+      -11.75,
+      -115.5
+     ],
+     "bundle_cell": 4
+    }
+   },
+   "14": {
+    "joint": "little_pip",
+    "side": "L",
+    "level": 1,
+    "column_y": 6.75,
+    "hls_room": false,
+    "spool_centre": [
+     -10.8,
+     6.75,
+     -141.0
+    ],
+    "spool_axis": [
+     1.0,
+     0,
+     0
+    ],
+    "flex": {
+     "tangent": [
+      -9.700000000000001,
+      11.75,
+      -141.0
+     ],
+     "clamp": [
+      -9.700000000000001,
+      11.75,
+      -121.5
+     ],
+     "bundle_cell": 17
+    },
+    "ext": {
+     "tangent": [
+      -11.9,
+      1.75,
+      -141.0
+     ],
+     "clamp": [
+      -11.9,
+      1.75,
+      -121.5
+     ],
+     "bundle_cell": 16
+    }
+   },
+   "15": {
+    "joint": "little_mcp_flex",
+    "side": "L",
+    "level": 2,
+    "column_y": 20.25,
+    "hls_room": true,
+    "spool_centre": [
+     -5.8,
+     20.25,
+     -175.0
+    ],
+    "spool_axis": [
+     1.0,
+     0,
+     0
+    ],
+    "flex": {
+     "tangent": [
+      -4.699999999999999,
+      25.25,
+      -175.0
+     ],
+     "clamp": [
+      -4.699999999999999,
+      25.25,
+      -115.5
+     ],
+     "bundle_cell": 29
+    },
+    "ext": {
+     "tangent": [
+      -6.9,
+      15.25,
+      -175.0
+     ],
+     "clamp": [
+      -6.9,
+      15.25,
+      -115.5
+     ],
+     "bundle_cell": 23
+    }
+   },
+   "16": {
+    "joint": "little_mcp_abd",
+    "side": "L",
+    "level": 1,
+    "column_y": 20.25,
+    "hls_room": false,
+    "spool_centre": [
+     -10.8,
+     20.25,
+     -141.0
+    ],
+    "spool_axis": [
+     1.0,
+     0,
+     0
+    ],
+    "flex": {
+     "tangent": [
+      -9.700000000000001,
+      25.25,
+      -141.0
+     ],
+     "clamp": [
+      -9.700000000000001,
+      25.25,
+      -115.5
+     ],
+     "bundle_cell": 28
+    },
+    "ext": {
+     "tangent": [
+      -11.9,
+      15.25,
+      -141.0
+     ],
+     "clamp": [
+      -11.9,
+      15.25,
+      -115.5
+     ],
+     "bundle_cell": 22
+    }
+   }
+  },
+  "bundle_cells_xy": [
+   [
+    -3.225,
+    -5.375
+   ],
+   [
+    -1.075,
+    -5.375
+   ],
+   [
+    1.075,
+    -5.375
+   ],
+   [
+    3.225,
+    -5.375
+   ],
+   [
+    -5.375,
+    -3.225
+   ],
+   [
+    -3.225,
+    -3.225
+   ],
+   [
+    -1.075,
+    -3.225
+   ],
+   [
+    1.075,
+    -3.225
+   ],
+   [
+    3.225,
+    -3.225
+   ],
+   [
+    5.375,
+    -3.225
+   ],
+   [
+    -5.375,
+    -1.075
+   ],
+   [
+    -3.225,
+    -1.075
+   ],
+   [
+    -1.075,
+    -1.075
+   ],
+   [
+    1.075,
+    -1.075
+   ],
+   [
+    3.225,
+    -1.075
+   ],
+   [
+    5.375,
+    -1.075
+   ],
+   [
+    -5.375,
+    1.075
+   ],
+   [
+    -3.225,
+    1.075
+   ],
+   [
+    -1.075,
+    1.075
+   ],
+   [
+    1.075,
+    1.075
+   ],
+   [
+    3.225,
+    1.075
+   ],
+   [
+    5.375,
+    1.075
+   ],
+   [
+    -5.375,
+    3.225
+   ],
+   [
+    -3.225,
+    3.225
+   ],
+   [
+    -1.075,
+    3.225
+   ],
+   [
+    1.075,
+    3.225
+   ],
+   [
+    3.225,
+    3.225
+   ],
+   [
+    5.375,
+    3.225
+   ],
+   [
+    -3.225,
+    5.375
+   ],
+   [
+    -1.075,
+    5.375
+   ],
+   [
+    1.075,
+    5.375
+   ],
+   [
+    3.225,
+    5.375
+   ]
+  ],
+  "comb_z": [
+   -63.0,
+   -60.0
+  ],
+  "clamp_block_z": [
+   -132.0,
+   -123.0
+  ],
+  "arm_mount": {
+   "z": -230.0,
+   "pcd": 50.0,
+   "bolts": 4,
+   "bolt": "M4",
+   "bore": 24.0,
+   "note": "stand-in for OpenArm J5's flange (sim site forearm_flange); verify the real pattern"
+  },
+  "envelope": {
+   "x": [
+    -45.0,
+    45.0
+   ],
+   "y": [
+    -32.0,
+    32.0
+   ],
+   "z": [
+    -230.0,
+    -18.0
+   ]
+  }
+ },
+ "invalid": []
+}

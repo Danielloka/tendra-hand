@@ -9,7 +9,7 @@ Layout (hand frame, mm; the forearm runs from the wrist base at z -18 down to th
 - Level 2 (lower) spools sit 5 mm closer to the rail than level 1, so level-2 strands pass inside
   the level-1 spools. Level 2 takes the six high-load joints (room for HLS3606M, +2.25 mm).
 - All 32 strands run straight up (tangent to their spool) to a clamp block of barrel adjusters at
-  z -103; from there each strand is inside its PTFE sheath, which fans in to the bundle comb at
+  z -123; from there each strand is inside its PTFE sheath, which fans in to the bundle comb at
   z -60 and runs through the hollow wrist to the palm clamp.
 - A servo comes out sideways after removing a side cover and its 2 tab screws: its spline slides out
   of the spool, the spool stays on its rail stub, strung and tensioned.
@@ -45,13 +45,13 @@ GROOVE_DX = 1.1  # the two grooves of a split spool sit at g -+ 1.1
 SPOOL_FLANGE_R = 6.5
 CASE_GAP = 5.0  # groove plane above the servo case top (spline + hub), as V1
 COLS = (-20.25, -6.75, 6.75, 20.25)  # column y (pitch 13.5 for a 12.1 wide servo)
-Z_S1, Z_S2 = -121.0, -155.0  # spool centre z, level 1 and 2
-Z_CLAMP = (-112.0, -103.0)  # barrel-adjuster clamp block
+Z_S1, Z_S2 = -141.0, -175.0  # spool centre z, level 1 and 2
+Z_CLAMP = (-132.0, -123.0)  # barrel-adjuster clamp block
 ADJ_RAISE = 6.0  # adjusters of odd columns stand 6 mm higher (head clearance)
 Z_COMB = (K.Z_FORE_COMB - 3.0, K.Z_FORE_COMB)
-Z_DECK = (-101.0, -98.0)
-Z_TRAY = (-196.0, -194.0)
-Z_FLANGE = (-210.0, -205.0)
+Z_DECK = (-121.0, -118.0)
+Z_TRAY = (-216.0, -214.0)
+Z_FLANGE = (-230.0, -225.0)
 SHELL = (45.0, 32.0, 2.0)  # outer half x, half y, wall
 SHELL_TOP = (32.0, 29.5)  # half sizes at the top (z -18); wide enough that the rod balls stay outside
 Z_SHELL_TOP, Z_SHELL_WIDE = -18.0, -48.0

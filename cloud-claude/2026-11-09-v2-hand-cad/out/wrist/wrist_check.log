@@ -1,0 +1,57 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+build q=0: 17 parts in 3.1 s
+== drive ==
+  ok: True
+  unreachable: 0
+  min_flex_Nm_stall: 3.627
+  median_flex_Nm_stall: 5.084
+  min_dev_Nm_stall: 16.124
+  median_dev_Nm_stall: 17.897
+  min_flex_Nm_cont: 1.11
+  min_dev_Nm_cont: 4.936
+  min_transmission_deg: 30.233
+  crank_range_deg: (24.26308294516245, 138.61306442704208)
+  servo_range_deg: (-144.1176768309325, 149.76177557749813)
+  max_rod_force_N_per_Nm: 186.85
+  rod_length: 84.732
+  sign_detA: [1]
+== bundle ==
+{'tube_min_bend_radius': 24.39462479625591, 'worst_pose': (-50.0, -30.0, 9), 'centreline_min_radius': 21.682406739157436, 'free_span_q0': 74.0}
+  tube dL range -6.4 .. +5.9 mm
+== stops ==
+  stop flex+: overlap 9.56 mm^3 beyond the stop (engages)
+  stop flex-: overlap 9.56 mm^3 beyond the stop (engages)
+  stop dev+: overlap 1.74 mm^3 beyond the stop (engages)
+  stop dev-: overlap 1.74 mm^3 beyond the stop (engages)
+== collisions (with notched palm proxy) ==
+  flex   -50 dev   -30: clear
+  flex   -50 dev   -15: clear
+  flex   -50 dev     0: clear
+  flex   -50 dev    20: clear
+  flex   -25 dev   -30: clear
+  flex   -25 dev   -15: clear
+  flex   -25 dev     0: clear
+  flex   -25 dev    20: clear
+  flex     0 dev   -30: clear
+  flex     0 dev   -15: clear
+  flex     0 dev     0: clear
+  flex     0 dev    20: clear
+  flex    25 dev   -30: clear
+  flex    25 dev   -15: clear
+  flex    25 dev     0: clear
+  flex    25 dev    20: clear
+  flex    50 dev   -30: clear
+  flex    50 dev   -15: clear
+  flex    50 dev     0: clear
+  flex    50 dev    20: clear
+== collisions (plain 28 mm palm, for the report) ==
+  flex   -50 dev   -30: wrist_ring x palm_proxy=254.601; wrist_base x palm_proxy=138.672; pin_dev_b x palm_proxy=15.733
+  flex   -50 dev     0: wrist_ring x palm_proxy=254.601; wrist_base x palm_proxy=137.726; pin_dev_b x palm_proxy=15.733
+  flex   -50 dev    20: wrist_ring x palm_proxy=254.601; wrist_base x palm_proxy=137.884; pin_dev_b x palm_proxy=15.733
+  flex     0 dev   -30: clear
+  flex     0 dev     0: clear
+  flex     0 dev    20: clear
+  flex    50 dev   -30: wrist_ring x palm_proxy=254.601; wrist_base x palm_proxy=138.672; pin_dev_f x palm_proxy=15.733
+  flex    50 dev     0: wrist_ring x palm_proxy=254.601; wrist_base x palm_proxy=137.726; pin_dev_f x palm_proxy=15.733
+  flex    50 dev    20: wrist_ring x palm_proxy=254.601; wrist_base x palm_proxy=137.884; pin_dev_f x palm_proxy=15.733
+done in 162 s

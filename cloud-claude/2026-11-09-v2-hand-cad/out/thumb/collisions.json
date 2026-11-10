@@ -1,8 +1,8 @@
 [
  [
   {
-   "cmc_rot": -45.0,
-   "cmc_flex": -20.0,
+   "cmc_rot": -31.0,
+   "cmc_flex": -37.0,
    "mcp_flex": -10.0,
    "ip": -15.0
   },
@@ -10,8 +10,17 @@
  ],
  [
   {
-   "cmc_rot": -45.0,
-   "cmc_flex": -20.0,
+   "cmc_rot": -31.0,
+   "cmc_flex": -37.0,
+   "mcp_flex": 30.0,
+   "ip": 35.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": -31.0,
+   "cmc_flex": -37.0,
    "mcp_flex": 70.0,
    "ip": 85.0
   },
@@ -19,68 +28,8 @@
  ],
  [
   {
-   "cmc_rot": -45.0,
-   "cmc_flex": 99.0,
-   "mcp_flex": -10.0,
-   "ip": -15.0
-  },
-  [
-   [
-    "thumb_mount",
-    "thenar_pad",
-    27.279
-   ],
-   [
-    "thumb_base",
-    "thenar_pad",
-    12.364
-   ],
-   [
-    "thumb_mount",
-    "thumb_metacarpal",
-    9.946
-   ],
-   [
-    "thumb_base",
-    "thumb_metacarpal",
-    3.557
-   ]
-  ]
- ],
- [
-  {
-   "cmc_rot": -45.0,
-   "cmc_flex": 99.0,
-   "mcp_flex": 70.0,
-   "ip": 85.0
-  },
-  [
-   [
-    "thumb_mount",
-    "thenar_pad",
-    27.279
-   ],
-   [
-    "thumb_base",
-    "thenar_pad",
-    12.364
-   ],
-   [
-    "thumb_mount",
-    "thumb_metacarpal",
-    9.946
-   ],
-   [
-    "thumb_base",
-    "thumb_metacarpal",
-    3.557
-   ]
-  ]
- ],
- [
-  {
-   "cmc_rot": 138.0,
-   "cmc_flex": -20.0,
+   "cmc_rot": -31.0,
+   "cmc_flex": 13.0,
    "mcp_flex": -10.0,
    "ip": -15.0
   },
@@ -88,8 +37,17 @@
  ],
  [
   {
-   "cmc_rot": 138.0,
-   "cmc_flex": -20.0,
+   "cmc_rot": -31.0,
+   "cmc_flex": 13.0,
+   "mcp_flex": 30.0,
+   "ip": 35.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": -31.0,
+   "cmc_flex": 13.0,
    "mcp_flex": 70.0,
    "ip": 85.0
   },
@@ -97,43 +55,192 @@
  ],
  [
   {
-   "cmc_rot": 138.0,
-   "cmc_flex": 99.0,
+   "cmc_rot": -31.0,
+   "cmc_flex": 63.0,
    "mcp_flex": -10.0,
    "ip": -15.0
   },
-  [
-   [
-    "thumb_base",
-    "thenar_pad",
-    12.364
-   ],
-   [
-    "thumb_base",
-    "thumb_metacarpal",
-    3.557
-   ]
-  ]
+  []
  ],
  [
   {
-   "cmc_rot": 138.0,
-   "cmc_flex": 99.0,
+   "cmc_rot": -31.0,
+   "cmc_flex": 63.0,
+   "mcp_flex": 30.0,
+   "ip": 35.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": -31.0,
+   "cmc_flex": 63.0,
    "mcp_flex": 70.0,
    "ip": 85.0
   },
-  [
-   [
-    "thumb_base",
-    "thenar_pad",
-    12.364
-   ],
-   [
-    "thumb_base",
-    "thumb_metacarpal",
-    3.557
-   ]
-  ]
+  []
+ ],
+ [
+  {
+   "cmc_rot": 39.5,
+   "cmc_flex": -37.0,
+   "mcp_flex": -10.0,
+   "ip": -15.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": 39.5,
+   "cmc_flex": -37.0,
+   "mcp_flex": 30.0,
+   "ip": 35.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": 39.5,
+   "cmc_flex": -37.0,
+   "mcp_flex": 70.0,
+   "ip": 85.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": 39.5,
+   "cmc_flex": 13.0,
+   "mcp_flex": -10.0,
+   "ip": -15.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": 39.5,
+   "cmc_flex": 13.0,
+   "mcp_flex": 30.0,
+   "ip": 35.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": 39.5,
+   "cmc_flex": 13.0,
+   "mcp_flex": 70.0,
+   "ip": 85.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": 39.5,
+   "cmc_flex": 63.0,
+   "mcp_flex": -10.0,
+   "ip": -15.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": 39.5,
+   "cmc_flex": 63.0,
+   "mcp_flex": 30.0,
+   "ip": 35.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": 39.5,
+   "cmc_flex": 63.0,
+   "mcp_flex": 70.0,
+   "ip": 85.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": 110.0,
+   "cmc_flex": -37.0,
+   "mcp_flex": -10.0,
+   "ip": -15.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": 110.0,
+   "cmc_flex": -37.0,
+   "mcp_flex": 30.0,
+   "ip": 35.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": 110.0,
+   "cmc_flex": -37.0,
+   "mcp_flex": 70.0,
+   "ip": 85.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": 110.0,
+   "cmc_flex": 13.0,
+   "mcp_flex": -10.0,
+   "ip": -15.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": 110.0,
+   "cmc_flex": 13.0,
+   "mcp_flex": 30.0,
+   "ip": 35.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": 110.0,
+   "cmc_flex": 13.0,
+   "mcp_flex": 70.0,
+   "ip": 85.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": 110.0,
+   "cmc_flex": 63.0,
+   "mcp_flex": -10.0,
+   "ip": -15.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": 110.0,
+   "cmc_flex": 63.0,
+   "mcp_flex": 30.0,
+   "ip": 35.0
+  },
+  []
+ ],
+ [
+  {
+   "cmc_rot": 110.0,
+   "cmc_flex": 63.0,
+   "mcp_flex": 70.0,
+   "ip": 85.0
+  },
+  []
  ],
  [
   {

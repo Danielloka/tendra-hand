@@ -102,201 +102,44 @@
   "free_span_q0": 74.0
  },
  "stops": {
-  "flex+": 199.143,
-  "flex-": 199.143,
-  "dev+": 0.0,
-  "dev-": 0.0
+  "flex+": 9.565,
+  "flex-": 9.565,
+  "dev+": 1.738,
+  "dev-": 1.738
  },
  "collisions": {
-  "-50,-30": [
-   [
-    "wrist_ring",
-    "palm_flange",
-    167.311
-   ],
-   [
-    "wrist_gears_L",
-    "wrist_rod_L",
-    116.169
-   ],
-   [
-    "wrist_base",
-    "palm_flange",
-    61.05
-   ],
-   [
-    "wrist_servo_L",
-    "wrist_rod_L",
-    52.293
-   ],
-   [
-    "wrist_base",
-    "wrist_rod_L",
-    50.099
-   ],
-   [
-    "wrist_ring",
-    "palm_proxy",
-    6.632
-   ]
-  ],
-  "-50,0": [
-   [
-    "wrist_ring",
-    "palm_flange",
-    167.311
-   ],
-   [
-    "wrist_ring",
-    "palm_proxy",
-    6.632
-   ],
-   [
-    "wrist_gears_R",
-    "wrist_rod_R",
-    1.717
-   ]
-  ],
-  "-50,20": [
-   [
-    "wrist_ring",
-    "palm_flange",
-    167.311
-   ],
-   [
-    "wrist_gears_R",
-    "wrist_rod_R",
-    116.413
-   ],
-   [
-    "wrist_servo_R",
-    "wrist_rod_R",
-    38.136
-   ],
-   [
-    "wrist_base",
-    "palm_flange",
-    17.138
-   ],
-   [
-    "wrist_ring",
-    "palm_proxy",
-    6.632
-   ]
-  ],
-  "0,-30": [
-   [
-    "wrist_gears_L",
-    "wrist_rod_L",
-    33.303
-   ],
-   [
-    "wrist_servo_L",
-    "wrist_rod_L",
-    2.863
-   ]
-  ],
+  "-50,-30": [],
+  "-50,-15": [],
+  "-50,0": [],
+  "-50,20": [],
+  "-25,-30": [],
+  "-25,-15": [],
+  "-25,0": [],
+  "-25,20": [],
+  "0,-30": [],
+  "0,-15": [],
   "0,0": [],
-  "0,20": [
-   [
-    "wrist_gears_R",
-    "wrist_rod_R",
-    17.324
-   ],
-   [
-    "wrist_servo_R",
-    "wrist_rod_R",
-    0.529
-   ]
-  ],
-  "50,-30": [
-   [
-    "wrist_ring",
-    "palm_flange",
-    167.311
-   ],
-   [
-    "wrist_servo_L",
-    "wrist_rod_L",
-    11.278
-   ],
-   [
-    "wrist_ring",
-    "palm_proxy",
-    6.632
-   ]
-  ],
-  "50,0": [
-   [
-    "wrist_ring",
-    "palm_flange",
-    167.311
-   ],
-   [
-    "wrist_ring",
-    "palm_proxy",
-    6.632
-   ]
-  ],
-  "50,20": [
-   [
-    "wrist_ring",
-    "palm_flange",
-    167.311
-   ],
-   [
-    "wrist_ring",
-    "palm_proxy",
-    6.632
-   ],
-   [
-    "wrist_servo_R",
-    "wrist_rod_R",
-    4.181
-   ],
-   [
-    "wrist_base",
-    "palm_flange",
-    2.483
-   ]
-  ]
+  "0,20": [],
+  "25,-30": [],
+  "25,-15": [],
+  "25,0": [],
+  "25,20": [],
+  "50,-30": [],
+  "50,-15": [],
+  "50,0": [],
+  "50,20": []
  },
  "collisions_plain_palm": {
   "-50,-30": [
    [
     "wrist_ring",
     "palm_proxy",
-    222.362
-   ],
-   [
-    "wrist_ring",
-    "palm_flange",
-    167.311
+    254.601
    ],
    [
     "wrist_base",
     "palm_proxy",
     138.672
-   ],
-   [
-    "wrist_gears_L",
-    "wrist_rod_L",
-    116.169
-   ],
-   [
-    "wrist_base",
-    "palm_flange",
-    61.05
-   ],
-   [
-    "wrist_servo_L",
-    "wrist_rod_L",
-    52.293
-   ],
-   [
-    "wrist_base",
-    "wrist_rod_L",
-    50.099
    ],
    [
     "pin_dev_b",
@@ -308,12 +151,7 @@
    [
     "wrist_ring",
     "palm_proxy",
-    222.362
-   ],
-   [
-    "wrist_ring",
-    "palm_flange",
-    167.311
+    254.601
    ],
    [
     "wrist_base",
@@ -324,23 +162,13 @@
     "pin_dev_b",
     "palm_proxy",
     15.733
-   ],
-   [
-    "wrist_gears_R",
-    "wrist_rod_R",
-    1.717
    ]
   ],
   "-50,20": [
    [
     "wrist_ring",
     "palm_proxy",
-    222.362
-   ],
-   [
-    "wrist_ring",
-    "palm_flange",
-    167.311
+    254.601
    ],
    [
     "wrist_base",
@@ -348,61 +176,19 @@
     137.884
    ],
    [
-    "wrist_gears_R",
-    "wrist_rod_R",
-    116.413
-   ],
-   [
-    "wrist_servo_R",
-    "wrist_rod_R",
-    38.136
-   ],
-   [
-    "wrist_base",
-    "palm_flange",
-    17.138
-   ],
-   [
     "pin_dev_b",
     "palm_proxy",
     15.733
    ]
   ],
-  "0,-30": [
-   [
-    "wrist_gears_L",
-    "wrist_rod_L",
-    33.303
-   ],
-   [
-    "wrist_servo_L",
-    "wrist_rod_L",
-    2.863
-   ]
-  ],
+  "0,-30": [],
   "0,0": [],
-  "0,20": [
-   [
-    "wrist_gears_R",
-    "wrist_rod_R",
-    17.324
-   ],
-   [
-    "wrist_servo_R",
-    "wrist_rod_R",
-    0.529
-   ]
-  ],
+  "0,20": [],
   "50,-30": [
    [
     "wrist_ring",
     "palm_proxy",
-    222.362
-   ],
-   [
-    "wrist_ring",
-    "palm_flange",
-    167.311
+    254.601
    ],
    [
     "wrist_base",
@@ -413,23 +199,13 @@
     "pin_dev_f",
     "palm_proxy",
     15.733
-   ],
-   [
-    "wrist_servo_L",
-    "wrist_rod_L",
-    11.278
    ]
   ],
   "50,0": [
    [
     "wrist_ring",
     "palm_proxy",
-    222.362
-   ],
-   [
-    "wrist_ring",
-    "palm_flange",
-    167.311
+    254.601
    ],
    [
     "wrist_base",
@@ -446,12 +222,7 @@
    [
     "wrist_ring",
     "palm_proxy",
-    222.362
-   ],
-   [
-    "wrist_ring",
-    "palm_flange",
-    167.311
+    254.601
    ],
    [
     "wrist_base",
@@ -462,16 +233,6 @@
     "pin_dev_f",
     "palm_proxy",
     15.733
-   ],
-   [
-    "wrist_servo_R",
-    "wrist_rod_R",
-    4.181
-   ],
-   [
-    "wrist_base",
-    "palm_flange",
-    2.483
    ]
   ]
  },
@@ -686,20 +447,20 @@
    "face_z": -18.0,
    "bolts": [
     [
-     -13.5,
-     -17.0
+     -12.5,
+     -18.0
     ],
     [
-     -13.5,
-     17.0
+     -12.5,
+     18.0
     ],
     [
-     13.5,
-     -17.0
+     12.5,
+     -18.0
     ],
     [
-     13.5,
-     17.0
+     12.5,
+     18.0
     ]
    ],
    "bundle_opening": {
@@ -712,12 +473,12 @@
    "servo_shaft": {
     "R": [
      27.5,
-     15.0,
+     9.0,
      -57.0
     ],
     "L": [
      -27.5,
-     15.0,
+     9.0,
      -57.0
     ]
    },

@@ -58,6 +58,9 @@ CLAMP_Z = (14.0, 19.0)  # sheath clamp bridge (laminated comb), sits in a pocket
 FLANGE_BOLTS = [(sx * 17.0, sy * 9.5) for sx in (-1, 1) for sy in (-1, 1)]  # M3 heat-set inserts
 INSERT_D, INSERT_L = 4.0, 5.0  # M3 x 5.7 short insert hole (4.0 for PETG)
 STOP_MARGIN = 2.0  # hard stops 2 deg beyond the software range
+DEV_PIN_R, DEV_PIN_D = 5.6, 1.6  # dev stop: steel pin in each ring Y end, riding in an arc slot in the lug
+DEV_PIN_HALF = math.degrees(math.atan(DEV_PIN_D / 2 / DEV_PIN_R))
+TOOTH_HALF = 12.5  # angular half-width of the flex-stop tooth at r 7 (deg)
 
 # drive (numbers from wrist_kin.DRIVE)
 DR = K.DRIVE
@@ -112,6 +115,10 @@ def make_base():
     """Wrist base: plate on top of the forearm neck + two dev lugs at +-Y (623 bearings) + dev stop pads."""
     bx, by = 15.0, FL_Y[1] + 1.0
     plate = rrect(2 * bx, 2 * by, 6.0, BASE_Z[1] - BASE_Z[0], BASE_Z[0])
+    # narrower (|x| <= 12) beside the bundle opening, so the palm ears clear it at extension + deviation
+    for sx in (-1, 1):
+        x0, x1 = sorted((sx * 12.0, sx * 20.0))
+        plate = plate.cut(box(x0, x1, -12.5, 12.5, BASE_Z[0] - 1, BASE_Z[1] + 1))
     ox, oy, orr = BASE_OPEN
     plate = plate.cut(rrect(2 * ox, 2 * oy, orr, 10, BASE_Z[0] - 2))
     for sx in (-1, 1):  # 4 x M3 to the forearm neck
@@ -125,19 +132,21 @@ def make_base():
         yo = y1 if sy > 0 else y0
         lug = lug.cut(cyl((0, yo, 0), (0, yo - sy * BRG_W, 0), BRG_OD / 2))
         plate = plate.union(lug)
-    # dev hard stops: pads under the ring's X bosses (contact at +22 / -32 deg), TPU face 1 mm
-    for sx, lim in ((1, K.RANGES["wrist_dev"][1] + STOP_MARGIN), (-1, K.RANGES["wrist_dev"][0] - STOP_MARGIN)):
-        zc = _boss_low_z(lim, sx)
-        plate = plate.union(box(sx * 12.0 if sx > 0 else -15.0, 15.0 if sx > 0 else -12.0, -5, 5, BASE_Z[1] - 0.5, zc))
+    # dev hard stops: arc slot (r 4.6..6.6, 1.5 deep) in each lug's inner face; the ring's stop pin rides in it
+    dmin, dmax = K.RANGES["wrist_dev"]
+    for sy in (-1, 1):
+        y0, y1 = sorted((sy * FL_Y[0], sy * (FL_Y[0] + 1.5)))
+        plate = plate.cut(_arc_xz(y0 - (0.01 if sy < 0 else 0), y1 + (0.01 if sy > 0 else 0), DEV_PIN_R - 1.0, DEV_PIN_R + 1.0,
+                                  dmin - STOP_MARGIN - DEV_PIN_HALF, dmax + STOP_MARGIN + DEV_PIN_HALF))
     return plate
 
 
-def _boss_low_z(dev_deg, sx):
-    """Lowest z of the ring's X boss (outer end) at a dev angle: the pad top for the hard stop."""
-    a = math.radians(dev_deg)
-    xe = sx * 15.0  # pad outer edge (the boss end overhangs it by 0.5)
-    zc = -xe * math.sin(a)
-    return zc - XBOSS[2] * math.cos(a)
+def _arc_xz(y0, y1, r0, r1, t0, t1, n=40):
+    """Annular sector about the Y axis: points (x, z) = (-r sin t, -r cos t), t in t0..t1 (deg), y0..y1."""
+    ts = np.radians(np.linspace(t0, t1, n))
+    pts = [(-r1 * math.sin(t), -r1 * math.cos(t)) for t in ts] + [(-r0 * math.sin(t), -r0 * math.cos(t)) for t in ts[::-1]]
+    wp = cq.Workplane("XZ", origin=(0, y1, 0)).polyline(pts).close().extrude(y1 - y0)
+    return wp
 
 
 # --- ring -------------------------------------------------------------------------------------------
@@ -156,8 +165,9 @@ def make_ring():
     # dev pin holes (press fit) in the +-Y ends, plus a local boss
     for sy in (-1, 1):
         yi, yo = sy * ri[1] / 2, sy * ro[1] / 2
-        ring = ring.union(cyl((0, yi, 0), (0, yo, 0), 3.5))
+        ring = ring.union(cyl((0, yi, 0), (0, yo, 0), 3.5)).union(cyl((0, yo - sy * 2.0, 0), (0, yo, 0), 6.6))
         ring = ring.cut(cyl((0, yi - sy * 0.5, 0), (0, yo + sy, 0), PIN / 2 - 0.05))
+        ring = ring.union(cyl((0, yo - sy * 0.5, -DEV_PIN_R), (0, sy * (FL_Y[0] + 1.3), -DEV_PIN_R), DEV_PIN_D / 2))
     return ring
 
 
@@ -186,13 +196,13 @@ def make_flange():
         xi = sx * 13.8
         fmin, fmax = K.RANGES["wrist_flex"]
         wall = _arc_wall(min(xi, sx * PL_X[0]), max(xi, sx * PL_X[0]), 7.0, 10.5,
-                         -fmin + STOP_MARGIN + 7.0, 360 - (fmax + STOP_MARGIN + 7.0))
+                         -fmin + STOP_MARGIN + TOOTH_HALF, 360 - (fmax + STOP_MARGIN + TOOTH_HALF))
         lug = lug.union(wall)
         fl = fl.union(lug)
         # push-rod ear (ball stud at B)
         B = np.array([sx * DR["xB"], DR["yB"], DR["zB"]])
         ex0, ex1 = sorted((sx * 19.9, sx * 21.6))
-        ear = box(ex0, ex1, 1.0, 11.0, -4.0, FLANGE_Z[0] + 0.5).union(box(min(ex0, sx * 21.0), max(ex1, sx * 21.0), 1.0, 11.0, FLANGE_Z[0], FLANGE_Z[1]))
+        ear = box(ex0, ex1, 3.5, 10.0, 0.0, FLANGE_Z[0] + 0.5).union(box(min(ex0, sx * 21.0), max(ex1, sx * 21.0), 3.5, 10.0, FLANGE_Z[0], FLANGE_Z[1]))
         ear = ear.union(cyl((sx * 20.5, B[1], B[2]), (B[0] - sx * 2.5, B[1], B[2]), 2.5))
         fl = fl.union(ear)
     # sheath clamp bridge: legs + laminated comb (6 plates, row joints on the tube centres)
@@ -369,17 +379,22 @@ def interface():
 # --- checks ------------------------------------------------------------------------------------------
 def palm_proxy(notch=True):
     """Rough palm + thumb-base volume for collision checks (the integrator owns the real palm).
-    notch=True applies the keep-out the wrist needs (report 03): in |x| < 9.5 the palm base is a
-    rounded heel inside r_x <= 21.5 (from the flex axis) up to z = 36; in |x| < 14.5 inside r_x <= 18
-    up to z = 22."""
+    notch=True applies the keep-out the wrist needs (report 03): for z < 36 and |x| < 9.5 the palm stays
+    inside r_x <= 18 (from the flex axis) or inside a +-20 deg wedge about +Z; for z < 22: inside r_x <= 18 for |x| < 11.5 and
+    within |y| <= 3.5 for 11.5 < |x| < 14.5 (same rule as the flange)."""
     palm = box(-47, 30, P.PALM_Y[0], P.PALM_Y[1], P.PALM_Z_BASE, 60)
     if notch:
-        heel = cyl((-9.5, 0, 0), (9.5, 0, 0), 21.5).intersect(box(-9.5, 9.5, -30, 30, P.PALM_Z_BASE, 40))
-        cutter = box(-9.5, 9.5, -30, 30, P.PALM_Z_BASE - 1, 36).cut(heel)
+        heel = cyl((-9.5, 0, 0), (9.5, 0, 0), 18.0)
+        t = math.tan(math.radians(20))
+        cone = cq.Workplane("YZ", origin=(-9.5, 0, 0)).polyline([(0, 0), (60 * t, 60), (-60 * t, 60)]).close().extrude(19)
+        cutter = box(-9.5, 9.5, -30, 30, P.PALM_Z_BASE - 1, 36).cut(heel).cut(cone)
         palm = palm.cut(cutter)
         # small chamfers for the ring ends (|x| < 14.5): r_x <= 18 up to z = 18.5
-        heel2 = cyl((-14.5, 0, 0), (14.5, 0, 0), 18.0).intersect(box(-14.5, 14.5, -30, 30, 14, 40))  # ring ends
-        palm = palm.cut(box(-14.5, 14.5, -30, 30, P.PALM_Z_BASE - 1, 22.0).cut(heel2))
+        heel2 = cyl((-11.5, 0, 0), (11.5, 0, 0), 18.0)  # ring ends and X-end walls
+        palm = palm.cut(box(-11.5, 11.5, -30, 30, P.PALM_Z_BASE - 1, 22.0).cut(heel2))
+        for sx in (-1, 1):
+            x0, x1 = sorted((sx * 11.5, sx * 14.5))
+            palm = palm.cut(box(x0, x1, 3.5, 30, P.PALM_Z_BASE - 1, 22.0)).cut(box(x0, x1, -30, -3.5, P.PALM_Z_BASE - 1, 22.0))
     return palm
 
 

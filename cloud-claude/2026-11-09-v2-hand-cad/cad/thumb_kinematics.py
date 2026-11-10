@@ -327,8 +327,8 @@ def _bounds(td, extra):
     lo = [r["cmc_rot"][0], r["cmc_flex"][0], r["mcp_flex"][0], r["ip"][0]]
     hi = [r["cmc_rot"][1], r["cmc_flex"][1], r["mcp_flex"][1], r["ip"][1]]
     if td.alpha0 is not None:  # roll-pitch: keep the metacarpal within 95 deg of the rot axis (routing)
-        lo[1] = max(lo[1], -95 - td.alpha0)
-        hi[1] = min(hi[1], 95 - td.alpha0)
+        lo[1] = max(lo[1], -ALPHA_MAX - td.alpha0)
+        hi[1] = min(hi[1], ALPHA_MAX - td.alpha0)
     for a, b in extra:
         lo.append(a)
         hi.append(b)
@@ -621,12 +621,20 @@ def finalize(td, ev, margin=8.0):
     nd = rebase(td, q_rest, flips, ranges, "V2 design")
     a1 = nd.joints[0][1]
     lo, hi = ranges["cmc_flex"]
-    ok = []
+    good = []
     for v in np.arange(lo, hi + 0.1, 1.0):
         T = thumb_fk(nd, [0, v, 0, 0])
         al = np.degrees(np.arccos(np.clip(unit(T["mcp"] - T["cmc"]) @ a1, -1, 1)))
-        ok.append(al <= 95.0)
+        if al <= ALPHA_MAX:
+            good.append(v)
+    nd.ranges = dict(nd.ranges)
+    nd.ranges["cmc_flex"] = (float(min(good)), float(max(good)))
     return nd, q_rest, flips
+
+
+# Metacarpal angle to the rot axis allowed by the CAD (thumb.py collision sweep: the thenar pad reaches the
+# mount at ~90 deg) and by the routing (wrap on the cmc_flex nip pins).
+ALPHA_MAX = 86.0
 
 
 def strength_table(td, ev):

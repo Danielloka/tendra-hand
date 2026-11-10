@@ -1,17 +1,18 @@
 """Tendra V2 concept thumb (study 2026-11-09, thumb designer): CadQuery model, tendon routing, checks.
 
 Kinematics come from thumb_kinematics.py (optimised "roll-pitch" CMC, see reports/02-thumb.md):
-- cmc_rot: axis a1 through the CMC centre P. The base turns on a hollow steel journal (10 x 1 mm tube) in
-  two 6700 bearings held by the fixed `thumb_mount` (bolted into the palm's thenar bay).
+- cmc_rot: axis a1 through the CMC centre P. The base turns on a hollow printed sleeve (OD 20) in two
+  thin-section 6704 bearings held by the fixed `thumb_mount` (bolted into the palm's thenar bay).
 - cmc_flex: axis a2, perpendicular to a1 and THROUGH P (the axes intersect, unlike V1's 5.5 mm offset).
   The metacarpal hub turns on two 3 mm steel stub pins pressed into the base's cheeks.
 - mcp_flex (axis a3) and ip (axis a4): 2 mm steel stub pins in the parent's fork cheeks.
 Every joint has a 7 mm drum (strand centreline) on its child, centred on its axis (params.R_DRUM).
 
 Tendon routing (the point of this design): all 6 strands of cmc_flex, mcp_flex and ip come up the hollow
-cmc_rot axis between two PTFE "spinneret" discs (6 holes on a 2.3/3.2 mm ring, aligned at mid-range, so
-cmc_rot only twists them a little). The mcp and ip strands then cross the cmc_flex axis exactly ON it
-(they come up a1, which intersects a2 at P) between two 1 mm steel nip pins, and the ip strands cross the
+cmc_rot axis: the 6 PTFE sheaths end in a hex bundle in the mount, the bare strands converge through one
+PTFE neck eyelet ON the rot axis (it turns with the base), so cmc_rot only twists them around each other.
+The mcp and ip strands then cross the cmc_flex axis exactly ON it (they come up a1, which intersects a2
+at P) between two 1 mm steel nip pins, and the ip strands cross the
 MCP axis the same way. Nothing in the thumb is a free sheath loop. Numbers: `routing_report()`.
 
 API: build(q) -> {"parts", "joints", "strands", "interface"}; q in degrees (cmc_rot, cmc_flex, mcp_flex,
@@ -54,27 +55,29 @@ CMC_GROOVE_X = 4.0  # cmc_flex grooves at x = -4 (flex) / +4 (ext)
 CMC_SLOT = 2.3  # central slot |x| < 2.3 for the 4 crossing strands
 CMC_CROSS_X = {"mcp_flex": -1.8, "ip_flex": -0.6, "ip_ext": 0.6, "mcp_ext": 1.8}
 STUB_CMC = (5.5, HUB_CMC_W, 3.0)  # stub pin from |x| 5.5 into the hub, through the cheek; diameter 3
-PLATE_Z = (-15.0, -HUB_CMC_R - 0.3)  # base plate under the hub
-DRUM_ROT_Z = (-20.3, -15.0)  # rot drum disc
-ROT_GROOVE_Z = {"flex": -18.6, "ext": -16.8}
+PLATE_Z = (-12.6, -HUB_CMC_R - 0.3)  # base plate under the hub
+DRUM_ROT_Z = (-17.2, -12.6)  # rot drum disc (its bottom face bears on the upper bearing's inner race)
+ROT_GROOVE_Z = {"flex": -16.0, "ext": -14.2}
 ROT_DRUM_FLANGE = 8.6
-JOURNAL = {"od": 10.0, "id": 8.0, "z": (-46.0, -13.0)}
-SPIN_TOP_Z, SPIN_BOT_Z = (-15.0, -13.0), (-48.5, -46.5)
-SPIN_R = {"inner": 2.3, "cmc": 3.2}
-SPIN_HOLE_D = 0.8
+BEARING = {"name": "6704ZZ", "id": 20.0, "od": 27.0, "w": 4.0}  # thin-section, 2 back to back
+BEAR_TOP_Z, BEAR_BOT_Z = (-21.2, -17.2), (-25.4, -21.4)
+SLEEVE_Z = (-25.4, -17.2)  # printed journal sleeve of the base (OD 20) in the bearings
+CAP_Z = (-26.6, -25.4)  # base cap: holds the lower inner race, carries the top neck eyelet
+NECK_Z = -26.0  # top neck (PTFE eyelet, 1.6 mm hole) on the rot axis, turns with the base
+NECK_R = 0.45  # strand offsets inside the neck
+SHEATH_END_Z = -32.0  # the 6 sheaths end here in a hex bundle (r 2.3), clamped in the mount
+BUNDLE_R = 2.3
+MOUNT_Z = (-37.0, -17.2)
+MOUNT_OD = 31.0
+FLANGE_Z, FLANGE_OD, BOLT_R = (-30.0, -27.0), 42.0, 18.5
 SPIN_ANG = {"cmc_flex_ext": 0, "ip_ext": 60, "ip_flex": 120, "cmc_flex_flex": 180, "mcp_flex": 240,
             "mcp_ext": 300}
-BEARING_6700 = {"id": 10.0, "od": 15.0, "w": 4.0}
-BEAR_TOP_Z, BEAR_BOT_Z = (-25.0, -21.0), (-44.0, -40.0)
-MOUNT_Z = (-60.0, -21.0)
-MOUNT_OD = 22.0
-SOCKET_R, SOCKET_Z = 3.6, (-60.0, -54.0)  # 6 sheath sockets under the journal
-STOP_RING_Z = (-26.0, -22.0)
-ROT_SOCKET_W = (15.0, 23.0)  # rot strand sheath sockets along w (strand exit direction)
+ROT_SOCKET_W = (15.3, 23.5)  # rot strand sheath sockets along w (strand exit direction)
 POST_R = (15.6, 18.6)
 LUG_R = (10.0, 18.0)
-LUG_Z = (-14.7, -10.8)
+LUG_Z = (-12.4, -10.1)
 LUG_HALF = 7.0  # deg
+STOP_TOP = -10.5
 
 # Metacarpal / MCP / IP
 SHAFT_MC = (18.0, 15.0)  # width (x) x height (y)
@@ -245,6 +248,12 @@ def loft(wires):
     return cq.Solid.makeLoft(wires, True)
 
 
+def main_solid(s, vmin=1.0):
+    """Drop zero-volume slivers that boolean cuts sometimes leave."""
+    sols = [x for x in s.Solids() if x.Volume() > vmin]
+    return sols[0] if len(sols) == 1 else cq.Compound.makeCompound(sols)
+
+
 def fuse(*shapes):
     s = shapes[0]
     for t in shapes[1:]:
@@ -293,10 +302,13 @@ def mid(j):
 ROT_MID = mid("cmc_rot")
 
 
-def _spin_pt(name, z, angle_off=0.0, r=None):
-    r = r if r is not None else (SPIN_R["cmc"] if name.startswith("cmc_flex") else SPIN_R["inner"])
+def _spin_pt(name, z, angle_off=0.0, r=BUNDLE_R):
     a = np.radians(SPIN_ANG[name] + angle_off)
     return to_world(J0["C"], [r * np.cos(a), r * np.sin(a), z])
+
+
+def node(st, lab):
+    return next(n for n in st["nodes"] if n["lab"] == lab)
 
 
 def _w_dir():
@@ -332,17 +344,15 @@ def strand_layout():
             nodes.append({"type": "pt", "body": "mount", "p": to_world(J0["C"], [xy[0], xy[1], z]), "lab": lab})
         S[f"cmc_rot_{side}"] = {"joint": "cmc_rot", "role": side, "nodes": nodes,
                                 "drum": {"joint": "cmc_rot", "groove_x": z, "body": "base"}, "sheathed_exit": True}
-    # strands up the journal
+    # strands up the rot axis: sheath bundle end (mount) -> neck (base) -> ...
     for name in ("cmc_flex_flex", "cmc_flex_ext", "mcp_flex", "mcp_ext", "ip_flex", "ip_ext"):
         j = "cmc_flex" if name.startswith("cmc_flex") else ("mcp_flex" if name.startswith("mcp") else "ip")
         role = name.rsplit("_", 1)[1]
-        key = name if name.startswith("cmc_flex") else name
+        key = name
         nodes = [
-            {"type": "pt", "body": "mount", "lab": "exit",
-             "p": _spin_pt(key, SOCKET_Z[0], ROT_MID, SOCKET_R)},
-            {"type": "pt", "body": "mount", "lab": "socket", "p": _spin_pt(key, SOCKET_Z[1], ROT_MID, SOCKET_R)},
-            {"type": "pt", "body": "mount", "lab": "spin_bot", "p": _spin_pt(key, np.mean(SPIN_BOT_Z), ROT_MID)},
-            {"type": "pt", "body": "base", "lab": "spin_top", "p": _spin_pt(key, np.mean(SPIN_TOP_Z))},
+            {"type": "pt", "body": "mount", "lab": "exit", "p": _spin_pt(key, MOUNT_Z[0], ROT_MID, BUNDLE_R)},
+            {"type": "pt", "body": "mount", "lab": "socket", "p": _spin_pt(key, SHEATH_END_Z, ROT_MID, BUNDLE_R)},
+            {"type": "pt", "body": "base", "lab": "neck", "p": _spin_pt(key, NECK_Z, 0.0, NECK_R)},
         ]
         if j in ("mcp_flex", "ip"):
             nodes.append({"type": "nip", "joint": "cmc_flex", "body": "metacarpal", "lab": "cmc_cross",
@@ -501,7 +511,7 @@ def _anchor_pocket(j, st):
     gx = st["drum"]["groove_x"]
     hub_r = {"cmc_rot": ROT_DRUM_FLANGE, "cmc_flex": HUB_CMC_R, "mcp_flex": HUB_MCP_R, "ip": HUB_IP_R}[j]
     d = np.array([0, np.cos(a), np.sin(a)])
-    r0 = 3.6 if j != "cmc_rot" else JOURNAL["od"] / 2 + 0.6
+    r0 = 3.6 if j != "cmc_rot" else 4.6
     return cyl_ab(np.array([gx, 0, 0]) + r0 * d, np.array([gx, 0, 0]) + (hub_r + 0.5) * d, POCKET_D / 2)
 
 
@@ -521,94 +531,71 @@ def _local_strand_bores(fr, segs, r):
 
 
 def make_mount():
+    """Fixed part, bolted into the palm's thenar bay: bearing housing (2 x 6704), flange, rot hard-stop
+    posts, sheath sockets for the two cmc_rot strands, and the clamp for the 6-sheath bundle."""
     C = J0["C"]
-    s = cyl_z(MOUNT_OD / 2, MOUNT_Z[0], MOUNT_Z[1])
-    # flange for 3 x M3 (palm bay), stop ring + posts, rot-strand socket block
-    s = fuse(s, ring_z(5, 20.0, -34.0, -30.0), ring_z(5, POST_R[1], *STOP_RING_Z))
+    s = fuse(cyl_z(MOUNT_OD / 2, MOUNT_Z[0], MOUNT_Z[1]), ring_z(5, FLANGE_OD / 2, *FLANGE_Z))
     rng = RANGES["cmc_rot"]
-    back = W_ANG + 180.0 - ROT_MID  # the lug's angle at q = 0 is placed so it is at the back at mid-range
+    lug_rest = W_ANG + 180.0 - ROT_MID  # lug angle at q = 0 (at the back at mid-range)
     post_half = np.degrees(1.75 / np.mean(POST_R))
     for end, sgn in ((rng[1], +1), (rng[0], -1)):
-        # lug centre angle at rest = back - ...; we place posts where the lug edge meets them at the limit
-        a = back + ROT_MID + (end - ROT_MID) + sgn * (LUG_HALF + post_half)
-        s = s.fuse(sector_z(POST_R[0], POST_R[1], STOP_RING_Z[0], LUG_Z[1] + 0.3, a - post_half, a + post_half))
-    lat = np.degrees(np.arctan2(10.0, ROT_SOCKET_W[0]))
-    blk_lo = sector_z(10.5, ROT_SOCKET_W[1] + 1.0, STOP_RING_Z[0], DRUM_ROT_Z[0] - 0.3, W_ANG - 40, W_ANG + 40)
-    ex, ey = np.array([W2[0], W2[1], 0]), np.array([-W2[1], W2[0], 0])
-    hi = cq.Workplane("XY").box(ROT_SOCKET_W[1] - ROT_SOCKET_W[0], 20.0, -12.0 - STOP_RING_Z[0], centered=False)
-    hi = hi.val().translate(V(ROT_SOCKET_W[0], -10.0, STOP_RING_Z[0]))
-    hi = hi.rotate(V(0, 0, 0), V(0, 0, 1), W_ANG)
-    s = fuse(s, blk_lo, hi)
-    # bores: journal clearance, bearing seats, collar room, spinneret pocket, fan cavity, sheath sockets
-    tools = [cyl_z(5.5, -46.2, MOUNT_Z[1] + 1), cyl_z(BEARING_6700["od"] / 2, *BEAR_TOP_Z),
-             cyl_z(BEARING_6700["od"] / 2, BEAR_BOT_Z[0] - 2.2, BEAR_BOT_Z[1]),
-             cyl_z(4.05, SPIN_BOT_Z[0] - 0.2, -46.2), cyl_z(5.0, SOCKET_Z[1], SPIN_BOT_Z[0] - 0.2)]
+        a = lug_rest + end + sgn * (LUG_HALF + post_half)
+        s = s.fuse(sector_z(POST_R[0] - 0.5, POST_R[1], MOUNT_Z[1] - 4.0, STOP_TOP, a - post_half, a + post_half))
+    s = s.fuse(ring_z(MOUNT_OD / 2 - 1, POST_R[1], MOUNT_Z[1] - 4.0, MOUNT_Z[1]))
+    blk = box(ROT_SOCKET_W[0], ROT_SOCKET_W[1], -10.0, 10.0, MOUNT_Z[1] - 4.0, STOP_TOP)
+    s = s.fuse(blk.rotate(V(0, 0, 0), V(0, 0, 1), W_ANG))
+    tools = [cyl_z(BEARING["od"] / 2, BEAR_BOT_Z[0], MOUNT_Z[1] + 1),  # bearing seat (shoulder below)
+             cyl_z(BEARING["od"] / 2 - 1.5, CAP_Z[0] - 0.4, BEAR_BOT_Z[0] + 0.01),  # room for the base cap
+             cyl_z(3.0, SHEATH_END_Z, CAP_Z[0] - 0.39)]  # strand fan from the sheath ends to the neck
     for b in range(3):
         a = np.radians(W_ANG + 180 + (b - 1) * 100)
-        tools.append(cyl_z(1.7, -35, -29, 16.5 * np.cos(a), 16.5 * np.sin(a)))
+        tools.append(cyl_z(1.7, FLANGE_Z[0] - 1, FLANGE_Z[1] + 1, BOLT_R * np.cos(a), BOLT_R * np.sin(a)))
     for st in STRANDS.values():
-        n = st["nodes"]
+        e, k = to_local(C, node(st, "exit")["p"]), to_local(C, node(st, "socket")["p"])
         if st["joint"] == "cmc_rot":
-            a, b = to_local(C, n[0]["p"]), to_local(C, n[1]["p"])
-            tools.append(cyl_ab(a + 2.0 * K.unit(a - b), b, P.SHEATH_BORE / 2))
-            tools.append(cyl_ab(b, b + 0.8 * K.unit(b - a), P.BARE_BORE / 2))
+            tools.append(cyl_ab(e + 2.0 * K.unit(e - k), k, P.SHEATH_BORE / 2))
         else:
-            a, b = to_local(C, n[0]["p"]), to_local(C, n[1]["p"])
-            tools.append(cyl_ab(a - np.array([0, 0, 0.5]), b, P.SHEATH_BORE / 2))
-    # clear the space the base drum + rot strands need inside the block (r < 15, drum layer)
-    tools.append(cyl_z(ROT_SOCKET_W[0], DRUM_ROT_Z[0] - 0.3, -10.0))
+            tools.append(cyl_ab(e - np.array([0, 0, 0.5]), k, P.SHEATH_BORE / 2))
+    # clear the base drum and the rot strands' path inside the block radius
+    tools.append(cyl_z(ROT_SOCKET_W[0], MOUNT_Z[1], STOP_TOP + 1))
     s = cut(s, *tools)
     return place(s, C)
 
 
-def make_spinneret(which):
-    C = J0["C"]
-    z0, z1 = SPIN_TOP_Z if which == "top" else SPIN_BOT_Z
-    s = cyl_z(3.95 if which == "top" else 4.0, z0, z1)
-    off = 0.0 if which == "top" else ROT_MID
-    for name in SPIN_ANG:
-        r = SPIN_R["cmc"] if name.startswith("cmc_flex") else SPIN_R["inner"]
-        a = np.radians(SPIN_ANG[name] + off)
-        s = s.cut(cyl_z(SPIN_HOLE_D / 2, z0 - 1, z1 + 1, r * np.cos(a), r * np.sin(a)))
-    return place(s, C)
+def make_cap():
+    """Screw-on cap under the base sleeve (3 x M2 into the sleeve): clamps the lower inner race."""
+    return place(cut(cyl_z(BEARING["id"] / 2 + 1.0, *CAP_Z), cyl_z(3.05, CAP_Z[0] - 1, CAP_Z[1] + 1)), J0["C"])
 
 
-def make_journal():
-    return place(ring_z(JOURNAL["id"] / 2, JOURNAL["od"] / 2, *JOURNAL["z"]), J0["C"])
+def make_neck():
+    """PTFE eyelet on the rot axis (all 6 strands pass its 1.6 mm hole), pressed into the cap."""
+    return place(cut(cyl_z(3.0, *CAP_Z), cyl_z(0.8, CAP_Z[0] - 1, CAP_Z[1] + 1)), J0["C"])
 
 
 def make_bearing(z):
-    return place(ring_z(BEARING_6700["id"] / 2, BEARING_6700["od"] / 2, *z), J0["C"])
-
-
-def make_collar():
-    return place(ring_z(5.0, 7.0, BEAR_BOT_Z[0] - 1.6, BEAR_BOT_Z[0] - 0.2), J0["C"])
+    return place(ring_z(BEARING["id"] / 2, BEARING["od"] / 2, *z), J0["C"])
 
 
 def make_base():
     C = J0["C"]
-    s = fuse(ring_z(5.0, 6.5, -21.0, DRUM_ROT_Z[0] + 0.01), cyl_z(ROT_DRUM_FLANGE, *DRUM_ROT_Z),
+    s = fuse(cyl_z(BEARING["id"] / 2, SLEEVE_Z[0], DRUM_ROT_Z[0] + 0.01), cyl_z(ROT_DRUM_FLANGE, *DRUM_ROT_Z),
              cyl_z(10.5, PLATE_Z[0], PLATE_Z[1]))
     for sgn in (+1, -1):
         x0, x1 = (CHEEK_CMC[0], CHEEK_CMC[1]) if sgn > 0 else (-CHEEK_CMC[1], -CHEEK_CMC[0])
-        cheek = fuse(box(x0, x1, -7.0, 7.0, PLATE_Z[0], 0.0), cyl_x(7.0, x0, x1))
-        s = s.fuse(cheek)
-    # plate under the cheeks
+        s = s.fuse(fuse(box(x0, x1, -7.0, 7.0, PLATE_Z[0], 0.0), cyl_x(7.0, x0, x1)))
     s = fuse(s, box(-CHEEK_CMC[1], CHEEK_CMC[1], -7.0, 7.0, PLATE_Z[0], PLATE_Z[1]))
-    # rot hard-stop lug at the back (at mid-range)
     lug_a = W_ANG + 180.0 - ROT_MID
     s = s.fuse(sector_z(LUG_R[0], LUG_R[1], LUG_Z[0], LUG_Z[1], lug_a - LUG_HALF, lug_a + LUG_HALF))
-    tools = [cyl_z(JOURNAL["od"] / 2, -21.5, JOURNAL["z"][1]), cyl_z(4.0, JOURNAL["z"][1] - 0.01, 1.0)]
-    # rot drum grooves (about z) + anchor pockets
+    tools = [cyl_z(4.0, SLEEVE_Z[0] - 0.01, PLATE_Z[1] + 0.01)]
+    for k in range(3):  # cap screws M2
+        a = np.radians(30 + 120 * k)
+        tools.append(cyl_z(0.8, SLEEVE_Z[0] - 0.01, SLEEVE_Z[0] + 6, 7.0 * np.cos(a), 7.0 * np.sin(a)))
     for side in ("flex", "ext"):
         z = ROT_GROOVE_Z[side]
         tools.append(ring_z(GROOVE_FLOOR, ROT_DRUM_FLANGE + 1, z - 0.5, z + 0.5))
-        st = STRANDS[f"cmc_rot_{side}"]
-        a = st["drum"]["anchor"]
-        # joint frame of cmc_rot: x = a1 (C z), y = a2 (C x), z = a1 x a2 (C y): angle in (Cx, Cy)
+        a = STRANDS[f"cmc_rot_{side}"]["drum"]["anchor"]
         d = np.array([np.cos(a), np.sin(a), 0])
-        tools.append(cyl_ab(np.array([0, 0, z]) + 5.6 * d, np.array([0, 0, z]) + 9.2 * d, POCKET_D / 2))
-    # stub holes (3 mm pins pressed in the cheeks)
+        tools.append(cyl_ab(np.array([0, 0, z]) + 4.6 * d, np.array([0, 0, z]) + 9.2 * d, POCKET_D / 2))
     tools += [cyl_x(STUB_CMC[2] / 2 + P.PRESS_FIT / 2, CHEEK_CMC[0] - 0.1, CHEEK_CMC[1] + 0.1),
               cyl_x(STUB_CMC[2] / 2 + P.PRESS_FIT / 2, -CHEEK_CMC[1] - 0.1, -CHEEK_CMC[0] + 0.1)]
     # strand passages above the top spinneret
@@ -617,14 +604,14 @@ def make_base():
         if st["joint"] == "cmc_rot":
             continue
         n = st["nodes"]
-        t = n[3]["p"]
+        t = node(st, "neck")["p"]
         if st["joint"] == "cmc_flex":
             Fq = body_transforms({})
             _, Tw, *_ = drum_segment(st, t, Fq, {})
             segs.append((t, Tw))
         else:
-            segs.append((t, n[4]["p"]))
-    tools += _local_strand_bores(C, segs, 0.7)
+            segs.append((t, node(st, "cmc_cross")["p"]))
+    tools += _local_strand_bores(C, segs, 0.75)
     # clearance for the metacarpal hub (cylinder about x) between the cheeks
     tools.append(cyl_x(HUB_CMC_R + 0.3, -CHEEK_CMC[0], CHEEK_CMC[0]))
     s = cut(s, *tools)
@@ -662,7 +649,7 @@ def make_metacarpal():
         fr = joint_frame_q("cmc_flex", q, Fq)
         for st in STRANDS.values():
             if st["joint"] in ("mcp_flex", "ip"):
-                A = to_local(fr, _wpt(st["nodes"][3], Fq))
+                A = to_local(fr, _wpt(node(st, "neck"), Fq))
                 angs.append(np.degrees(np.arctan2(A[2], A[1])))
     a0, a1 = min(angs) - 12, max(angs) + 12
     tools.append(sector_x(HUB_CMC_R + 3, -CMC_SLOT, CMC_SLOT, a0, a1))
@@ -679,12 +666,12 @@ def make_metacarpal():
     Fq = body_transforms({})
     for st in STRANDS.values():
         if st["joint"] == "mcp_flex":
-            c = st["nodes"][4]["p"]
+            c = node(st, "cmc_cross")["p"]
             _, Tw, *_ = drum_segment(st, c, Fq, {})
             segs.append((c + 6.0 * K.unit(Tw - c), Tw - 2.5 * K.unit(Tw - c)))
             segs.append((c, c + 6.0 * K.unit(Tw - c)))
         elif st["joint"] == "ip":
-            c, m = st["nodes"][4]["p"], st["nodes"][5]["p"]
+            c, m = node(st, "cmc_cross")["p"], node(st, "mcp_cross")["p"]
             segs.append((c + 6.0 * K.unit(m - c), m - (HUB_MCP_R + 1.0) * K.unit(m - c)))
             segs.append((c, c + 6.0 * K.unit(m - c)))
     bores = []
@@ -694,7 +681,7 @@ def make_metacarpal():
     # hard-stop lugs are on the child hubs (proximal); here: nothing else
     s = cut(s, *tools)
     s = s.fuse(_stop_lugs("cmc_flex", HUB_CMC_R, (STUB_CMC[0] + 0.5, HUB_CMC_W - 0.3), PLATE_Z[1]))
-    return place(s.clean(), F), pins
+    return place(main_solid(s.clean()), F), pins
 
 
 def _local_from(fr_src, fr_dst, shape):
@@ -763,21 +750,21 @@ def make_proximal():
     Fq = body_transforms({})
     for st in STRANDS.values():
         if st["joint"] == "ip":
-            c = st["nodes"][5]["p"]
+            c = node(st, "mcp_cross")["p"]
             _, Tw, *_ = drum_segment(st, c, Fq, {})
             u = K.unit(Tw - c)
             tools.append(cyl_ab(to_local(Fm, c), to_local(Fm, c + 5.5 * u), 0.6))
             tools.append(cyl_ab(to_local(Fm, c + 5.5 * u), to_local(Fm, Tw - 2.0 * u), P.SHEATH_BORE / 2))
     s = cut(s, *tools)
     s = s.fuse(_stop_lugs("mcp_flex", HUB_MCP_R, (4.6, HUB_MCP_W - 0.3), -(HUB_MCP_R + 0.6)))
-    return place(s.clean(), Fm), pins
+    return place(main_solid(s.clean()), Fm), pins
 
 
 def make_distal():
     Fi = J0["ip"]
     hub = cyl_x(HUB_IP_R, -HUB_IP_W, HUB_IP_W)
     body = loft([rrect_wire(2 * HUB_IP_W, 15.0, 3.5, 2.0), rrect_wire(15.0, 12.5, 4.0, L3 - 7.0)])
-    tip = sphere(6.3, (0, 0, L3 - 6.8))
+    tip = cq.Workplane("XY").add(cyl_x(6.25, -7.0, 7.0, 0, L3 - 7.0)).edges().fillet(2.5).val()
     s = fuse(hub, body, tip)
     # pad seat (palmar, -y): a flat recess 2 mm deep for the TPU pad
     pad_seat = box(-8, 8, -9, -PAD_SEAT_Y, 5.0, L3 + 1)
@@ -787,7 +774,7 @@ def make_distal():
     tools += [cyl_x(STUB_SMALL_D / 2 + 0.06, 3.5, HUB_IP_W + .1), cyl_x(STUB_SMALL_D / 2 + 0.06, -HUB_IP_W - .1, -3.5)]
     s = cut(s, *tools)
     s = s.fuse(_stop_lugs("ip", HUB_IP_R, (3.6, HUB_IP_W - 0.3), -(HUB_IP_R + 0.6)))
-    return place(s.clean(), Fi)
+    return place(main_solid(s.clean()), Fi)
 
 
 PAD_SEAT_Y = 5.5  # pad seat plane at y = -5.5 (distal frame); the pad surface is at y = -8
@@ -796,10 +783,10 @@ PAD_SEAT_Y = 5.5  # pad seat plane at y = -5.5 (distal frame); the pad surface i
 def make_thumb_pad():
     """TPU 95A (or Shore-A 60 silicone) pad: a broad, slightly domed pad on the distal phalanx."""
     Fi = J0["ip"]
-    pad = loft([rrect_wire(15.0, 2.6, 1.0, 6.0), rrect_wire(16.0, 2.6, 1.0, L3 - 6.0)])
+    pad = loft([rrect_wire(15.0, 2.6, 1.0, 6.0), rrect_wire(14.0, 2.6, 1.0, L3 - 7.0)])
     pad = pad.translate(V(0, -(PAD_SEAT_Y + 1.25), 0))
-    cap = sphere(6.4, (0, 0, L3 - 6.8)).cut(sphere(4.3, (0, 0, L3 - 6.8)))
-    cap = cap.cut(box(-10, 10, -PAD_SEAT_Y, 10, -10, 100)).cut(box(-10, 10, -10, 10, -10, L3 - 6.8))
+    cap = cut(ring_x(6.0, 8.0, -7.0, 7.0).translate(V(0, 0, L3 - 7.0)),
+              box(-10, 10, -PAD_SEAT_Y, 10, -10, 100), box(-10, 10, -10, 10, -10, L3 - 7.0))
     pad = fuse(pad, cap)
     return place(pad, Fi)
 
@@ -829,10 +816,9 @@ def make_stubs():
 @functools.lru_cache(maxsize=1)
 def rest_parts():
     t0 = time.time()
-    parts = {"thumb_mount": make_mount(), "rot_journal": make_journal(),
-             "bearing_top": make_bearing(BEAR_TOP_Z), "bearing_bottom": make_bearing(BEAR_BOT_Z),
-             "journal_collar": make_collar(), "spinneret_top": make_spinneret("top"),
-             "spinneret_bottom": make_spinneret("bottom"), "thumb_base": make_base()}
+    parts = {"thumb_mount": make_mount(), "bearing_top": make_bearing(BEAR_TOP_Z),
+             "bearing_bottom": make_bearing(BEAR_BOT_Z), "base_cap": make_cap(), "neck_top": make_neck(),
+             "thumb_base": make_base()}
     mc, pins_c = make_metacarpal()
     parts["thumb_metacarpal"] = mc
     parts["thenar_pad"] = make_thenar_pad()
@@ -849,17 +835,16 @@ def rest_parts():
     return parts
 
 
-PART_BODY = {"thumb_mount": "mount", "bearing_top": "mount", "bearing_bottom": "mount", "spinneret_bottom": "mount",
-             "rot_journal": "base", "journal_collar": "base", "spinneret_top": "base", "thumb_base": "base",
+PART_BODY = {"thumb_mount": "mount", "bearing_top": "mount", "bearing_bottom": "mount",
+             "base_cap": "base", "neck_top": "base", "thumb_base": "base",
              "pin_cmc_a": "base", "pin_cmc_b": "base", "thumb_metacarpal": "metacarpal", "thenar_pad": "metacarpal",
              "nip_cmc_a": "metacarpal", "nip_cmc_b": "metacarpal", "pin_mcp_a": "metacarpal", "pin_mcp_b": "metacarpal",
              "thumb_proximal": "proximal", "nip_mcp_a": "proximal", "nip_mcp_b": "proximal", "pin_ip_a": "proximal",
              "pin_ip_b": "proximal", "thumb_distal": "distal", "thumb_pad": "distal"}
 MATERIAL = {"thumb_mount": "PETG", "thumb_base": "PETG", "thumb_metacarpal": "PETG", "thumb_proximal": "PETG",
             "thumb_distal": "PETG", "thumb_pad": "TPU 95A (or cast silicone A30)", "thenar_pad": "TPU 95A",
-            "rot_journal": "steel/aluminium tube 10 x 1", "bearing_top": "6700ZZ 10x15x4",
-            "bearing_bottom": "6700ZZ 10x15x4", "journal_collar": "steel shaft collar 10 mm (grub screw)",
-            "spinneret_top": "PTFE disc (cut from 8 mm rod)", "spinneret_bottom": "PTFE disc (cut from 8 mm rod)",
+            "bearing_top": "6704ZZ 20x27x4", "bearing_bottom": "6704ZZ 20x27x4", "base_cap": "PETG, 3 x M2x6",
+            "neck_top": "PTFE eyelet (6 mm rod, 1.6 mm hole, both ends rounded R0.8)",
             "pin_cmc_a": "steel dowel 3 mm", "pin_cmc_b": "steel dowel 3 mm", "nip_cmc_a": "steel pin 1 mm",
             "nip_cmc_b": "steel pin 1 mm", "nip_mcp_a": "steel pin 1 mm", "nip_mcp_b": "steel pin 1 mm",
             "pin_mcp_a": "steel dowel 2 mm", "pin_mcp_b": "steel dowel 2 mm", "pin_ip_a": "steel dowel 2 mm",
@@ -937,10 +922,9 @@ def interface():
 # --- Checks -----------------------------------------------------------------------------------------
 IGNORE = [("pin_cmc_*", "thumb_base"), ("pin_cmc_*", "thumb_metacarpal"), ("nip_cmc_*", "thumb_metacarpal"),
           ("pin_mcp_*", "thumb_metacarpal"), ("pin_mcp_*", "thumb_proximal"), ("nip_mcp_*", "thumb_proximal"),
-          ("pin_ip_*", "thumb_proximal"), ("pin_ip_*", "thumb_distal"), ("rot_journal", "thumb_base"),
-          ("rot_journal", "bearing_*"), ("bearing_*", "thumb_mount"), ("journal_collar", "rot_journal"),
-          ("spinneret_top", "rot_journal"), ("spinneret_bottom", "thumb_mount"), ("thumb_pad", "thumb_distal"),
-          ("thenar_pad", "thumb_metacarpal"), ("journal_collar", "bearing_bottom")]
+          ("pin_ip_*", "thumb_proximal"), ("pin_ip_*", "thumb_distal"), ("bearing_*", "thumb_base"),
+          ("bearing_*", "thumb_mount"), ("neck_top", "base_cap"), ("thumb_pad", "thumb_distal"),
+          ("thenar_pad", "thumb_metacarpal")]
 
 
 def routing_report(n=13):
@@ -979,7 +963,27 @@ def routing_report(n=13):
                 q[jn] = v
                 vals.append(strand_length(f, q) + strand_length(e, q))
         sums[jn] = float(np.ptp(vals))
-    return res, sums
+    # true coupling: a change of (L_flex - L_ext)/2 turns the driven joint by that / (mm per deg)
+    coup = {}
+    for jn in JOINT_NAMES:
+        f, e = STRANDS[f"{jn}_flex"], STRANDS[f"{jn}_ext"]
+        row = {}
+        for kn in JOINT_NAMES:
+            if kn == jn:
+                continue
+            worst = 0.0
+            for other in ("rest", "mid", "hi"):
+                base_q = {k: (0.0 if other == "rest" else mid(k) if other == "mid" else RANGES[k][1])
+                          for k in JOINT_NAMES}
+                d = []
+                for v in np.linspace(*RANGES[kn], n):
+                    q = dict(base_q)
+                    q[kn] = v
+                    d.append(0.5 * (strand_length(f, q) - strand_length(e, q)))
+                worst = max(worst, float(np.ptp(d)))
+            row[kn] = {"mm": worst, "deg": worst / P.MM_PER_DEG}
+        coup[jn] = row
+    return res, sums, coup
 
 
 def collision_sweep(quick=False):
@@ -1123,7 +1127,7 @@ def render_all(views_rest=("iso", "front", "side", "top")):
                 parts[n] = s_
     parts["strands"] = strand_solids(q0, 0.3)
     render(parts, OUT / "cmc_section.png", views=((10, 0), (10, 90), (40, 45), (-30, 135)), colors=COLORS,
-           legend=False, title="CMC section (half cut away): journal, spinnerets, nip, drums, strands")
+           legend=False, title="CMC section (half cut away): bearings, neck, nip, drums, strands")
 
 
 def main():
@@ -1141,12 +1145,14 @@ def main():
     res = build({})
     export_all(res["parts"], OUT, name="thumb_rest")
     print("routing (max length change, mm):")
-    rr, sums = routing_report(9 if quick else 13)
+    rr, sums, coup = routing_report(9 if quick else 13)
     for n, row in rr.items():
         print(f"  {n:15s} " + " ".join(f"{k}={row[k]:.3f}" for k in JOINT_NAMES) +
               f"  own slope {row.get('slope_mm_per_deg', 0):.4f} mm/deg")
     print("  loop sums ptp:", {k: round(v, 3) for k, v in sums.items()})
-    (OUT / "routing.json").write_text(json.dumps({"per_strand": rr, "loop_sums": sums,
+    for jn, row in coup.items():
+        print(f"  coupling into {jn}: " + ", ".join(f"{k} {v['mm']:.3f} mm = {v['deg']:.2f} deg" for k, v in row.items()))
+    (OUT / "routing.json").write_text(json.dumps({"per_strand": rr, "loop_sums": sums, "coupling": coup,
                                                   "anchors": {n: {k: v for k, v in st["drum"].items()}
                                                               for n, st in STRANDS.items()}}, indent=1))
     print("interface:")

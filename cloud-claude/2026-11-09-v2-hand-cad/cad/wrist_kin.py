@@ -21,12 +21,19 @@ import params as P  # noqa: E402
 
 DEG = math.pi / 180
 
+# Wrist ranges used by this design (report 03, "Requested params changes"): flexion is limited to
+# +-50 deg (hard stops +-52). With crossing axes in a 30 mm gap, anything fixed to the palm near the
+# centre line (sheath clamp, sheaths entering the palm) sweeps into the forearm-side dev lugs beyond
+# ~+-53 deg; the full -60..+70 of params.WRIST_RANGES is not reachable without a bigger gap or a palm
+# with a deep central notch. +-50 deg covers the functional ROM of daily tasks (Ryu et al. 1991).
+RANGES = {"wrist_flex": (-50.0, 50.0), "wrist_dev": tuple(P.WRIST_RANGES["wrist_dev"])}
+
 # --- bundle --------------------------------------------------------------------------------------
 PITCH = 2.15  # tube pitch in the bundle combs (2.0 OD + 0.15)
 N_COLS, N_ROWS = 8, 4  # 8 along x, 4 along y = 32 sheaths
 CABLE_D = 3.0  # palm sensor cable (4 x 30 AWG in a sleeve), runs at the -X end of the bundle
-Z_PALM_CLAMP = 18.0  # palm-side sheath clamp lower face (clamp bridge 3 mm into the palm base)
-Z_FORE_COMB = -55.0  # forearm-side bundle comb (slide guide) top face
+Z_PALM_CLAMP = 14.0  # palm-side sheath clamp lower face (clamp bridge sits in the flange, z 14..19)
+Z_FORE_COMB = -60.0  # forearm-side bundle comb (slide guide) top face
 RING_H_Y = 7.0  # ring height (z) at its +-Y ends
 RING_H_X = 7.0  # ring height at its +-X ends
 
@@ -176,7 +183,7 @@ def bore_needed(flex, dev, n=241):
     return float(np.abs(mx[:, 0]).max()), float(np.abs(my[:, 1]).max())
 
 
-def wrist_grid(step_flex=(-60, -30, 0, 35, 70), step_dev=(-30, -15, 0, 20)):
+def wrist_grid(step_flex=(-52, -25, 0, 25, 52), step_dev=(-32, -15, 0, 22)):
     return [(f, d) for f in step_flex for d in step_dev]
 
 
@@ -186,8 +193,8 @@ def wrist_grid(step_flex=(-60, -30, 0, 35, 70), step_dev=(-30, -15, 0, 20)):
 # e2 = +Y (axis X) or e2 = +X (axis Y, right side; mirrored on the left). The rod length is fixed by
 # the crank angle phi_mid at the mid pose Q_MID. G = servo turns per crank turn (2:1 spur stage).
 Q_MID = (5.0, -5.0)
-DRIVE = dict(axis="X", xB=24.0, yB=16.0, zB=-1.4, xA=24.0, yA=-12.0, zA=-48.0, r_c=20.0,
-             phi_mid=90.0, G=2.0)
+DRIVE = dict(axis="Y", xB=24.2, yB=7.1, zB=2.03, xA=22.04, yA=26.79, zA=-79.02, r_c=19.91,
+             phi_mid=80.34, G=2.57)  # differential-evolution result (optimize_drive("Y"), flex +-50)
 STS3215_STALL = 2.94  # N m at 12 V (30 kg cm class, verify datasheet)
 STS3215_CONT = 0.9  # N m, ~30 % of stall, a sustainable holding torque (rule of thumb)
 
@@ -293,8 +300,8 @@ def capacity(dr, flex, dev, tau_servo=STS3215_STALL):
 
 
 def drive_sweep(dr, n_f=27, n_d=11, margin=2.0):
-    fl = np.linspace(P.WRIST_RANGES["wrist_flex"][0] - margin, P.WRIST_RANGES["wrist_flex"][1] + margin, n_f)
-    dv = np.linspace(P.WRIST_RANGES["wrist_dev"][0] - margin, P.WRIST_RANGES["wrist_dev"][1] + margin, n_d)
+    fl = np.linspace(RANGES["wrist_flex"][0] - margin, RANGES["wrist_flex"][1] + margin, n_f)
+    dv = np.linspace(RANGES["wrist_dev"][0] - margin, RANGES["wrist_dev"][1] + margin, n_d)
     return [(f, d, capacity(dr, f, d)) for f in fl for d in dv]
 
 

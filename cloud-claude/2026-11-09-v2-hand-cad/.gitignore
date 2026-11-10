@@ -1,1 +1,3 @@
 __pycache__/
+# STL is regenerated from the scripts; STEP + PNG + JSON are committed
+out/**/*.stl

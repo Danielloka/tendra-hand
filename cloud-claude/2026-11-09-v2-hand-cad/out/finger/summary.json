@@ -1,0 +1,528 @@
+{
+ "index": {
+  "valid": {
+   "yoke": true,
+   "proximal": true,
+   "middle": true,
+   "distal": true,
+   "pad_tip": true,
+   "pad_proximal": true,
+   "pad_middle": true,
+   "pin_mcp_l": true,
+   "pin_mcp_r": true,
+   "pin_pip": true,
+   "pin_dip": true,
+   "post_mcp": true,
+   "post_pip": true,
+   "post_abd": true,
+   "pin_abd_palmar": true,
+   "pin_abd_dorsal": true,
+   "pin_link_a": true,
+   "pin_link_b": true,
+   "eyelet_flex": true,
+   "eyelet_ext": true,
+   "ptfe_mcp_flex": true,
+   "ptfe_mcp_ext": true,
+   "ptfe_pip_flex": true,
+   "ptfe_pip_ext": true
+  },
+  "volumes_cm3": {
+   "yoke": 4.349,
+   "proximal": 10.57,
+   "middle": 6.072,
+   "distal": 4.583,
+   "pad_tip": 0.649,
+   "pad_proximal": 0.393,
+   "pad_middle": 0.097
+  },
+  "decoupling": [
+   {
+    "strand": "mcp_abd.flex",
+    "mcp_flex": 0.0,
+    "pip": 0.0,
+    "own_mm_per_deg": -0.12217304763960322,
+    "own_nonlin_mm": 3.552713678800501e-15,
+    "loop_sum_var_mm": 7.105427357601002e-15
+   },
+   {
+    "strand": "mcp_abd.ext",
+    "mcp_flex": 0.0,
+    "pip": 0.0,
+    "own_mm_per_deg": 0.12217304763960307,
+    "own_nonlin_mm": 3.552713678800501e-15,
+    "loop_sum_var_mm": 7.105427357601002e-15
+   },
+   {
+    "strand": "mcp_flex.flex",
+    "mcp_abd": 0.0,
+    "pip": 0.0,
+    "own_mm_per_deg": -0.12217304763960296,
+    "own_nonlin_mm": 1.0658141036401503e-14,
+    "loop_sum_var_mm": 7.105427357601002e-15
+   },
+   {
+    "strand": "mcp_flex.ext",
+    "mcp_abd": 0.0,
+    "pip": 0.0,
+    "own_mm_per_deg": 0.12217304763960316,
+    "own_nonlin_mm": 7.105427357601002e-15,
+    "loop_sum_var_mm": 7.105427357601002e-15
+   },
+   {
+    "strand": "pip.flex",
+    "mcp_abd": 0.0,
+    "mcp_flex": 0.19201475796171508,
+    "own_mm_per_deg": -0.12217304763960282,
+    "own_nonlin_mm": 1.4210854715202004e-14,
+    "loop_sum_var_mm": 1.4210854715202004e-14
+   },
+   {
+    "strand": "pip.ext",
+    "mcp_abd": 0.0,
+    "mcp_flex": 0.12768747509328193,
+    "own_mm_per_deg": 0.1221730476396034,
+    "own_nonlin_mm": 2.1316282072803006e-14,
+    "loop_sum_var_mm": 1.4210854715202004e-14
+   }
+  ],
+  "poly_check_mm": 0.0020039049301345813,
+  "link": {
+   "bar_mm": 22.8712,
+   "max_ratio_error_deg": 0.5063558696378587,
+   "min_transmission_deg": 38.611,
+   "axis_clear_mm": 2.184,
+   "dip_range": [
+    -3.2436441303621413,
+    70.90639724653126
+   ],
+   "pin_a": {
+    "r_mm": 3.5,
+    "angle_deg": 33.75
+   },
+   "pin_b": {
+    "r_mm": 4.4922,
+    "angle_deg": -78.672
+   }
+  },
+  "sheath_min_bend_mm": 19.07406776091042,
+  "force": {
+   "SCS0009": {
+    "strand_N": 45.2,
+    "mcp_Nm": 0.285,
+    "tip_N_straight": 3.4
+   },
+   "HLS3606M": {
+    "strand_N": 118.0,
+    "mcp_Nm": 0.743,
+    "tip_N_straight": 8.7
+   }
+  },
+  "collisions": {
+   "(0.0, -10.0, -5.0)": [],
+   "(0.0, -10.0, 45.0)": [],
+   "(0.0, -10.0, 95.0)": [],
+   "(0.0, 40.0, -5.0)": [],
+   "(0.0, 40.0, 45.0)": [],
+   "(0.0, 40.0, 95.0)": [],
+   "(0.0, 90.0, -5.0)": [],
+   "(0.0, 90.0, 45.0)": [],
+   "(0.0, 90.0, 95.0)": [],
+   "(15.0, 90.0, 95.0)": []
+  },
+  "strand_in_solid": []
+ },
+ "middle": {
+  "valid": {
+   "yoke": true,
+   "proximal": true,
+   "middle": true,
+   "distal": true,
+   "pad_tip": true,
+   "pad_proximal": true,
+   "pad_middle": true,
+   "pin_mcp_l": true,
+   "pin_mcp_r": true,
+   "pin_pip": true,
+   "pin_dip": true,
+   "post_mcp": true,
+   "post_pip": true,
+   "post_abd": true,
+   "pin_abd_palmar": true,
+   "pin_abd_dorsal": true,
+   "pin_link_a": true,
+   "pin_link_b": true,
+   "eyelet_flex": true,
+   "eyelet_ext": true,
+   "ptfe_mcp_flex": true,
+   "ptfe_mcp_ext": true,
+   "ptfe_pip_flex": true,
+   "ptfe_pip_ext": true
+  },
+  "volumes_cm3": {
+   "yoke": 4.349,
+   "proximal": 11.406,
+   "middle": 6.843,
+   "distal": 4.81,
+   "pad_tip": 0.683,
+   "pad_proximal": 0.458,
+   "pad_middle": 0.146
+  },
+  "decoupling": [
+   {
+    "strand": "mcp_abd.flex",
+    "mcp_flex": 0.0,
+    "pip": 0.0,
+    "own_mm_per_deg": -0.12217304763960322,
+    "own_nonlin_mm": 3.552713678800501e-15,
+    "loop_sum_var_mm": 7.105427357601002e-15
+   },
+   {
+    "strand": "mcp_abd.ext",
+    "mcp_flex": 0.0,
+    "pip": 0.0,
+    "own_mm_per_deg": 0.12217304763960307,
+    "own_nonlin_mm": 3.552713678800501e-15,
+    "loop_sum_var_mm": 7.105427357601002e-15
+   },
+   {
+    "strand": "mcp_flex.flex",
+    "mcp_abd": 0.0,
+    "pip": 0.0,
+    "own_mm_per_deg": -0.12217304763960296,
+    "own_nonlin_mm": 1.0658141036401503e-14,
+    "loop_sum_var_mm": 7.105427357601002e-15
+   },
+   {
+    "strand": "mcp_flex.ext",
+    "mcp_abd": 0.0,
+    "pip": 0.0,
+    "own_mm_per_deg": 0.12217304763960316,
+    "own_nonlin_mm": 7.105427357601002e-15,
+    "loop_sum_var_mm": 7.105427357601002e-15
+   },
+   {
+    "strand": "pip.flex",
+    "mcp_abd": 0.0,
+    "mcp_flex": 0.18624567234127198,
+    "own_mm_per_deg": -0.12217304763960299,
+    "own_nonlin_mm": 2.842170943040401e-14,
+    "loop_sum_var_mm": 2.842170943040401e-14
+   },
+   {
+    "strand": "pip.ext",
+    "mcp_abd": 0.0,
+    "mcp_flex": 0.11273212841068414,
+    "own_mm_per_deg": 0.12217304763960295,
+    "own_nonlin_mm": 2.842170943040401e-14,
+    "loop_sum_var_mm": 2.842170943040401e-14
+   }
+  ],
+  "poly_check_mm": 0.0019700582387827126,
+  "link": {
+   "bar_mm": 25.9182,
+   "max_ratio_error_deg": 0.4355924748424913,
+   "min_transmission_deg": 36.431,
+   "axis_clear_mm": 2.078,
+   "dip_range": [
+    -3.3144075251575087,
+    70.85225242100577
+   ],
+   "pin_a": {
+    "r_mm": 3.5,
+    "angle_deg": 37.891
+   },
+   "pin_b": {
+    "r_mm": 4.5078,
+    "angle_deg": -79.375
+   }
+  },
+  "sheath_min_bend_mm": 19.0740677609159,
+  "force": {
+   "SCS0009": {
+    "strand_N": 45.2,
+    "mcp_Nm": 0.285,
+    "tip_N_straight": 3.1
+   },
+   "HLS3606M": {
+    "strand_N": 118.0,
+    "mcp_Nm": 0.743,
+    "tip_N_straight": 8.1
+   }
+  },
+  "collisions": {
+   "(0.0, -10.0, -5.0)": [],
+   "(0.0, -10.0, 45.0)": [],
+   "(0.0, -10.0, 95.0)": [],
+   "(0.0, 40.0, -5.0)": [],
+   "(0.0, 40.0, 45.0)": [],
+   "(0.0, 40.0, 95.0)": [],
+   "(0.0, 90.0, -5.0)": [],
+   "(0.0, 90.0, 45.0)": [],
+   "(0.0, 90.0, 95.0)": [],
+   "(15.0, 90.0, 95.0)": []
+  },
+  "strand_in_solid": []
+ },
+ "ring": {
+  "valid": {
+   "yoke": true,
+   "proximal": true,
+   "middle": true,
+   "distal": true,
+   "pad_tip": true,
+   "pad_proximal": true,
+   "pad_middle": true,
+   "pin_mcp_l": true,
+   "pin_mcp_r": true,
+   "pin_pip": true,
+   "pin_dip": true,
+   "post_mcp": true,
+   "post_pip": true,
+   "post_abd": true,
+   "pin_abd_palmar": true,
+   "pin_abd_dorsal": true,
+   "pin_link_a": true,
+   "pin_link_b": true,
+   "eyelet_flex": true,
+   "eyelet_ext": true,
+   "ptfe_mcp_flex": true,
+   "ptfe_mcp_ext": true,
+   "ptfe_pip_flex": true,
+   "ptfe_pip_ext": true
+  },
+  "volumes_cm3": {
+   "yoke": 4.131,
+   "proximal": 9.918,
+   "middle": 5.822,
+   "distal": 4.247,
+   "pad_tip": 0.609,
+   "pad_proximal": 0.396,
+   "pad_middle": 0.128
+  },
+  "decoupling": [
+   {
+    "strand": "mcp_abd.flex",
+    "mcp_flex": 0.0,
+    "pip": 0.0,
+    "own_mm_per_deg": -0.12217304763960322,
+    "own_nonlin_mm": 3.552713678800501e-15,
+    "loop_sum_var_mm": 7.105427357601002e-15
+   },
+   {
+    "strand": "mcp_abd.ext",
+    "mcp_flex": 0.0,
+    "pip": 0.0,
+    "own_mm_per_deg": 0.12217304763960307,
+    "own_nonlin_mm": 3.552713678800501e-15,
+    "loop_sum_var_mm": 7.105427357601002e-15
+   },
+   {
+    "strand": "mcp_flex.flex",
+    "mcp_abd": 0.0,
+    "pip": 0.0,
+    "own_mm_per_deg": -0.12217304763960296,
+    "own_nonlin_mm": 1.0658141036401503e-14,
+    "loop_sum_var_mm": 7.105427357601002e-15
+   },
+   {
+    "strand": "mcp_flex.ext",
+    "mcp_abd": 0.0,
+    "pip": 0.0,
+    "own_mm_per_deg": 0.12217304763960316,
+    "own_nonlin_mm": 7.105427357601002e-15,
+    "loop_sum_var_mm": 7.105427357601002e-15
+   },
+   {
+    "strand": "pip.flex",
+    "mcp_abd": 0.0,
+    "mcp_flex": 0.18942994411997915,
+    "own_mm_per_deg": -0.12217304763960293,
+    "own_nonlin_mm": 2.842170943040401e-14,
+    "loop_sum_var_mm": 1.4210854715202004e-14
+   },
+   {
+    "strand": "pip.ext",
+    "mcp_abd": 0.0,
+    "mcp_flex": 0.11350214251844193,
+    "own_mm_per_deg": 0.1221730476396033,
+    "own_nonlin_mm": 2.1316282072803006e-14,
+    "loop_sum_var_mm": 1.4210854715202004e-14
+   }
+  ],
+  "poly_check_mm": 0.0019917809657812313,
+  "link": {
+   "bar_mm": 24.9327,
+   "max_ratio_error_deg": 0.4843215752965033,
+   "min_transmission_deg": 37.827,
+   "axis_clear_mm": 2.149,
+   "dip_range": [
+    -3.2656784247034967,
+    70.77594352765752
+   ],
+   "pin_a": {
+    "r_mm": 3.5039,
+    "angle_deg": 35.625
+   },
+   "pin_b": {
+    "r_mm": 4.5039,
+    "angle_deg": -78.047
+   }
+  },
+  "sheath_min_bend_mm": 19.07406776091042,
+  "force": {
+   "SCS0009": {
+    "strand_N": 45.2,
+    "mcp_Nm": 0.285,
+    "tip_N_straight": 3.2
+   },
+   "HLS3606M": {
+    "strand_N": 118.0,
+    "mcp_Nm": 0.743,
+    "tip_N_straight": 8.4
+   }
+  },
+  "collisions": {
+   "(0.0, -10.0, -5.0)": [],
+   "(0.0, -10.0, 45.0)": [],
+   "(0.0, -10.0, 95.0)": [],
+   "(0.0, 40.0, -5.0)": [],
+   "(0.0, 40.0, 45.0)": [],
+   "(0.0, 40.0, 95.0)": [],
+   "(0.0, 90.0, -5.0)": [],
+   "(0.0, 90.0, 45.0)": [],
+   "(0.0, 90.0, 95.0)": [],
+   "(15.0, 90.0, 95.0)": []
+  },
+  "strand_in_solid": []
+ },
+ "little": {
+  "valid": {
+   "yoke": true,
+   "proximal": true,
+   "middle": true,
+   "distal": true,
+   "pad_tip": true,
+   "pad_proximal": true,
+   "pin_mcp_l": true,
+   "pin_mcp_r": true,
+   "pin_pip": true,
+   "pin_dip": true,
+   "post_mcp": true,
+   "post_pip": true,
+   "post_abd": true,
+   "pin_abd_palmar": true,
+   "pin_abd_dorsal": true,
+   "pin_link_a": true,
+   "pin_link_b": true,
+   "eyelet_flex": true,
+   "eyelet_ext": true,
+   "ptfe_mcp_flex": true,
+   "ptfe_mcp_ext": true,
+   "ptfe_pip_flex": true,
+   "ptfe_pip_ext": true
+  },
+  "volumes_cm3": {
+   "yoke": 4.081,
+   "proximal": 6.738,
+   "middle": 3.528,
+   "distal": 3.285,
+   "pad_tip": 0.484,
+   "pad_proximal": 0.196
+  },
+  "decoupling": [
+   {
+    "strand": "mcp_abd.flex",
+    "mcp_flex": 0.0,
+    "pip": 0.0,
+    "own_mm_per_deg": -0.12217304763960322,
+    "own_nonlin_mm": 3.552713678800501e-15,
+    "loop_sum_var_mm": 7.105427357601002e-15
+   },
+   {
+    "strand": "mcp_abd.ext",
+    "mcp_flex": 0.0,
+    "pip": 0.0,
+    "own_mm_per_deg": 0.12217304763960307,
+    "own_nonlin_mm": 3.552713678800501e-15,
+    "loop_sum_var_mm": 7.105427357601002e-15
+   },
+   {
+    "strand": "mcp_flex.flex",
+    "mcp_abd": 0.0,
+    "pip": 0.0,
+    "own_mm_per_deg": -0.12217304763960296,
+    "own_nonlin_mm": 1.0658141036401503e-14,
+    "loop_sum_var_mm": 7.105427357601002e-15
+   },
+   {
+    "strand": "mcp_flex.ext",
+    "mcp_abd": 0.0,
+    "pip": 0.0,
+    "own_mm_per_deg": 0.12217304763960316,
+    "own_nonlin_mm": 7.105427357601002e-15,
+    "loop_sum_var_mm": 7.105427357601002e-15
+   },
+   {
+    "strand": "pip.flex",
+    "mcp_abd": 0.0,
+    "mcp_flex": 0.19334876237057586,
+    "own_mm_per_deg": -0.12217304763960297,
+    "own_nonlin_mm": 1.4210854715202004e-14,
+    "loop_sum_var_mm": 1.4210854715202004e-14
+   },
+   {
+    "strand": "pip.ext",
+    "mcp_abd": 0.0,
+    "mcp_flex": 0.1311455332844318,
+    "own_mm_per_deg": 0.12217304763960289,
+    "own_nonlin_mm": 2.1316282072803006e-14,
+    "loop_sum_var_mm": 1.4210854715202004e-14
+   }
+  ],
+  "poly_check_mm": 0.0020470354331081353,
+  "link": {
+   "bar_mm": 18.7134,
+   "max_ratio_error_deg": 0.5230924256334402,
+   "min_transmission_deg": 39.493,
+   "axis_clear_mm": 2.226,
+   "dip_range": [
+    -3.22690757436656,
+    70.72720150859027
+   ],
+   "pin_a": {
+    "r_mm": 3.5,
+    "angle_deg": 30.078
+   },
+   "pin_b": {
+    "r_mm": 4.5,
+    "angle_deg": -81.25
+   }
+  },
+  "sheath_min_bend_mm": 19.0740677608683,
+  "force": {
+   "SCS0009": {
+    "strand_N": 45.2,
+    "mcp_Nm": 0.285,
+    "tip_N_straight": 4.0
+   },
+   "HLS3606M": {
+    "strand_N": 118.0,
+    "mcp_Nm": 0.743,
+    "tip_N_straight": 10.5
+   }
+  },
+  "collisions": {
+   "(0.0, -10.0, -5.0)": [],
+   "(0.0, -10.0, 45.0)": [],
+   "(0.0, -10.0, 95.0)": [],
+   "(0.0, 40.0, -5.0)": [],
+   "(0.0, 40.0, 45.0)": [],
+   "(0.0, 40.0, 95.0)": [],
+   "(0.0, 90.0, -5.0)": [],
+   "(0.0, 90.0, 45.0)": [],
+   "(0.0, 90.0, 95.0)": [],
+   "(15.0, 90.0, 95.0)": []
+  },
+  "strand_in_solid": []
+ }
+}

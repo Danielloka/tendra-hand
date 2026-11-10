@@ -22,7 +22,7 @@ post without a reverse bend, 1-1.5 wraps, then a knot).
 
 API: build(name, q=None) -> {"parts", "joints", "strands", "interface"}; see the bottom for __main__.
 Run: uv run --no-project --with cadquery --with trimesh --with numpy --with matplotlib --with scipy \
-         --with pillow python cad/finger.py [--quick] [--finger index] [--no-export]
+         --with pillow --with rtree python cad/finger.py [--quick] [--finger index] [--no-export]
 """
 
 from __future__ import annotations
@@ -70,7 +70,7 @@ ABD_DISC_Y = (9.0, 14.6)
 ABD_GROOVE_Y = {"flex": 10.7, "ext": 13.3}  # flex = +x side strand (pulls toward the thumb)
 ABD_PIN_D = P.PIN_D_BIG  # 3 mm dowels, palmar + dorsal (pins far apart: stiff against finger twist)
 ABD_PIN_Y = {"palmar": (-12.5, -6.25), "dorsal": (8.0, 18.0)}  # palm holds y < -9.25 and y > 14.85
-PALM_GUIDE_DZ = 16.0  # sheath free span below the yoke before the palm's guide channel
+PALM_GUIDE_DZ = 22.0  # sheath free span below the yoke before the palm's guide channel
 ABD_SOCKET_DZ = 12.0  # abd strands: sheath mouths in the palm this far below the abd axis
 PIN_D = P.PIN_D_FINGER  # 2 mm dowels: MCP stubs, PIP, DIP
 POST_D = 1.5  # anchor posts (steel), flush with the groove floor
@@ -173,9 +173,9 @@ def geom(name: str) -> dict:
     g["link"] = DL.design(float(L2))
     # eyelet entrance: optimise its height so the pip strands' length change over the MCP range is smallest
     best = None
-    for z0 in np.arange(-0.8, 0.81, 0.05):
+    for z0 in np.arange(-1.0, 0.81, 0.025):
         g["z0"] = float(z0)
-        e = max(abs(v).max() for v in crossing_table(g).values())
+        e = max(v.max() - v.min() for v in crossing_table(g).values())  # peak-to-peak
         if best is None or e < best[0]:
             best = (e, float(z0))
     g["z0"] = best[1]
@@ -416,10 +416,17 @@ def keep_near_joint(shape, zc, phi0, phi1, r_inner, r_far=16.0, x0=-30, x1=30):
 
 
 def place_shape(shape, Tm):
-    """Apply a 4x4 rigid transform to a CadQuery shape."""
+    """Apply a 4x4 rigid transform to a CadQuery shape (re-orthonormalised, via gp_Trsf)."""
     cq = _cq()
-    m = cq.Matrix([[float(Tm[i, j]) for j in range(4)] for i in range(3)])
-    return shape.transformShape(m)
+    from OCP.BRepBuilderAPI import BRepBuilderAPI_Transform
+    from OCP.gp import gp_Trsf
+    Rm = np.asarray(Tm[:3, :3], float)
+    u, _, vt = np.linalg.svd(Rm)
+    Rm = u @ vt
+    t = np.asarray(Tm[:3, 3], float)
+    tr = gp_Trsf()
+    tr.SetValues(*[float(v) for row in np.column_stack([Rm, t]) for v in row])
+    return cq.Shape.cast(BRepBuilderAPI_Transform(shape.wrapped, tr, True).Shape())
 
 
 # ------------------------------------------------------------------------------------------------
@@ -491,7 +498,9 @@ def local_parts(name: str) -> dict:
         pcheeks.append(keep_near_joint(ch, zp, pip_par[0], pip_par[1], r_boss))
     prox = U(drum, neck, shaft, *heels, *pcheeks)
     prox = keep_near_joint(prox, 0.0, mcp_chi[0], mcp_chi[1], r_fl + 0.01)
-    cut = [ring_groove_x(s * X_MCP_GROOVE, GROOVE_FLOOR, r_fl + 1) for s in (-1, 1)]
+    prox = keep_near_joint(prox, zp, pip_par[0], pip_par[1], r_boss + 0.01)  # PIP flexion stop at ~96 deg
+    # 1 mm groove slot reaches r 12: at 90 deg the flex strand runs through the root of the shaft
+    cut = [ring_groove_x(s * X_MCP_GROOVE, GROOVE_FLOOR, 12.0) for s in (-1, 1)]
     cut += [cylx(PIN_D / 2 + CLR / 2, s * STUB_X0, s * (xd + 1)) for s in (-1, 1)]  # stub axles, running fit
     # pip strands: open slot under the eyelets (strand fan), eyelet bosses kept, eyelet + strand bores
     slot = box(-SLOT_HALF, SLOT_HALF, -12, 12, -12, g["z0"] + 1.6)  # eyelet sticks out 0.6 below the plastic
@@ -532,7 +541,7 @@ def local_parts(name: str) -> dict:
     mid = U(mdrum, mneck, mnarrow, tongue, mbody, *mheels)
     mid = keep_near_joint(mid, zp, pip_chi[0], pip_chi[1], r_fl + 0.01)
     mid = keep_near_joint(mid, zd, dip_par[0], dip_par[1], r_fl + 0.01)
-    cut = [ring_groove_x(s * X_PIP, GROOVE_FLOOR, r_fl + 1, zp) for s in (-1, 1)]
+    cut = [ring_groove_x(s * X_PIP, GROOVE_FLOOR, 11.0, zp) for s in (-1, 1)]  # slot to r 11 (strand at 95 deg)
     cut.append(cylx(PIN_D / 2 + CLR / 2, -xdp - 1, xdp + 1, 0, zp))  # PIP axle, running fit
     cut.append(cylx(PIN_D / 2 + CLR / 2, -xt - 1, xt + 1, 0, zd))  # DIP axle, running fit
     pm = np.array([POST_R_C * math.cos(math.radians(ANCHOR["pip"])), zp + POST_R_C * math.sin(math.radians(ANCHOR["pip"]))])
@@ -547,11 +556,11 @@ def local_parts(name: str) -> dict:
         x0, x1 = sorted((s * (xt + CLR), s * (hw if s > 0 else hw - RECESS)))
         arm = box(x0, x1, -hh + PAD_T, hh, zd, zd + r_band + 1)
         dcheeks.append(U(cylx(r_boss, x0, x1, 0, zd), arm))
-    tip_end = zt - hwt
-    tbody = U(box(-hwt, hwt, -hh + PAD_T, hh, zd + r_boss, tip_end),
-              cyl(hwt, (0, -hh + PAD_T, tip_end), (0, hh, tip_end)))
-    try:  # round the dorsal tip edge
-        tbody = _cq().Workplane().add(tbody).edges(">Y").fillet(2.5).val()
+    r_tip = min(hwt - 0.6, 6.0)  # plan-view corner radius of the fingertip
+    tip_end = zt - r_tip
+    tbody = fbox(-hwt, hwt, -hh + PAD_T, hh, zd + r_boss, zt, r_tip, "|Y and >Z")
+    try:  # round the dorsal edges (nail side)
+        tbody = _cq().Workplane().add(tbody).edges(">Y").fillet(2.0).val()
     except Exception:
         pass
     dist = U(*dcheeks, tbody, box(-xt - CLR - 0.01, xt + CLR + 0.01, -hh + PAD_T, hh, zd + r_boss, zd + r_band + 1))
@@ -563,10 +572,9 @@ def local_parts(name: str) -> dict:
 
     # ---------------- TPU pads ----------------
     z_pad0 = zd + 6.0
-    pad = U(box(-hwt + 0.6, hwt - 0.6, -hh - 0.8, -hh + PAD_T, z_pad0, tip_end),
-            cyl(hwt - 0.6, (0, -hh - 0.8, tip_end), (0, -hh + PAD_T, tip_end)))
+    pad = fbox(-hwt + 0.6, hwt - 0.6, -hh - 0.8, -hh + PAD_T - 0.05, z_pad0, zt - 0.6, r_tip - 0.6, "|Y and >Z")
     bulge = cylx(45.0, -hw, hw, -hh - 0.8 + 45.0, (z_pad0 + zt) / 2)  # flattened, slightly convex pad
-    pad = pad.intersect(bulge)
+    pad = pad.intersect(bulge).cut(cylx(r_boss + CLR, -hw - 1, hw + 1, 0, zd))  # clear the DIP cheek bosses
     try:
         pad = _cq().Workplane().add(pad).edges("<Y").fillet(1.0).val()
     except Exception:
@@ -765,7 +773,7 @@ def strands_in_solids(name, q, step=0.3):
     """Sample each bare strand and report points that fall inside a solid (should be none)."""
     import trimesh
 
-    from tools.render import tessellate
+    from tools.render import tessellate  # needs rtree (uv --with rtree)
     b = build(name, q)
     meshes = {}
     for k, s in b["parts"].items():
@@ -950,6 +958,24 @@ def main(argv=None):
                               cut_x=1.4, title="index fist, cutaway")
         print(f"  ({time.time() - t0:.0f} s)")
     (OUT / "summary.json").write_text(json.dumps(summary, indent=1, default=str))
+    if not a.no_render and len(names) == 4:
+        render_all({}, OUT / "fingers_q0.png", "4 fingers q=0 (hand frame)")
+        render_all({"mcp_flex": 70, "pip": 80}, OUT / "fingers_curl.png", "4 fingers mcp 70 pip 80")
+        render_all({"mcp_flex": 90, "pip": 95}, OUT / "fingers_fist.png", "4 fingers fist (mcp 90, pip 95)")
+
+
+def render_all(q, out_png, title):
+    from tools.render import render
+    parts = {}
+    for n in FINGER_NAMES:
+        b = build(n, q)
+        for k, v in b["parts"].items():
+            if k in MATERIAL:
+                parts[f"{n}_{k}"] = v
+        for k, v in strand_solids(b["strands"]).items():
+            parts[f"{n}_{k}"] = v
+    cols = {k: colours({k.split("_", 1)[1]: 0})[k.split("_", 1)[1]] for k in parts}
+    return render(parts, out_png, views=("iso", "front", "side", "top"), colors=cols, title=title, legend=False)
 
 
 if __name__ == "__main__":

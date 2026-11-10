@@ -52,7 +52,7 @@ Z_COMB = (K.Z_FORE_COMB - 3.0, K.Z_FORE_COMB)
 Z_DECK = (-121.0, -118.0)
 Z_TRAY = (-216.0, -214.0)
 Z_FLANGE = (-230.0, -225.0)
-SHELL = (45.0, 32.0, 2.0)  # outer half x, half y, wall
+SHELL = (47.5, 33.0, 2.0)  # outer half x, half y, wall (95 x 66: the wrist cranks set the width)
 SHELL_TOP = (32.0, 29.5)  # half sizes at the top (z -18); wide enough that the rod balls stay outside
 Z_SHELL_TOP, Z_SHELL_WIDE = -18.0, -48.0
 ARM_PCD, ARM_BOLTS, ARM_BOLT_D, ARM_BORE = 50.0, 4, 4.5, 24.0  # OpenArm J5 stand-in (verify)
@@ -306,12 +306,12 @@ def make_frame(wrist_iface):
     and the wrist-drive supports (crank-axle bosses on the back wall, servo cradles)."""
     ox, oy, w = SHELL
     tx, ty = SHELL_TOP
-    top = rrect(2 * (tx - w), 2 * (ty - w), 3, 4.0, Z_SHELL_TOP - 4.0)
+    top = rrect(2 * 16.0, 2 * (ty - w), 3, 4.0, Z_SHELL_TOP - 4.0)  # narrow: the push rods pass beside it
     top = top.cut(rrect(2 * WR.BASE_OPEN[0] + 4, 2 * WR.BASE_OPEN[1] + 4, 4, 10, Z_SHELL_TOP - 6))
     for bx, by in wrist_iface["forearm_top"]["bolts"]:
         top = top.cut(cyl((bx, by, Z_SHELL_TOP - 5), (bx, by, Z_SHELL_TOP + 1), 2.0))  # M3 insert
     deck = box(-(ox - w), ox - w, -(oy - w), oy - w, Z_DECK[0], Z_DECK[1])
-    deck = deck.cut(box(-14.0, 14.0, -28.0, 28.0, Z_DECK[0] - 1, Z_DECK[1] + 1))  # sheath fan passes
+    deck = deck.cut(box(-15.0, 15.0, -29.0, 29.0, Z_DECK[0] - 1, Z_DECK[1] + 1))  # sheath fan passes
     tray = box(-(ox - w), ox - w, -(oy - w), oy - w, Z_TRAY[0], Z_TRAY[1])
     tray = tray.cut(box(-6, 6, -6, 6, Z_TRAY[0] - 1, Z_TRAY[1] + 1))
     frame = top.union(deck).union(tray)

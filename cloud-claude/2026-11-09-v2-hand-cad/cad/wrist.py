@@ -64,11 +64,11 @@ TOOTH_HALF = 12.5  # angular half-width of the flex-stop tooth at r 7 (deg)
 
 # drive (numbers from wrist_kin.DRIVE)
 DR = K.DRIVE
-SERVO_SHAFT = {"R": (27.5, 9.0, -57.0)}  # STS3215 output shaft (right; left = mirror), pointing +Y
-GEAR_C = float(np.hypot(SERVO_SHAFT["R"][0] - DR["xA"], SERVO_SHAFT["R"][2] - DR["zA"]))  # 14T:36T, m 0.9
+SERVO_SHAFT = {"R": (26.0, 9.0, -61.6)}  # STS3215 output shaft (right; left = mirror), pointing +Y
+GEAR_C = float(np.hypot(SERVO_SHAFT["R"][0] - DR["xA"], SERVO_SHAFT["R"][2] - DR["zA"]))  # 14T:36T, module 0.7 (pinion r 5, crank gear r 12.9)
 STS = P.STS3215
 STS_SHAFT_OFF = 11.0  # shaft to body centre along L (verify)
-ROD_D, BALL_D = 4.0, 8.0
+ROD_D, BALL_D, BALL_D_CRANK = 4.0, 8.0, 6.0  # M4 rod; 8 mm ball at the palm, 6 mm ball link at the crank
 
 
 # --- helpers ---------------------------------------------------------------------------------------
@@ -271,7 +271,7 @@ def make_crank(side, phi):
 def make_rod(B, C):
     u = (B - C) / np.linalg.norm(B - C)
     rod = cyl(C + u * BALL_D / 2, B - u * BALL_D / 2, ROD_D / 2)
-    return rod.union(sphere(B, BALL_D / 2)).union(sphere(C, BALL_D / 2))
+    return rod.union(sphere(B, BALL_D / 2)).union(sphere(C, BALL_D_CRANK / 2))
 
 
 # --- bundle ------------------------------------------------------------------------------------------

@@ -44,8 +44,12 @@ KNUCKLE_MIN_W = 17.0  # MCP knuckle (yoke + drum) width is max(width, 17): littl
 # Finger MCPs stay at y = -4 (thumb opposition was optimised against it). The palmar abd pin (hand y -16.5..-13.25)
 # sits below the -14 palm face, so the palm bulges locally at the knuckle row (human distal palmar pad):
 PALM_KNUCKLE_BULGE = {"palmar_y": -18.1, "dorsal_y": 15.6}  # pin ends + 1.6 wall
-# Adjacent yokes collide only when neighbours abduct toward each other; spacing kept (~19.5-20 mm), limit in software:
-ABD_PAIR_LIMIT = "q_abd(radial finger) - q_abd(ulnar neighbour) >= -14 deg (yoke envelopes touch beyond)"
+# MCP spacing kept (19.5-20 mm). 18 mm fingers are ~2 mm apart and their tips ~107 mm from the abd pivot, so
+# neighbours touch after ~1 deg of relative adduction (checked: -7/+7 already collides at mcp 0 and 90).
+# Software rule (like a human hand, adduction ends when fingers touch): neighbours may only spread apart:
+ABD_PAIR_LIMIT_DEG = -1.0  # q_abd(radial finger) - q_abd(ulnar neighbour) >= this (abd + = toward the thumb)
+# NOT sufficient for ring/little: their abd pivots are staggered (z 81.5 vs 73.5), so the yokes still touch at
+# ring +14 / little +15 (184 mm^3). A per-pair (q_a, q_b, mcp) collision table is an open issue (report 04).
 # Joint ranges, degrees (min, max); positive = closing. From V1 config_v1.h, adjust with reason.
 FINGER_RANGES = {"mcp_abd": (-15.0, 15.0), "mcp_flex": (-10.0, 90.0), "pip": (-5.0, 95.0)}
 DIP_RATIO = 0.75  # DIP = 0.75 * PIP via a rigid bar (owner)
@@ -91,6 +95,12 @@ SCS0009 = {"L": 23.3, "W": 12.1, "H": 25.25, "tab_L": 32.5, "tab_W": 11.0, "tab_
            "hole_spacing": 28.5, "shaft_offset": 5.7}
 HLS_EXTRA_H = 2.25
 STS3215 = {"L": 45.2, "W": 24.7, "H": 35.0}
+
+# Palm sheath clamp cell map (integrator): the wrist/forearm map (forearm.comb_cells) with 3 swaps
+# (13<->15, 19<->21, 25<->27) and the 6 thumb axial strands re-ordered among their own cells so that nothing
+# crosses in the palm. Source of truth: out/assembly/routes.json["cell_map"]. The forearm fan must follow it.
+PALM_CELL_SWAPS = ((13, 15), (19, 21), (25, 27))
+CLAMP_THUMB_STEP_Z = 15.5  # clamp top stepped down over the thumb cells (steel guide tubes turn lower)
 
 SERVO_IDS = {  # protocol order = V1
     1: "index_pip", 2: "index_mcp_flex", 3: "index_mcp_abd",

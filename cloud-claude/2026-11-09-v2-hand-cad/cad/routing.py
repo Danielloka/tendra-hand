@@ -382,7 +382,7 @@ def steel_route(s, placed, R=5.0):
         grid = [(t1, zk, off) for t1 in (3.9, 4.6, 5.5, 6.5) for zk in np.arange(20.5, 28.1, 0.5) for off in (-4, -2, 0, 2, 4)]
     else:
         grid = [(t1, zk, (off, zw)) for t1 in (3.0, 6.0, 10.0) for zk in np.arange(20.5, 25.1, 0.5)
-                for off in (-28, -26, -24, -22) for zw in (16.8, 17.8, 18.8)]
+                for off in (-30, -28, -26, -24, -22) for zw in (16.8, 17.8, 18.8)]
     for t1, zk, off in grid:
         K1 = S + dS * t1
         if s["kind"] == "thumb_axial":
@@ -415,7 +415,7 @@ def steel_route(s, placed, R=5.0):
             d, _ = tree.query(pts)
             near = pts[:, 2] < Z_CELL_THUMB + 4.5
             req = np.where(near, 1.5, OD["steel"] + GAP + 0.1)
-            J += 50 * float(np.sum(np.maximum(req - d, 0) ** 2))
+            J += 400 * float(np.sum(np.maximum(req - d, 0) ** 2))
         if best is None or J < best[0]:
             best = (J, pts, corners)
     return best
@@ -638,19 +638,68 @@ def wrist_cell_map(strands, swaps=()):
     return m
 
 
+def polish(path=OUT / "routes.json", passes=4, verbose=True):
+    """Continue optimising the PTFE paths from a saved routes.json (L-BFGS-B, dense sampling, margins)."""
+    global N_S, _T, _B, _B1, _B2, W_CLEAR
+    N_S = 140
+    _T = np.linspace(0, 1, N_S)
+    _B = np.array([[math.comb(DEG_N, i) * t ** i * (1 - t) ** (DEG_N - i) for i in range(DEG_N + 1)] for t in _T])
+    _B1 = np.array([[math.comb(DEG_N - 1, i) * t ** i * (1 - t) ** (DEG_N - 1 - i) for i in range(DEG_N)] for t in _T])
+    _B2 = np.array([[math.comb(DEG_N - 2, i) * t ** i * (1 - t) ** (DEG_N - 2 - i) for i in range(DEG_N - 1)] for t in _T])
+    TARGET["ptfe"] = 16.8
+    d = json.loads(Path(path).read_text())
+    st = strand_table()
+    by = {r["name"]: r for r in d["strands"]}
+    C = cells()
+    for s in st:
+        r = by[s["name"]]
+        s["cell"] = r["cell"]
+        s["cell_xyz"] = np.array(r["end"])
+        s["x"] = np.array(r["x"])
+        if s["mat"] == "steel":
+            s["pts"] = np.array(r["points"])
+            s["corners"] = r.get("corners")
+        s["J"] = 0.0
+    order = [i for i, s in enumerate(st) if s["mat"] == "ptfe"]
+    for ps, w in zip(range(passes), (1500.0, 3000.0, 5000.0, 8000.0)):
+        W_CLEAR = w
+        t0 = time.time()
+        for i in sorted(order, key=lambda i: -st[i]["J"]):
+            s = st[i]
+            others = _others(st, i, 9)
+            r = minimize(cost, s["x"], args=(s, others), method="L-BFGS-B", options=dict(maxiter=300))
+            r2 = minimize(cost, r.x, args=(s, others), method="Powell", options=dict(maxiter=1500, xtol=1e-3, ftol=1e-7))
+            s["x"], s["J"] = (r2.x, float(r2.fun)) if r2.fun < r.fun else (r.x, float(r.fun))
+        if verbose:
+            print(f"polish {ps} (w {w:.0f}): {time.time() - t0:.0f} s, J {sum(st[i]['J'] for i in order):.1f}")
+    return st, {s["name"]: s["cell"] for s in st}
+
+
 def main():
     t0 = time.time()
+    if "--polish" in sys.argv:
+        st, cmap = polish()
+        rows, allp = evaluate(st)
+        p = save(st, rows, allp)
+        _print(rows)
+        print("forearm fan with this cell map:", forearm_fan_check(cmap, st))
+        print("wrote", p, f"{time.time() - t0:.0f} s")
+        return
     st = strand_table()
     cmap = assign_cells(st) if "--palm-map" in sys.argv else wrist_cell_map(st, CELL_SWAPS)
     route(st, cmap, passes=3)
     rows, allp = evaluate(st)
     p = save(st, rows, allp)
+    _print(rows)
+    print("forearm fan with this cell map:", forearm_fan_check(cmap, st))
+    print("wrote", p, f"{time.time() - t0:.0f} s")
+
+
+def _print(rows):
     print(f"{'strand':24s} {'id':>3s} {'cell':>4s} {'mat':5s} {'L':>6s} {'Rmin':>6s} {'clear':>6s} {'turn':>6s} {'free':>5s} ok")
     for r in rows:
         print(f"{r['name']:24s} {r['sid']:3d} {r['cell']:4d} {r['material']:5s} {r['length']:6.1f} {r['min_radius']:6.1f} "
               f"{r['clearance']:6.2f} {r['turn_deg']:6.0f} {r.get('free_span_min_r_abd15', ''):>5} {r['ok']}")
-    print("forearm fan with this cell map:", forearm_fan_check(cmap, st))
-    print("wrote", p, f"{time.time() - t0:.0f} s")
 
 
 if __name__ == "__main__":

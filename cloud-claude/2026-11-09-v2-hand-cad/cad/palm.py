@@ -48,6 +48,9 @@ FINGERS = ("index", "middle", "ring", "little")
 # helpers
 # ----------------------------------------------------------------------------------------------------
 def box(x0, x1, y0, y1, z0, z1):
+    x0, x1 = sorted((x0, x1))
+    y0, y1 = sorted((y0, y1))
+    z0, z1 = sorted((z0, z1))
     return cq.Workplane("XY").box(x1 - x0, y1 - y0, z1 - z0).translate(((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2))
 
 
@@ -91,16 +94,34 @@ def _unused_smooth_xz(ctrl, n=60):
     return cs(np.linspace(0, t[-1], n))
 
 
-def tube_solid(pts, r):
-    """Sweep a circle of radius r along a smooth polyline (hand frame)."""
+def resample(pts, step=1.5):
     pts = np.asarray(pts, float)
-    keep = np.r_[True, np.linalg.norm(np.diff(pts, axis=0), axis=1) > 0.2]
-    pts = pts[keep]
-    path = cq.Wire.assembleEdges([cq.Edge.makeSpline([V(*q) for q in pts])])
-    d = pts[1] - pts[0]
-    d /= np.linalg.norm(d)
-    circ = cq.Wire.makeCircle(r, V(*pts[0]), V(*d))
-    return cq.Solid.sweep(circ, [], path, makeSolid=True, isFrenet=False, transitionMode="right")
+    sl = np.r_[0, np.cumsum(np.linalg.norm(np.diff(pts, axis=0), axis=1))]
+    n = max(4, int(sl[-1] / step) + 1)
+    t = np.linspace(0, sl[-1], n)
+    return np.column_stack([np.interp(t, sl, pts[:, k]) for k in range(3)])
+
+
+def tube_solid(pts, r, step=1.5):
+    """Sweep a circle of radius r along a smooth path (resampled, splined); capsule-chain fallback."""
+    for st in (step, step * 1.6, step * 0.7):
+        q = resample(pts, st)
+        try:
+            path = cq.Wire.assembleEdges([cq.Edge.makeSpline([V(*p) for p in q])])
+            d = q[1] - q[0]
+            d /= np.linalg.norm(d)
+            circ = cq.Wire.makeCircle(r, V(*q[0]), V(*d))
+            sol = cq.Solid.sweep(circ, [], path, makeSolid=True, isFrenet=False, transitionMode="right")
+            if sol.isValid() and sol.Volume() > 0:
+                return sol
+        except Exception:
+            pass
+    q = resample(pts, 1.0)
+    out = None
+    for a, b in zip(q[:-1], q[1:]):
+        c = cyl(a, b, r).union(cq.Workplane(obj=cq.Solid.makeSphere(r, V(*b))))
+        out = c if out is None else out.union(c)
+    return out.val()
 
 
 def ext(pts, a, b):
@@ -172,7 +193,7 @@ def lip_xz(fi):
         if i + 2 < len(top) - 1:
             top2.append(((top[i + 1][0] + top[i + 2][0]) / 2, min(top[i + 1][1], top[i + 2][1]) - 2.5))
     top2.append(top[-1])
-    bot = [(-49.0, 64.0), (-46.0, 57.0), (-10.0, 61.0), (31.0, 59.0), (32.0, 70.0)]
+    bot = [(-49.0, 64.0), (-45.0, 61.0), (-20.0, 67.0), (0.0, 69.5), (20.0, 66.5), (31.0, 64.0), (32.0, 70.0)]
     return [("spline", top2), ("spline", bot)]
 
 
@@ -301,13 +322,127 @@ def channel_solids(routes, which="bore"):
             r = P.SHEATH_BORE / 2 if which == "bore" else P.SHEATH_OD / 2
         else:
             r = 0.9 if which == "bore" else 1.27 / 2
+        if which == "bore" and s["material"] == "steel":
+            continue  # steel guide tubes sit in an open trough (thumb_trough), not in bores
         if which == "bore" and s["kind"] == "free":
             g = np.array(s["guide"])
             i = int(np.argmin(np.linalg.norm(p - g, axis=1)))
             p = p[max(i - 3, 0):]  # channel starts ~1 mm before the guide (inside the pocket)
-        q = ext(p, 0.0, 0.6) if which == "bore" else p
-        out[s["name"]] = tube_solid(q, r)
+        if which == "bore":  # the last part (converging on the clamp) is the common bundle well
+            zc = WELL_Z if s["material"] == "ptfe" else WELL_Z - 1.0
+            inwell = (p[:, 2] < zc) & (np.abs(p[:, 0]) < WELL_XY[0] - 1.0) & (np.abs(p[:, 1]) < WELL_XY[1] - 1.0)
+            k = int(np.argmax(inwell)) if inwell.any() else len(p)
+            p = p[: k + 2]
+            if s["material"] == "steel":
+                p = p[3:]  # starts inside the mount socket
+            if len(p) < 4:
+                continue
+        out[s["name"]] = tube_solid(p, r)
     return out
+
+
+WELL_Z = 25.0
+WELL_XY = (7.8, 7.4)
+
+
+def thumb_trough(routes, half=1.25, chunk=5.0):
+    """Open trough for the pre-bent steel guide tubes: union of axis-aligned boxes along each path, open
+    toward +y? no - simply the swept envelope; the tubes are laid in from the thenar bay / heel before the
+    thumb mount goes in, then held by the mount and the clamp."""
+    boxes = []
+    for s in routes:
+        if s["material"] != "steel":
+            continue
+        p = s["dense"][4:]
+        sl = np.r_[0, np.cumsum(np.linalg.norm(np.diff(p, axis=0), axis=1))]
+        edges = np.arange(0, sl[-1] + chunk, chunk)
+        for a, b in zip(edges[:-1], edges[1:]):
+            q = p[(sl >= a - 0.5) & (sl <= b + 0.5)]
+            if len(q) < 2:
+                continue
+            lo, hi = q.min(0) - half, q.max(0) + half
+            boxes.append(box(lo[0], hi[0], lo[1], hi[1], lo[2], hi[2]))
+    out = boxes[0]
+    for b in boxes[1:]:
+        out = out.union(b)
+    return out.val()
+
+
+def thumb_side_cleanup(ti, routes):
+    """Remove the thin slivers the thumb-bay cuts leave on the radial side: everything above the thumb flange
+    plane (C-z > -30.3) for x > 22, z < 58, except a 2.8 mm sleeve around any sheath passing there."""
+    C = ti["frame_C"]
+    o, z = np.array(C["origin"]), np.array(C["z"])
+    region = cyl(o + z * -30.3, o + z * 80.0, 90.0).intersect(box(22.0, 70.0, -45.0, 45.0, 27.5, 58.0))
+    for s in routes:
+        if s["material"] != "ptfe":
+            continue
+        p = s["dense"]
+        m = (p[:, 0] > 19.0) & (p[:, 2] < 61.0) & (((p - o) @ z) > -34.0)
+        if m.any():
+            region = region.cut(cq.Workplane(obj=tube_solid(p, 2.8)))
+    return region
+
+
+def thumb_opposition_carve(fi):
+    """Thenar hollow: the thumb's metacarpal, thenar pad and proximal phalanx at the ring / little oppositions
+    pass under the index knuckle (x 12-32, z 58-84). Their posed solids (minus a 4.6 mm boss around the
+    index's palmar abduction dowel) are cut from the palm and the pads. Returns a list of cutters."""
+    if "carve" in _SIMPLE:
+        return _SIMPLE["carve"]
+    import thumb
+    td = json.loads((HERE.parent / "out" / "thumb" / "thumb_design.json").read_text())["eval"]
+    qs = [td["little"]["q_thumb"], td["ring"]["q_thumb"],
+          [0.5 * (a + b) for a, b in zip(td["little"]["q_thumb"], td["ring"]["q_thumb"])]]
+    ap = np.array(fi["index"]["interface"]["abd_pivot"]["axis_point"])
+    keep = cyl((ap[0], LIP_PALMAR - 2.0, ap[2]), (ap[0], -12.5, ap[2]), 4.6).val()
+    out = []
+    for q in qs:
+        b = thumb.build(dict(zip(("cmc_rot", "cmc_flex", "mcp_flex", "ip"), q)))["parts"]
+        for k in ("thumb_metacarpal", "thenar_pad", "thumb_proximal"):
+            w = b[k].val() if hasattr(b[k], "val") else b[k]
+            try:
+                out.append(w.cut(keep))
+            except Exception:
+                out.append(w)
+    _SIMPLE["carve"] = out
+    return out
+
+
+def cut_each(wp, tools, label=""):
+    sh = wp.val() if hasattr(wp, "val") else wp
+    for t in tools:
+        t = t.val() if hasattr(t, "val") else t
+        try:
+            r = sh.cut(t)
+            if r.isValid() and r.Volume() > 0.5 * sh.Volume():
+                sh = r
+            else:
+                print(f"  {label}: a cut gave an invalid result, skipped", flush=True)
+        except Exception as e:
+            print(f"  {label}: cut failed ({e}), skipped", flush=True)
+    return cq.Workplane(obj=sh)
+
+
+def forearm_sweep_carve():
+    """Rounded heel corners: the forearm envelope (rounded box x +-47.5, y +-33, top z -18, the shell's top loft
+    starts at 72 x 59) seen from the palm at the wrist extremes, +0.5 mm. Returns a list of cutters."""
+    import wrist
+    import wrist_kin as K
+    E = P.FOREARM_ENVELOPE
+    top = rbox(-36.5, 36.5, -30.0, 30.0, -48.0, E["z"][1] + 0.5, 5.0, "|Z")
+    low = rbox(E["x"][0] - 0.5, E["x"][1] + 0.5, E["y"][0] - 0.5, E["y"][1] + 0.5, -120.0, -47.0, 6.0, "|Z")
+    fore = top.union(low)
+    out = []
+    for fl in (-50.0, -37.5, 37.5, 50.0):
+        for dv in (-30.0, 0.0, 20.0):
+            out.append(wrist.rot_shape(fore, K.R_palm(fl, dv).T))
+    return out
+
+
+def bundle_well():
+    """Common pocket above the clamp where the 32 tubes converge onto their 2.15 mm cells."""
+    return rbox(-WELL_XY[0], WELL_XY[0], -WELL_XY[1], WELL_XY[1], P.SHEATH_CLAMP_Z[1] - 0.5, WELL_Z, 3.0, "|Z")
 
 
 def idler_parts(routes):
@@ -342,8 +477,31 @@ def idler_cuts(routes):
 _CACHE = {}
 
 
-def build(routes_path=OUT / "routes.json", verbose=True):
-    """-> {"parts": {...}, "interface": {...}} in the palm frame (= hand frame at wrist q = 0)."""
+CACHE_DIR = OUT / "palm_cache"
+_SIMPLE: dict = {}
+
+
+def build(routes_path=OUT / "routes.json", verbose=True, use_cache=True):
+    """-> {"parts": {...}, "interface": {...}} in the palm frame (= hand frame at wrist q = 0).
+    Solids are cached as BREP in out/assembly/palm_cache (rebuilt when routes.json or palm.py is newer)."""
+    import routing
+    meta = CACHE_DIR / "meta.json"
+    src = max(Path(routes_path).stat().st_mtime, Path(__file__).stat().st_mtime)
+    if use_cache and meta.exists() and meta.stat().st_mtime > src:
+        m = json.loads(meta.read_text())
+        routes, rdata = routing.load(routes_path)
+        parts = {n: cq.Workplane(obj=cq.Shape.importBrep(str(CACHE_DIR / f"{n}.brep"))) for n in m["parts"]}
+        return {"parts": parts, "routes": routes, "cell_map": rdata["cell_map"], "interface": m["interface"]}
+    out = _build(routes_path, verbose)
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    _SIMPLE["shell"].val().exportBrep(str(CACHE_DIR / "check_shell_simple.brep"))
+    for n, sh in out["parts"].items():
+        (sh.val() if len(sh.vals()) == 1 else cq.Compound.makeCompound(sh.vals())).exportBrep(str(CACHE_DIR / f"{n}.brep"))
+    meta.write_text(json.dumps({"parts": list(out["parts"]), "interface": out["interface"]}))
+    return out
+
+
+def _build(routes_path=OUT / "routes.json", verbose=True):
     t0 = time.time()
     import routing
     import thumb
@@ -367,11 +525,36 @@ def build(routes_path=OUT / "routes.json", verbose=True):
             paths.append(p[: i + 1])
         lo = np.array(fi[f]["interface"]["yoke_envelope"]["min"])
         cuts.append(pocket_from_paths(paths, pad=1.8, zmax=lo[2] + 1.0))
+    if verbose:
+        print(f"  cutters ready {time.time() - t0:.1f}s", flush=True)
     bores = channel_solids(routes, "bore")
-    cutter = None
-    for c in cuts + [cq.Workplane(obj=b) for b in bores.values()]:
-        cutter = c if cutter is None else cutter.union(c, clean=False)
-    shell = shell.cut(cutter)
+    if verbose:
+        print(f"  bores swept {time.time() - t0:.1f}s", flush=True)
+    tools = [c.val() if hasattr(c, "val") else c for c in cuts + [bundle_well()]]
+    shell = cq.Workplane(obj=shell.val().cut(*tools))
+    shell = cq.Workplane(obj=shell.val().cut(thumb_trough(routes)))
+    shell = shell.cut(thumb_side_cleanup(ti, routes))
+    carve = thumb_opposition_carve(fi) + forearm_sweep_carve()
+    shell = cut_each(shell, carve, "carve")
+    simple = shell.cut(heel_cutter())  # palm without the internal bores: fast proxy for collision checks
+    if verbose:
+        print(f"  cut 1 done {time.time() - t0:.1f}s", flush=True)
+    sh = shell.val()
+    for name, b in bores.items():
+        t = time.time()
+        try:
+            r = sh.cut(b)
+            if r.isValid():
+                sh = r
+            else:
+                print(f"  bore {name}: invalid result, skipped", flush=True)
+        except Exception as e:
+            print(f"  bore {name}: {e}", flush=True)
+        if verbose and time.time() - t > 3:
+            print(f"  bore {name}: {time.time() - t:.1f}s", flush=True)
+    shell = cq.Workplane(obj=sh)
+    if verbose:
+        print(f"  cut done {time.time() - t0:.1f}s valid {shell.val().isValid()}", flush=True)
     shell = shell.cut(heel_cutter())
     t2 = time.time()
     # back plate: dorsal skin over the central palm, separated from the shell
@@ -382,9 +565,14 @@ def build(routes_path=OUT / "routes.json", verbose=True):
     for sx, sz in screws:
         back_plate = back_plate.cut(cyl((sx, BACK_PLATE_Y - 1, sz), (sx, 20, sz), 1.1))
         shell = shell.cut(cyl((sx, BACK_PLATE_Y - 6, sz), (sx, BACK_PLATE_Y + 0.1, sz), 0.8))
+    sols = sorted(shell.val().Solids(), key=lambda q: -q.Volume())
+    if len(sols) > 1 and verbose:
+        print("  shell fragments dropped (mm^3):", [round(q.Volume(), 1) for q in sols[1:]], flush=True)
+    shell = cq.Workplane(obj=sols[0])
     # TPU pads
-    pads = make_pads(fi, shell)
+    pads = {k: cut_each(v, carve, k) for k, v in make_pads(fi, shell).items()}
     parts = {"palm_shell": shell, "palm_back_plate": back_plate, **pads}
+    _SIMPLE["shell"] = simple.cut(bp_region)
     # tubes (visible parts)
     tubes = channel_solids(routes, "tube")
     ptfe = [tubes[s["name"]] for s in routes if s["material"] == "ptfe"]
@@ -434,5 +622,5 @@ if __name__ == "__main__":
         print(n, {k: (round(v, 1) if isinstance(v, float) else v) for k, v in is_valid(s).items()})
     render(b["parts"], OUT / "palm_only.png", views=("front", "back", "side", "iso"), size=(1800, 1400),
            colors={"palm_shell": "#c9d3df", "palm_back_plate": "#a9b8cc", "palm_pad": "#3d4650", "hypothenar_pad": "#3d4650",
-                   "knuckle_pad": "#3d4650", "palm_sheaths": "#f4f4f4", "thumb_guides": "#9aa0a6", "rot_idlers": "#666"},
+                   "knuckle_pad": "#3d4650", "palm_sheaths": "#f4f4f4", "thumb_guides": "#9aa0a6", "rot_idlers": "#666666"},
            title="palm (integrator)")

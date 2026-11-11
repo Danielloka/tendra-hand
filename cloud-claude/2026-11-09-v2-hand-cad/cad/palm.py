@@ -324,6 +324,14 @@ def wrist_cuts():
     return cuts
 
 
+def _bore_start(s):
+    """index where a bore starts (free span: 3 samples before the guide)."""
+    if s["kind"] == "free":
+        p = s["dense"]
+        return max(int(np.argmin(np.linalg.norm(p - np.array(s["guide"]), axis=1))) - 3, 0)
+    return 0
+
+
 def channel_solids(routes, which="bore"):
     """PTFE bores (2.2) / steel-guide bores (1.8) along each palm path; free span excluded for bores."""
     out = {}
@@ -420,13 +428,16 @@ def thumb_opposition_carve(fi):
     return out
 
 
-def cut_each(wp, tools, label=""):
+def cut_each(wp, tools, label="", max_loss=0.12):
+    """Cut tools one by one; a cut is rejected if the result is invalid or if the part has lost more than
+    max_loss of its ORIGINAL volume in total (protects against a runaway carve)."""
     sh = wp.val() if hasattr(wp, "val") else wp
+    v0 = sh.Volume()
     for t in tools:
         t = t.val() if hasattr(t, "val") else t
         try:
             r = sh.cut(t)
-            if r.isValid() and r.Volume() > 0.5 * sh.Volume():
+            if r.isValid() and r.Volume() > (1 - max_loss) * v0:
                 sh = r
             else:
                 print(f"  {label}: a cut gave an invalid result, skipped", flush=True)
@@ -441,9 +452,10 @@ def forearm_sweep_carve():
     import wrist
     import wrist_kin as K
     E = P.FOREARM_ENVELOPE
-    top = rbox(E["x"][0] - 0.5, E["x"][1] + 0.5, E["y"][0] - 0.5, E["y"][1] + 0.5, -48.0, E["z"][1] + 0.5, 5.0, "|Z")
-    low = rbox(E["x"][0] - 0.5, E["x"][1] + 0.5, E["y"][0] - 0.5, E["y"][1] + 0.5, -120.0, -47.0, 6.0, "|Z")
-    fore = top.union(low)
+    # stepped approximation of the shell's top loft (72 x 59 at z -18 -> 95 x 66 at z -48), +0.5 mm
+    fore = rbox(-40.3, 40.3, -31.2, 31.2, -28.0, E["z"][1] + 0.5, 5.0, "|Z")
+    fore = fore.union(rbox(-44.3, 44.3, -32.4, 32.4, -38.0, -27.9, 5.0, "|Z"))
+    fore = fore.union(rbox(E["x"][0] - 0.5, E["x"][1] + 0.5, E["y"][0] - 0.5, E["y"][1] + 0.5, -120.0, -37.9, 6.0, "|Z"))
     out = []
     for fl in (-50.0, -37.5, 37.5, 50.0):
         for dv in (-30.0, 0.0, 20.0):
@@ -542,11 +554,16 @@ def _build(routes_path=OUT / "routes.json", verbose=True):
     if verbose:
         print(f"  bores swept {time.time() - t0:.1f}s", flush=True)
     tools = [c.val() if hasattr(c, "val") else c for c in cuts + [bundle_well()]]
+    _vol = lambda w: (w.val() if hasattr(w, "val") else w).Volume()  # noqa: E731
+    v_core = _vol(shell)
     shell = cq.Workplane(obj=shell.val().cut(*tools))
-    shell = cq.Workplane(obj=shell.val().cut(thumb_trough(routes)))
-    shell = shell.cut(thumb_side_cleanup(ti, routes))
+    print(f"  vol core {v_core:.0f} -> after cutters {_vol(shell):.0f}", flush=True)
+    shell = cut_each(shell, [thumb_trough(routes)], "trough", 0.3)
+    shell = cut_each(shell, [thumb_side_cleanup(ti, routes)], "cleanup", 0.4)
+    print(f"  vol after trough/cleanup {_vol(shell):.0f}", flush=True)
     carve = thumb_opposition_carve(fi) + forearm_sweep_carve()
     shell = cut_each(shell, carve, "carve")
+    print(f"  vol after carves {_vol(shell):.0f}", flush=True)
     simple = shell.cut(heel_cutter())  # palm without the internal bores: fast proxy for collision checks
     if verbose:
         print(f"  cut 1 done {time.time() - t0:.1f}s", flush=True)
@@ -555,10 +572,18 @@ def _build(routes_path=OUT / "routes.json", verbose=True):
         t = time.time()
         try:
             r = sh.cut(b)
-            if r.isValid():
+            if not (r.isValid() and r.Volume() > sh.Volume() - 400.0):
+                pth = next(x for x in routes if x["name"] == name)["dense"]
+                for st_, rr_ in ((1.0, 1.11), (2.2, 1.12), (0.8, 1.105)):  # retry with another sampling
+                    b2 = tube_solid(resample(pth, 0.5)[3:] if False else pth[_bore_start(next(x for x in routes if x["name"] == name)):], rr_, st_)
+                    r = sh.cut(b2)
+                    if r.isValid() and r.Volume() > sh.Volume() - 400.0:
+                        bores[name] = b2
+                        break
+            if r.isValid() and r.Volume() > sh.Volume() - 400.0:
                 sh = r
             else:
-                print(f"  bore {name}: invalid result, skipped", flush=True)
+                print(f"  bore {name}: bad result ({r.Volume():.0f} vs {sh.Volume():.0f}), skipped", flush=True)
         except Exception as e:
             print(f"  bore {name}: {e}", flush=True)
         if verbose and time.time() - t > 3:
@@ -566,7 +591,8 @@ def _build(routes_path=OUT / "routes.json", verbose=True):
     shell = cq.Workplane(obj=sh)
     if verbose:
         print(f"  cut done {time.time() - t0:.1f}s valid {shell.val().isValid()}", flush=True)
-    shell = shell.cut(heel_cutter())
+    shell = cut_each(shell, [heel_cutter()], "heel", 0.3)
+    print(f"  vol final {_vol(shell):.0f}", flush=True)
     t2 = time.time()
     # back plate: dorsal skin over the central palm, separated from the shell
     bp_region = rbox(-42.0, 6.0, BACK_PLATE_Y, 20.0, 24.0, 63.0, 6.0, "|Y")
@@ -597,10 +623,17 @@ def _build(routes_path=OUT / "routes.json", verbose=True):
     for s_ in routes:
         if s_["kind"] == "thumb_axial" and s_["material"] == "ptfe":
             p_ = s_["dense"]
-            try:
-                mt = mt.cut(tube_solid(ext(p_[:60], 4.5, 0.0), P.SHEATH_BORE / 2))
-            except Exception as e:
-                print("  mount bore failed", s_["name"], e)
+            ok_ = False
+            for st_ in (1.5, 1.0, 2.2, 0.8):
+                try:
+                    r_ = mt.cut(tube_solid(ext(p_[:60], 4.5, 0.0), P.SHEATH_BORE / 2, st_)).fix()
+                    if r_.isValid() and r_.Volume() > mt.Volume() - 300:
+                        mt, ok_ = r_, True
+                        break
+                except Exception:
+                    pass
+            if not ok_:
+                print("  mount bore invalid, skipped", s_["name"])
     parts["thumb_mount_bored"] = cq.Workplane(obj=mt)
     ip = idler_parts(routes)
     parts["rot_idlers"] = cq.Workplane(obj=cq.Compound.makeCompound([p.val() for p in ip]))
@@ -633,10 +666,6 @@ def make_pads(fi, shell):
     for f in FINGERS:
         ap = np.array(fi[f]["interface"]["abd_pivot"]["axis_point"])
         lip = lip.cut(cyl((ap[0], face - 3, ap[2]), (ap[0], face + 1, ap[2]), BOSS_R + 0.3))
-    try:
-        lip = lip.faces("<Y").edges().fillet(0.6)
-    except Exception:
-        pass
     # keep pads out of the shell's openings (pin bores stay covered: pads are glued over the dowel ends)
     return {"palm_pad": palm_pad, "hypothenar_pad": hyp, "knuckle_pad": lip}
 

@@ -99,64 +99,60 @@ WRIST_SET = ("W_wrist_ring", "W_wrist_base", "W_pin_dev_b", "W_pin_dev_f", "W_pi
 def main(argv=None):
     quick = "--quick" in (argv or sys.argv)
     T0 = time.time()
-    res = {}
+    fp = OUT / "checks.json"
+    res = json.loads(fp.read_text()) if ("--resume" in sys.argv and fp.exists()) else {}
+
+    def save():
+        fp.write_text(json.dumps(res, indent=1, default=lambda o: o.tolist() if hasattr(o, "tolist") else str(o)))
     ps = A.poses()
     # 1. validity (open pose, everything incl. forearm)
-    parts = A.build(ps["a_open"], forearm=True)
-    val = {n: is_valid(s) for n, s in parts.items()}
-    bad = {n: v for n, v in val.items() if not v["ok"]}
-    res["validity"] = {"parts": len(val), "ok": len(val) - len(bad),
-                       "not_ok": {n: {k: v[k] for k in ("valid", "watertight", "solids")} for n, v in bad.items()}}
-    print("validity:", res["validity"]["ok"], "/", len(val), "ok; not ok:", list(bad), flush=True)
+    if "validity" not in res:
+        parts = A.build(ps["a_open"], forearm=True)
+        val = {n: is_valid(s) for n, s in parts.items()}
+        bad = {n: v for n, v in val.items() if not v["ok"]}
+        res["validity"] = {"parts": len(val), "ok": len(val) - len(bad),
+                           "not_ok": {n: {k: v[k] for k in ("valid", "watertight", "solids")} for n, v in bad.items()}}
+        save()
+    print("validity:", res["validity"]["ok"], "/", res["validity"]["parts"], "not ok:", list(res["validity"]["not_ok"]), flush=True)
     # 2. the 7 poses (hand + wrist; wrist/forearm parts only where the wrist moves)
-    res["poses"] = {}
+    res.setdefault("poses", {})
     for k, pose in ps.items():
+        if k in res["poses"]:
+            continue
         wp = WRIST_SET if pose["wrist"]["wrist_flex"] or pose["wrist"]["wrist_dev"] else ("W_palm_flange",)
         res["poses"][k] = run_pose(k, pose, wp, extra=("OBJ_cylinder55",))
-    # 3. thumb sweeping past the index at index open / mid / fist
-    res["thumb_x_index"] = {}
-    tq = {t: A._tq(t) for t in ("flat", "index", "middle", "tip_pinch", "lateral", "power55")}
-    iq = {"open": A.ZERO, "mid": {"mcp_abd": 0.0, "mcp_flex": 45.0, "pip": 45.0},
-          "fist": {"mcp_abd": 0.0, "mcp_flex": 90.0, "pip": 95.0}}
-    for tn, t in tq.items():
-        for inn, i in iq.items():
-            if quick and inn == "mid":
-                continue
-            pose = A._pose({"index": i}, t)
-            parts = A.build(pose, forearm=False, sheaths=False)
-            sel = with_proxy(select(parts, fingers=("index", "middle")))
-            hits = interference(sel, threshold=0.5, ignore=ignore_rules())
-            res["thumb_x_index"][f"{tn}|index_{inn}"] = hits
-            print(f"  thumb {tn} x index {inn}: {hits[:4]}", flush=True)
-    # 4. thumb base / metacarpal vs palm over the CMC range (MCP, IP straight)
-    res["thumb_vs_palm"] = {}
+        save()
+    # 3. thumb base / metacarpal vs palm over the CMC range (MCP, IP straight)
+    res.setdefault("thumb_vs_palm", {})
     rr, fr = P.THUMB_RANGES["cmc_rot"], P.THUMB_RANGES["cmc_flex"]
     for rot in (rr[0], (rr[0] + rr[1]) / 2, rr[1]):
         for fl in (fr[0], (fr[0] + fr[1]) / 2, fr[1]):
+            key = f"rot{rot:+.0f}_flex{fl:+.0f}"
+            if key in res["thumb_vs_palm"]:
+                continue
             pose = A._pose(thumb={"cmc_rot": rot, "cmc_flex": fl, "mcp_flex": 0.0, "ip": 0.0})
             parts = A.build(pose, forearm=False, sheaths=False)
             sel = with_proxy(select(parts, fingers=("index",)))
-            hits = interference(sel, threshold=0.5, ignore=ignore_rules())
-            res["thumb_vs_palm"][f"rot{rot:+.0f}_flex{fl:+.0f}"] = hits
-            print(f"  thumb rot {rot:+.0f} flex {fl:+.0f}: {hits[:4]}", flush=True)
-    # 5. neighbouring fingers abducting toward each other
-    res["neighbours"] = {}
-    for a, b in (("index", "middle"), ("middle", "ring"), ("ring", "little")):
-        for mcp in (0.0, 90.0):
-            for ab in (7.0, 10.0, 15.0):
-                pose = A._pose({a: {"mcp_abd": -ab, "mcp_flex": mcp, "pip": mcp}, b: {"mcp_abd": ab, "mcp_flex": mcp, "pip": mcp}})
-                parts = A.build(pose, forearm=False, sheaths=False)
-                sel = select(parts, fingers=(a, b), thumb=False, palm=False)
-                hits = interference(sel, threshold=0.5, ignore=ignore_rules())
-                res["neighbours"][f"{a}-{b}|mcp{mcp:.0f}|abd{ab:.0f}"] = hits
-                print(f"  {a}(-{ab}) {b}(+{ab}) mcp {mcp:.0f}: {hits[:3]}", flush=True)
-    # 6. palm / thumb / fingers vs wrist + forearm at the wrist extremes
-    res["wrist_extremes"] = {}
+            res["thumb_vs_palm"][key] = interference(sel, threshold=0.5, ignore=ignore_rules())
+            print(f"  thumb {key}: {res['thumb_vs_palm'][key][:4]}", flush=True)
+            save()
+    # 4. palm / thumb / fingers vs wrist + forearm at the wrist extremes
+    res.setdefault("wrist_extremes", {})
     for fl in (-50.0, 50.0):
         for dv in (-30.0, 20.0):
+            key = f"flex{fl:+.0f}_dev{dv:+.0f}"
+            if key in res["wrist_extremes"]:
+                continue
             pose = A._pose(wrist={"wrist_flex": fl, "wrist_dev": dv})
-            res["wrist_extremes"][f"flex{fl:+.0f}_dev{dv:+.0f}"] = run_pose(f"wrist {fl:+.0f}/{dv:+.0f}", pose, WRIST_SET)
-    # 7. sheath bends across the wrist (wrist_kin bundle model; the palm cell map is a permutation of the same cells)
+            res["wrist_extremes"][key] = run_pose(f"wrist {fl:+.0f}/{dv:+.0f}", pose, WRIST_SET)
+            save()
+    # 5. wrist module's own grid (ring, base, pins, drive, bundle vs a palm proxy) with the lowered clamp
+    if "wrist_grid" not in res:
+        import wrist
+        r = wrist.check_collisions(quick=True)
+        res["wrist_grid"] = {f"{k[0]:+.0f}/{k[1]:+.0f}": v for k, v in r.items()}
+        save()
+    # 6. sheath bends across the wrist (wrist_kin bundle model) + forearm fan + palm routes
     import wrist_kin as K
     stats = {}
     for f in (-50.0, 0.0, 50.0):
@@ -164,8 +160,12 @@ def main(argv=None):
             L, r = K.tube_stats(f, d)
             stats[f"{f:+.0f}/{d:+.0f}"] = {"min_bend_r": round(float(r.min()), 1)}
     res["wrist_bundle"] = stats
+    fan = json.loads((OUT / "fan_routes.json").read_text())["strands"]
+    res["forearm_fan"] = {"min_radius": min(f["min_radius"] for f in fan), "min_wall_gap": min(f["clearance"] for f in fan),
+                          "n_R_lt_15": sum(f["min_radius"] < 15 for f in fan), "n_gap_lt_0.4": sum(f["clearance"] < 0.4 for f in fan)}
+    res["abd_pair_table"] = "out/assembly/abd_pair_table.json"
     res["runtime_s"] = round(time.time() - T0)
-    (OUT / "checks.json").write_text(json.dumps(res, indent=1, default=lambda o: o.tolist() if hasattr(o, "tolist") else str(o)))
+    save()
     print(f"checks done in {time.time() - T0:.0f} s")
 
 

@@ -4,3 +4,4 @@ out/**/*.stl
 out/assembly/palm_cache/
 # Too big for git: committed as .step.gz
 out/assembly/tendra_v2_open.step
+out/**/*.log

@@ -380,25 +380,33 @@ def neighbour_table(qs=(-15.0, -7.5, 0.0, 7.5, 15.0), mcps=(0.0, 45.0, 90.0), st
 
 
 def main():
+    """Each task is written to poses_solved.json as soon as it is solved; --resume skips solved tasks."""
     t0 = time.time()
-    res = {}
-    res["power55"] = solve_power(55.0)
-    print("power", json.dumps(res["power55"], default=str)[:900], f"{time.time() - t0:.0f}s", flush=True)
-    res["fist"] = solve_fist()
-    print("fist", json.dumps(res["fist"], default=str)[:700], f"{time.time() - t0:.0f}s", flush=True)
+    fp = OUT / "poses_solved.json"
+    res = json.loads(fp.read_text()) if ("--resume" in sys.argv and fp.exists()) else {}
+
+    def save():
+        fp.write_text(json.dumps(res, indent=1, default=float))
+
+    if "power55" not in res:
+        res["power55"] = solve_power(55.0)
+        save()
+        print("power", json.dumps(res["power55"], default=str)[:900], f"{time.time() - t0:.0f}s", flush=True)
+    if "fist" not in res:
+        res["fist"] = solve_fist()
+        save()
+        print("fist", json.dumps(res["fist"], default=str)[:700], f"{time.time() - t0:.0f}s", flush=True)
     td = json.loads((HERE.parent / "out" / "thumb" / "thumb_design.json").read_text())["eval"]
-    J = ("cmc_rot", "cmc_flex", "mcp_flex", "ip")
     F = ("mcp_abd", "mcp_flex", "pip")
     abd_cap = {"index": 15.0, "middle": 15.0, "ring": 9.0, "little": 9.0}  # abd_pair_table.json (ring/little)
-    for key, fname in (("tip_pinch", "index"), ("little", "little"), ("middle", "middle"), ("ring", "ring"), ("index", "index")):
+    for key, fname in (("tip_pinch", "index"), ("little", "little")):
+        if f"pinch_{key}" in res:
+            continue
         fq = dict(zip(F, td[key]["q_finger"]))
         fq["mcp_abd"] = min(fq["mcp_abd"], abd_cap[fname])
         res[f"pinch_{key}"] = solve_opposition(fname, fq, td[key]["q_thumb"])
-        print(key, res[f"pinch_{key}"], flush=True)
-    (OUT / "poses_solved.json").write_text(json.dumps(res, indent=1, default=float))
-    nt = neighbour_table()
-    (OUT / "abd_pair_table.json").write_text(json.dumps(nt, indent=1))
-    print("neighbour table done", f"{time.time() - t0:.0f}s")
+        save()
+        print(key, res[f"pinch_{key}"], f"{time.time() - t0:.0f}s", flush=True)
 
 
 if __name__ == "__main__":

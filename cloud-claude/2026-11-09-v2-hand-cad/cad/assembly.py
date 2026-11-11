@@ -68,7 +68,7 @@ def poses():
     lt = ps_["pinch_little"]
     # neighbours follow the little within the pair limits (abd_pair_table.json)
     little = _pose({"little": lt["finger_q"], "ring": {"mcp_abd": 9.0, "mcp_flex": 30.0, "pip": 30.0},
-                    "middle": {"mcp_abd": 6.0, "mcp_flex": 15.0, "pip": 15.0}, "index": {"mcp_abd": 4.0, "mcp_flex": 5.0, "pip": 5.0}},
+                    "middle": {"mcp_abd": 10.5, "mcp_flex": 30.0, "pip": 30.0}, "index": {"mcp_abd": 12.0, "mcp_flex": 30.0, "pip": 30.0}},
                    lt["thumb"])
     pw = ps_["power55"]
     power = _pose(pw["fingers"], pw["thumb"], obj={"cylinder": pw["cylinder"]})

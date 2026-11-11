@@ -2,11 +2,11 @@
  "groups": {
   "fingers": 65.3,
   "thumb": 37.1,
-  "palm": 67.9,
-  "wrist": 198.7,
-  "forearm": 387.3
+  "palm": 67.1,
+  "wrist": 193.9,
+  "forearm": 388.0
  },
- "total_g": 756.3,
+ "total_g": 751.4,
  "dims_all": [
   [
    -51.7,
@@ -23,11 +23,11 @@
   [
    -51.7,
    -62.4,
-   13.1
+   10.4
   ],
   [
    72.7,
-   16.4,
+   17.6,
    192.0
   ]
  ],
@@ -529,7 +529,7 @@
   },
   "T_thumb_mount": {
    "material": "PETG_thumb",
-   "volume_cm3": 14.07,
+   "volume_cm3": 13.96,
    "grams": 7.1
   },
   "T_bearing_top": {
@@ -559,7 +559,7 @@
   },
   "T_thumb_metacarpal": {
    "material": "PETG_thumb",
-   "volume_cm3": 12.68,
+   "volume_cm3": 12.69,
    "grams": 6.4
   },
   "T_thenar_pad": {
@@ -634,12 +634,12 @@
   },
   "P_shell": {
    "material": "PETG_palm",
-   "volume_cm3": 83.23,
-   "grams": 42.3
+   "volume_cm3": 81.31,
+   "grams": 41.3
   },
   "P_back_plate": {
    "material": "PETG_palm",
-   "volume_cm3": 5.7,
+   "volume_cm3": 5.62,
    "grams": 2.9
   },
   "P_pad": {
@@ -649,23 +649,23 @@
   },
   "P_hypothenar_pad": {
    "material": "TPU",
-   "volume_cm3": 2.09,
-   "grams": 2.5
+   "volume_cm3": 2.02,
+   "grams": 2.4
   },
   "P_knuckle_pad": {
    "material": "TPU",
-   "volume_cm3": 1.68,
-   "grams": 2.0
+   "volume_cm3": 1.95,
+   "grams": 2.4
   },
   "P_sheaths": {
    "material": "PTFE",
-   "volume_cm3": 4.72,
-   "grams": 10.4
+   "volume_cm3": 5.71,
+   "grams": 12.6
   },
   "P_thumb_guides": {
    "material": "steel",
-   "volume_cm3": 0.34,
-   "grams": 2.7
+   "volume_cm3": 0.05,
+   "grams": 0.4
   },
   "P_rot_idlers": {
    "material": "bearing",
@@ -674,17 +674,17 @@
   },
   "W_palm_flange": {
    "material": "PETG_wrist",
-   "volume_cm3": 4.84,
-   "grams": 2.5
+   "volume_cm3": 4.36,
+   "grams": 2.2
   },
   "W_palm_sheath_clamp": {
    "material": "PTFE",
-   "volume_cm3": 0.63,
-   "grams": 1.4
+   "volume_cm3": 0.92,
+   "grams": 2.0
   },
   "W_wrist_base": {
    "material": "PETG_wrist",
-   "volume_cm3": 4.98,
+   "volume_cm3": 4.86,
    "grams": 2.5
   },
   "W_wrist_ring": {
@@ -714,13 +714,13 @@
   },
   "W_wrist_servo_R": {
    "material": "servo",
-   "volume_cm3": 39.1,
+   "volume_cm3": 39.34,
    "grams": 55.0
   },
   "W_wrist_gears_R": {
    "material": "steel",
-   "volume_cm3": 2.04,
-   "grams": 16.0
+   "volume_cm3": 1.8,
+   "grams": 14.1
   },
   "W_wrist_crank_R": {
    "material": "steel",
@@ -729,18 +729,18 @@
   },
   "W_wrist_rod_R": {
    "material": "steel",
-   "volume_cm3": 1.35,
-   "grams": 10.6
+   "volume_cm3": 1.37,
+   "grams": 10.7
   },
   "W_wrist_servo_L": {
    "material": "servo",
-   "volume_cm3": 39.1,
+   "volume_cm3": 39.34,
    "grams": 55.0
   },
   "W_wrist_gears_L": {
    "material": "steel",
-   "volume_cm3": 2.04,
-   "grams": 16.0
+   "volume_cm3": 1.8,
+   "grams": 14.1
   },
   "W_wrist_crank_L": {
    "material": "steel",
@@ -749,13 +749,13 @@
   },
   "W_wrist_rod_L": {
    "material": "steel",
-   "volume_cm3": 1.29,
-   "grams": 10.2
+   "volume_cm3": 1.31,
+   "grams": 10.3
   },
   "W_sheath_bundle": {
    "material": "PTFE",
-   "volume_cm3": 8.3,
-   "grams": 18.3
+   "volume_cm3": 7.63,
+   "grams": 16.8
   },
   "F_spool_rail": {
    "material": "PETG_forearm",
@@ -809,8 +809,8 @@
   },
   "F_forearm_frame": {
    "material": "PETG_forearm",
-   "volume_cm3": 34.79,
-   "grams": 17.7
+   "volume_cm3": 34.59,
+   "grams": 17.6
   },
   "F_arm_flange": {
    "material": "PETG_forearm",
@@ -982,165 +982,165 @@
    "volume_cm3": 0.62,
    "grams": 0.3
   },
+  "F_sheath_02f": {
+   "material": "PTFE",
+   "volume_cm3": 0.21,
+   "grams": 0.5
+  },
+  "F_sheath_02e": {
+   "material": "PTFE",
+   "volume_cm3": 0.19,
+   "grams": 0.4
+  },
   "F_sheath_01f": {
    "material": "PTFE",
-   "volume_cm3": 0.17,
+   "volume_cm3": 0.19,
    "grams": 0.4
   },
   "F_sheath_01e": {
    "material": "PTFE",
-   "volume_cm3": 0.17,
-   "grams": 0.4
-  },
-  "F_sheath_02f": {
-   "material": "PTFE",
-   "volume_cm3": 0.18,
-   "grams": 0.4
-  },
-  "F_sheath_02e": {
-   "material": "PTFE",
-   "volume_cm3": 0.17,
+   "volume_cm3": 0.19,
    "grams": 0.4
   },
   "F_sheath_03f": {
    "material": "PTFE",
-   "volume_cm3": 0.19,
-   "grams": 0.4
+   "volume_cm3": 0.22,
+   "grams": 0.5
   },
   "F_sheath_03e": {
    "material": "PTFE",
-   "volume_cm3": 0.18,
-   "grams": 0.4
-  },
-  "F_sheath_04f": {
-   "material": "PTFE",
-   "volume_cm3": 0.19,
-   "grams": 0.4
-  },
-  "F_sheath_04e": {
-   "material": "PTFE",
-   "volume_cm3": 0.2,
-   "grams": 0.4
-  },
-  "F_sheath_05f": {
-   "material": "PTFE",
-   "volume_cm3": 0.19,
-   "grams": 0.4
-  },
-  "F_sheath_05e": {
-   "material": "PTFE",
-   "volume_cm3": 0.18,
-   "grams": 0.4
-  },
-  "F_sheath_06f": {
-   "material": "PTFE",
-   "volume_cm3": 0.17,
-   "grams": 0.4
-  },
-  "F_sheath_06e": {
-   "material": "PTFE",
-   "volume_cm3": 0.17,
-   "grams": 0.4
-  },
-  "F_sheath_07f": {
-   "material": "PTFE",
-   "volume_cm3": 0.19,
-   "grams": 0.4
-  },
-  "F_sheath_07e": {
-   "material": "PTFE",
-   "volume_cm3": 0.2,
-   "grams": 0.4
-  },
-  "F_sheath_08f": {
-   "material": "PTFE",
-   "volume_cm3": 0.19,
-   "grams": 0.4
-  },
-  "F_sheath_08e": {
-   "material": "PTFE",
-   "volume_cm3": 0.2,
-   "grams": 0.4
+   "volume_cm3": 0.22,
+   "grams": 0.5
   },
   "F_sheath_09f": {
    "material": "PTFE",
-   "volume_cm3": 0.17,
+   "volume_cm3": 0.18,
    "grams": 0.4
   },
   "F_sheath_09e": {
    "material": "PTFE",
-   "volume_cm3": 0.17,
-   "grams": 0.4
-  },
-  "F_sheath_10f": {
-   "material": "PTFE",
    "volume_cm3": 0.18,
    "grams": 0.4
   },
-  "F_sheath_10e": {
-   "material": "PTFE",
-   "volume_cm3": 0.17,
-   "grams": 0.4
-  },
-  "F_sheath_11f": {
-   "material": "PTFE",
-   "volume_cm3": 0.19,
-   "grams": 0.4
-  },
-  "F_sheath_11e": {
+  "F_sheath_08f": {
    "material": "PTFE",
    "volume_cm3": 0.2,
    "grams": 0.4
   },
-  "F_sheath_12f": {
+  "F_sheath_08e": {
+   "material": "PTFE",
+   "volume_cm3": 0.21,
+   "grams": 0.5
+  },
+  "F_sheath_10f": {
+   "material": "PTFE",
+   "volume_cm3": 0.13,
+   "grams": 0.3
+  },
+  "F_sheath_10e": {
    "material": "PTFE",
    "volume_cm3": 0.19,
    "grams": 0.4
   },
+  "F_sheath_12f": {
+   "material": "PTFE",
+   "volume_cm3": 0.23,
+   "grams": 0.5
+  },
   "F_sheath_12e": {
+   "material": "PTFE",
+   "volume_cm3": 0.2,
+   "grams": 0.4
+  },
+  "F_sheath_11f": {
+   "material": "PTFE",
+   "volume_cm3": 0.21,
+   "grams": 0.5
+  },
+  "F_sheath_11e": {
+   "material": "PTFE",
+   "volume_cm3": 0.22,
+   "grams": 0.5
+  },
+  "F_sheath_13f": {
    "material": "PTFE",
    "volume_cm3": 0.18,
    "grams": 0.4
   },
-  "F_sheath_13f": {
-   "material": "PTFE",
-   "volume_cm3": 0.17,
-   "grams": 0.4
-  },
   "F_sheath_13e": {
-   "material": "PTFE",
-   "volume_cm3": 0.17,
-   "grams": 0.4
-  },
-  "F_sheath_14f": {
-   "material": "PTFE",
-   "volume_cm3": 0.19,
-   "grams": 0.4
-  },
-  "F_sheath_14e": {
    "material": "PTFE",
    "volume_cm3": 0.18,
    "grams": 0.4
   },
   "F_sheath_15f": {
    "material": "PTFE",
-   "volume_cm3": 0.18,
+   "volume_cm3": 0.19,
    "grams": 0.4
   },
   "F_sheath_15e": {
    "material": "PTFE",
-   "volume_cm3": 0.17,
+   "volume_cm3": 0.19,
+   "grams": 0.4
+  },
+  "F_sheath_14f": {
+   "material": "PTFE",
+   "volume_cm3": 0.2,
+   "grams": 0.4
+  },
+  "F_sheath_14e": {
+   "material": "PTFE",
+   "volume_cm3": 0.2,
    "grams": 0.4
   },
   "F_sheath_16f": {
    "material": "PTFE",
-   "volume_cm3": 0.18,
+   "volume_cm3": 0.19,
    "grams": 0.4
   },
   "F_sheath_16e": {
    "material": "PTFE",
-   "volume_cm3": 0.17,
+   "volume_cm3": 0.21,
+   "grams": 0.5
+  },
+  "F_sheath_07f": {
+   "material": "PTFE",
+   "volume_cm3": 0.05,
+   "grams": 0.1
+  },
+  "F_sheath_07e": {
+   "material": "PTFE",
+   "volume_cm3": 0.21,
+   "grams": 0.5
+  },
+  "F_sheath_06f": {
+   "material": "PTFE",
+   "volume_cm3": 0.18,
    "grams": 0.4
+  },
+  "F_sheath_06e": {
+   "material": "PTFE",
+   "volume_cm3": 0.19,
+   "grams": 0.4
+  },
+  "F_sheath_05f": {
+   "material": "PTFE",
+   "volume_cm3": 0.21,
+   "grams": 0.5
+  },
+  "F_sheath_05e": {
+   "material": "PTFE",
+   "volume_cm3": 0.2,
+   "grams": 0.4
+  },
+  "F_sheath_04f": {
+   "material": "PTFE",
+   "volume_cm3": 0.22,
+   "grams": 0.5
+  },
+  "F_sheath_04e": {
+   "material": "PTFE",
+   "volume_cm3": 0.24,
+   "grams": 0.5
   },
   "F_esp32_s3": {
    "material": "electronics",

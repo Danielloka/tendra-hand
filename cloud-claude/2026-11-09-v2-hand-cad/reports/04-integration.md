@@ -15,6 +15,15 @@ $RUN cad/assembly_checks.py    # validity + cross-module interference + wrist bu
 
 ## 1. Summary (read this first)
 
+> **Fix round (2026-11-11): see §11.** It supersedes the numbers below where they differ.
+> - Every pose was re-solved on the real CAD with 0 interference.
+> - 6 of 8 thumb strands are now PTFE.
+> - The finger MCPs moved to y = −2 with local dowel bosses.
+> - The palm clamp is 6 mm lower.
+> - The forearm fan is routed.
+> - The neighbour abduction table is exact.
+> - Gears and rods are valid.
+
 - The hand closes: **every part is a valid solid (220/225 watertight; the 5 that are not are the wrist designer's
   gear/rod and one forearm sheath mesh)**, the assembly exports to STEP/GLB, and the open pose and the wrist
   dev −30° pose have **zero interference**. The wrist at ±50/−30…+20 has at most 59 mm³ of palm–forearm-cover contact.
@@ -252,17 +261,17 @@ this section supersedes them where they differ.
 
 | Issue | Round 1 | Fix round |
 |---|---|---|
-| Power grasp Ø55 | fingers nearly straight, cylinder through fingers/palm (wrong pose) | **POWER_RESULT** |
-| Fist | 90/95 into the palm; thumb "thumbs-up" | **FIST_RESULT** |
-| Tip pinch / thumb–little pads | pads overlap 2–3 mm (195 / 241 mm³) | **PINCH_RESULT** |
-| Thumb strands | 8 bare strands in R 5 steel guide tubes (160–199° bend each) + 2 idlers | **6 of 8 in PTFE R ≥ 15** (thumb_mcp_flex_ext R 12.7, thumb_cmc_flex_ext R 14.2), 87–107° bend each (×1.16–1.20 friction at μ 0.1 instead of ×1.32–1.42). cmc_rot pair unchanged (idler + guide tube), justified in §11.3 |
+| Power grasp Ø55 | fingers nearly straight, cylinder through fingers/palm (wrong pose) | **solved on the real geometry**: cylinder against the palm (γ 12°, axis z 76), each finger wraps it (pad gaps 0.0–1.8 mm; the index middle phalanx is 2.7 mm off because the DIP is coupled), no penetration; thumb pad 0.3 mm on the far side. Interference with the object: **0** |
+| Fist | 90/95 into the palm; thumb "thumbs-up" | fingers curl until they meet the palm (mcp 77.5–80, pip 92.5–95); **thumb pad 0.43 mm on the index/middle middle phalanges**; interference **0** |
+| Tip pinch / thumb–little pads | pads overlap 2–3 mm (195 / 241 mm³) | thumb re-solved to a **0.3 mm** pad gap (tip pinch and thumb–little, the little capped at abd 9°); interference **0** (thumb–little pose: only a 0.9 mm³ thenar-pad graze on the palm) |
+| Thumb strands | 8 bare strands in R 5 steel guide tubes (160–199° bend each) + 2 idlers | **6 of 8 in PTFE**; 4 of those at R ≥ 15, thumb_cmc_flex_ext R 14.2 and thumb_mcp_flex_ext R 12.7, 87–107° bend each (×1.16–1.20 friction at μ 0.1 instead of ×1.32–1.42). cmc_rot pair unchanged (idler + guide tube), justified in §11.3 |
 | Thumb decoupling | ≤ 0.109 mm common mode, ≤ 0.011 mm true coupling | **0.186 mm** common mode (< 0.2), **≤ 0.011 mm** true coupling |
 | Knuckle bulge vs thumb opposition | opposition score 32.09 (thin slab) / 52.3 (palm as thick as the lip) | MCPs y −2, local Ø9.2 bosses flush with the 2 mm pad: **37.25** with the real palm surface (y −16); little pad 0.96 mm / 15° |
-| Palm sheaths (24 finger + 6 thumb PTFE) | R 13.8–24 (3 < 15), 16 gaps < 0.4 mm, 3 free spans < 15 | **28 of 30 at R ≥ 15**; **all wall gaps ≥ 0.4 mm** outside the bundle well over the clamp and the spinneret; **all free spans ≥ 15** at abd ±15 |
+| Palm sheaths (24 finger + 6 thumb PTFE) | R 13.8–24 (3 < 15), 16 gaps < 0.4 mm, 3 free spans < 15 | **28 of 30 at R ≥ 15** (the two thumb ones above), wall gaps ≥ 0.4 mm except thumb_mcp_flex_ext 0.38, measured outside the bundle well over the clamp and the spinneret zone; **all free spans ≥ 15** at abd ±15 |
 | Forearm fan | 22 tube pairs closer than one OD (new map, old S-curves) | **routed**: min R **11.3**, 4 wall gaps < 0.4 (min 0.26 mm). Best after 11 passes, time-boxed (§11.6) |
 | Neighbour fingers | "relative ≥ −1°", ring/little contact at +14/+15 | exact allowed-interval table `abd_pair_table.json` (§11.5) |
-| Palm heel vs forearm cover at +50/+20 | 59 mm³ | **HEEL_RESULT** |
-| Invalid solids | wrist gears ×2, rods ×2, forearm sheath 05e | **VALID_RESULT** |
+| Palm heel vs forearm cover at +50/+20 | 59 mm³ | **1.8 mm³** palm + 2.3 mm³ cmc_rot idler graze at +50/+20 (stepped forearm-envelope carve); the other 3 extremes **0** |
+| Invalid solids | wrist gears ×2, rods ×2, forearm sheath 05e | gears, rods: **valid + watertight**. 223/225 pass; T_thumb_mount (bored) and F_sheath_03e are valid B-reps whose meshes are not watertight (tessellation) |
 
 ### 11.2 Poses (`cad/poses.py`, `out/assembly/poses_solved.json`)
 
@@ -280,7 +289,15 @@ distance (analytic for the cylinder).
 - **Pinch / opposition:** the finger abd is capped by the pair table (ring/little ≤ 9°). The thumb is re-solved so
   its pad sits 0.3 mm from the finger's tip pad, with no penetration.
 
-POSES_TABLE
+| pose | result (`poses_solved.json`, checks.json) |
+|---|---|
+| a open | interference 0 |
+| b fist | fingers (mcp, pip): index 80/95, middle 77.5/95, ring 80/95, little 80/92.5; thumb (47, 32, 55, 69); pad gap 0.43; **0** |
+| c tip pinch | index (12.4, 31.8, 31.1), thumb (18.7, 31.8, 22.8, 32.2); pad gap 0.30; **0** |
+| d thumb–little | little (9, 31.5, 25), ring 9 / middle 10.5 / index 12 (table limits), thumb (−18.8, 55.0, −8.0, −13.6); pad gap 0.30; 0.9 mm³ thenar pad × palm |
+| e power Ø55 | fingers index 44/47.5, middle 58/50, ring 62/45, little 56/30; thumb (81.3, 46.5, 67.7, 43.6), pad gap 0.3; **0** |
+| f wrist +50 + pinch | **0** (wrist, forearm included) |
+| g wrist dev −30 | **0** |
 
 ### 11.3 Thumb strands: the spinneret
 
@@ -373,3 +390,35 @@ Rules for the firmware:
 | palm.py | local bosses, distal pad round the bosses, conservative stepped forearm envelope carve with a 12 % volume guard, bored thumb mount (`thumb_mount_bored`), bore retries, checkpoint of the bored shell |
 | assembly.py | poses from poses.py; clamp step over the thumb/rot cells; bored mount replaces T_thumb_mount |
 | poses.py | new: pose solver + neighbour table |
+
+### 11.8 Mass, exports, run order
+
+- **Mass:** fingers 65.3, thumb 37.1, palm 67.1, wrist 193.9, forearm 388.0 → **751 g** (hand alone 170 g).
+- **Hand envelope:** x −51.7…72.7, y −62.4…17.6, z 10.4…192 mm.
+- **Exports:** `tendra_v2_open.step.gz` (21.6 MB; the raw .step stays git-ignored), `tendra_v2_open.glb` (11.1 MB, not
+  decimated), `stl/`, pose renders `pose_*.png`, `palm_only.png`.
+- **Run order:** `routing.py` (+ `--polish`, `--fan [--warm]`) → `palm.py` (resumable: the bored shell is
+  checkpointed per bore in `palm_cache/`) → `cad/run_fix_pipeline.sh`. The pipeline runs poses.py --resume →
+  assembly.py → gzip → assembly_checks.py --resume, each step logging to `out/assembly/*.log` and writing its JSON as
+  it goes.
+- Slowest step: one palm channel boolean (middle_mcp_abd_ext) needs ~22 min of retries on its first attempt; it is
+  checkpointed after that.
+
+### 11.9 Remaining open issues (fix round), ranked
+
+1. **cmc_rot strands** still use 1 idler + 1 bent guide tube each (×1.27–1.39 friction). Needs a thumb re-layout
+   (§11.3).
+2. **Forearm fan:** min R 11.3 (5 tubes 11.3–14.0), 4 wall gaps 0.26–0.37 mm. Re-order the forearm adjuster
+   columns to follow the palm cell map, then re-route.
+3. **Two thumb PTFE sheaths:** thumb_mcp_flex_ext R 12.7, thumb_cmc_flex_ext R 14.2. Their spinneret exits are the
+   lowest; a 2–3 mm higher spinneret or a cell swap would fix them.
+4. **Thumb mount bores:** 2 of the 6 curved bores (cmc_flex_flex, ip_flex) failed as OCC booleans and keep only
+   their straight start, so cut them in the slicer or re-model the mount as a printed sleeve. The bored mount's mesh
+   is not watertight; the B-rep is valid.
+5. **little_mcp_abd ≤ 9°** (ring/little yokes). Widening the ring–little spacing by ~2 mm would lift it.
+6. **Thumb opposition score 37.25** vs 32.2 (palm surface now −16 instead of −14); re-optimise the thumb against the
+   real palm.
+7. **Small grazes (≤ 2.3 mm³):** idler and palm heel × forearm front cover at wrist +50/+20; thenar pad × palm at
+   little opposition; one forearm sheath mesh not watertight.
+8. **Lower clamp:** the thumb PTFE is gripped over only 2.5 mm (z 8–10.5) and needs glue; the bridge hangs 2 mm
+   below the flange (wrist grid clear, worst tube bend 18.8 mm).

@@ -568,13 +568,17 @@ def _build(routes_path=OUT / "routes.json", verbose=True):
     if verbose:
         print(f"  cut 1 done {time.time() - t0:.1f}s", flush=True)
     ck = CACHE_DIR / "_bored_shell.brep"
-    ckm = CACHE_DIR / "_bored_shell.key"
+    ckm = CACHE_DIR / "_bored_progress.json"
     key = f"{Path(routes_path).stat().st_mtime:.0f}"
     sh = shell.val()
-    if ck.exists() and ckm.exists() and ckm.read_text() == key:
-        sh = cq.Shape.importBrep(str(ck))
-        bores = {}
-        print("  bored shell from checkpoint", flush=True)
+    done = []
+    if ck.exists() and ckm.exists():
+        prog = json.loads(ckm.read_text())
+        if prog.get("key") == key:
+            sh = cq.Shape.importBrep(str(ck))
+            done = prog["done"]
+            print(f"  resuming bored shell: {len(done)} bores done", flush=True)
+    bores = {k: v for k, v in bores.items() if k not in done}
     for name, b in bores.items():
         t = time.time()
         try:
@@ -591,15 +595,15 @@ def _build(routes_path=OUT / "routes.json", verbose=True):
                 sh = r
             else:
                 print(f"  bore {name}: bad result ({r.Volume():.0f} vs {sh.Volume():.0f}), skipped", flush=True)
+            done.append(name)
+            CACHE_DIR.mkdir(parents=True, exist_ok=True)
+            sh.exportBrep(str(ck))
+            ckm.write_text(json.dumps({"key": key, "done": done}))
         except Exception as e:
             print(f"  bore {name}: {e}", flush=True)
         if verbose and time.time() - t > 3:
             print(f"  bore {name}: {time.time() - t:.1f}s", flush=True)
     shell = cq.Workplane(obj=sh)
-    CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    if bores:
-        sh.exportBrep(str(ck))
-        ckm.write_text(key)
     if verbose:
         print(f"  cut done {time.time() - t0:.1f}s valid {shell.val().isValid()}", flush=True)
     shell = cut_each(shell, [heel_cutter()], "heel", 0.3)

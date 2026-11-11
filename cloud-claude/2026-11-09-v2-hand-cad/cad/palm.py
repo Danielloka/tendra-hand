@@ -510,13 +510,13 @@ def build(routes_path=OUT / "routes.json", verbose=True, use_cache=True):
     import routing
     meta = CACHE_DIR / "meta.json"
     src = max(Path(routes_path).stat().st_mtime, Path(__file__).stat().st_mtime)
-    if use_cache and meta.exists() and meta.stat().st_mtime > src:
+    if use_cache and meta.exists() and meta.stat().st_mtime > src and "--rebuild" not in sys.argv:
         m = json.loads(meta.read_text())
         routes, rdata = routing.load(routes_path)
         parts = {n: cq.Workplane(obj=cq.Shape.importBrep(str(CACHE_DIR / f"{n}.brep"))) for n in m["parts"]}
         return {"parts": parts, "routes": routes, "cell_map": rdata["cell_map"], "interface": m["interface"]}
-    out = _build(routes_path, verbose)
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    out = _build(routes_path, verbose)
     _SIMPLE["shell"].val().exportBrep(str(CACHE_DIR / "check_shell_simple.brep"))
     for n, sh in out["parts"].items():
         (sh.val() if len(sh.vals()) == 1 else cq.Compound.makeCompound(sh.vals())).exportBrep(str(CACHE_DIR / f"{n}.brep"))
@@ -567,7 +567,14 @@ def _build(routes_path=OUT / "routes.json", verbose=True):
     simple = shell.cut(heel_cutter())  # palm without the internal bores: fast proxy for collision checks
     if verbose:
         print(f"  cut 1 done {time.time() - t0:.1f}s", flush=True)
+    ck = CACHE_DIR / "_bored_shell.brep"
+    ckm = CACHE_DIR / "_bored_shell.key"
+    key = f"{Path(routes_path).stat().st_mtime:.0f}"
     sh = shell.val()
+    if ck.exists() and ckm.exists() and ckm.read_text() == key:
+        sh = cq.Shape.importBrep(str(ck))
+        bores = {}
+        print("  bored shell from checkpoint", flush=True)
     for name, b in bores.items():
         t = time.time()
         try:
@@ -589,6 +596,10 @@ def _build(routes_path=OUT / "routes.json", verbose=True):
         if verbose and time.time() - t > 3:
             print(f"  bore {name}: {time.time() - t:.1f}s", flush=True)
     shell = cq.Workplane(obj=sh)
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    if bores:
+        sh.exportBrep(str(ck))
+        ckm.write_text(key)
     if verbose:
         print(f"  cut done {time.time() - t0:.1f}s valid {shell.val().isValid()}", flush=True)
     shell = cut_each(shell, [heel_cutter()], "heel", 0.3)
@@ -624,9 +635,9 @@ def _build(routes_path=OUT / "routes.json", verbose=True):
         if s_["kind"] == "thumb_axial" and s_["material"] == "ptfe":
             p_ = s_["dense"]
             ok_ = False
-            for st_ in (1.5, 1.0, 2.2, 0.8):
+            for st_ in (1.5,):
                 try:
-                    r_ = mt.cut(tube_solid(ext(p_[:60], 4.5, 0.0), P.SHEATH_BORE / 2, st_)).fix()
+                    r_ = mt.cut(tube_solid(ext(p_[:60], 4.5, 0.0), P.SHEATH_BORE / 2, st_))
                     if r_.isValid() and r_.Volume() > mt.Volume() - 300:
                         mt, ok_ = r_, True
                         break

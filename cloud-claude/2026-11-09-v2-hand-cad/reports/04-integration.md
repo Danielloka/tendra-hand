@@ -242,3 +242,134 @@ fingertip 192 mm. Palm 86 × 28 mm (34 mm over the knuckle lips). Forearm 95 × 
    (intended stop, but it is on TPU over the knuckle lip).
 10. **Wrist hardware (low).** 624/4 mm pins not adopted (needs a wrist rework); the wrist gear/rod meshes are not
     watertight; the clamp step leaves only 1.5 mm of grip on the thumb PTFE (glue).
+
+## 11. Fix round (2026-11-10/11, integrator; owns all modules now)
+
+Lead's priorities 1–6. Every module change is listed in §11.7. The numbers in §§1–10 above are from round 1;
+this section supersedes them where they differ.
+
+### 11.1 Before / after
+
+| Issue | Round 1 | Fix round |
+|---|---|---|
+| Power grasp Ø55 | fingers nearly straight, cylinder through fingers/palm (wrong pose) | **POWER_RESULT** |
+| Fist | 90/95 into the palm; thumb "thumbs-up" | **FIST_RESULT** |
+| Tip pinch / thumb–little pads | pads overlap 2–3 mm (195 / 241 mm³) | **PINCH_RESULT** |
+| Thumb strands | 8 bare strands in R 5 steel guide tubes (160–199° bend each) + 2 idlers | **6 of 8 in PTFE R ≥ 15** (thumb_mcp_flex_ext R 12.7, thumb_cmc_flex_ext R 14.2), 87–107° bend each (×1.16–1.20 friction at μ 0.1 instead of ×1.32–1.42). cmc_rot pair unchanged (idler + guide tube), justified in §11.3 |
+| Thumb decoupling | ≤ 0.109 mm common mode, ≤ 0.011 mm true coupling | **0.186 mm** common mode (< 0.2), **≤ 0.011 mm** true coupling |
+| Knuckle bulge vs thumb opposition | opposition score 32.09 (thin slab) / 52.3 (palm as thick as the lip) | MCPs y −2, local Ø9.2 bosses flush with the 2 mm pad: **37.25** with the real palm surface (y −16); little pad 0.96 mm / 15° |
+| Palm sheaths (24 finger + 6 thumb PTFE) | R 13.8–24 (3 < 15), 16 gaps < 0.4 mm, 3 free spans < 15 | **28 of 30 at R ≥ 15**; **all wall gaps ≥ 0.4 mm** outside the bundle well over the clamp and the spinneret; **all free spans ≥ 15** at abd ±15 |
+| Forearm fan | 22 tube pairs closer than one OD (new map, old S-curves) | **routed**: min R **11.3**, 4 wall gaps < 0.4 (min 0.26 mm). Best after 11 passes, time-boxed (§11.6) |
+| Neighbour fingers | "relative ≥ −1°", ring/little contact at +14/+15 | exact allowed-interval table `abd_pair_table.json` (§11.5) |
+| Palm heel vs forearm cover at +50/+20 | 59 mm³ | **HEEL_RESULT** |
+| Invalid solids | wrist gears ×2, rods ×2, forearm sheath 05e | **VALID_RESULT** |
+
+### 11.2 Poses (`cad/poses.py`, `out/assembly/poses_solved.json`)
+
+A new solver works on the real CAD. Every rigid body (finger yoke/proximal/middle/distal with pads, thumb
+base/metacarpal/proximal/distal with pads, palm shell + pads) becomes surface samples plus a 0.4 mm voxel grid in its
+own frame. Penetration = points of A inside B's voxels (checked against OCC booleans: same answers). Gap = KD-tree
+distance (analytic for the cylinder).
+- **Power Ø55:** the axis lies in the x–z plane at γ from +x. It is placed so the palm touches it (0.4 mm), with a
+  search over γ and height. Each finger: grid over mcp/pip, keep the pose with the smallest pad gaps (proximal +
+  middle + 1.5 × distal) and no penetration of the cylinder or the palm. Thumb: Powell from 4 seeds. It minimises
+  the pad gap (target 0.3) with the contact on the far side of the cylinder, and penalises penetration of the
+  cylinder, the curled fingers and the palm.
+- **Fist:** each finger takes the largest mcp + pip with no point inside the palm. The thumb pad goes onto the
+  index/middle middle phalanges (target 0.4 mm), without penetrating.
+- **Pinch / opposition:** the finger abd is capped by the pair table (ring/little ≤ 9°). The thumb is re-solved so
+  its pad sits 0.3 mm from the finger's tip pad, with no penetration.
+
+POSES_TABLE
+
+### 11.3 Thumb strands: the spinneret
+
+The 6 axial strands still come up the cmc_rot axis through the neck (the twist zone is unchanged in principle). The
+sheath ends become a fixed **PTFE spinneret plate** at C −31.5 (hex r 3.4, rotated 18° so that sheaths leaving along
+g are ≥ 2.14 mm apart). Each strand turns ~60° in its rounded spinneret hole: a fixed bend, so it cannot couple. Its
+sheath then leaves along **g, 5° below horizontal toward the wrist clamp**, through a curved bore in the mount and
+then the palm. The neck hole shrank from Ø1.6 to Ø1.2 (strand offsets 0.36), which keeps the cmc_rot common-mode
+length change at 0.186 mm with a 4.5 mm twist zone.
+
+Two other things were needed:
+- **The palm sheath clamp moved down 6 mm** into the palm flange opening (bridge z 8–13 instead of 14–19, with ears on
+  the flange's |y| ≤ 3.5 band and 2 × M2). That gives every strand 6 mm more height in the palm.
+- **The clamp top is stepped down to z 10.5 over the 8 thumb cells.**
+
+The 6 thumb tubes take the 6 right-hand rim cells (3, 9, 15, 21, 27, 31) and enter vertically. I tried a tilted
+entry into the clamp, but a tube leaving the clamp tilted would cross its neighbours in the 2.15 mm-pitch bundle.
+
+**cmc_rot keeps one idler + a guide tube per strand.** The rot drum's strands leave tangentially in the drum plane
+(⊥ a1). Every in-plane direction toward the wrist points upward, and the Ø42 mount flange fills the space under the
+thenar. A PTFE path from there needs a 300°+ loop (worse friction than the idler). The real fix is a thumb re-layout
+(rot drum under the bearings with a bevel/crossed-strand turn, or a differential CMC): open issue.
+
+### 11.4 Finger MCPs y = −2 (local bosses)
+
+The finger MCPs move from y −4 to −2 (`params.FINGERS`). The palmar abd dowel now ends at y −14.5 and sits in a local
+Ø9.2 boss to y −16.1, flush with the TPU palm pad. The continuous palmar lip is gone, and the distal pad (TPU 2 mm)
+is cut round the bosses. The dorsal knuckle lip stays (y 16.4, bosses to 17.6). Thumb re-score (`opposition_fixround.json`):
+
+| palm model | score | index | middle | ring | little | tip pinch | key | Ø55 |
+|---|---|---|---|---|---|---|---|---|
+| designer (y −4, slab −14) | 32.22 | 2.0 / 40° | 0.5 / 20° | 1.2 / 16° | 0.1 / 2° | 0 / 0 | 0.9 / 12° | 0.1 / 1° |
+| round 1 knuckle lip (slab −19.6) | 52.3 | 2.0 / 40° | 0.5 / 20° | 1.2 / 23° | 5.6 / 23° | 0 / 0 | 0.9 / 12° | 0 / 0 |
+| **fix round (y −2, palm −16)** | **37.25** | 2.0 / 42° | 0.7 / 21° | 0.9 / 15° | 1.0 / 15° | 0 / 0 | 0.9 / 12° | 0.05 / 1° |
+
+The thumb was not re-optimised (the CMC is unchanged); a refine run would recover part of the 5 points.
+
+### 11.5 Neighbour abduction table (`out/assembly/abd_pair_table.json`)
+
+Allowed radial-finger abd (deg, + toward the thumb) for each ulnar-neighbour angle, both fingers at the same flexion.
+Voxel test, step 1.5°, agrees with OCC. The firmware uses it as a joint-space constraint.
+
+| pair | flexion | q_ulnar −15 | −7.5 | 0 | +7.5 | +15 |
+|---|---|---|---|---|---|---|
+| index–middle | 0 | −15…15 | −7.5…15 | 0…15 | 6…15 | 13.5…15 |
+| index–middle | 45 | −15…15 | −9…15 | −3…15 | 4.5…15 | 12…15 |
+| index–middle | 90 | −15…−12 | −10.5…−1.5 | −4.5…7.5 | 1.5…15 | 9…15 |
+| middle–ring | 0 | −15…15 | −9…15 | −1.5…15 | 6…15 | 15 |
+| middle–ring | 45 | −15…15 | −10.5…15 | −3…15 | 6…15 | 15 |
+| middle–ring | 90 | −15…−9 | −13.5…−1.5 | −6…4.5 | 3…10.5 | 13.5…15 |
+| ring–little | 0 | −15…15 | −10.5…15 | −1.5…15 | **7.5…9** | **none** |
+| ring–little | 45 | −15…15 | −12…15 | −3…15 | **7.5…9** | **none** |
+| ring–little | 90 | −15…−6 | −15…0 | −4.5…4.5 | 7.5…9 | none |
+
+Rules for the firmware:
+- **Straight neighbours may only spread** (relative ≥ −1…−1.5°).
+- **At 90° flexion the window inverts**: curled tips sit below the abd pivot, so abduction swings them the other way.
+- **little_mcp_abd ≤ +9°**, and above +7.5° the ring must follow within 0…1.5°. The ring and little pivots are 8 mm
+  apart in z, so their yokes meet. Widening that spacing by ~2 mm would lift the cap; not done (it would re-route
+  everything).
+
+### 11.6 Routing and fan
+
+- **Cell map:** the left half is as the wrist/forearm map. On the right half: cmc_rot → 7/2 (stepped), the thumb's 6
+  → the rim cells by y order, index + middle_abd → the 8 inner cells (Hungarian).
+- **Palm optimiser:** Bézier G2 paths, then a polish (L-BFGS + Powell, N = 140 samples, R target 16.8, curvature
+  weight ×3), then a targeted fix of the 8 failing strands with the others frozen.
+- **Clearance:** relaxed to the 2.15 mm cell pitch only in the **bundle well** above the clamp (15.6 × 14.8 mm, up to
+  z 25) and within 9 mm of the spinneret. All 32 tubes must converge onto the bundle's pitch there by construction;
+  it is the same packing as in the wrist bundle.
+- **Forearm fan** (`routing.route_fan` → `out/assembly/fan_routes.json`, read by `forearm.make_sheaths`): Bézier paths
+  from each barrel adjuster (heading +Z) to its comb cell (z −63). The same packing relaxation applies within 12 mm
+  under the comb. 11 passes in all (Powell + L-BFGS, warm start).
+  - Best: **min R 11.3** (thumb_cmc_rot_ext), R < 15 on 5 tubes (11.3–14.0), 4 wall gaps 0.26–0.37.
+  - Time-boxed. The fan has 55 mm of height for up to 22 mm of lateral shift with 32 crossing assignments.
+  - The fix is to re-order the forearm adjuster columns to follow the palm map (open issue).
+- Wrist bundle with the lower clamp (wrist_kin): min tube R **18.8** at flex ±50 / dev −30 (was 24.4; ≥ 15 ✓). The
+  bundle grazed the wrist-base opening (0.79 mm³), so the opening grew by 1 mm in y (BASE_OPEN y 12 → 13): clear.
+
+### 11.7 Module changes (all logged)
+
+| file | change |
+|---|---|
+| params.py | FINGERS mcp y −4 → −2; PALM_KNUCKLE_BULGE → local bosses (−16.1 / 17.6, Ø9.2); PALM_PAD_FACE_Y −16; SHEATH_CLAMP_Z (14,19) → (8,13); CLAMP_THUMB_STEP_Z 15.5 → 10.5; ABD_PAIR_LIMIT_DEG + table note |
+| thumb.py | "spinneret" layout: FAN_DOWN_DEG 5, FAN_TARGET_XY (4,−1), EXIT_L 4, `fan_dir()`, `_hex_rot()` (18°); sheath exits = spinneret hole + 4·g; SHEATH_END_Z −32 → −31.5; BUNDLE_R 2.3 → 3.4; NECK_R 0.45 → 0.36, neck hole Ø1.6 → Ø1.2; fan cavity r BUNDLE_R + 0.7; `FAN_DOWN_DEG = None` restores the original |
+| wrist.py | CLAMP_Z from params (z 8–13); bridge ears + 2 × M2 into the flange band; BASE_OPEN y 12 → 13; pinion fused to the servo shaft, big gear to its axle (single solids); push rod rebuilt as one solid of revolution with flat pole caps (watertight) |
+| wrist_kin.py | Z_PALM_CLAMP from params (8) |
+| forearm.py | `comb_cells()` reads routes.json's cell map (shared palm/comb map); `fan_paths()` uses fan_routes.json; sheaths as one sweep each (was a chain of unioned cylinders) |
+| routing.py | per-strand end direction, palm_cell_map, thumb PTFE strands, real base-sweep obstacle, flange rule, well/spinneret relaxation, route_fan |
+| palm.py | local bosses, distal pad round the bosses, conservative stepped forearm envelope carve with a 12 % volume guard, bored thumb mount (`thumb_mount_bored`), bore retries, checkpoint of the bored shell |
+| assembly.py | poses from poses.py; clamp step over the thumb/rot cells; bored mount replaces T_thumb_mount |
+| poses.py | new: pose solver + neighbour table |

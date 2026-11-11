@@ -53,8 +53,8 @@ FLANGE_Z = (10.0, 15.0)  # palm flange; palm base face at z = +15
 FLANGE_XY = (21.5, 12.5, 5.0)
 FLANGE_OPEN = (8.0, 8.0, 3.0)  # half x, half y, r (bundle +-7.5 below the clamp)
 FLANGE_HEEL_R = 18.0  # in |x| < 12.5 the flange stays inside r_x <= 18 (clears the ring ends at +-52 deg flex)
-BASE_OPEN = (10.0, 12.0, 4.0)  # half x, half y, r (bundle needs +-7.5 x +-9 at the base)
-CLAMP_Z = (14.0, 19.0)  # sheath clamp bridge (laminated comb), sits in a pocket of the flange
+BASE_OPEN = (10.0, 13.0, 4.0)  # half x, half y, r (bundle needs +-7.5 x +-9 at the base)
+CLAMP_Z = tuple(P.SHEATH_CLAMP_Z)  # sheath clamp bridge (laminated comb); fix round: z 8..13 inside the flange opening
 FLANGE_BOLTS = [(sx * 17.0, sy * 9.5) for sx in (-1, 1) for sy in (-1, 1)]  # M3 heat-set inserts
 INSERT_D, INSERT_L = 4.0, 5.0  # M3 x 5.7 short insert hole (4.0 for PETG)
 STOP_MARGIN = 2.0  # hard stops 2 deg beyond the software range
@@ -215,8 +215,16 @@ def make_flange():
     for sx in (-1, 1):  # 2 x M2.5 clamp screws along Y through the laminations
         bridge = bridge.cut(cyl((sx * (cw + 1.25), -ch - 1, (CLAMP_Z[0] + CLAMP_Z[1]) / 2),
                                 (sx * (cw + 1.25), ch + 1, (CLAMP_Z[0] + CLAMP_Z[1]) / 2), 1.35))
-    # the bridge sits in a pocket of the flange (flange top z 15): cut the pocket
+    # fix round: ears (|y| <= 3.2, to |x| 13.6) at the bridge top rest on the flange's x-band and take 2 x M2 screws
+    for sx in (-1, 1):
+        x0, x1 = sorted((sx * (cw + 2.4), sx * 13.6))
+        bridge = bridge.union(box(x0, x1, -3.2, 3.2, CLAMP_Z[1] - 2.0, CLAMP_Z[1]))
+        bridge = bridge.cut(cyl((sx * 12.6, 0, CLAMP_Z[1] - 3), (sx * 12.6, 0, CLAMP_Z[1] + 1), 1.1))
+    # the bridge sits in a pocket of the flange: cut the pocket (+ the ear seats)
     fl = fl.cut(box(-cw - 2.6, cw + 2.6, -ch - 0.1, ch + 0.1, CLAMP_Z[0], 30))
+    fl = fl.cut(box(-13.7, 13.7, -3.3, 3.3, CLAMP_Z[1] - 2.0, 30))
+    for sx in (-1, 1):
+        fl = fl.cut(cyl((sx * 12.6, 0, CLAMP_Z[1] - 6), (sx * 12.6, 0, CLAMP_Z[1]), 0.8))
     return fl, bridge
 
 
@@ -251,7 +259,9 @@ def make_drive_fixed(side):
     _, A = K.drive_points(DR, side)
     big_r = GEAR_C * DR["G"] / (1 + DR["G"])
     pin_r = GEAR_C - big_r
-    gears = cyl(sh + (0, 1.0, 0), sh + (0, 4.0, 0), pin_r).union(cyl((A[0], sh[1] + 1, A[2]), (A[0], sh[1] + 4, A[2]), big_r))
+    # integrator fix: pinion fused to the servo shaft (one solid), big gear fused to its crank axle (one solid)
+    servo = servo.union(cyl(sh + (0, 0.9, 0), sh + (0, 4.0, 0), pin_r))
+    gears = cyl((A[0], sh[1] + 1, A[2]), (A[0], sh[1] + 4, A[2]), big_r)
     gears = gears.union(cyl((A[0], sh[1] + 1, A[2]), (A[0], A[1] - 1.5, A[2]), 2.5))  # 5 mm crank axle
     return servo, gears
 
@@ -269,9 +279,24 @@ def make_crank(side, phi):
 
 
 def make_rod(B, C):
-    u = (B - C) / np.linalg.norm(B - C)
-    rod = cyl(C + u * BALL_D / 2, B - u * BALL_D / 2, ROD_D / 2)
-    return rod.union(sphere(B, BALL_D / 2)).union(sphere(C, BALL_D_CRANK / 2))
+    """Rod + both ball ends as ONE solid of revolution (fix round: the sphere/cylinder union tessellated with a
+    seam and failed the watertight check)."""
+    L = float(np.linalg.norm(B - C))
+    rc, rb, rr = BALL_D_CRANK / 2, BALL_D / 2, ROD_D / 2
+    zc = math.sqrt(rc**2 - rr**2)  # where the rod meets the crank ball
+    zb = L - math.sqrt(rb**2 - rr**2)
+    c5, s5 = math.cos(math.radians(8)), math.sin(math.radians(8))  # tiny flat caps: no pole singularity
+    prof = (cq.Workplane("XZ").moveTo(0, -rc * c5).lineTo(rc * s5, -rc * c5)
+            .threePointArc((rc * math.sin(math.radians(45)), -rc * math.cos(math.radians(45))), (rr, zc))
+            .lineTo(rr, zb).threePointArc((rb * math.sin(math.radians(45)), L + rb * math.cos(math.radians(45))), (rb * s5, L + rb * c5))
+            .lineTo(0, L + rb * c5).close())
+    sol = prof.revolve(360, (0, 0, 0), (0, 1, 0))  # XZ workplane: local y = global z
+    u = (B - C) / L
+    z = np.array([0, 0, 1.0])
+    ax = np.cross(z, u)
+    if np.linalg.norm(ax) > 1e-9:
+        sol = sol.rotate((0, 0, 0), tuple(ax / np.linalg.norm(ax)), math.degrees(math.acos(float(np.clip(z @ u, -1, 1)))))
+    return sol.translate(tuple(C))
 
 
 # --- bundle ------------------------------------------------------------------------------------------

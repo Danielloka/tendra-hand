@@ -59,19 +59,23 @@ def _pose(fingers=None, thumb=None, wrist=None, obj=None):
 
 
 def poses():
+    """Fix round: grasp poses from the solver (cad/poses.py -> out/assembly/poses_solved.json): fingers wrap the
+    cylinder / curl onto the palm on the real geometry, pinch / opposition backed off to 0..0.5 mm contact."""
+    ps_ = json.loads((OUT / "poses_solved.json").read_text())
     curl = {"mcp_abd": 0.0, "mcp_flex": 15.0, "pip": 20.0}
-    pinch = _pose({"index": _fq("tip_pinch"), "middle": curl, "ring": curl, "little": curl}, _tq("tip_pinch"))
-    fist_f = {f: {"mcp_abd": 0.0, "mcp_flex": 90.0, "pip": 95.0} for f in FINGERS}
-    fist_t = _tq("lateral")  # key-pinch thumb: lies on the radial side of the curled index
-    little = _pose({"little": _fq("little"), "ring": {"mcp_abd": 14.0, "mcp_flex": 25.0, "pip": 25.0}, "middle": {"mcp_abd": 13.0, "mcp_flex": 10.0, "pip": 10.0}, "index": {"mcp_abd": 12.0, "mcp_flex": 0.0, "pip": 0.0}}, _tq("little"))
-    # power grasp re-solved by the thumb optimiser against the lip-aware palm (cylinder on the knuckle pads)
-    la = json.loads((OUT / "opposition_rerun.json").read_text())["lip_aware"]["tasks"]["power55"]
-    g, zc = la["cyl"][0], la["cyl"][1]
-    tq55 = dict(zip(("cmc_rot", "cmc_flex", "mcp_flex", "ip"), la["q_thumb"]))
-    power = _pose(power_fingers(55.0, g, zc), tq55, obj={"cylinder": {"d": 55.0, "gamma": g, "zc": zc}})
+    tp = ps_["pinch_tip_pinch"]
+    pinch = _pose({"index": tp["finger_q"], "middle": curl, "ring": curl, "little": curl}, tp["thumb"])
+    lt = ps_["pinch_little"]
+    # neighbours follow the little within the pair limits (abd_pair_table.json)
+    little = _pose({"little": lt["finger_q"], "ring": {"mcp_abd": 9.0, "mcp_flex": 30.0, "pip": 30.0},
+                    "middle": {"mcp_abd": 6.0, "mcp_flex": 15.0, "pip": 15.0}, "index": {"mcp_abd": 4.0, "mcp_flex": 5.0, "pip": 5.0}},
+                   lt["thumb"])
+    pw = ps_["power55"]
+    power = _pose(pw["fingers"], pw["thumb"], obj={"cylinder": pw["cylinder"]})
+    fs = ps_["fist"]
     return {
         "a_open": _pose(),
-        "b_fist": _pose(fist_f, fist_t),
+        "b_fist": _pose(fs["fingers"], fs["thumb"]),
         "c_tip_pinch": pinch,
         "d_thumb_little": little,
         "e_power55": power,
@@ -171,16 +175,25 @@ def _forearm():
 
 
 def clamp_stepped():
-    """The wrist's palm sheath clamp with its top stepped down to z 15.5 over the 8 thumb cells (integrator
-    change: lets the thumb's steel guide tubes turn down lower)."""
+    """The wrist's palm sheath clamp, fix round: top stepped down to z 15.5 over the 2 cmc_rot cells (steel guide
+    tubes) and 6 tilted bores (2.2) for the thumb's PTFE tubes, from their cell at the clamp bottom up toward +x."""
     if "clamp" not in _CACHE:
         import routing
         import wrist
         c = wrist._base_parts()["clamp"]
         z0, z1 = routing.Z_CELL_THUMB, P.SHEATH_CLAMP_Z[1] + 1
-        step = (cq.Workplane("XY").box(20, 30, z1 - z0).translate((4.25 + 10, 0, (z0 + z1) / 2))
-                .union(cq.Workplane("XY").box(20, 20, z1 - z0).translate((10, -2.15 - 10, (z0 + z1) / 2))))
-        _CACHE["clamp"] = c.cut(step)
+        C = routing.cells()
+        for cell in routing.ROT_CELLS:
+            a, b = C[cell]
+            c = c.cut(cq.Workplane("XY").box(2.1, 2.1, z1 - z0).translate((a, b, (z0 + z1) / 2)))
+        rr, _ = routing.load()
+        for s in rr:
+            if s["kind"] == "thumb_axial" and s.get("cell_bottom"):
+                cb, d = np.array(s["cell_bottom"]), np.array(s["end_dir"])
+                p0, p1 = cb + d * 1.0, cb - d * 9.0
+                c = c.cut(cq.Workplane(obj=cq.Solid.makeCylinder(P.SHEATH_BORE / 2, float(np.linalg.norm(p1 - p0)),
+                                                                cq.Vector(*p0), cq.Vector(*((p1 - p0) / np.linalg.norm(p1 - p0))))))
+        _CACHE["clamp"] = c
     return _CACHE["clamp"]
 
 
@@ -197,16 +210,18 @@ def build(pose, forearm=True, sheaths=True, verbose=False):
     for f in FINGERS:
         for k, s in finger.build(f, pose.get(f, {}))["parts"].items():
             hand[f"{f}_{k}"] = s
-    for k, s in thumb.build(pose.get("thumb", {}))["parts"].items():
-        hand[f"T_{k}"] = s
+    tb = thumb.build(pose.get("thumb", {}))["parts"]
+    pbm = _palm()["parts"].get("thumb_mount_bored")
+    for k, s in tb.items():
+        hand[f"T_{k}"] = pbm if (k == "thumb_mount" and pbm is not None) else s
     pb = _palm()
     for k, s in pb["parts"].items():
-        if not sheaths and k in ("palm_sheaths", "thumb_guides"):
+        if (not sheaths and k in ("palm_sheaths", "thumb_guides")) or k == "thumb_mount_bored":
             continue
         hand[f"P_{k.replace('palm_', '')}"] = s
     if "object" in pose:
         cy = pose["object"]["cylinder"]
-        o, c = cylinder_axis(cy["d"], cy["gamma"], cy["zc"])
+        o, c = (np.array(cy["origin"]), np.array(cy["axis"])) if "origin" in cy else cylinder_axis(cy["d"], cy["gamma"], cy["zc"])
         L = 120.0
         hand["OBJ_cylinder55"] = cq.Workplane(obj=cq.Solid.makeCylinder(cy["d"] / 2, L, cq.Vector(*(o - c * L / 2)), cq.Vector(*c)))
     wb = wrist.build({"wrist_flex": flex, "wrist_dev": dev}, bundle=True)["parts"]

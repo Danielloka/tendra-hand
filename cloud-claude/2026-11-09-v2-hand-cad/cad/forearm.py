@@ -201,6 +201,23 @@ def make_adjusters():
 
 
 def comb_cells():
+    """Fix round: if the integrator's out/assembly/routes.json exists, its cell map is used (same cells at the
+    palm clamp and the comb); otherwise the original Hungarian assignment below.
+    """
+    import json as _json
+    rp = HERE.parent / "out" / "assembly" / "routes.json"
+    if rp.exists():
+        cm = _json.loads(rp.read_text())["cell_map"]
+        inv = {v: k for k, v in P.SERVO_IDS.items()}
+        out = {}
+        for name, c in cm.items():
+            joint, role = name.rsplit("_", 1)
+            out[(inv[joint], role)] = int(c)
+        return out
+    return comb_cells_hungarian()
+
+
+def comb_cells_hungarian():
     """Assign each of the 32 strands a bundle cell (same cell at the forearm comb and at the palm
     clamp) to minimise the sheath fan's sideways travel (Hungarian assignment)."""
     from scipy.optimize import linear_sum_assignment
@@ -235,16 +252,32 @@ def sheath_path(start, cell, n=60):
     return pts
 
 
-def make_sheaths(cells):
+def fan_paths(cells):
+    """Routed fan (out/assembly/fan_routes.json, integrator) if present, else the original S-curves."""
+    import json as _json
+    fp = HERE.parent / "out" / "assembly" / "fan_routes.json"
+    routed = {}
+    if fp.exists():
+        for r in _json.loads(fp.read_text())["strands"]:
+            routed[(r["sid"], r["role"])] = np.array(r["points"])
     out = {}
     for (sid, name), cell in cells.items():
-        p = strand_points(sid)[name]
-        pts = sheath_path(p["sheath_start"], cell, 24)
-        solid = None
-        for i in range(len(pts) - 1):
-            c = cyl(pts[i], pts[i + 1], P.SHEATH_OD / 2)
-            solid = c if solid is None else solid.union(c)
-        out[f"sheath_{sid:02d}{name[0]}"] = solid
+        if (sid, name) in routed:
+            out[(sid, name)] = routed[(sid, name)]
+        else:
+            out[(sid, name)] = sheath_path(strand_points(sid)[name]["sheath_start"], cell, 24)
+    return out
+
+
+def make_sheaths(cells):
+    """One swept solid per sheath (fix round: a sweep instead of a chain of unioned cylinders, which left one
+    sheath non-watertight)."""
+    import palm as _palm
+    out = {}
+    for (sid, name), pts in fan_paths(cells).items():
+        a, b = K.tube_offsets()[cells[(sid, name)]]
+        pts = np.vstack([pts, [[a, b, Z_COMB[1] + 2.0]]])  # straight up through the comb
+        out[f"sheath_{sid:02d}{name[0]}"] = cq.Workplane(obj=_palm.tube_solid(pts, P.SHEATH_OD / 2))
     return out
 
 
@@ -419,9 +452,9 @@ def sheath_report(cells):
     from tools.transform import min_bend_radius
 
     worst, rows = 1e9, []
+    fp = fan_paths(cells)
     for (sid, name), cell in cells.items():
-        p = strand_points(sid)[name]
-        pts = sheath_path(p["sheath_start"], cell, 200)
+        pts = fp[(sid, name)]
         r, _ = min_bend_radius(pts)
         rows.append((sid, name, cell, r))
         worst = min(worst, r)

@@ -32,7 +32,7 @@ RANGES = {"wrist_flex": (-50.0, 50.0), "wrist_dev": tuple(P.WRIST_RANGES["wrist_
 PITCH = 2.15  # tube pitch in the bundle combs (2.0 OD + 0.15)
 N_COLS, N_ROWS = 8, 4  # 8 along x, 4 along y = 32 sheaths
 CABLE_D = 3.0  # palm sensor cable (4 x 30 AWG in a sleeve), runs at the -X end of the bundle
-Z_PALM_CLAMP = 14.0  # palm-side sheath clamp lower face (clamp bridge sits in the flange, z 14..19)
+Z_PALM_CLAMP = P.SHEATH_CLAMP_Z[0]  # palm-side sheath clamp lower face (fix round: z 8, was 14)
 Z_FORE_COMB = -60.0  # forearm-side bundle comb (slide guide) top face
 RING_H_Y = 7.0  # ring height (z) at its +-Y ends
 RING_H_X = 7.0  # ring height at its +-X ends

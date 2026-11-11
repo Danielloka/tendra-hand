@@ -45,14 +45,47 @@ OUT = HERE.parent / "out" / "assembly"
 Z_CELL = P.SHEATH_CLAMP_Z[1]  # 19: clamp top
 R_PTFE, R_STEEL = 15.0, 4.0
 TARGET = {"ptfe": 16.0, "steel": 5.0}
-Z_CELL_THUMB = 15.5  # the clamp top is stepped down to z 15.5 over the thumb cells (integrator change)
+Z_CELL_THUMB = P.CLAMP_THUMB_STEP_Z  # 10.5: clamp top stepped down over the 8 thumb cells
 CELL_SWAPS = [(13, 15), (19, 21), (25, 27)]  # wrist map -> palm map: thumb gets the whole outer (+x) column
 ROT_IDLER_R = 3.6  # cmc_rot idler pulley (MR63 + printed tyre, groove r 3.4) strand-centre radius
 
 
+WELL = (7.8, 7.4, 25.0)  # bundle well over the clamp (palm.py): tubes converge onto the 2.15 cell pitch here
+
+
+def in_well(p):
+    p = np.atleast_2d(p)
+    return (np.abs(p[:, 0]) < WELL[0]) & (np.abs(p[:, 1]) < WELL[1]) & (p[:, 2] < WELL[2])
+
+
+_SPIN = {}
+
+
+def spin_centre():
+    if "c" in _SPIN:
+        return _SPIN["c"]
+    import thumb
+    o, x, y, z = thumb.J0["C"]
+    _SPIN["c"] = o + z * thumb.SHEATH_END_Z + thumb.fan_dir() * thumb.EXIT_L
+    return _SPIN["c"]
+
+
+def flange_pen(p, margin=0.3):
+    """Outside the clamp pocket (|x| < 11.0, |y| < 8.5) the palm flange / palm base fill z < 15: penalise."""
+    out = (np.abs(p[:, 0]) > 11.0) | (np.abs(p[:, 1]) > 8.5)
+    return float(np.sum(np.maximum(15.0 + margin - p[:, 2], 0) ** 2 * out))
+
+
 def step_zone(x, y):
-    """Clamp-top step (z 15.5 instead of 19) over the thumb cells: outer column and the -y rows of the +x half."""
-    return (x > 4.25) | ((x > 0) & (y < -2.15))
+    """Clamp-top step (z 10.5 instead of 13) over the 8 thumb cells: the outer +x column (x > 4.25), the
+    y +-5.4 rows' +x ends (cells 3, 31 side) and the cmc_rot cells 7, 2 with their -y approach."""
+    return (x > 4.25) | ((x > 2.15) & (np.abs(y) > 4.3)) | ((x > 0) & (x < 2.15) & (y < -2.15))
+
+
+THUMB_RIM_CELLS = (3, 9, 15, 21, 27, 31)  # right-half rim: the 6 thumb axial PTFE tubes enter tilted outward
+ROT_CELLS = (7, 2)
+TILTS = (0.0,)  # fix round: vertical entry (a tilted tube would cross its neighbours below the clamp)  # clamp entry tilt grid (deg from vertical) for the thumb axial tubes
+CLAMP_BOT = P.SHEATH_CLAMP_Z[0]  # 14
 OD = {"ptfe": P.SHEATH_OD, "steel": 1.27}
 GAP = 0.4
 FREE_SPAN = 22.0
@@ -86,7 +119,7 @@ def strand_table():
     for k, e in ti["strand_exits"].items():
         joint, role = k.rsplit("_", 1)
         d = dict(name=k, finger="thumb", joint=joint, role=role, sid=NAMES_ID[joint],
-                 kind="thumb_rot" if "cmc_rot" in k else "thumb_axial", mat="steel",
+                 kind="thumb_rot" if "cmc_rot" in k else "thumb_axial", mat="steel" if "cmc_rot" in k else "ptfe",
                  start=np.array(e["point"]), dir=np.array(e["direction"]), moved=None)
         if d["kind"] == "thumb_rot":
             d["exit"], d["exit_dir"] = d["start"], d["dir"]
@@ -159,6 +192,11 @@ def assign_cells(strands):
 _OBS = {}
 
 
+def _rotm(axis, deg):
+    from tools.transform import rot_matrix
+    return rot_matrix(axis, deg)
+
+
 def obstacles():
     """Voxel point clouds (pitch 1 mm) of the thumb mount and the thumb base sweep hull + analytic bits."""
     if _OBS:
@@ -183,6 +221,23 @@ def obstacles():
         p = np.array(b["point"])
         pts.append(np.array([p - a1 * s for s in np.arange(0, 7, 0.7)]))
     _OBS["thumb"] = cKDTree(np.vstack(pts[:2]))
+    # for the thumb's own PTFE tubes (they may bore through the mount body): moving base hull + bearing/cap zone
+    o, cx, cy, cz = thumb.J0["C"]
+    zone = []
+    for zc in np.arange(-27.5, -11.0, 1.0):
+        for r in np.arange(0, 15.1, 1.5):
+            for t in np.linspace(0, 2 * np.pi, max(6, int(r * 4)), endpoint=False):
+                zone.append(o + cz * zc + r * (np.cos(t) * cx + np.sin(t) * cy))
+    # real swept volume of the rotating base (base + cap + neck) over the cmc_rot range (the convex hull is too fat)
+    sweep = []
+    for part in ("thumb_base", "base_cap", "neck_top"):
+        vb, fb = tessellate(rp[part], 0.2, 0.3)
+        vox = trimesh.Trimesh(vb, fb).voxelized(1.0).fill().points
+        for ang in np.linspace(thumb.RANGES["cmc_rot"][0], thumb.RANGES["cmc_rot"][1], 15):
+            Rm = _rotm(cz, ang)
+            sweep.append((vox - o) @ Rm.T + o)
+    # strand passage neck -> spinneret must stay free: no obstacle needed (it is inside the mount cavity)
+    _OBS["thumbpath"] = cKDTree(np.vstack(sweep + [np.array(zone)]))
     _OBS["bolts"] = cKDTree(np.vstack(pts[2:]))
     _OBS["a1"] = a1
     return _OBS
@@ -198,10 +253,11 @@ _B1 = np.array([[math.comb(DEG_N - 1, i) * t ** i * (1 - t) ** (DEG_N - 1 - i) f
 _B2 = np.array([[math.comb(DEG_N - 2, i) * t ** i * (1 - t) ** (DEG_N - 2 - i) for i in range(DEG_N - 1)] for t in _T])
 
 
-def ctrl(x, S, dS, C):
-    """x = (a1, a2, b1, b2, m1(3), m2(3)) -> 8 control points. a2 > a1 > 0 along dS, b2 > b1 > 0 above C."""
+def ctrl(x, S, dS, C, dE=(0.0, 0.0, -1.0)):
+    """x = (a1, a2, b1, b2, m1(3), m2(3)) -> 8 control points. a2 > a1 > 0 along dS, b2 > b1 > 0 back along the
+    end direction dE (default: arriving straight down)."""
     a1, da, b1, db = np.abs(x[:4]) + 0.3
-    up = np.array([0, 0, 1.0])
+    up = -np.asarray(dE, float)
     return np.array([S, S + a1 * dS, S + (a1 + da) * dS, x[4:7], x[7:10], C + (b1 + db) * up, C + b1 * up, C])
 
 
@@ -230,18 +286,21 @@ def radii(pts):
 # ----------------------------------------------------------------------------------------------------
 def cost(x, s, others):
     S, dS, C = s["start"], s["dir"], s["cell_xyz"]
-    cp = ctrl(x, S, dS, C)
+    cp = ctrl(x, S, dS, C, s.get("dE", (0, 0, -1.0)))
     p, k, sp = curve(cp)
     seg = np.linalg.norm(np.diff(p, axis=0), axis=1)
     L = float(np.sum(seg))
     kmax = 1.0 / TARGET[s["mat"]]
     turn = float(np.sum(0.5 * (k[1:] + k[:-1]) * seg))  # total bend (rad) = capstan friction exponent / mu
     J = 0.02 * L + (W_TURN_STEEL if s["mat"] == "steel" else W_TURN) * turn
-    J += 2e6 * float(np.sum(np.maximum(k - kmax, 0) ** 2))
+    J += 6e6 * float(np.sum(np.maximum(k - kmax, 0) ** 2))
     if s["kind"] == "free":
         J += free_span_cost(s, p, seg)
     ob = obstacles()
-    if s["mat"] == "ptfe":
+    if s["kind"] == "thumb_axial":
+        d, _ = ob["thumbpath"].query(p[2:], distance_upper_bound=4)
+        J += 50 * float(np.sum(np.maximum(2.6 - np.minimum(d, 99), 0) ** 2))
+    elif s["mat"] == "ptfe":
         d, _ = ob["thumb"].query(p, distance_upper_bound=WALL_TO_BAY + 1)
         J += 50 * float(np.sum(np.maximum(WALL_TO_BAY + 0.5 - np.minimum(d, 99), 0) ** 2))
     else:  # steel tubes start at the mount face: ignore their first 1.5 mm, then keep 1.2 from the voxels
@@ -255,14 +314,15 @@ def cost(x, s, others):
         J += 20 * float(np.sum(np.maximum(np.abs(p[:, 1]) - Y_SKIN, 0) ** 2 * (p[:, 2] < 66)))
     else:
         J += 20 * float(np.sum(np.maximum(p[:, 1] - Y_SKIN, 0) ** 2 + np.maximum(-28 - p[:, 1], 0) ** 2))
-    if s["mat"] == "ptfe":
+    if s["mat"] == "ptfe" and s["finger"] != "thumb":
         J += 50 * float(np.sum(np.maximum(Z_CELL + 0.2 - p[:-6, 2], 0) ** 2))  # stay above the clamp top
     else:  # steel: above the stepped clamp (16.5) in the step zone, above 19.2 over the rest of the clamp block
         q = p[:-6]
         inblock = (np.abs(q[:, 0]) < 11.7) & (np.abs(q[:, 1]) < 9.2) & ~step_zone(q[:, 0], q[:, 1])
         J += 50 * float(np.sum(np.maximum(Z_CELL + 0.2 - q[:, 2], 0) ** 2 * inblock))
         J += 50 * float(np.sum(np.maximum(Z_CELL_THUMB + 0.2 - q[:, 2], 0) ** 2))
-    J += 20 * float(np.sum(np.maximum(15.5 - p[:, 2], 0) ** 2))
+    J += 20 * float(np.sum(np.maximum(Z_CELL_THUMB - p[:-4, 2], 0) ** 2))
+    J += 50 * flange_pen(p)
     # clearance to the other strands
     if others is not None:
         tree, mats, zs = others
@@ -270,7 +330,9 @@ def cost(x, s, others):
         ok = np.isfinite(d)
         if ok.any():
             req = (OD[s["mat"]] + np.where(mats[j[ok]] == 1, OD["steel"], OD["ptfe"])) / 2 + GAP + 0.25
-            near = (p[ok, 2] < Z_CELL + 4) & (zs[j[ok]] < Z_CELL + 4)
+            near = ((p[ok, 2] < Z_CELL + 4) & (zs[j[ok]] < Z_CELL + 4)) | in_well(p[ok])
+            if s["kind"] == "thumb_axial":  # sheath starts in printed bores round the spinneret: >= 2.1 c-c
+                near |= np.linalg.norm(p[ok] - spin_centre(), axis=1) < 9.0
             req = np.where(near, 2.1, req)
             J += W_CLEAR * float(np.sum(np.maximum(req - d[ok], 0) ** 2))
     return J
@@ -318,6 +380,9 @@ def initial(s):
             m1 = np.array([S[0] + 10, S[1], S[2] - 18])
             m2 = np.array([C[0] - 12, C[1], C[2] + 12])
         x = np.r_[4.0, 4.0, 4.0, 4.0, m1, m2]
+    elif s["kind"] == "thumb_axial" and s["mat"] == "ptfe":
+        dE = np.asarray(s["dE"])
+        x = np.r_[2.0, 3.0, 2.0, 3.0, S + dS * 8.0 + np.array([0, 0, -1.0]), C - dE * 7.0]
     elif s["kind"] == "thumb_axial":
         h = C - S
         h[2] = 0
@@ -381,8 +446,8 @@ def steel_route(s, placed, R=5.0):
     if s["kind"] == "thumb_axial":
         grid = [(t1, zk, off) for t1 in (3.9, 4.6, 5.5, 6.5) for zk in np.arange(20.5, 28.1, 0.5) for off in (-4, -2, 0, 2, 4)]
     else:
-        grid = [(t1, zk, (off, zw)) for t1 in (3.0, 6.0, 10.0) for zk in np.arange(20.5, 25.1, 0.5)
-                for off in (-30, -28, -26, -24, -22) for zw in (16.8, 17.8, 18.8)]
+        grid = [(t1, zk, (off, zw)) for t1 in (3.0, 6.0, 10.0) for zk in np.arange(15.5, 21.1, 0.5)
+                for off in (-30, -28, -26, -24, -22) for zw in (16.0, 17.0, 18.0)]
     for t1, zk, off in grid:
         K1 = S + dS * t1
         if s["kind"] == "thumb_axial":
@@ -410,6 +475,7 @@ def steel_route(s, placed, R=5.0):
         inblock = (np.abs(q[:, 0]) < 11.7) & (np.abs(q[:, 1]) < 9.2) & ~step_zone(q[:, 0], q[:, 1])
         J += 20 * float(np.sum(np.maximum(Z_CELL + 0.2 - q[:, 2], 0) ** 2 * inblock))
         J += 20 * float(np.sum(np.maximum(Z_CELL_THUMB + 0.3 - q[:, 2], 0) ** 2))
+        J += 20 * flange_pen(pts[:-3])
         J += 20 * float(np.sum(np.maximum(pts[:, 1] - Y_SKIN, 0) ** 2))
         if tree is not None:
             d, _ = tree.query(pts)
@@ -464,14 +530,25 @@ def free_span_check(s, cp):
 
 
 def route(strands, cell_map, passes=4, verbose=True):
-    C = cells()
     for s in strands:
-        c = C[cell_map[s["name"]]]
-        s["cell"] = int(cell_map[s["name"]])
-        s["cell_xyz"] = np.array([c[0], c[1], Z_CELL_THUMB if s["mat"] == "steel" else Z_CELL])
+        set_end(s, cell_map[s["name"]], 0.0)
         s["x"] = initial(s)
     # steel guide tubes: deterministic bent-tube paths, placed greedily (rot first, then axial by exit height)
     steel_layout(strands, verbose)
+    for i, s in enumerate(strands):  # thumb axial: pick the clamp-entry tilt with the lowest cost
+        if s["kind"] != "thumb_axial":
+            continue
+        best = None
+        for tl in TILTS:
+            set_end(s, s["cell"], tl)
+            x0 = initial(s)
+            r = minimize(cost, x0, args=(s, _others(strands, i, 0)), method="Powell", options=dict(maxiter=6000))
+            if best is None or r.fun < best[0]:
+                best = (float(r.fun), tl, r.x)
+        set_end(s, s["cell"], best[1])
+        s["x"], s["J"] = best[2], best[0]
+        if verbose:
+            print(f"  {s['name']}: tilt {best[1]:.0f} J {best[0]:.2f}")
     order = [i for i in sorted(range(len(strands)), key=lambda i: {"index": 0, "little": 1, "ring": 2, "middle": 3}.get(strands[i]["finger"], 0))
              if strands[i]["mat"] == "ptfe"]
     global W_CLEAR
@@ -503,10 +580,30 @@ def route(strands, cell_map, passes=4, verbose=True):
     return strands
 
 
+def set_end(s, cell, tilt):
+    """End of a path: clamp top point and arrival direction. Tilted ends (thumb axial) pass the clamp in a straight
+    bore from the cell at the clamp bottom (z 14) outward-up at `tilt` deg from vertical."""
+    c = cells()[cell]
+    s["cell"] = int(cell)
+    s["tilt"] = float(tilt)
+    if s["mat"] == "steel" or (s["kind"] == "thumb_axial" and tilt == 0.0):
+        s["cell_xyz"], s["dE"] = np.array([c[0], c[1], Z_CELL_THUMB]), np.array([0, 0, -1.0])
+        return
+    # tilt toward +x (the direction the thumb tubes come from); every thumb rim cell is the last of its row in +x,
+    # so the tilted bore crosses no other cell inside the clamp
+    out = np.array([1.0, 0.0, 0.0])
+    t = math.radians(tilt)
+    dE = np.array([0, 0, -1.0]) * math.cos(t) - out * math.sin(t)
+    Cb = np.array([c[0], c[1], CLAMP_BOT])
+    s["cell_bottom"] = Cb
+    s["dE"] = dE
+    s["cell_xyz"] = Cb - dE * ((Z_CELL - CLAMP_BOT) / math.cos(t))
+
+
 def path_of(s, n=400):
     if s["mat"] == "steel":
         return s["pts"]
-    return dense(ctrl(s["x"], s["start"], s["dir"], s["cell_xyz"]), n)
+    return dense(ctrl(s["x"], s["start"], s["dir"], s["cell_xyz"], s.get("dE", (0, 0, -1.0))), n)
 
 
 def _others(strands, i, ps):
@@ -514,7 +611,7 @@ def _others(strands, i, ps):
     for j, o in enumerate(strands):
         if j == i or (ps == 0 and "J" not in o):
             continue
-        p = o["pts"] if o["mat"] == "steel" else curve(ctrl(o["x"], o["start"], o["dir"], o["cell_xyz"]))[0]
+        p = o["pts"] if o["mat"] == "steel" else curve(ctrl(o["x"], o["start"], o["dir"], o["cell_xyz"], o.get("dE", (0, 0, -1.0))))[0]
         pts.append(p)
         mats.append(np.full(len(p), 1 if o["mat"] == "steel" else 0))
         zs.append(p[:, 2])
@@ -541,7 +638,7 @@ def evaluate(strands):
             if o is s:
                 continue
             d, _ = trees[o["name"]].query(p)
-            far = (p[:, 2] > Z_CELL + 5)
+            far = ~in_well(p) & (p[:, 2] > Z_CELL + 3) & (np.linalg.norm(p - spin_centre(), axis=1) > 9.0)
             if far.any():
                 dm = float((d[far]).min()) - (OD[s["mat"]] + OD[mat[o["name"]]]) / 2
                 if dm < clear:
@@ -555,7 +652,7 @@ def evaluate(strands):
         row["turn_deg"] = round(turn, 1)
         row["friction_factor_mu0.1"] = round(math.exp(0.1 * math.radians(turn)), 3)
         if s["kind"] == "free":
-            rf, G, TG = free_span_check(s, ctrl(s["x"], s["start"], s["dir"], s["cell_xyz"]))
+            rf, G, TG = free_span_check(s, ctrl(s["x"], s["start"], s["dir"], s["cell_xyz"], s.get("dE", (0, 0, -1.0))))
             row["free_span_min_r_abd15"] = round(rf, 1)
             row["guide"] = np.round(G, 2).tolist()
             row["guide_dir"] = np.round(TG, 3).tolist()
@@ -579,6 +676,8 @@ def save(strands, rows, allp, path=OUT / "routes.json"):
             extra["mount_exit"] = s["exit"].round(3).tolist()
         data["strands"].append({**row, **extra, "start": s["start"].round(3).tolist(), "start_dir": s["dir"].round(4).tolist(),
                                 "end": s["cell_xyz"].round(3).tolist(), "x": np.round(s["x"], 4).tolist(),
+                                "end_dir": np.round(s.get("dE", np.array([0, 0, -1.0])), 5).tolist(), "tilt": s.get("tilt", 0.0),
+                                "cell_bottom": (np.round(s["cell_bottom"], 3).tolist() if "cell_bottom" in s else None),
                                 "corners": s.get("corners"),
                                 "points": (np.round(allp[s["name"]], 3).tolist() if s["mat"] == "steel" else
                                            np.round(allp[s["name"]][::5], 3).tolist() + [np.round(allp[s["name"]][-1], 3).tolist()])})
@@ -594,7 +693,8 @@ def load(path=OUT / "routes.json"):
         if s["material"] == "steel":
             out.append({**s, "dense": np.array(s["points"])})
             continue
-        cp = ctrl(np.array(s["x"]), np.array(s["start"]), np.array(s["start_dir"]), np.array(s["end"]))
+        cp = ctrl(np.array(s["x"]), np.array(s["start"]), np.array(s["start_dir"]), np.array(s["end"]),
+                  s.get("end_dir", (0, 0, -1.0)))
         out.append({**s, "dense": dense(cp, 300)})
     return out, d
 
@@ -617,6 +717,33 @@ def forearm_fan_check(cell_map, strands):
             d = np.linalg.norm(paths[names[i]][:, None] - paths[names[j]][None], axis=-1).min()
             close += d < P.SHEATH_OD
     return dict(min_radius=round(float(worst), 1), pairs_closer_than_od=int(close))
+
+
+def palm_cell_map(strands):
+    """Fix-round map: left half as the wrist/forearm map; right half: cmc_rot -> cells 7/2 (stepped clamp, steel),
+    thumb axial -> the 6 right rim cells (tilted entry), sorted by y; index + middle_abd -> the 8 inner right cells
+    (Hungarian on y, then x)."""
+    import forearm
+    cm = forearm.comb_cells()
+    m = {s["name"]: cm[(s["sid"], s["role"])] for s in strands}
+    C = cells()
+    rot = [s for s in strands if s["kind"] == "thumb_rot"]
+    rot = sorted(rot, key=lambda s: s["role"] != "flex")
+    m[rot[0]["name"]], m[rot[1]["name"]] = ROT_CELLS
+    ax = sorted([s for s in strands if s["kind"] == "thumb_axial"], key=lambda s: s["start"][1])
+    for s, c in zip(ax, sorted(THUMB_RIM_CELLS, key=lambda c: C[c][1])):
+        m[s["name"]] = c
+    inner = [c for c in range(32) if C[c][0] > 0 and c not in THUMB_RIM_CELLS and c not in ROT_CELLS]
+    rest = [s for s in strands if s["finger"] == "index" or s["sid"] == 10]
+    a = np.array([[s["start"][1], -s["start"][0]] for s in rest])
+    b = np.array([[C[c][1], -C[c][0]] for c in inner])
+    a = (a - a.mean(0)) / (a.std(0) + 1e-9)
+    b = (b - b.mean(0)) / (b.std(0) + 1e-9)
+    cost_ = ((a[:, None, :] - b[None, :, :]) ** 2 * np.array([1.0, 0.3])).sum(-1)
+    r, c = linear_sum_assignment(cost_)
+    for i, j in zip(r, c):
+        m[rest[i]["name"]] = inner[j]
+    return m
 
 
 def wrist_cell_map(strands, swaps=()):
@@ -653,8 +780,7 @@ def polish(path=OUT / "routes.json", passes=4, verbose=True):
     C = cells()
     for s in st:
         r = by[s["name"]]
-        s["cell"] = r["cell"]
-        s["cell_xyz"] = np.array(r["end"])
+        set_end(s, r["cell"], r.get("tilt", 0.0))
         s["x"] = np.array(r["x"])
         if s["mat"] == "steel":
             s["pts"] = np.array(r["points"])
@@ -675,8 +801,111 @@ def polish(path=OUT / "routes.json", passes=4, verbose=True):
     return st, {s["name"]: s["cell"] for s in st}
 
 
+# ----------------------------------------------------------------------------------------------------
+# Forearm fan (fix round): adjuster sheath start (heading +Z) -> comb cell bottom (heading +Z)
+# ----------------------------------------------------------------------------------------------------
+def fan_well(p):
+    """Below the forearm comb the 32 tubes converge onto the 2.15 cell pitch (like the bundle): relaxed zone."""
+    import forearm
+    return (np.abs(p[:, 0]) < 8.0) & (np.abs(p[:, 1]) < 8.0) & (p[:, 2] > forearm.Z_COMB[0] - 12.0)
+
+
+def cost_fan(x, s, others):
+    cp = ctrl(x, s["start"], s["dir"], s["cell_xyz"], s["dE"])
+    p, k, sp = curve(cp)
+    seg = np.linalg.norm(np.diff(p, axis=0), axis=1)
+    turn = float(np.sum(0.5 * (k[1:] + k[:-1]) * seg))
+    J = 0.02 * float(seg.sum()) + W_TURN * turn + 6e6 * float(np.sum(np.maximum(k - 1 / 16.8, 0) ** 2))
+    J += 50 * float(np.sum(np.maximum(p[:, 2] - s["cell_xyz"][2], 0) ** 2))  # stay below the comb
+    J += 50 * float(np.sum(np.maximum(s["start"][2] - 0.5 - p[:, 2], 0) ** 2))
+    J += 20 * float(np.sum(np.maximum(np.abs(p[:, 0]) - 40.0, 0) ** 2 + np.maximum(np.abs(p[:, 1]) - 27.0, 0) ** 2))
+    if others is not None:
+        tree, mats, zs = others
+        d, j = tree.query(p, k=1, distance_upper_bound=4)
+        ok = np.isfinite(d)
+        if ok.any():
+            near = (p[ok, 2] > s["cell_xyz"][2] - 4) & (zs[j[ok]] > s["cell_xyz"][2] - 4)
+            near |= fan_well(p[ok])
+            req = np.where(near, 2.1, P.SHEATH_OD + GAP + 0.25)
+            J += W_CLEAR * float(np.sum(np.maximum(req - d[ok], 0) ** 2))
+    return J
+
+
+def route_fan(cell_map, passes=6, verbose=True, weights=(200.0, 1500.0, 5000.0, 10000.0, 10000.0, 10000.0)):
+    import forearm
+    warm = {}
+    fp = OUT / "fan_routes.json"
+    if "--warm" in sys.argv and fp.exists():
+        warm = {r["name"]: r["x"] for r in json.loads(fp.read_text())["strands"] if "x" in r}
+    C = cells()
+    fan = []
+    inv = {v: k for k, v in P.SERVO_IDS.items()}
+    for name, cell in cell_map.items():
+        joint, role = name.rsplit("_", 1)
+        sid = inv[joint]
+        st = np.array(forearm.strand_points(sid)[role]["sheath_start"], float)
+        a, b = C[cell]
+        end = np.array([a, b, forearm.Z_COMB[0]])
+        h = end[2] - st[2]
+        f = dict(name=name, sid=sid, role=role, cell=int(cell), start=st, dir=np.array([0, 0, 1.0]), cell_xyz=end,
+                 dE=np.array([0, 0, 1.0]), mat="ptfe", kind="fan")
+        f["x"] = np.r_[h * 0.15, h * 0.15, h * 0.15, h * 0.15, st + [0, 0, h * 0.45], end - [0, 0, h * 0.45]]
+        if warm and name in warm:
+            f["x"] = np.array(warm[name])
+        fan.append(f)
+    global W_CLEAR
+
+    def others_of(i):
+        pts, zs = [], []
+        for j, o in enumerate(fan):
+            if j != i:
+                q = curve(ctrl(o["x"], o["start"], o["dir"], o["cell_xyz"], o["dE"]))[0]
+                pts.append(q)
+                zs.append(q[:, 2])
+        pts = np.vstack(pts)
+        return cKDTree(pts), np.zeros(len(pts), int), np.concatenate(zs)
+
+    for ps, w in zip(range(passes), weights):
+        W_CLEAR = w
+        t0 = time.time()
+        for i, f in enumerate(sorted(range(len(fan)), key=lambda i: -fan[i].get("J", 0))):
+            f = fan[f]
+            i = fan.index(f)
+            oth = others_of(i)
+            r = minimize(cost_fan, f["x"], args=(f, oth), method="Powell", options=dict(maxiter=6000, xtol=1e-3, ftol=1e-8))
+            r2 = minimize(cost_fan, r.x, args=(f, oth), method="L-BFGS-B", options=dict(maxiter=300))
+            r = r2 if r2.fun < r.fun else r
+            f["x"], f["J"] = r.x, float(r.fun)
+        if verbose:
+            print(f"fan pass {ps}: {time.time() - t0:.0f} s J {sum(f['J'] for f in fan):.1f}", flush=True)
+    rows = []
+    P_ = {f["name"]: dense(ctrl(f["x"], f["start"], f["dir"], f["cell_xyz"], f["dE"]), 300) for f in fan}
+    T_ = {k: cKDTree(v) for k, v in P_.items()}
+    for f in fan:
+        p = P_[f["name"]]
+        far = p[(p[:, 2] < f["cell_xyz"][2] - 4) & ~fan_well(p)]
+        cl = (min(float(T_[o["name"]].query(far)[0].min()) for o in fan if o is not f) - P.SHEATH_OD) if len(far) else 9.9
+        rows.append(dict(name=f["name"], sid=f["sid"], role=f["role"], cell=f["cell"], x=np.round(f["x"], 5).tolist(),
+                         min_radius=round(float(radii(p).min()), 1),
+                         clearance=round(cl, 2), length=round(float(np.linalg.norm(np.diff(p, axis=0), axis=1).sum()), 1),
+                         points=np.round(p[::4], 3).tolist() + [np.round(p[-1], 3).tolist()]))
+    (OUT / "fan_routes.json").write_text(json.dumps({"note": "forearm sheath fan: adjuster -> comb cell bottom (z -63), "
+                                                     "PTFE, routed by routing.route_fan", "strands": rows}, indent=1))
+    if verbose:
+        print("fan: min R", min(r["min_radius"] for r in rows), "min wall gap", min(r["clearance"] for r in rows),
+              "gaps < 0.4:", sum(r["clearance"] < 0.4 for r in rows))
+    return rows
+
+
 def main():
     t0 = time.time()
+    if "--fan" in sys.argv:
+        cm = json.loads((OUT / "routes.json").read_text())["cell_map"]
+        if "--warm" in sys.argv:
+            route_fan(cm, passes=5, weights=(10000.0,) * 5)
+        else:
+            route_fan(cm)
+        return
     if "--polish" in sys.argv:
         st, cmap = polish()
         rows, allp = evaluate(st)
@@ -686,7 +915,7 @@ def main():
         print("wrote", p, f"{time.time() - t0:.0f} s")
         return
     st = strand_table()
-    cmap = assign_cells(st) if "--palm-map" in sys.argv else wrist_cell_map(st, CELL_SWAPS)
+    cmap = palm_cell_map(st)
     route(st, cmap, passes=3)
     rows, allp = evaluate(st)
     p = save(st, rows, allp)

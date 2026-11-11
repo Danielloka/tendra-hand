@@ -37,8 +37,10 @@ import params as P  # noqa: E402
 OUT = HERE.parent / "out" / "assembly"
 V = cq.Vector
 Y_FACE, Y_BACK = -14.0, 14.0
-LIP_PALMAR = P.PALM_KNUCKLE_BULGE["palmar_y"]  # -18.1
-LIP_DORSAL = P.PALM_KNUCKLE_BULGE["dorsal_y"]  # 15.6
+LIP_PALMAR = P.PALM_KNUCKLE_BULGE["palmar_y"]  # -16.1 (fix round: local bosses only, flush with the pad)
+LIP_DORSAL = P.PALM_KNUCKLE_BULGE["dorsal_y"]  # 17.6 (dorsal knuckle bosses)
+BOSS_R = P.PALM_KNUCKLE_BULGE["boss_d"] / 2
+DORSAL_LIP_Y = 16.4
 BACK_PLATE_Y = 10.5  # back plate from here to the dorsal face
 PIN_HOLE = P.PIN_D_BIG + P.PRESS_FIT  # 2.9 press fit for the 3 mm abd dowels
 FINGERS = ("index", "middle", "ring", "little")
@@ -207,17 +209,25 @@ def make_core(fi):
         core = core.faces(">Y").edges().fillet(4.0)
     except Exception:
         pass
-    lip_p = xz_prism(lip_xz(fi), LIP_PALMAR, Y_FACE + 1.0)
-    try:
-        lip_p = lip_p.faces("<Y").edges().fillet(1.6)
-    except Exception:
-        pass
-    lip_d = xz_prism(lip_xz(fi), Y_BACK - 1.0, LIP_DORSAL)
+    # fix round: no continuous palmar lip (it blocked the thumb's ring/little opposition); a local boss round each
+    # palmar abd dowel (flush with the TPU pad face), a dorsal knuckle lip + dorsal bosses on the back
+    lip_d = xz_prism(lip_xz(fi), Y_BACK - 1.0, DORSAL_LIP_Y)
     try:
         lip_d = lip_d.faces(">Y").edges().fillet(1.2)
     except Exception:
         pass
-    return core.union(lip_p).union(lip_d)
+    core = core.union(lip_d)
+    for f in FINGERS:
+        ap = np.array(fi[f]["interface"]["abd_pivot"]["axis_point"])
+        pb = cyl((ap[0], LIP_PALMAR, ap[2]), (ap[0], Y_FACE + 2.0, ap[2]), BOSS_R)
+        db = cyl((ap[0], Y_BACK - 2.0, ap[2]), (ap[0], LIP_DORSAL, ap[2]), BOSS_R)
+        try:
+            pb = pb.faces("<Y").edges().fillet(1.0)
+            db = db.faces(">Y").edges().fillet(1.0)
+        except Exception:
+            pass
+        core = core.union(pb).union(db)
+    return core
 
 
 def thenar_heel():
@@ -265,8 +275,9 @@ def pin_bores(fi):
     out = []
     for f in FINGERS:
         ap = np.array(fi[f]["interface"]["abd_pivot"]["axis_point"])
-        out.append(cyl((ap[0], LIP_PALMAR - 0.5, ap[2]), (ap[0], -13.0, ap[2]), PIN_HOLE / 2))
-        out.append(cyl((ap[0], 10.6, ap[2]), (ap[0], LIP_DORSAL + 0.5, ap[2]), PIN_HOLE / 2))
+        (p0, p1), (d0, d1) = fi[f]["interface"]["abd_pivot"]["palm_holds_y"]
+        out.append(cyl((ap[0], LIP_PALMAR - 0.5, ap[2]), (ap[0], p1 + 0.3, ap[2]), PIN_HOLE / 2))
+        out.append(cyl((ap[0], d0 - 0.3, ap[2]), (ap[0], LIP_DORSAL + 0.5, ap[2]), PIN_HOLE / 2))
     return out
 
 
@@ -430,7 +441,7 @@ def forearm_sweep_carve():
     import wrist
     import wrist_kin as K
     E = P.FOREARM_ENVELOPE
-    top = rbox(-36.5, 36.5, -30.0, 30.0, -48.0, E["z"][1] + 0.5, 5.0, "|Z")
+    top = rbox(E["x"][0] - 0.5, E["x"][1] + 0.5, E["y"][0] - 0.5, E["y"][1] + 0.5, -48.0, E["z"][1] + 0.5, 5.0, "|Z")
     low = rbox(E["x"][0] - 0.5, E["x"][1] + 0.5, E["y"][0] - 0.5, E["y"][1] + 0.5, -120.0, -47.0, 6.0, "|Z")
     fore = top.union(low)
     out = []
@@ -579,6 +590,18 @@ def _build(routes_path=OUT / "routes.json", verbose=True):
     steel = [tubes[s["name"]] for s in routes if s["material"] == "steel"]
     parts["palm_sheaths"] = cq.Workplane(obj=cq.Compound.makeCompound(ptfe))
     parts["thumb_guides"] = cq.Workplane(obj=cq.Compound.makeCompound(steel))
+    # the thumb mount, bored along the routed thumb sheaths (spinneret -> mount surface), for the assembly
+    import thumb as _thumb
+    mt = _thumb.rest_parts()["thumb_mount"]
+    mt = mt.val() if hasattr(mt, "val") else mt
+    for s_ in routes:
+        if s_["kind"] == "thumb_axial" and s_["material"] == "ptfe":
+            p_ = s_["dense"]
+            try:
+                mt = mt.cut(tube_solid(ext(p_[:60], 4.5, 0.0), P.SHEATH_BORE / 2))
+            except Exception as e:
+                print("  mount bore failed", s_["name"], e)
+    parts["thumb_mount_bored"] = cq.Workplane(obj=mt)
     ip = idler_parts(routes)
     parts["rot_idlers"] = cq.Workplane(obj=cq.Compound.makeCompound([p.val() for p in ip]))
     if verbose:
@@ -604,8 +627,12 @@ def make_pads(fi, shell):
     except Exception:
         pass
     hyp = hyp.intersect(rbox(-50.5, -29.0, -25, 0, 20.0, 58.0, 8.0, "|Y"))
-    lip = xz_prism(lip_xz(fi), LIP_PALMAR - 1.5, LIP_PALMAR + 0.01)
-    lip = lip.intersect(box(-60, 40, -30, 0, 0, 200))
+    # distal palm pad (fix round): 2 mm TPU between the knuckle bosses, flush with the bosses (y -16)
+    lip = xz_prism(lip_xz(fi), face - 2.0, face + 0.01)
+    lip = lip.intersect(box(-60, 31, -30, 0, 60.5, 200))
+    for f in FINGERS:
+        ap = np.array(fi[f]["interface"]["abd_pivot"]["axis_point"])
+        lip = lip.cut(cyl((ap[0], face - 3, ap[2]), (ap[0], face + 1, ap[2]), BOSS_R + 0.3))
     try:
         lip = lip.faces("<Y").edges().fillet(0.6)
     except Exception:

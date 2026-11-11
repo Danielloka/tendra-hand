@@ -64,8 +64,8 @@ BEAR_TOP_Z, BEAR_BOT_Z = (-21.2, -17.2), (-25.4, -21.4)
 SLEEVE_Z = (-25.4, -17.2)  # printed journal sleeve of the base (OD 20) in the bearings
 CAP_Z = (-26.6, -25.4)  # base cap: holds the lower inner race, carries the top neck eyelet
 NECK_Z = -26.0  # top neck (PTFE eyelet, 1.6 mm hole) on the rot axis, turns with the base
-NECK_R = 0.45  # strand offsets inside the neck
-NECK_HOLE_R = 0.8
+NECK_R = 0.36  # strand offsets inside the neck (fix round: hole 1.6 -> 1.2, six 0.36 strands)
+NECK_HOLE_R = 0.6
 # Integrator fix round ("spinneret"): the twist zone neck -> sheath ends is unchanged (parallel to a1, hex r 2.3,
 # so the cmc_rot coupling stays 0.109 mm), but the 6 sheath ends become a FIXED PTFE spinneret plate at
 # SHEATH_END_Z in which each strand turns ~60 deg (rounded hole, fixed geometry = no coupling) into a sheath that
@@ -76,8 +76,8 @@ FAN_DOWN_DEG = 5.0
 FAN_TARGET_XY = (4.0, -1.0)
 SOCKET_L = 6.0
 EXIT_L = 4.0  # spinneret -> where the routed path starts (inside the mount)
-SHEATH_END_Z = -32.0  # the 6 sheaths end here in a hex bundle (r 2.3), clamped in the mount
-BUNDLE_R = 2.3
+SHEATH_END_Z = -31.5  # fix round: PTFE spinneret plate (hex r 2.3) here; the 6 sheaths start below it along g
+BUNDLE_R = 3.4  # fix round: spinneret hex radius (was 2.3); with HEX_ROT the sheaths leaving along g are >= 2.1 apart
 MOUNT_Z = (-37.0, -17.2)
 MOUNT_OD = 31.0
 FLANGE_Z, FLANGE_OD, BOLT_R = (-30.0, -27.0), 42.0, 18.5
@@ -346,6 +346,24 @@ def _fan_ctr(dist):
     return o + z * NECK_Z + fan_dir() * dist
 
 
+def _hex_rot():
+    """Spin offset of the spinneret hex that maximises the smallest centre distance between the sheaths
+    measured across g (they all leave the plate along g)."""
+    if FAN_DOWN_DEG is None:
+        return 0.0
+    o, x, y, z = J0["C"]
+    g = fan_dir()
+    best = (0.0, -1.0)
+    for off in np.arange(0.0, 60.0, 1.0):
+        pts = np.array([_spin_pt(n, SHEATH_END_Z, ROT_MID + off) for n in SPIN_ANG if n not in ("cmc_rot_flex", "cmc_rot_ext")])
+        d = pts[:, None, :] - pts[None, :, :]
+        d = d - (d @ g)[..., None] * g
+        m = np.linalg.norm(d, axis=-1)[np.triu_indices(len(pts), 1)].min()
+        if m > best[1]:
+            best = (float(off), float(m))
+    return best[0]
+
+
 def node(st, lab):
     return next(n for n in st["nodes"] if n["lab"] == lab)
 
@@ -365,8 +383,14 @@ W2 = _w_dir()
 W_ANG = float(np.degrees(np.arctan2(W2[1], W2[0])))
 
 
+HEX_ROT = None
+
+
 def strand_layout():
     """Nodes per strand at rest (world points + owning body)."""
+    global HEX_ROT
+    if HEX_ROT is None:
+        HEX_ROT = _hex_rot()
     S = {}
     # cmc_rot: from the mount's sheath socket straight to the drum groove (tangent)
     lat = np.array([-W2[1], W2[0]])
@@ -391,9 +415,9 @@ def strand_layout():
         nodes = [
             {"type": "pt", "body": "mount", "lab": "exit",
              "p": _spin_pt(key, MOUNT_Z[0], ROT_MID, BUNDLE_R) if FAN_DOWN_DEG is None else
-             _spin_pt(key, SHEATH_END_Z, ROT_MID, BUNDLE_R) + fan_dir() * EXIT_L},
+             _spin_pt(key, SHEATH_END_Z, ROT_MID + HEX_ROT, BUNDLE_R) + fan_dir() * EXIT_L},
             {"type": "pt", "body": "mount", "lab": "socket",
-             "p": _spin_pt(key, SHEATH_END_Z, ROT_MID, BUNDLE_R)},
+             "p": _spin_pt(key, SHEATH_END_Z, ROT_MID + (HEX_ROT if FAN_DOWN_DEG is not None else 0.0), BUNDLE_R)},
             {"type": "pt", "body": "base", "lab": "neck", "p": _spin_pt(key, NECK_Z, 0.0, NECK_R)},
         ]
         if j in ("mcp_flex", "ip"):
@@ -588,7 +612,7 @@ def make_mount():
     s = s.fuse(blk.rotate(V(0, 0, 0), V(0, 0, 1), W_ANG))
     tools = [cyl_z(BEARING["od"] / 2, BEAR_BOT_Z[0], MOUNT_Z[1] + 1),  # bearing seat (shoulder below)
              cyl_z(BEARING["od"] / 2 - 1.5, CAP_Z[0] - 0.4, BEAR_BOT_Z[0] + 0.01),  # room for the base cap
-             cyl_z(3.0, SHEATH_END_Z, CAP_Z[0] - 0.39)]  # strand fan from the sheath ends to the neck
+             cyl_z(BUNDLE_R + 0.7, SHEATH_END_Z, CAP_Z[0] - 0.39)]  # strand fan from the sheath ends to the neck
     for b in range(3):
         a = np.radians(W_ANG + 180 + (b - 1) * 100)
         tools.append(cyl_z(1.7, FLANGE_Z[0] - 1, FLANGE_Z[1] + 1, BOLT_R * np.cos(a), BOLT_R * np.sin(a)))

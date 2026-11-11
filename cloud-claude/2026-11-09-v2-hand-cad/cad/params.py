@@ -86,7 +86,10 @@ FOREARM_Z_TOP = -18.0  # wrist base plate z -18..-15 sits on the forearm top
 PALM_HEEL = {"z_top": 36.0, "x_half": 9.5, "r_x": 18.0, "wedge_deg": 20.0, "z_low": 22.0, "x_half_low": 11.5,
              "x_band": (11.5, 14.5), "band_y": 3.5}
 WRIST_FLANGE_BOLTS = [(sx * 17.0, sy * 9.5) for sx in (-1, 1) for sy in (-1, 1)]  # M3, inserts in the flange
-SHEATH_CLAMP_Z = (14.0, 19.0)  # sheaths leave the clamp top (z 19) along +Z in their bundle cells
+# Fix round: the palm sheath clamp is lowered by 6 mm into the palm flange opening (bridge z 8..13, ears on the
+# flange's |y| <= 3.5 band): every strand gets 6 mm more height in the palm and the bundle's swing radius at the
+# ring shrinks. Sheaths leave the clamp top (z 13) along +Z in their bundle cells.
+SHEATH_CLAMP_Z = (8.0, 13.0)
 FOREARM_ENVELOPE = {"x": (-47.5, 47.5), "y": (-33.0, 33.0), "z": (-230.0, -18.0)}
 ARM_FLANGE = {"z": -230.0, "bolts": "4 x M4", "pcd": 50.0, "bore": 24.0}  # stand-in for OpenArm J5: verify
 PIN_D_WRIST = 3.0  # 4 mm pins + 624 bearings accepted in principle, but 624 (13 OD) needs ring bosses r >= 8.1
@@ -102,7 +105,7 @@ STS3215 = {"L": 45.2, "W": 24.7, "H": 35.0}
 # (13<->15, 19<->21, 25<->27) and the 6 thumb axial strands re-ordered among their own cells so that nothing
 # crosses in the palm. Source of truth: out/assembly/routes.json["cell_map"]. The forearm fan must follow it.
 PALM_CELL_SWAPS = ((13, 15), (19, 21), (25, 27))
-CLAMP_THUMB_STEP_Z = 15.5  # clamp top stepped down over the thumb cells (steel guide tubes turn lower)
+CLAMP_THUMB_STEP_Z = 10.5  # clamp top stepped down over the 8 thumb cells (thumb tubes arrive lowest)
 
 SERVO_IDS = {  # protocol order = V1
     1: "index_pip", 2: "index_mcp_flex", 3: "index_mcp_abd",

@@ -9,5 +9,6 @@ These are **studies, not decisions**. Accepted results move into the real places
 | Folder | Topic |
 |---|---|
 | [`2026-11-04-v1-wrist/`](2026-11-04-v1-wrist/README.md) | A 2-DOF wrist (bend + wave) for V1 that passes all 16 tendon loops (32 strands) cleanly |
+| [`2026-11-09-v2-hand-cad/`](2026-11-09-v2-hand-cad/README.md) | "V2 concept": full hand, thumb, wrist and forearm in CadQuery with one 7 mm drum on every joint; geometry works, tendon housing must change |
 
 Licence: text CC BY 4.0 (like `research/`), code Apache-2.0.

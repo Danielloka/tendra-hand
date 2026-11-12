@@ -11,6 +11,12 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** what I learned and what to try next
 ```
 
+## 2026-11-12: V2 concept hand in code CAD (agent team)
+**Goal:** model a complete hand with thumb, 2-DOF wrist and forearm, with one common drum radius ("same distance on each degree"), DIP coupled to PIP, PTFE tubes through the wrist and the best thumb possible.
+**Setup:** 5-agent team (tools, finger, thumb, wrist/forearm, integrator) and an adversarial reviewer; CadQuery 2.8, renders via three.js in headless Chromium. Everything is in `cloud-claude/2026-11-09-v2-hand-cad/`.
+**Result:** 7 mm drums on all 16 servo joints (0.1222 mm/°, ratio 1.4); coupling ≤ 0.19 mm; DIP bar within 0.5°; new roll-pitch thumb reaches every fingertip; 7 poses (fist, power grasp 55 mm, pinches, wrist ±50°) with no interference; hand 170 g, 751 g with forearm. Review: plain PTFE 1 × 2 tubes yield and shorten ~8 mm at SCS0009 stall (≈ 70° of joint), friction leaves 45–75 % (fingertip ≈ 2–2.5 N), wrist gear 3–5× undersized, eyelet radius 0.43 mm will fray the line.
+**Conclusion / next:** keep the geometry; switch to a compressionless housing (PEEK tube or lined steel coil) with ferrule end stops and a Ø3 roller at the knuckle; bench-test one tube and one finger before printing. Owner decisions listed in the study README.
+
 ## 2026-11-04: V1 wrist study (bend + wave, all tendons through)
 **Goal:** what a 2-DOF wrist needs so all 32 servo strands (16 loops) cross it cleanly and strongly.
 **Setup:** 4-agent research team; reports, maths script and summary in `cloud-claude/2026-11-04-v1-wrist/`.

@@ -1,0 +1,146 @@
+{
+ "power55": {
+  "cylinder": {
+   "d": 55.0,
+   "gamma": 12.0,
+   "zc": 76.0,
+   "origin": [
+    0.0,
+    -44.0,
+    76.0
+   ],
+   "axis": [
+    0.97815,
+    0.0,
+    0.20791
+   ]
+  },
+  "fingers": {
+   "index": {
+    "mcp_abd": 0.0,
+    "mcp_flex": 44.0,
+    "pip": 47.5
+   },
+   "middle": {
+    "mcp_abd": 0.0,
+    "mcp_flex": 58.0,
+    "pip": 50.0
+   },
+   "ring": {
+    "mcp_abd": 0.0,
+    "mcp_flex": 62.0,
+    "pip": 45.0
+   },
+   "little": {
+    "mcp_abd": 0.0,
+    "mcp_flex": 56.0,
+    "pip": 30.0
+   }
+  },
+  "finger_gaps": {
+   "index": {
+    "proximal": 0.14366462278475467,
+    "middle": 2.7089158937139786,
+    "distal": 1.6303523598962393,
+    "palm_inside_pts": 0
+   },
+   "middle": {
+    "proximal": 0.47687413263347267,
+    "middle": 1.7794453940041777,
+    "distal": 0.6216036757282701,
+    "palm_inside_pts": 0
+   },
+   "ring": {
+    "proximal": 0.008013155588461274,
+    "middle": 0.0023132527484399645,
+    "distal": 0.23269629739743536,
+    "palm_inside_pts": 0
+   },
+   "little": {
+    "proximal": 0.45566027079680893,
+    "middle": 0.6753799494849311,
+    "distal": 0.40942529481302614,
+    "palm_inside_pts": 0
+   }
+  },
+  "thumb": {
+   "cmc_rot": 81.29627182478677,
+   "cmc_flex": 46.473713394186106,
+   "mcp_flex": 67.72269054067309,
+   "ip": 43.5963370474999
+  },
+  "thumb_pad_gap": 0.3,
+  "thumb_min_gap_all": -0.0,
+  "thumb_inside_fingers_pts": 0,
+  "thumb_inside_palm_pts": 0,
+  "cost": 5.642085494831786e-23
+ },
+ "fist": {
+  "fingers": {
+   "index": {
+    "mcp_abd": 0.0,
+    "mcp_flex": 80.0,
+    "pip": 95.0
+   },
+   "middle": {
+    "mcp_abd": 0.0,
+    "mcp_flex": 77.5,
+    "pip": 95.0
+   },
+   "ring": {
+    "mcp_abd": 0.0,
+    "mcp_flex": 80.0,
+    "pip": 95.0
+   },
+   "little": {
+    "mcp_abd": 0.0,
+    "mcp_flex": 80.0,
+    "pip": 92.5
+   }
+  },
+  "thumb": {
+   "cmc_rot": 47.24926139349361,
+   "cmc_flex": 31.787700019055386,
+   "mcp_flex": 55.38916684542489,
+   "ip": 68.6363026972421
+  },
+  "thumb_pad_gap_to_index_middle": 0.43,
+  "thumb_inside_fingers_pts": 0,
+  "thumb_inside_palm_pts": 0,
+  "cost": 0.001442960068453718
+ },
+ "pinch_tip_pinch": {
+  "finger_q": {
+   "mcp_abd": 12.354266292247582,
+   "mcp_flex": 31.831225923885395,
+   "pip": 31.136248409751094
+  },
+  "thumb": {
+   "cmc_rot": 18.710741179534292,
+   "cmc_flex": 31.810859547879424,
+   "mcp_flex": 22.834184788479867,
+   "ip": 32.232855317616746
+  },
+  "pad_gap_mm": 0.3,
+  "thumb_inside_finger_pts": 0,
+  "thumb_inside_palm_pts": 0,
+  "cost": 6.933347799794049e-29
+ },
+ "pinch_little": {
+  "finger_q": {
+   "mcp_abd": 9.0,
+   "mcp_flex": 31.51531809712064,
+   "pip": 25.000000000000004
+  },
+  "thumb": {
+   "cmc_rot": -18.8478759755542,
+   "cmc_flex": 54.978887239248415,
+   "mcp_flex": -8.016930944521052,
+   "ip": -13.617974446816591
+  },
+  "pad_gap_mm": 0.3,
+  "thumb_inside_finger_pts": 0,
+  "thumb_inside_palm_pts": 0,
+  "cost": 4.616611232579666e-27
+ }
+}

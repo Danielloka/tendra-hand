@@ -1,0 +1,443 @@
+{
+ "index-middle": [
+  {
+   "flex": 0.0,
+   "q_ulnar": -15.0,
+   "free_q_radial": [
+    [
+     -15.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 0.0,
+   "q_ulnar": -7.5,
+   "free_q_radial": [
+    [
+     -7.5,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 0.0,
+   "q_ulnar": 0.0,
+   "free_q_radial": [
+    [
+     0.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 0.0,
+   "q_ulnar": 7.5,
+   "free_q_radial": [
+    [
+     6.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 0.0,
+   "q_ulnar": 15.0,
+   "free_q_radial": [
+    [
+     13.5,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 45.0,
+   "q_ulnar": -15.0,
+   "free_q_radial": [
+    [
+     -15.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 45.0,
+   "q_ulnar": -7.5,
+   "free_q_radial": [
+    [
+     -9.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 45.0,
+   "q_ulnar": 0.0,
+   "free_q_radial": [
+    [
+     -3.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 45.0,
+   "q_ulnar": 7.5,
+   "free_q_radial": [
+    [
+     4.5,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 45.0,
+   "q_ulnar": 15.0,
+   "free_q_radial": [
+    [
+     12.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 90.0,
+   "q_ulnar": -15.0,
+   "free_q_radial": [
+    [
+     -15.0,
+     -12.0
+    ]
+   ]
+  },
+  {
+   "flex": 90.0,
+   "q_ulnar": -7.5,
+   "free_q_radial": [
+    [
+     -10.5,
+     -1.5
+    ]
+   ]
+  },
+  {
+   "flex": 90.0,
+   "q_ulnar": 0.0,
+   "free_q_radial": [
+    [
+     -4.5,
+     7.5
+    ]
+   ]
+  },
+  {
+   "flex": 90.0,
+   "q_ulnar": 7.5,
+   "free_q_radial": [
+    [
+     1.5,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 90.0,
+   "q_ulnar": 15.0,
+   "free_q_radial": [
+    [
+     9.0,
+     15.0
+    ]
+   ]
+  }
+ ],
+ "middle-ring": [
+  {
+   "flex": 0.0,
+   "q_ulnar": -15.0,
+   "free_q_radial": [
+    [
+     -15.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 0.0,
+   "q_ulnar": -7.5,
+   "free_q_radial": [
+    [
+     -9.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 0.0,
+   "q_ulnar": 0.0,
+   "free_q_radial": [
+    [
+     -1.5,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 0.0,
+   "q_ulnar": 7.5,
+   "free_q_radial": [
+    [
+     6.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 0.0,
+   "q_ulnar": 15.0,
+   "free_q_radial": [
+    [
+     15.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 45.0,
+   "q_ulnar": -15.0,
+   "free_q_radial": [
+    [
+     -15.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 45.0,
+   "q_ulnar": -7.5,
+   "free_q_radial": [
+    [
+     -10.5,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 45.0,
+   "q_ulnar": 0.0,
+   "free_q_radial": [
+    [
+     -3.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 45.0,
+   "q_ulnar": 7.5,
+   "free_q_radial": [
+    [
+     6.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 45.0,
+   "q_ulnar": 15.0,
+   "free_q_radial": [
+    [
+     15.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 90.0,
+   "q_ulnar": -15.0,
+   "free_q_radial": [
+    [
+     -15.0,
+     -9.0
+    ]
+   ]
+  },
+  {
+   "flex": 90.0,
+   "q_ulnar": -7.5,
+   "free_q_radial": [
+    [
+     -13.5,
+     -1.5
+    ]
+   ]
+  },
+  {
+   "flex": 90.0,
+   "q_ulnar": 0.0,
+   "free_q_radial": [
+    [
+     -6.0,
+     4.5
+    ]
+   ]
+  },
+  {
+   "flex": 90.0,
+   "q_ulnar": 7.5,
+   "free_q_radial": [
+    [
+     3.0,
+     10.5
+    ]
+   ]
+  },
+  {
+   "flex": 90.0,
+   "q_ulnar": 15.0,
+   "free_q_radial": [
+    [
+     13.5,
+     15.0
+    ]
+   ]
+  }
+ ],
+ "ring-little": [
+  {
+   "flex": 0.0,
+   "q_ulnar": -15.0,
+   "free_q_radial": [
+    [
+     -15.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 0.0,
+   "q_ulnar": -7.5,
+   "free_q_radial": [
+    [
+     -10.5,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 0.0,
+   "q_ulnar": 0.0,
+   "free_q_radial": [
+    [
+     -1.5,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 0.0,
+   "q_ulnar": 7.5,
+   "free_q_radial": [
+    [
+     7.5,
+     9.0
+    ]
+   ]
+  },
+  {
+   "flex": 0.0,
+   "q_ulnar": 15.0,
+   "free_q_radial": []
+  },
+  {
+   "flex": 45.0,
+   "q_ulnar": -15.0,
+   "free_q_radial": [
+    [
+     -15.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 45.0,
+   "q_ulnar": -7.5,
+   "free_q_radial": [
+    [
+     -12.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 45.0,
+   "q_ulnar": 0.0,
+   "free_q_radial": [
+    [
+     -3.0,
+     15.0
+    ]
+   ]
+  },
+  {
+   "flex": 45.0,
+   "q_ulnar": 7.5,
+   "free_q_radial": [
+    [
+     7.5,
+     9.0
+    ]
+   ]
+  },
+  {
+   "flex": 45.0,
+   "q_ulnar": 15.0,
+   "free_q_radial": []
+  },
+  {
+   "flex": 90.0,
+   "q_ulnar": -15.0,
+   "free_q_radial": [
+    [
+     -15.0,
+     -6.0
+    ]
+   ]
+  },
+  {
+   "flex": 90.0,
+   "q_ulnar": -7.5,
+   "free_q_radial": [
+    [
+     -15.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "flex": 90.0,
+   "q_ulnar": 0.0,
+   "free_q_radial": [
+    [
+     -4.5,
+     4.5
+    ]
+   ]
+  },
+  {
+   "flex": 90.0,
+   "q_ulnar": 7.5,
+   "free_q_radial": [
+    [
+     7.5,
+     9.0
+    ]
+   ]
+  },
+  {
+   "flex": 90.0,
+   "q_ulnar": 15.0,
+   "free_q_radial": []
+  }
+ ]
+}

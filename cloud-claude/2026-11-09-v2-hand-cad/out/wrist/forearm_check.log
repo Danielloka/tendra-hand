@@ -1,0 +1,16 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+build: 80 parts in 45.1 s
+forearm sheath fan: min bend radius 22.2 mm (limit 15.0)
+adjuster heads: min spacing at the same height 5.00 mm (head 4.5)
+invalid solids: none
+  static interference (3 s): clear
+  wrist flex  -52 dev  -32: clear
+  wrist flex  -52 dev    0: clear
+  wrist flex  -52 dev   22: clear
+  wrist flex    0 dev  -32: clear
+  wrist flex    0 dev    0: clear
+  wrist flex    0 dev   22: clear
+  wrist flex   52 dev  -32: clear
+  wrist flex   52 dev    0: clear
+  wrist flex   52 dev   22: clear
+done in 82 s

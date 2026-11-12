@@ -1,0 +1,140 @@
+{
+ "validity": {
+  "parts": 225,
+  "ok": 223,
+  "not_ok": {
+   "T_thumb_mount": {
+    "valid": true,
+    "watertight": false,
+    "solids": 1
+   },
+   "F_sheath_03e": {
+    "valid": true,
+    "watertight": false,
+    "solids": 1
+   }
+  }
+ },
+ "poses": {
+  "a_open": [],
+  "b_fist": [],
+  "c_tip_pinch": [],
+  "e_power55": [],
+  "f_flex50_pinch": [],
+  "g_dev-30": [],
+  "d_thumb_little": [
+   [
+    "T_thenar_pad",
+    "P_shell",
+    0.92
+   ]
+  ]
+ },
+ "thumb_vs_palm": {
+  "rot-31_flex-37": [],
+  "rot-31_flex+13": [],
+  "rot-31_flex+63": [
+   [
+    "T_thumb_metacarpal",
+    "P_shell",
+    649.655
+   ],
+   [
+    "T_thumb_metacarpal",
+    "P_knuckle_pad",
+    479.11
+   ],
+   [
+    "T_thenar_pad",
+    "P_shell",
+    210.174
+   ],
+   [
+    "T_thenar_pad",
+    "P_knuckle_pad",
+    41.113
+   ],
+   [
+    "T_thumb_proximal",
+    "P_knuckle_pad",
+    28.341
+   ],
+   [
+    "index_yoke",
+    "T_thumb_metacarpal",
+    0.887
+   ]
+  ],
+  "rot+40_flex-37": [],
+  "rot+40_flex+13": [],
+  "rot+40_flex+63": [],
+  "rot+110_flex-37": [],
+  "rot+110_flex+13": [],
+  "rot+110_flex+63": []
+ },
+ "wrist_extremes": {
+  "flex-50_dev-30": [],
+  "flex-50_dev+20": [],
+  "flex+50_dev-30": [],
+  "flex+50_dev+20": [
+   [
+    "P_rot_idlers",
+    "F_forearm_cover_front",
+    2.289
+   ],
+   [
+    "P_shell",
+    "F_forearm_cover_front",
+    1.766
+   ]
+  ]
+ },
+ "wrist_grid": {
+  "-50/-30": [],
+  "-50/+0": [],
+  "-50/+20": [],
+  "+0/-30": [],
+  "+0/+0": [],
+  "+0/+20": [],
+  "+50/-30": [],
+  "+50/+0": [],
+  "+50/+20": []
+ },
+ "wrist_bundle": {
+  "-50/-30": {
+   "min_bend_r": 18.8
+  },
+  "-50/+0": {
+   "min_bend_r": 24.9
+  },
+  "-50/+20": {
+   "min_bend_r": 21.6
+  },
+  "+0/-30": {
+   "min_bend_r": 48.5
+  },
+  "+0/+0": {
+   "min_bend_r": Infinity
+  },
+  "+0/+20": {
+   "min_bend_r": 78.0
+  },
+  "+50/-30": {
+   "min_bend_r": 18.8
+  },
+  "+50/+0": {
+   "min_bend_r": 24.9
+  },
+  "+50/+20": {
+   "min_bend_r": 21.6
+  }
+ },
+ "forearm_fan": {
+  "min_radius": 11.3,
+  "min_wall_gap": 0.26,
+  "n_R_lt_15": 5,
+  "n_gap_lt_0.4": 4
+ },
+ "abd_pair_table": "out/assembly/abd_pair_table.json",
+ "runtime_s": 31
+}

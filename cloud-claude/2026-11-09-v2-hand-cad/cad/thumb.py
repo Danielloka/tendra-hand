@@ -4,9 +4,13 @@ Kinematics come from thumb_kinematics.py (optimised "roll-pitch" CMC, see report
 - cmc_rot: axis a1 through the CMC centre P. The base turns on a hollow printed sleeve (OD 20) in two
   thin-section 6704 bearings held by the fixed `thumb_mount` (bolted into the palm's thenar bay).
 - cmc_flex: axis a2, perpendicular to a1 and THROUGH P (the axes intersect, unlike V1's 5.5 mm offset).
-  The metacarpal hub turns on two 3 mm steel stub pins pressed into the base's cheeks.
-- mcp_flex (axis a3) and ip (axis a4): 2 mm steel stub pins in the parent's fork cheeks.
-Every joint has a 7 mm drum (strand centreline) on its child, centred on its axis (params.R_DRUM).
+- cmc_flex, mcp_flex (axis a3) and ip (axis a4) each run on 2 x MR84ZZ (4 x 8 x 3), one in each cheek of the
+  parent (owner 2026-11-13, like his V0 thumb), on a 4 mm steel axle in the child: two stubs at cmc_flex and
+  mcp_flex (the centre stays free for the strands crossing ON the axis), one through-axle at the IP.
+  Parts bearing_<joint>_l / _r (l = -x of the joint axis); build(q, bearings=False) leaves all bearings out.
+Every joint has ONE 7 mm track (strand centreline) on its child, centred on its axis (params.R_DRUM): one strand
+per joint comes in on the flex side, wraps over the drum, is knotted through a tie hole at the top of the track
+ring (knot pocket on the hub face) and leaves on the extend side (report 07).
 
 Tendon routing (the point of this design): all 6 strands of cmc_flex, mcp_flex and ip come up the hollow
 cmc_rot axis: the 6 PTFE sheaths end in a hex bundle in the mount, the bare strands converge through one
@@ -47,17 +51,44 @@ NIP_RC = NIP_PIN_D / 2 + LINE_R  # strand-centre wrap radius on a nip pin
 NIP_OFF = NIP_RC + 0.03  # pin centre offset from the crossing point (0.06 mm gap at the axis)
 CL = P.CLEAR_SLIDE  # 0.25
 
+# --- Joint bearings + one track per joint (owner, 2026-11-13; report 07) ----------------------------
+# Every thumb hinge (cmc_flex, mcp_flex, ip) runs on 2 x MR84ZZ (4 x 8 x 3), one in each cheek of the parent
+# fork, like the owner's V0 thumb. Seat = P.BEARING_SEAT_D, open to the OUTSIDE of the cheek (press the bearing in
+# from outside after the child is in the fork); a lip on the inner side (bore BEARING_SEAT_D - 2 x
+# BEARING_SHOULDER) stops the outer race. The child carries a 4 mm hardened steel axle in the inner races:
+# two stubs at cmc_flex and mcp_flex (the centre must stay free for the strands that cross those axes ON the
+# axis), one through-axle at the IP. A spacer boss on each hub face touches only the inner race.
+BRG = P.BEARING_JOINT  # MR84ZZ: id 4, od 8, w 3
+BRG_LIP = 0.8  # cheek lip behind the bearing (inner side)
+CHEEK_T = BRG["w"] + BRG_LIP  # 3.8: every bearing cheek
+SEAT_R = P.BEARING_SEAT_D / 2  # 3.975 (light press)
+LIP_R = P.BEARING_SEAT_D / 2 - P.BEARING_SHOULDER  # 3.375: lip bore (outer race stops on the lip)
+AXLE_R = P.JOINT_AXLE_D / 2  # 2.0
+SPACER_R = 2.6  # hub-face boss on the inner race only (MR84 inner ring OD ~5.3)
+SPACER_GAP = 0.05  # spacer to inner race (modelled gap; it touches when the fork is loaded sideways)
+# One track per servo joint (owner's V0 practice): ONE groove at R_DRUM, one strand: it comes in from the flex
+# side, wraps over the drum, is knotted through a tie hole at the "top" of the track ring (between the two wraps),
+# and leaves on the extend side. Pulling either end turns the joint either way; flex + ext stay a constant loop.
+# Tie hole = TIE_HOLE_D bore parallel to the joint axis, from the groove's side wall at r = R_DRUM into a knot
+# pocket that is open on the hub's side face (tie it before the hub goes into the fork; the cheek then covers it).
+KNOT_D, KNOT_DEPTH, KNOT_RC = 2.4, 1.7, 6.6  # knot pocket diameter, depth from the hub face, centre radius
+TIE_MARGIN_MIN = 15.0  # deg: smallest wrap allowed between a tangent point and the knot over the range
+
 # --- Dimensions (frame-local mm) -------------------------------------------------------------------
 # Base frame C: origin P, x = a2 (cmc_flex axis), z = a1 (cmc_rot axis), y = z x x.
-HUB_CMC_R, HUB_CMC_W = 9.5, 10.0  # metacarpal hub radius, half-width along a2
-CHEEK_CMC = (HUB_CMC_W + CL, HUB_CMC_W + CL + 3.0)  # base cheek x-span (|x|)
-CMC_GROOVE_X = 4.0  # cmc_flex grooves at x = -4 (flex) / +4 (ext)
+HUB_CMC_R, HUB_CMC_W = 9.5, 9.2  # metacarpal hub radius, half-width along a2 (was 10: bearing cheeks)
+CHEEK_CMC = (HUB_CMC_W + CL, HUB_CMC_W + CL + CHEEK_T)  # base cheek x-span (|x|): 9.45..13.25 (outside unchanged)
+CMC_GROOVE_X = 4.8  # the single cmc_flex track at x = -4.8 (1.6 mm wall to the central slot; was +-4.0)
 CMC_SLOT = 2.3  # central slot |x| < 2.3 for the 4 crossing strands
-CMC_CROSS_X = {"mcp_flex": -1.8, "ip_flex": -0.6, "ip_ext": 0.6, "mcp_ext": 1.8}
-STUB_CMC = (5.5, HUB_CMC_W, 3.0)  # stub pin from |x| 5.5 into the hub, through the cheek; diameter 3
+# crossing order re-sorted for the single tracks: both mcp strands on +x (their track is at x +3.9 on the MCP)
+CMC_CROSS_X = {"ip_flex": -1.8, "ip_ext": -0.6, "mcp_flex": 0.6, "mcp_ext": 1.8}
+STUB_IN = {"cmc_flex": 4.25, "mcp_flex": 2.85}  # 4 mm steel stubs start at |x| (clear of the nip pins)
+NIP_HALF = {"cmc_flex": CMC_SLOT + 1.0, "mcp_flex": 1.4 + 0.9}  # nip pin half-lengths
 PLATE_Z = (-12.6, -HUB_CMC_R - 0.3)  # base plate under the hub
 DRUM_ROT_Z = (-17.2, -12.6)  # rot drum disc (its bottom face bears on the upper bearing's inner race)
-ROT_GROOVE_Z = {"flex": -16.0, "ext": -14.2}
+ROT_TRACK_Z = -16.0  # single rot track (was flex -16.0 / ext -14.2); knot pocket above it, open at the rim
+ROT_GROOVE_Z = {"flex": ROT_TRACK_Z, "ext": ROT_TRACK_Z}
+ROT_KNOT_Z = (-14.3, -12.75)  # rot knot pocket (radial slot from the rim), 1.2 mm above the track's top wall
 ROT_DRUM_FLANGE = 8.6
 BEARING = {"name": "6704ZZ", "id": 20.0, "od": 27.0, "w": 4.0}  # thin-section, 2 back to back
 BEAR_TOP_Z, BEAR_BOT_Z = (-21.2, -17.2), (-25.4, -21.4)
@@ -92,17 +123,23 @@ STOP_TOP = -10.5
 
 # Metacarpal / MCP / IP
 SHAFT_MC = (18.0, 15.0)  # width (x) x height (y)
-HUB_MCP_R, HUB_MCP_W = 8.5, 7.5
-CHEEK_MCP = (HUB_MCP_W + CL, HUB_MCP_W + CL + 2.0)
-MCP_GROOVE_X = 3.5
+HUB_MCP_R, HUB_MCP_W = 8.5, 6.8  # (was W 7.5) MCP fork = 2 x 10.85 = 21.7 wide (was 19.5)
+CHEEK_MCP = (HUB_MCP_W + CL, HUB_MCP_W + CL + CHEEK_T)
+MCP_GROOVE_X = 3.9  # the single mcp track at x = +3.9 (1.6 mm wall to the slot)
 MCP_SLOT = 1.4
 MCP_CROSS_X = {"ip_flex": -0.6, "ip_ext": 0.6}
-SHAFT_PX = (16.0, 16.0)
-HUB_IP_R, HUB_IP_W = 8.0, 7.5
-CHEEK_IP = (HUB_IP_W + CL, HUB_IP_W + CL + 1.8)
-IP_GROOVE_X = 1.0
-STUB_SMALL_D = 2.0
-POCKET_D = 2.2  # crimp-bead anchor pocket
+SHAFT_PX = (2 * HUB_MCP_W, 16.0)  # proximal shaft near the MCP: fits between the MCP cheeks
+HUB_IP_R, HUB_IP_W = 8.0, 6.0  # (was W 7.5) IP fork = 2 x 10.05 = 20.1 wide (was 19.1)
+CHEEK_IP = (HUB_IP_W + CL, HUB_IP_W + CL + CHEEK_T)
+IP_GROOVE_X = 1.0  # the single ip track at x = +1.0
+# Track per joint: x of the groove (child joint frame) and the side (+1/-1) of its tie hole / knot pocket
+TRACK_X = {"cmc_flex": -CMC_GROOVE_X, "mcp_flex": MCP_GROOVE_X, "ip": IP_GROOVE_X}
+TIE_SIDE = {"cmc_flex": -1, "mcp_flex": +1, "ip": +1}
+HUB_W = {"cmc_flex": HUB_CMC_W, "mcp_flex": HUB_MCP_W, "ip": HUB_IP_W}
+HUB_R = {"cmc_flex": HUB_CMC_R, "mcp_flex": HUB_MCP_R, "ip": HUB_IP_R}
+CHEEKS = {"cmc_flex": CHEEK_CMC, "mcp_flex": CHEEK_MCP, "ip": CHEEK_IP}
+IP_CHEEK_TRIM_Y = -0.5  # IP cheeks: palmar-lower quadrant removed below this y (proximal's IP frame)
+DISTAL_NARROW_Z = 8.0  # distal body is 2 x HUB_IP_W wide up to here (clears the IP cheek ring r 6.5)
 
 
 # --- Design -----------------------------------------------------------------------------------------
@@ -426,7 +463,7 @@ def strand_layout():
         if j == "ip":
             nodes.append({"type": "nip", "joint": "mcp_flex", "body": "proximal", "lab": "mcp_cross",
                           "p": to_world(J0["mcp_flex"], [MCP_CROSS_X[name], 0, 0])})
-        gx = {"cmc_flex": CMC_GROOVE_X, "mcp_flex": MCP_GROOVE_X, "ip": IP_GROOVE_X}[j] * (-1 if role == "flex" else 1)
+        gx = TRACK_X[j]  # one track per joint: flex and ext halves of the same strand share it
         S[f"{j}_{role}"] = {"joint": j, "role": role, "nodes": nodes,
                             "drum": {"joint": j, "groove_x": gx, "body": BODY_OF_JOINT[j]}, "sheathed_exit": True}
     return S
@@ -545,25 +582,38 @@ def _setup_strands():
             u_in, u_out = K.unit(N - A), K.unit(B - N)
             gdir = K.unit(u_in + u_out)
             n["gate"] = np.array([-gdir[1], gdir[0]])
-    # drum anchors: min wrap 25 deg over the joint's range
-    for st in S.values():
-        j = st["drum"]["joint"]
-        angs, senses = [], []
-        for v in np.linspace(*RANGES[j], 21):
-            q = {k: 0.0 for k in JOINT_NAMES}
-            q[j] = v
-            Fq = body_transforms(q)
-            pts = [_wpt(m, Fq) for m in st["nodes"]]
-            _, _, aT, sense, _ = drum_segment(st, pts[-1], Fq, q)
-            # express the tangent angle in the child's frame at rest: the child turned by v about +x
-            angs.append(aT)
-            senses.append(sense)
-        assert len(set(senses)) == 1, "wrap sense flips"
-        sense = senses[0]
-        a = np.unwrap(np.array(angs))
-        st["drum"]["anchor"] = float((np.max(sense * a) * sense + sense * np.radians(25.0)) % (2 * np.pi))
-        st["drum"]["sense"] = sense
-        st["drum"]["max_wrap_deg"] = float(np.degrees(np.ptp(a)) + 25.0)
+    # one track per joint: the flex and ext halves are ONE strand knotted at a common tie angle (the "top" of
+    # the track ring). Over the joint's range the flex tangent point sweeps one way and the ext tangent point the
+    # same way; the knot goes in the middle of the free arc between their extreme positions, so both wraps keep
+    # the same margin (`tie_margin_deg`) and the knot never reaches a tangent point.
+    for j in JOINT_NAMES:
+        ext = {}
+        for role in ("flex", "ext"):
+            st = S[f"{j}_{role}"]
+            angs, senses = [], []
+            for v in np.linspace(*RANGES[j], 41):
+                q = {k: 0.0 for k in JOINT_NAMES}
+                q[j] = v
+                Fq = body_transforms(q)
+                pts = [_wpt(m, Fq) for m in st["nodes"]]
+                _, _, aT, sense, _ = drum_segment(st, pts[-1], Fq, q)  # tangent angle in the child's frame
+                angs.append(aT)
+                senses.append(sense)
+            assert len(set(senses)) == 1, "wrap sense flips"
+            a = np.unwrap(np.array(angs))
+            s = senses[0]
+            ext[role] = (s, float(a[np.argmax(s * a)]), a)  # extreme tangent in the wrap direction
+        (sf, af, _), (se, ae, _) = ext["flex"], ext["ext"]
+        assert sf == -se, f"{j}: flex and ext must wrap in opposite senses on one track"
+        arc = (sf * (ae - af)) % (2 * np.pi)  # free arc from the flex extreme to the ext extreme
+        anchor = float((af + sf * arc / 2) % (2 * np.pi))
+        for role, (s, _, a) in ext.items():
+            dr = S[f"{j}_{role}"]["drum"]
+            dr["anchor"], dr["sense"] = anchor, s
+            w = np.degrees((s * (anchor - a)) % (2 * np.pi))
+            dr["tie_margin_deg"] = float(np.degrees(arc / 2))
+            dr["min_wrap_deg"], dr["max_wrap_deg"] = float(w.min()), float(w.max())
+        assert np.degrees(arc / 2) >= TIE_MARGIN_MIN, f"{j}: knot margin {np.degrees(arc / 2):.1f} deg too small"
     return S
 
 
@@ -571,14 +621,74 @@ STRANDS = _setup_strands()
 
 
 # --- Parts (rest pose) -------------------------------------------------------------------------------
-def _anchor_pocket(j, st):
-    """Crimp-bead pocket: radial bore from the hub surface to r 3.5 at the anchor angle (joint frame)."""
-    a = st["drum"]["anchor"]
-    gx = st["drum"]["groove_x"]
-    hub_r = {"cmc_rot": ROT_DRUM_FLANGE, "cmc_flex": HUB_CMC_R, "mcp_flex": HUB_MCP_R, "ip": HUB_IP_R}[j]
-    d = np.array([0, np.cos(a), np.sin(a)])
-    r0 = 3.6 if j != "cmc_rot" else 4.6
-    return cyl_ab(np.array([gx, 0, 0]) + r0 * d, np.array([gx, 0, 0]) + (hub_r + 0.5) * d, POCKET_D / 2)
+def _yz(a, r):
+    return r * np.cos(a), r * np.sin(a)
+
+
+def _track(j):
+    """Tools (child joint frame of j): the single track groove, its tie hole and the knot pocket.
+    Tie hole: TIE_HOLE_D, parallel to the axis at r = R (the strand centre), from the groove's side wall to the
+    knot pocket; knot pocket: KNOT_D x KNOT_DEPTH, open on the hub's side face (side TIE_SIDE[j])."""
+    gx, sd, W = TRACK_X[j], TIE_SIDE[j], HUB_W[j]
+    a = STRANDS[f"{j}_flex"]["drum"]["anchor"]
+    x_wall, x_pk, x_face = gx + sd * 0.5, sd * (W - KNOT_DEPTH), sd * W
+    tools = _grooves(j, (gx,), HUB_R[j])
+    tools.append(cyl_x(P.TIE_HOLE_D / 2, *sorted((x_wall - sd * 0.1, x_pk + sd * 0.1)), *_yz(a, R)))
+    tools.append(cyl_x(KNOT_D / 2, *sorted((x_pk, x_face + sd * 0.5)), *_yz(a, KNOT_RC)))
+    return tools
+
+
+def _hub_spacers(j, s):
+    """Child hub (joint frame of j) + a spacer boss on each face that reaches the bearing's inner race."""
+    W, c0 = HUB_W[j], CHEEKS[j][0]
+    for sgn in (+1, -1):
+        s = s.fuse(cyl_x(SPACER_R, *sorted((sgn * (W - 0.01), sgn * (c0 + BRG_LIP - SPACER_GAP)))))
+    return s
+
+
+def _axle_bores(j):
+    """Press bores (child joint frame) for the 4 mm steel axle: two stubs (cmc_flex, mcp_flex: the centre is the
+    strands' crossing slot) or one through-axle (ip)."""
+    r, end = AXLE_R + P.PRESS_FIT / 2, CHEEKS[j][0] + BRG_LIP + 0.1
+    if j == "ip":
+        return [cyl_x(r, -end, end)]
+    return [cyl_x(r, STUB_IN[j], end), cyl_x(r, -end, -STUB_IN[j])]
+
+
+def _cheek_seats(j):
+    """Tools (joint frame of j) for the parent's two cheeks: MR84 seat open to the outside + the lip bore."""
+    c0, c1 = CHEEKS[j]
+    out = []
+    for sgn in (+1, -1):
+        out.append(cyl_x(SEAT_R, *sorted((sgn * (c0 + BRG_LIP), sgn * (c1 + 0.2)))))
+        out.append(cyl_x(LIP_R, *sorted((sgn * (c0 - 0.2), sgn * (c0 + BRG_LIP + 0.01)))))
+    return out
+
+
+def make_joint_bearings(j):
+    """2 x MR84ZZ (4 x 8 x 3) of joint j, placed in the parent's cheeks: _l on the joint axis' -x side, _r on +x."""
+    c0, c1 = CHEEKS[j]
+    out = {}
+    for sgn, tag in ((-1, "l"), (+1, "r")):
+        x0, x1 = sorted((sgn * (c0 + BRG_LIP), sgn * c1))
+        b = ring_x(BRG["id"] / 2, BRG["od"] / 2, x0, x1)
+        for xf in (x0, x1):  # shield recesses (looks only)
+            b = b.cut(ring_x(2.75, 3.45, xf - 0.15, xf + 0.15))
+        out[f"bearing_{j}_{tag}"] = place(b, J0[j])
+    return out
+
+
+def make_axles():
+    """4 mm hardened steel: stubs pin_cmc_a/b (+x/-x) and pin_mcp_a/b, pressed into the child hub, running in the
+    inner races; through-axle pin_ip_axle (4 x 20 dowel) pressed into the distal hub."""
+    out = {}
+    for j, pre in (("cmc_flex", "pin_cmc"), ("mcp_flex", "pin_mcp")):
+        c1 = CHEEKS[j][1]
+        for sgn, tag in ((+1, "a"), (-1, "b")):
+            out[f"{pre}_{tag}"] = place(cyl_x(AXLE_R, *sorted((sgn * STUB_IN[j], sgn * c1))), J0[j])
+    c1 = CHEEKS["ip"][1]
+    out["pin_ip_axle"] = place(cyl_x(AXLE_R, -c1, c1), J0["ip"])
+    return out
 
 
 def _grooves(j, xs, hub_r):
@@ -658,14 +768,14 @@ def make_base():
     for k in range(3):  # cap screws M2
         a = np.radians(30 + 120 * k)
         tools.append(cyl_z(0.8, SLEEVE_Z[0] - 0.01, SLEEVE_Z[0] + 6, 7.0 * np.cos(a), 7.0 * np.sin(a)))
-    for side in ("flex", "ext"):
-        z = ROT_GROOVE_Z[side]
-        tools.append(ring_z(GROOVE_FLOOR, ROT_DRUM_FLANGE + 1, z - 0.5, z + 0.5))
-        a = STRANDS[f"cmc_rot_{side}"]["drum"]["anchor"]
-        d = np.array([np.cos(a), np.sin(a), 0])
-        tools.append(cyl_ab(np.array([0, 0, z]) + 4.6 * d, np.array([0, 0, z]) + 9.2 * d, POCKET_D / 2))
-    tools += [cyl_x(STUB_CMC[2] / 2 + P.PRESS_FIT / 2, CHEEK_CMC[0] - 0.1, CHEEK_CMC[1] + 0.1),
-              cyl_x(STUB_CMC[2] / 2 + P.PRESS_FIT / 2, -CHEEK_CMC[1] - 0.1, -CHEEK_CMC[0] + 0.1)]
+    # single rot track: groove, axial tie hole at r = R up into a knot slot that opens at the drum rim
+    z = ROT_TRACK_Z
+    tools.append(ring_z(GROOVE_FLOOR, ROT_DRUM_FLANGE + 1, z - 0.5, z + 0.5))
+    a = STRANDS["cmc_rot_flex"]["drum"]["anchor"]
+    tools.append(cyl_z(P.TIE_HOLE_D / 2, z + 0.4, ROT_KNOT_Z[0] + 0.3, *_yz(a, R)))
+    tools.append(box(5.6, ROT_DRUM_FLANGE + 0.5, -KNOT_D / 2, KNOT_D / 2, *ROT_KNOT_Z)
+                 .rotate(V(0, 0, 0), V(0, 0, 1), float(np.degrees(a))))
+    tools += _cheek_seats("cmc_flex")  # 2 x MR84 in the base cheeks (C frame x = a2 = cmc_flex axis)
     # strand passages above the top spinneret
     segs = []
     for st in STRANDS.values():
@@ -689,7 +799,7 @@ def make_base():
 def make_metacarpal():
     F = J0["cmc_flex"]
     Fm = J0["mcp_flex"]
-    hub = cyl_x(HUB_CMC_R, -HUB_CMC_W, HUB_CMC_W)
+    hub = _hub_spacers("cmc_flex", cyl_x(HUB_CMC_R, -HUB_CMC_W, HUB_CMC_W))
     # shaft: loft from the hub (metacarpal frame) to the MCP fork (MCP frame, twisted by tau3)
     ex = to_local(F, F[0] + Fm[1]) - 0.0
     exm = np.array([Fm[1] @ F[1], Fm[1] @ F[2], Fm[1] @ F[3]])
@@ -706,9 +816,7 @@ def make_metacarpal():
         ch = fuse(box(x0, x1, -SHAFT_MC[1] / 2, SHAFT_MC[1] / 2, -(HUB_MCP_R + 2.0), 0.0), cyl_x(6.5, x0, x1))
         s = s.fuse(_local_from(Fm, F, ch))
     # TPU thenar pad seat is a separate part; cut grooves, slot, pockets, stub/nip holes, strand channels
-    tools = _grooves("cmc_flex", (-CMC_GROOVE_X, CMC_GROOVE_X), HUB_CMC_R)
-    for side in ("flex", "ext"):
-        tools.append(_anchor_pocket("cmc_flex", STRANDS[f"cmc_flex_{side}"]))
+    tools = _track("cmc_flex")
     # fan slot for the 4 crossing strands (incoming from below over the cmc_flex range)
     angs = []
     for v in np.linspace(*RANGES["cmc_flex"], 9):
@@ -722,13 +830,12 @@ def make_metacarpal():
     a0, a1 = min(angs) - 12, max(angs) + 12
     tools.append(sector_x(HUB_CMC_R + 3, -CMC_SLOT, CMC_SLOT, a0, a1))
     # nip pins (1 mm) across the slot
-    nip_holes, pins = _nip_pins("cmc_flex", CMC_SLOT + 1.0)
+    nip_holes, pins = _nip_pins("cmc_flex", NIP_HALF["cmc_flex"])
     tools += nip_holes
-    tools += [cyl_x(STUB_CMC[2] / 2 + 0.08, STUB_CMC[0], HUB_CMC_W + 0.1),
-              cyl_x(STUB_CMC[2] / 2 + 0.08, -HUB_CMC_W - 0.1, -STUB_CMC[0])]
+    tools += _axle_bores("cmc_flex")
     # MCP clearance for the proximal hub and the 2 mm stub holes in the cheeks
     tools.append(_local_from(Fm, F, cyl_x(HUB_MCP_R + 0.3, -CHEEK_MCP[0], CHEEK_MCP[0])))
-    tools.append(_local_from(Fm, F, cyl_x(STUB_SMALL_D / 2 + P.PRESS_FIT / 2, -CHEEK_MCP[1] - .1, CHEEK_MCP[1] + .1)))
+    tools += [_local_from(Fm, F, t) for t in _cheek_seats("mcp_flex")]
     # strand channels (PTFE-lined 2.2 mm) from the crossing to the MCP
     segs = []
     Fq = body_transforms({})
@@ -748,7 +855,7 @@ def make_metacarpal():
     tools += bores
     # hard-stop lugs are on the child hubs (proximal); here: nothing else
     s = cut(s, *tools)
-    s = s.fuse(_stop_lugs("cmc_flex", HUB_CMC_R, (STUB_CMC[0] + 0.5, HUB_CMC_W - 0.3), PLATE_Z[1]))
+    s = s.fuse(_stop_lugs("cmc_flex", HUB_CMC_R, (CMC_GROOVE_X + 1.2, HUB_CMC_W - 0.3), PLATE_Z[1]))
     return place(main_solid(s.clean()), F), pins
 
 
@@ -798,26 +905,28 @@ def _sector_ring_x(r0, r1, x0, x1, a0, a1, n=None):
 
 def make_proximal():
     Fm, Fi = J0["mcp_flex"], J0["ip"]
-    hub = cyl_x(HUB_MCP_R, -HUB_MCP_W, HUB_MCP_W)
+    hub = _hub_spacers("mcp_flex", cyl_x(HUB_MCP_R, -HUB_MCP_W, HUB_MCP_W))
     exi = np.array([Fi[1] @ Fm[1], Fi[1] @ Fm[2], Fi[1] @ Fm[3]])
     eyi = np.array([Fi[2] @ Fm[1], Fi[2] @ Fm[2], Fi[2] @ Fm[3]])
-    shaft = fuse(prism(2 * HUB_MCP_W, SHAFT_PX[1], 3.5, 3.0, L2 - HUB_IP_R - 4.0),
+    shaft = fuse(prism(SHAFT_PX[0], SHAFT_PX[1], 3.5, 3.0, L2 - HUB_IP_R - 4.0),
                  _local_from(Fi, Fm, prism(2 * CHEEK_IP[1], SHAFT_PX[1], 3.5, -(L2 * 0.5), -(HUB_IP_R + 0.6))))
     s = fuse(hub, shaft)
     for sgn in (+1, -1):
         x0, x1 = (CHEEK_IP[0], CHEEK_IP[1]) if sgn > 0 else (-CHEEK_IP[1], -CHEEK_IP[0])
         ch = fuse(box(x0, x1, -SHAFT_PX[1] / 2, SHAFT_PX[1] / 2, -(HUB_IP_R + 2.0), 0.0), cyl_x(6.5, x0, x1))
+        # bearing cheeks start at |x| 6.25 (was 7.75), inside the 15 mm pad: free the palmar-lower quadrant
+        # outside the seat ring so the pad and distal can swing through at full IP flexion (a knuckle shape)
+        ch = ch.cut(box(x0 - 0.1, x1 + 0.1, -SHAFT_PX[1] / 2 - 1, IP_CHEEK_TRIM_Y, -(HUB_IP_R + 2.5), 0.01)
+                    .cut(cyl_x(6.5, x0 - 0.2, x1 + 0.2)))
         s = s.fuse(_local_from(Fi, Fm, ch))
-    tools = _grooves("mcp_flex", (-MCP_GROOVE_X, MCP_GROOVE_X), HUB_MCP_R)
-    for side in ("flex", "ext"):
-        tools.append(_anchor_pocket("mcp_flex", STRANDS[f"mcp_flex_{side}"]))
+    tools = _track("mcp_flex")
     lo, hi = RANGES["mcp_flex"]
     tools.append(sector_x(HUB_MCP_R + 3, -MCP_SLOT, MCP_SLOT, -90 - hi - 25, -90 - lo + 25))
-    holes, pins = _nip_pins("mcp_flex", MCP_SLOT + 1.2)
+    holes, pins = _nip_pins("mcp_flex", NIP_HALF["mcp_flex"])
     tools += holes
-    tools += [cyl_x(STUB_SMALL_D / 2 + 0.06, 4.5, HUB_MCP_W + .1), cyl_x(STUB_SMALL_D / 2 + 0.06, -HUB_MCP_W - .1, -4.5)]
+    tools += _axle_bores("mcp_flex")
     tools.append(_local_from(Fi, Fm, cyl_x(HUB_IP_R + 0.3, -CHEEK_IP[0], CHEEK_IP[0])))
-    tools.append(_local_from(Fi, Fm, cyl_x(STUB_SMALL_D / 2 + P.PRESS_FIT / 2, -CHEEK_IP[1] - .1, CHEEK_IP[1] + .1)))
+    tools += [_local_from(Fi, Fm, t) for t in _cheek_seats("ip")]
     Fq = body_transforms({})
     for st in STRANDS.values():
         if st["joint"] == "ip":
@@ -827,22 +936,21 @@ def make_proximal():
             tools.append(cyl_ab(to_local(Fm, c), to_local(Fm, c + 5.5 * u), 0.6))
             tools.append(cyl_ab(to_local(Fm, c + 5.5 * u), to_local(Fm, Tw - 2.0 * u), P.SHEATH_BORE / 2))
     s = cut(s, *tools)
-    s = s.fuse(_stop_lugs("mcp_flex", HUB_MCP_R, (4.6, HUB_MCP_W - 0.3), -(HUB_MCP_R + 0.6)))
+    s = s.fuse(_stop_lugs("mcp_flex", HUB_MCP_R, (MCP_GROOVE_X + 1.1, HUB_MCP_W - 0.3), -(HUB_MCP_R + 0.6)))
     return place(main_solid(s.clean()), Fm), pins
 
 
 def make_distal():
     Fi = J0["ip"]
-    hub = cyl_x(HUB_IP_R, -HUB_IP_W, HUB_IP_W)
-    body = loft([rrect_wire(2 * HUB_IP_W, 15.0, 3.5, 2.0), rrect_wire(15.0, 12.5, 4.0, L3 - 7.0)])
+    hub = _hub_spacers("ip", cyl_x(HUB_IP_R, -HUB_IP_W, HUB_IP_W))
+    # stays as wide as the hub (2 x HUB_IP_W, inside the IP cheeks) until it clears the cheek ring (r 6.5)
+    body = loft([rrect_wire(2 * HUB_IP_W, 15.0, 3.5, 2.0), rrect_wire(2 * HUB_IP_W, 14.3, 3.5, DISTAL_NARROW_Z),
+                 rrect_wire(15.0, 12.5, 4.0, L3 - 7.0)])
     tip = cq.Workplane("XY").add(cyl_x(6.25, -7.0, 7.0, 0, L3 - 7.0)).edges().fillet(2.5).val()
     s = fuse(hub, body, tip)
     # pad seat (palmar, -y): a flat recess 2 mm deep for the TPU pad
     pad_seat = box(-8, 8, -9, -PAD_SEAT_Y, 5.0, L3 + 1)
-    tools = _grooves("ip", (-IP_GROOVE_X, IP_GROOVE_X), HUB_IP_R) + [pad_seat]
-    for side in ("flex", "ext"):
-        tools.append(_anchor_pocket("ip", STRANDS[f"ip_{side}"]))
-    tools += [cyl_x(STUB_SMALL_D / 2 + 0.06, 3.5, HUB_IP_W + .1), cyl_x(STUB_SMALL_D / 2 + 0.06, -HUB_IP_W - .1, -3.5)]
+    tools = _track("ip") + [pad_seat] + _axle_bores("ip")
     s = cut(s, *tools)
     s = s.fuse(_stop_lugs("ip", HUB_IP_R, (3.6, HUB_IP_W - 0.3), -(HUB_IP_R + 0.6)))
     return place(main_solid(s.clean()), Fi)
@@ -872,18 +980,6 @@ def make_thenar_pad():
     return place(pad, F)
 
 
-def make_stubs():
-    out = {}
-    for sgn, tag in ((+1, "a"), (-1, "b")):
-        x0, x1 = (STUB_CMC[0] + 0.3, CHEEK_CMC[1]) if sgn > 0 else (-CHEEK_CMC[1], -STUB_CMC[0] - 0.3)
-        out[f"pin_cmc_{tag}"] = place(cyl_x(STUB_CMC[2] / 2, x0, x1), J0["cmc_flex"])
-        x0, x1 = (4.8, CHEEK_MCP[1]) if sgn > 0 else (-CHEEK_MCP[1], -4.8)
-        out[f"pin_mcp_{tag}"] = place(cyl_x(STUB_SMALL_D / 2, x0, x1), J0["mcp_flex"])
-        x0, x1 = (3.8, CHEEK_IP[1]) if sgn > 0 else (-CHEEK_IP[1], -3.8)
-        out[f"pin_ip_{tag}"] = place(cyl_x(STUB_SMALL_D / 2, x0, x1), J0["ip"])
-    return out
-
-
 @functools.lru_cache(maxsize=1)
 def rest_parts():
     t0 = time.time()
@@ -901,25 +997,33 @@ def rest_parts():
         parts[f"nip_cmc_{'ab'[i]}"] = p
     for i, p in enumerate(pins_m):
         parts[f"nip_mcp_{'ab'[i]}"] = p
-    parts.update(make_stubs())
+    parts.update(make_axles())
+    for j in ("cmc_flex", "mcp_flex", "ip"):
+        parts.update(make_joint_bearings(j))
     print(f"  rest parts built in {time.time() - t0:.1f} s")
     return parts
 
 
 PART_BODY = {"thumb_mount": "mount", "bearing_top": "mount", "bearing_bottom": "mount",
              "base_cap": "base", "neck_top": "base", "thumb_base": "base",
-             "pin_cmc_a": "base", "pin_cmc_b": "base", "thumb_metacarpal": "metacarpal", "thenar_pad": "metacarpal",
-             "nip_cmc_a": "metacarpal", "nip_cmc_b": "metacarpal", "pin_mcp_a": "metacarpal", "pin_mcp_b": "metacarpal",
-             "thumb_proximal": "proximal", "nip_mcp_a": "proximal", "nip_mcp_b": "proximal", "pin_ip_a": "proximal",
-             "pin_ip_b": "proximal", "thumb_distal": "distal", "thumb_pad": "distal"}
+             "bearing_cmc_flex_l": "base", "bearing_cmc_flex_r": "base",
+             "thumb_metacarpal": "metacarpal", "thenar_pad": "metacarpal", "pin_cmc_a": "metacarpal",
+             "pin_cmc_b": "metacarpal", "nip_cmc_a": "metacarpal", "nip_cmc_b": "metacarpal",
+             "bearing_mcp_flex_l": "metacarpal", "bearing_mcp_flex_r": "metacarpal",
+             "thumb_proximal": "proximal", "nip_mcp_a": "proximal", "nip_mcp_b": "proximal", "pin_mcp_a": "proximal",
+             "pin_mcp_b": "proximal", "bearing_ip_l": "proximal", "bearing_ip_r": "proximal",
+             "thumb_distal": "distal", "thumb_pad": "distal", "pin_ip_axle": "distal"}
 MATERIAL = {"thumb_mount": "PETG", "thumb_base": "PETG", "thumb_metacarpal": "PETG", "thumb_proximal": "PETG",
             "thumb_distal": "PETG", "thumb_pad": "TPU 95A (or cast silicone A30)", "thenar_pad": "TPU 95A",
             "bearing_top": "6704ZZ 20x27x4", "bearing_bottom": "6704ZZ 20x27x4", "base_cap": "PETG, 3 x M2x6",
             "neck_top": "PTFE eyelet (6 mm rod, 1.6 mm hole, both ends rounded R0.8)",
-            "pin_cmc_a": "steel dowel 3 mm", "pin_cmc_b": "steel dowel 3 mm", "nip_cmc_a": "steel pin 1 mm",
-            "nip_cmc_b": "steel pin 1 mm", "nip_mcp_a": "steel pin 1 mm", "nip_mcp_b": "steel pin 1 mm",
-            "pin_mcp_a": "steel dowel 2 mm", "pin_mcp_b": "steel dowel 2 mm", "pin_ip_a": "steel dowel 2 mm",
-            "pin_ip_b": "steel dowel 2 mm"}
+            "pin_cmc_a": "steel dowel 4 x 9 (4 x 10 cut), pressed in the metacarpal",
+            "pin_cmc_b": "steel dowel 4 x 9 (4 x 10 cut), pressed in the metacarpal",
+            "nip_cmc_a": "steel pin 1 mm", "nip_cmc_b": "steel pin 1 mm", "nip_mcp_a": "steel pin 1 mm",
+            "nip_mcp_b": "steel pin 1 mm", "pin_mcp_a": "steel dowel 4 x 8, pressed in the proximal",
+            "pin_mcp_b": "steel dowel 4 x 8, pressed in the proximal",
+            "pin_ip_axle": "steel dowel 4 x 20, pressed in the distal",
+            **{f"bearing_{j}_{t}": "MR84ZZ 4x8x3" for j in ("cmc_flex", "mcp_flex", "ip") for t in "lr"}}
 
 
 def _qdict(q):
@@ -939,9 +1043,14 @@ def pose(shape, body, q):
     return shape
 
 
-def build(q: dict | None = None) -> dict:
+def is_bearing(name):
+    return name.startswith("bearing_")
+
+
+def build(q: dict | None = None, bearings: bool = True) -> dict:
+    """bearings=False leaves out every bearing_* part (the 2 x 6704 and the 6 x MR84) to see the seats."""
     q = _qdict(q)
-    parts = {n: pose(s, PART_BODY[n], q) for n, s in rest_parts().items()}
+    parts = {n: pose(s, PART_BODY[n], q) for n, s in rest_parts().items() if bearings or not is_bearing(n)}
     Fq = body_transforms(q)
     joints = {}
     for k, jn in enumerate(JOINT_NAMES):
@@ -994,11 +1103,15 @@ def interface():
 
 
 # --- Checks -----------------------------------------------------------------------------------------
-IGNORE = [("pin_cmc_*", "thumb_base"), ("pin_cmc_*", "thumb_metacarpal"), ("nip_cmc_*", "thumb_metacarpal"),
-          ("pin_mcp_*", "thumb_metacarpal"), ("pin_mcp_*", "thumb_proximal"), ("nip_mcp_*", "thumb_proximal"),
-          ("pin_ip_*", "thumb_proximal"), ("pin_ip_*", "thumb_distal"), ("bearing_*", "thumb_base"),
-          ("bearing_*", "thumb_mount"), ("neck_top", "base_cap"), ("thumb_pad", "thumb_distal"),
-          ("thenar_pad", "thumb_metacarpal")]
+# only press fits and parts that sit in their own holes; everything else (stub vs parent cheek, bearing vs child
+# hub/spacer, bearings vs the mount) is checked
+IGNORE = [("pin_cmc_*", "thumb_metacarpal"), ("nip_cmc_*", "thumb_metacarpal"), ("pin_mcp_*", "thumb_proximal"),
+          ("nip_mcp_*", "thumb_proximal"), ("pin_ip_axle", "thumb_distal"),
+          ("bearing_cmc_flex_*", "thumb_base"), ("bearing_mcp_flex_*", "thumb_metacarpal"),
+          ("bearing_ip_*", "thumb_proximal"), ("bearing_cmc_flex_*", "pin_cmc_*"), ("bearing_mcp_flex_*", "pin_mcp_*"),
+          ("bearing_ip_*", "pin_ip_axle"), ("bearing_top", "thumb_base"), ("bearing_bottom", "thumb_base"),
+          ("bearing_top", "thumb_mount"), ("bearing_bottom", "thumb_mount"), ("neck_top", "base_cap"),
+          ("thumb_pad", "thumb_distal"), ("thenar_pad", "thumb_metacarpal")]
 
 
 def routing_report(n=13):
@@ -1058,6 +1171,31 @@ def routing_report(n=13):
             row[kn] = {"mm": worst, "deg": worst / P.MM_PER_DEG}
         coup[jn] = row
     return res, sums, coup
+
+
+def track_report(n=13):
+    """One track per joint: smallest and largest wrap (deg) between each strand's tangent point and the knot,
+    over the own joint's range with the other joints at rest / mid / max (the knot must never reach a tangent
+    point), plus the loop length flex + ext over a full 4-joint grid."""
+    out = {}
+    for name, st in STRANDS.items():
+        ws = []
+        for other in ("rest", "mid", "hi"):
+            base_q = {k: (0.0 if other == "rest" else mid(k) if other == "mid" else RANGES[k][1]) for k in JOINT_NAMES}
+            for v in np.linspace(*RANGES[st["joint"]], n):
+                q = dict(base_q)
+                q[st["joint"]] = v
+                ws.append(strand_length(st, q, detail=True)[1]["wrap_deg"])
+        out[name] = {"min_wrap_deg": float(min(ws)), "max_wrap_deg": float(max(ws)),
+                     "knot_inside_wrap_mm": float(np.radians(min(ws)) * R)}
+    loops = {}
+    grid = [np.linspace(*RANGES[k], 5) for k in JOINT_NAMES]
+    for jn in JOINT_NAMES:
+        f, e = STRANDS[f"{jn}_flex"], STRANDS[f"{jn}_ext"]
+        vals = [strand_length(f, dict(zip(JOINT_NAMES, qq))) + strand_length(e, dict(zip(JOINT_NAMES, qq)))
+                for qq in np.array(np.meshgrid(*grid)).reshape(4, -1).T]
+        loops[jn] = {"loop_mm": float(np.mean(vals)), "ptp_mm_full_grid": float(np.ptp(vals))}
+    return out, loops
 
 
 def collision_sweep(quick=False):
@@ -1230,6 +1368,214 @@ def render_all(views_rest=("iso", "front", "side", "top")):
            legend=False, title="CMC section (half cut away): bearings, neck, nip, drums, strands")
 
 
+def render_bearing_section(q=None, out_name="bearing_section.png"):
+    """Cut section through the MCP and IP (plane through the MCP axis and the IP centre): bearings, 4 mm axles,
+    spacers, the single tracks with their tie holes / knot pockets, and the strands."""
+    from tools.render import render
+    q = _qdict(q)
+    p3, a3 = D.joints[2]
+    p4, _ = D.joints[3]
+    nrm = K.unit(np.cross(a3, p4 - p3))
+    # keep the z <= 0 half (z = nrm) of a box round the MCP + IP, in a frame that moves with the proximal
+    fr = (p3, K.unit(a3), np.cross(nrm, K.unit(a3)), nrm)
+    keep_box = place(box(-16.0, 16.0, -24.0, L2 + 22.0, -16.0, 0.0), fr)
+    keep = ("metacarpal", "proximal", "distal")
+    parts = {}
+    res = build(q)
+    Fq = body_transforms(q)
+    Rm, t = Fq["proximal"]  # the plane holds the MCP axis and moves with the proximal
+    kb = _rot_shape(keep_box, Rm, t)
+    for n, s_ in res["parts"].items():
+        if PART_BODY[n] in keep:
+            c = s_.intersect(kb)
+            if c.Volume() > 0.01:
+                parts[n] = c
+    parts["strands"] = strand_solids(q, 0.25).intersect(_rot_shape(place(box(-16.0, 16.0, -24.0, L2 + 22.0, -16.0, 16.0),
+                                                                          fr), Rm, t))
+    cols = dict(COLORS, **{n: "#d4af37" for n in parts if is_bearing(n)},
+                **{n: "#3a3a3a" for n in parts if n.startswith("pin_") or n.startswith("nip_")})
+    nv = Rm @ nrm
+    el = float(np.degrees(np.arcsin(nv[2])))
+    az = float(np.degrees(np.arctan2(nv[0], -nv[1])))
+    render(parts, OUT / out_name, views=(("section, face-on", el, az), ("oblique", el + 30, az + 35)),
+           colors=cols, legend=False, size=(1800, 1000),
+           title="Thumb MCP + IP cut: 2 x MR84ZZ per joint (gold), 4 mm steel axles (dark), one track + tie hole each")
+
+
+def render_tracks(out_name="tracks.png"):
+    """The three hinge hubs side by side (joint axis = X, knot side turned to +X), cut at the track's centre plane:
+    the single groove, the tie hole at the top of the track ring and the knot pocket on the hub face."""
+    from tools.render import render
+    rp = rest_parts()
+    parts = {}
+    for i, (j, part) in enumerate((("cmc_flex", "thumb_metacarpal"), ("mcp_flex", "thumb_proximal"),
+                                   ("ip", "thumb_distal"))):
+        sh = _apply(rp[part], _trsf(J0[j]).Inverted())  # world -> joint frame of j
+        gx = TRACK_X[j]
+        if TIE_SIDE[j] < 0:
+            sh, gx = sh.rotate(V(0, 0, 0), V(0, 0, 1), 180), -gx
+        sh = sh.intersect(box(gx, 30, -30, 30, -30, 13.0))
+        parts[f"hub_{j}"] = sh.translate(V(0, 32.0 * i, 0))
+    cols = {k: "#4f8fd6" for k in parts}
+    render(parts, OUT / out_name, views=(("cut at the track (from -X)", 5, -95), ("knot side (from +X)", 15, 70),
+                                         ("iso", 35, -60)), colors=cols, legend=False, size=(1800, 800),
+           title="One track per joint (cmc_flex | mcp_flex | ip): groove r 7, tie hole at the top, knot pocket")
+
+
+def render_bearings_on_off():
+    """Same pose with and without the bearings (bearing_* parts), for the owner to compare."""
+    from tools.render import render
+    q = dict(zip(JOINT_NAMES, (20.0, 20.0, 35.0, 40.0)))
+    for flag, name in ((True, "thumb_bearings_on.png"), (False, "thumb_bearings_off.png")):
+        parts = {n: s_ for n, s_ in build(q, bearings=flag)["parts"].items() if PART_BODY[n] != "mount"}
+        cols = dict(COLORS, **{n: "#d4af37" for n in parts if is_bearing(n)},
+                    **{n: "#3a3a3a" for n in parts if n.startswith("pin_") or n.startswith("nip_")})
+        render(parts, OUT / name, views=("iso", (20, 160), (-15, 60), "side"), colors=cols, legend=False,
+               size=(1600, 1200), title=f"Thumb at q = (20, 20, 35, 40), bearings {'ON' if flag else 'OFF'}")
+
+
+def _rot_shape(shape, Rm, t):
+    """Apply the rigid motion x -> Rm x + t to a shape."""
+    from OCP.gp import gp_Trsf
+    tr = gp_Trsf()
+    tr.SetValues(*Rm[0], t[0], *Rm[1], t[1], *Rm[2], t[2])
+    return _apply(shape, tr)
+
+
+VIEWER_HTML = """<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tendra V2 thumb</title>
+<style>
+:root{--bg:#f5f5f7;--card:#fff;--ink:#1d1d1f;--muted:#6e6e73;--accent:#0066cc}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.4 Inter,system-ui,sans-serif;overflow:hidden}
+#ui{position:absolute;top:16px;left:16px;background:var(--card);border-radius:16px;padding:14px 18px;
+box-shadow:0 4px 20px rgba(0,0,0,.10);width:270px;max-height:calc(100vh - 64px);overflow:auto}
+h1{font-size:16px;margin:0 0 4px}p{margin:0 0 10px;color:var(--muted);font-size:12px}
+label{display:flex;gap:8px;align-items:center;margin:5px 0;cursor:pointer}
+.sl{margin:8px 0 2px;font-size:12px;color:var(--muted)}input[type=range]{width:100%;accent-color:var(--accent)}
+input[type=checkbox]{accent-color:var(--accent)}.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+button{border:0;border-radius:999px;background:var(--accent);color:#fff;padding:6px 14px;margin-top:8px;cursor:pointer}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+"three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+</head><body>
+<div id="ui"><h1>Tendra V2 thumb</h1>
+<p>2 x MR84ZZ (4 x 8 x 3) per hinge, 4 mm steel axles, one track + tie hole per joint. Drag to orbit.</p>
+<div id="toggles"></div><div id="sliders"></div><button id="reset">Reset pose</button></div>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+const DATA = __DATA__;
+const GLB = "data:model/gltf-binary;base64,__GLB__";
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(devicePixelRatio); renderer.setSize(innerWidth, innerHeight);
+renderer.localClippingEnabled = true; document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0xf5f5f7);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8f99, 1.6));
+const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(1, 2, 1.5); scene.add(sun);
+const camera = new THREE.PerspectiveCamera(35, innerWidth / innerHeight, 1, 5000);
+const controls = new OrbitControls(camera, renderer.domElement);
+const root = new THREE.Group(); root.rotation.x = -Math.PI / 2; scene.add(root);  // CAD Z up -> three Y up
+const v3 = a => new THREE.Vector3(a[0], a[1], a[2]);
+const body = {mount: root}, pivots = [];
+let parent = root;
+DATA.joints.forEach((j, k) => {
+  const pv = new THREE.Group(); pv.position.copy(v3(j.point));
+  const inner = new THREE.Group(); inner.position.copy(v3(j.point).negate());
+  pv.add(inner); parent.add(pv); pivots.push(pv); body[DATA.bodies[k + 1]] = inner; parent = inner;
+});
+const n = DATA.section.normal, c = DATA.section.point;
+const plane = new THREE.Plane(new THREE.Vector3(n[0], n[2], -n[1]), 0);
+plane.constant = -plane.normal.dot(new THREE.Vector3(c[0], c[2], -c[1]));
+const GROUPS = DATA.groups, mats = {}, meshesOf = {};
+for (const [g, d] of Object.entries(GROUPS)) {
+  mats[g] = new THREE.MeshStandardMaterial({color: d.color, metalness: d.metal ? .5 : 0, roughness: d.metal ? .4 : .7,
+                                            flatShading: true, side: THREE.DoubleSide});
+  meshesOf[g] = [];
+}
+new GLTFLoader().load(GLB, gltf => {
+  const meshes = []; gltf.scene.traverse(o => { if (o.isMesh) meshes.push(o); });
+  for (const m of meshes) {
+    const name = m.name in DATA.part_body ? m.name : m.parent.name;
+    const g = DATA.part_group[name] || 'printed';
+    m.material = mats[g]; meshesOf[g].push(m);
+    m.updateWorldMatrix(true, false); const M = m.matrixWorld.clone();
+    (body[DATA.part_body[name]] || root).add(m); m.matrix.copy(M); m.matrix.decompose(m.position, m.quaternion, m.scale);
+  }
+  const box = new THREE.Box3().setFromObject(root), ctr = box.getCenter(new THREE.Vector3());
+  const r = box.getSize(new THREE.Vector3()).length();
+  controls.target.copy(ctr); camera.position.copy(ctr).add(new THREE.Vector3(.8, .5, 1).multiplyScalar(r * 1.1));
+  controls.update();
+});
+const tg = document.getElementById('toggles');
+for (const [g, d] of Object.entries(GROUPS)) {
+  const l = document.createElement('label');
+  l.innerHTML = `<input type="checkbox" checked> <span class="sw" style="background:${d.color}"></span> ${d.label}`;
+  l.querySelector('input').onchange = e => meshesOf[g].forEach(m => m.visible = e.target.checked);
+  tg.appendChild(l);
+}
+const sec = document.createElement('label'); sec.innerHTML = '<input type="checkbox"> Section cut (through MCP + IP)';
+sec.querySelector('input').onchange = e => Object.values(mats).forEach(m => { m.clippingPlanes = e.target.checked ? [plane] : []; m.needsUpdate = true; });
+tg.appendChild(sec);
+const sl = document.getElementById('sliders'), inputs = [];
+DATA.joints.forEach((j, k) => {
+  const d = document.createElement('div'); d.className = 'sl';
+  d.innerHTML = `${j.name}: <b>0</b> deg<input type="range" min="${j.range[0]}" max="${j.range[1]}" step="1" value="0">`;
+  const inp = d.querySelector('input'), b = d.querySelector('b'), ax = v3(j.axis).normalize();
+  inp.oninput = () => { b.textContent = inp.value; pivots[k].quaternion.setFromAxisAngle(ax, inp.value * Math.PI / 180); };
+  inputs.push(inp); sl.appendChild(d);
+});
+document.getElementById('reset').onclick = () => inputs.forEach(i => { i.value = 0; i.oninput(); });
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight); });
+renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+</script></body></html>
+"""
+
+PART_GROUPS = {  # viewer / export colour groups (bearings can be shown or hidden)
+    "bearings": {"label": "Bearings (2 x MR84ZZ per hinge, 2 x 6704 at the base)", "color": "#d4af37", "metal": 1},
+    "steel": {"label": "Steel axles (4 mm) and nip pins", "color": "#3a3a3a", "metal": 1},
+    "printed": {"label": "Printed thumb (PETG)", "color": "#4f8fd6", "metal": 0},
+    "base": {"label": "CMC base, cap, neck", "color": "#c8a165", "metal": 0},
+    "pads": {"label": "TPU pads", "color": "#e0703a", "metal": 0},
+    "mount": {"label": "Mount (fixed in the palm)", "color": "#8a96a6", "metal": 0},
+}
+
+
+def part_group(n):
+    if is_bearing(n):
+        return "bearings"
+    if n.startswith(("pin_", "nip_")):
+        return "steel"
+    if n.endswith("_pad"):
+        return "pads"
+    if n == "thumb_mount":
+        return "mount"
+    if PART_BODY[n] == "base":
+        return "base"
+    return "printed"
+
+
+def part_colors(names):
+    return {n: PART_GROUPS[part_group(n)]["color"] for n in names}
+
+
+def write_viewer(glb_path, out_html):
+    """Standalone HTML viewer (three.js from jsdelivr, the GLB embedded): show/hide bearings, axles, pads,
+    a section cut, and the four joint sliders (chain of rest-pose axes, like build())."""
+    import base64
+    p3, a3 = D.joints[2]
+    p4, _ = D.joints[3]
+    data = {"bodies": list(BODIES), "groups": PART_GROUPS,
+            "joints": [{"name": f"thumb_{jn}", "point": D.joints[k][0].tolist(), "axis": D.joints[k][1].tolist(),
+                        "range": list(RANGES[jn])} for k, jn in enumerate(JOINT_NAMES)],
+            "part_body": PART_BODY, "part_group": {n: part_group(n) for n in PART_BODY},
+            "section": {"point": p3.tolist(), "normal": K.unit(np.cross(a3, p4 - p3)).tolist()}}
+    glb = base64.b64encode(Path(glb_path).read_bytes()).decode()
+    Path(out_html).write_text(VIEWER_HTML.replace("__DATA__", json.dumps(data)).replace("__GLB__", glb))
+
+
 def main():
     quick = "--quick" in sys.argv
     OUT.mkdir(parents=True, exist_ok=True)
@@ -1243,7 +1589,12 @@ def main():
         v = is_valid(s)
         print(f"  {n:18s} ok={v['ok']} solids={v['solids']} vol={v['volume']:.0f}")
     res = build({})
-    export_all(res["parts"], OUT, name="thumb_rest")
+    for f in (OUT / "stl").glob("*.stl"):  # drop STLs of parts that no longer exist (e.g. the old 2 mm IP stubs)
+        if f.stem not in res["parts"]:
+            f.unlink()
+    exp = export_all(res["parts"], OUT, name="thumb_rest", colors=part_colors(res["parts"]))
+    write_viewer(exp["glb"], OUT / "thumb_viewer.html")
+    print("  viewer:", OUT / "thumb_viewer.html")
     print("routing (max length change, mm):")
     rr, sums, coup = routing_report(9 if quick else 13)
     for n, row in rr.items():
@@ -1252,7 +1603,15 @@ def main():
     print("  loop sums ptp:", {k: round(v, 3) for k, v in sums.items()})
     for jn, row in coup.items():
         print(f"  coupling into {jn}: " + ", ".join(f"{k} {v['mm']:.3f} mm = {v['deg']:.2f} deg" for k, v in row.items()))
+    tr, loops = track_report(9 if quick else 13)
+    print("tracks (one per joint; knot = tie hole):")
+    for n, row in tr.items():
+        print(f"  {n:15s} wrap {row['min_wrap_deg']:.1f}..{row['max_wrap_deg']:.1f} deg, knot >= "
+              f"{row['knot_inside_wrap_mm']:.2f} mm inside the wrap")
+    print("  loop flex+ext over the full 4-joint grid:", {k: (round(v['loop_mm'], 2), f"{v['ptp_mm_full_grid']:.2e}")
+                                                        for k, v in loops.items()})
     (OUT / "routing.json").write_text(json.dumps({"per_strand": rr, "loop_sums": sums, "coupling": coup,
+                                                  "tracks": tr, "loops_full_grid": loops,
                                                   "anchors": {n: {k: v for k, v in st["drum"].items()}
                                                               for n, st in STRANDS.items()}}, indent=1))
     print("interface:")
@@ -1264,6 +1623,10 @@ def main():
     if "--no-render" not in sys.argv:
         print("renders...")
         render_all()
+        render_bearing_section()
+        render_bearing_section({"mcp_flex": 50.0, "ip": 60.0}, "bearing_section_flexed.png")
+        render_tracks()
+        render_bearings_on_off()
     print("hard stops:")
     stops = stop_check(3.0 if quick else 2.0)
     (OUT / "stops.json").write_text(json.dumps(stops, indent=1))

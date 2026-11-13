@@ -1,45 +1,60 @@
 warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
 thumb design: V2 design ranges {'cmc_rot': [-31.0, 110.0], 'cmc_flex': [-37.0, 63.0], 'mcp_flex': [-10.0, 70.0], 'ip': [-15.0, 85.0]}
 lengths L1 L2 L3 = 46.7 36.0 31.6
-  rest parts built in 4.8 s
+  rest parts built in 3.3 s
 validity:
-  thumb_mount        ok=True solids=1 vol=14066
+  thumb_mount        ok=True solids=1 vol=13989
   bearing_top        ok=True solids=1 vol=1034
   bearing_bottom     ok=True solids=1 vol=1034
   base_cap           ok=True solids=1 vol=421
-  neck_top           ok=True solids=1 vol=32
-  thumb_base         ok=True solids=1 vol=5145
-  thumb_metacarpal   ok=True solids=1 vol=12684
+  neck_top           ok=True solids=1 vol=33
+  thumb_base         ok=True solids=1 vol=5268
+  thumb_metacarpal   ok=True solids=1 vol=13251
   thenar_pad         ok=True solids=1 vol=926
-  thumb_proximal     ok=True solids=1 vol=8446
-  thumb_distal       ok=True solids=1 vol=6540
+  thumb_proximal     ok=True solids=1 vol=8308
+  thumb_distal       ok=True solids=1 vol=5581
   thumb_pad          ok=True solids=1 vol=794
   nip_cmc_a          ok=True solids=1 vol=5
   nip_cmc_b          ok=True solids=1 vol=5
-  nip_mcp_a          ok=True solids=1 vol=4
-  nip_mcp_b          ok=True solids=1 vol=4
-  pin_cmc_a          ok=True solids=1 vol=53
-  pin_mcp_a          ok=True solids=1 vol=16
-  pin_ip_a           ok=True solids=1 vol=18
-  pin_cmc_b          ok=True solids=1 vol=53
-  pin_mcp_b          ok=True solids=1 vol=16
-  pin_ip_b           ok=True solids=1 vol=18
+  nip_mcp_a          ok=True solids=1 vol=3
+  nip_mcp_b          ok=True solids=1 vol=3
+  pin_cmc_a          ok=True solids=1 vol=113
+  pin_cmc_b          ok=True solids=1 vol=113
+  pin_mcp_a          ok=True solids=1 vol=101
+  pin_mcp_b          ok=True solids=1 vol=101
+  pin_ip_axle        ok=True solids=1 vol=253
+  bearing_cmc_flex_l ok=True solids=1 vol=109
+  bearing_cmc_flex_r ok=True solids=1 vol=109
+  bearing_mcp_flex_l ok=True solids=1 vol=109
+  bearing_mcp_flex_r ok=True solids=1 vol=109
+  bearing_ip_l       ok=True solids=1 vol=109
+  bearing_ip_r       ok=True solids=1 vol=109
 routing (max length change, mm):
   cmc_rot_flex    cmc_rot=0.000 cmc_flex=0.000 mcp_flex=0.000 ip=0.000  own slope -0.1222 mm/deg
   cmc_rot_ext     cmc_rot=0.000 cmc_flex=0.000 mcp_flex=0.000 ip=0.000  own slope 0.1222 mm/deg
-  cmc_flex_flex   cmc_rot=0.109 cmc_flex=0.000 mcp_flex=0.000 ip=0.000  own slope -0.1222 mm/deg
-  cmc_flex_ext    cmc_rot=0.109 cmc_flex=0.000 mcp_flex=0.000 ip=0.000  own slope 0.1222 mm/deg
-  mcp_flex_flex   cmc_rot=0.109 cmc_flex=0.103 mcp_flex=0.000 ip=0.000  own slope -0.1222 mm/deg
-  mcp_flex_ext    cmc_rot=0.109 cmc_flex=0.123 mcp_flex=0.000 ip=0.000  own slope 0.1222 mm/deg
-  ip_flex         cmc_rot=0.109 cmc_flex=0.106 mcp_flex=0.080 ip=0.000  own slope -0.1222 mm/deg
-  ip_ext          cmc_rot=0.109 cmc_flex=0.109 mcp_flex=0.076 ip=0.000  own slope 0.1222 mm/deg
-  loop sums ptp: {'cmc_rot': 0.0, 'cmc_flex': 0.075, 'mcp_flex': 0.087, 'ip': 0.102}
+  cmc_flex_flex   cmc_rot=0.186 cmc_flex=0.000 mcp_flex=0.000 ip=0.000  own slope -0.1222 mm/deg
+  cmc_flex_ext    cmc_rot=0.186 cmc_flex=0.000 mcp_flex=0.000 ip=0.000  own slope 0.1222 mm/deg
+  mcp_flex_flex   cmc_rot=0.186 cmc_flex=0.123 mcp_flex=0.000 ip=0.000  own slope -0.1222 mm/deg
+  mcp_flex_ext    cmc_rot=0.186 cmc_flex=0.124 mcp_flex=0.000 ip=0.000  own slope 0.1222 mm/deg
+  ip_flex         cmc_rot=0.186 cmc_flex=0.106 mcp_flex=0.082 ip=0.000  own slope -0.1222 mm/deg
+  ip_ext          cmc_rot=0.186 cmc_flex=0.110 mcp_flex=0.079 ip=0.000  own slope 0.1222 mm/deg
+  loop sums ptp: {'cmc_rot': 0.0, 'cmc_flex': 0.16, 'mcp_flex': 0.171, 'ip': 0.188}
   coupling into cmc_rot: cmc_flex 0.000 mm = 0.00 deg, mcp_flex 0.000 mm = 0.00 deg, ip 0.000 mm = 0.00 deg
   coupling into cmc_flex: cmc_rot 0.000 mm = 0.00 deg, mcp_flex 0.000 mm = 0.00 deg, ip 0.000 mm = 0.00 deg
-  coupling into mcp_flex: cmc_rot 0.000 mm = 0.00 deg, cmc_flex 0.011 mm = 0.09 deg, ip 0.000 mm = 0.00 deg
+  coupling into mcp_flex: cmc_rot 0.000 mm = 0.00 deg, cmc_flex 0.002 mm = 0.02 deg, ip 0.000 mm = 0.00 deg
   coupling into ip: cmc_rot 0.000 mm = 0.00 deg, cmc_flex 0.002 mm = 0.02 deg, mcp_flex 0.004 mm = 0.03 deg
+tracks (one per joint; knot = tie hole):
+  cmc_rot_flex    wrap 19.5..160.5 deg, knot >= 2.38 mm inside the wrap
+  cmc_rot_ext     wrap 19.5..160.5 deg, knot >= 2.38 mm inside the wrap
+  cmc_flex_flex   wrap 55.6..155.6 deg, knot >= 6.80 mm inside the wrap
+  cmc_flex_ext    wrap 55.6..155.6 deg, knot >= 6.80 mm inside the wrap
+  mcp_flex_flex   wrap 58.0..138.0 deg, knot >= 7.09 mm inside the wrap
+  mcp_flex_ext    wrap 58.0..138.0 deg, knot >= 7.09 mm inside the wrap
+  ip_flex         wrap 51.3..151.3 deg, knot >= 6.27 mm inside the wrap
+  ip_ext          wrap 51.3..151.3 deg, knot >= 6.27 mm inside the wrap
+  loop flex+ext over the full 4-joint grid: {'cmc_rot': (68.99, '1.42e-14'), 'cmc_flex': (97.52, '3.56e-01'), 'mcp_flex': (189.55, '6.03e-01'), 'ip': (261.67, '7.31e-01')}
 interface:
-  envelope hull bounds [[-48.2, -129.2, -11.8], [139.3, 26.5, 158.6]]  base sweep bounds [[18.3, -32.7, 25.3], [54.8, 4.7, 64.7]]
+  envelope hull bounds [[-48.3, -129.2, -11.8], [139.3, 26.4, 158.6]]  base sweep bounds [[18.3, -32.7, 25.3], [54.8, 4.7, 64.7]]
 renders...
 hard stops:
   stop cmc_rot: first contact {'max': 2.0, 'min': 2.0} deg past the limit (None = no stop within 30.0)

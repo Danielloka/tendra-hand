@@ -374,14 +374,18 @@ def strands(g, q):
         else:
             th_t = (th_t + 180) % 360 - 180
             wrap = th_a - th_t
-        # the strand leaves the eyelet plane x = +-X_PIP and runs straight to the track at x = X_PIP_TRACK:
-        # that last segment is fixed in the proximal frame, so the x step only adds a constant length
-        d2 = float(np.linalg.norm(np.asarray(cpts[-1]) - np.asarray(cpts[-2])))
-        L = Lc + math.hypot(d2, x - X_PIP_TRACK) - d2 + R * math.radians(wrap)
+        # the eyelet keeps the strand in its plane x = +-X_PIP; at the eyelet exit E it turns 2.4 deg toward the
+        # track at x = X_PIP_TRACK. E -> T is fixed in the proximal frame, so the x step only adds a constant.
+        Q, Tq = np.asarray(cpts[-2], float), np.asarray(cpts[-1], float)
+        Ex = P0 + u * EYELET_L
+        t = float(np.clip(np.dot(Ex - Q, u) / np.dot(Tq - Q, u), 0.0, 1.0))
+        E = Q + (Tq - Q) * t
+        dET = float(np.linalg.norm(Tq - E))
+        L = Lc + math.hypot(dET, x - X_PIP_TRACK) - dET + R * math.radians(wrap)
         arc_p = _arc(C, R, th_a, th_t)
         cross_p = np.array(cpts[::-1])  # from T back to the mouth (proximal frame)
-        pts = np.vstack([xf(Tb["proximal"], lift(X_PIP_TRACK, arc_p)), xf(Tb["proximal"], lift(x, cross_p[1:])),
-                         xf(Tb["yoke"], [[x, 0.0, BASE_BOT]])])
+        pts = np.vstack([xf(Tb["proximal"], lift(X_PIP_TRACK, arc_p)), xf(Tb["proximal"], lift(x, [E])),
+                         xf(Tb["proximal"], lift(x, cross_p[1:])), xf(Tb["yoke"], [[x, 0.0, BASE_BOT]])])
         out.append(dict(joint="pip", role=role, x_local=x, points=pts.tolist(), length=L, wrap_deg=wrap,
                         sheathed_exit=True))
     # --- mcp_abd: (x, z) plane at y = groove, centre (0, -ABD_OFFSET); + abd turns the disc clockwise
@@ -1048,7 +1052,7 @@ def render_bearings(name, out_dir=OUT):
     xw = GROOVE_W / 2 + WELL_WALL + WELL_R  # knot well centre, +x of its track
     for tag, xc in (("mcp", X_MCP_TRACK), ("pip", X_PIP_TRACK), ("mcp_knot", X_MCP_TRACK + xw),
                     ("pip_knot", X_PIP_TRACK + xw)):
-        cutb = box(-200, m[0] + xc, -200, 200, -200, 400)
+        cutb = box(-200, m[0] + xc + 0.05, -200, 200, -200, 400)  # +0.05: off the eyelet / well axis planes
         pp = {k: v.intersect(cutb) for k, v in keep.items() if BODY_OF.get(k) in ("yoke", "proximal", "middle")}
         pp = {k: v for k, v in pp.items() if v.Volume() > 1e-6}
         pp.update({k: v for k, v in st.items() if tag.split("_")[0] in k})

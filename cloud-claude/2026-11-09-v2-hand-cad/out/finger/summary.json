@@ -76,21 +76,21 @@
    {
     "strand": "pip.flex",
     "mcp_abd": 0.0,
-    "mcp_flex": 0.18791747347054866,
-    "own_mm_per_deg": -0.12217304763960309,
+    "mcp_flex": 0.19201516465459179,
+    "own_mm_per_deg": -0.12217304763960292,
     "own_nonlin_mm": 1.4210854715202004e-14,
     "loop_sum_var_mm": 1.4210854715202004e-14
    },
    {
     "strand": "pip.ext",
     "mcp_abd": 0.0,
-    "mcp_flex": 0.12768747509328193,
-    "own_mm_per_deg": 0.1221730476396033,
+    "mcp_flex": 0.12768747509326772,
+    "own_mm_per_deg": 0.12217304763960286,
     "own_nonlin_mm": 1.4210854715202004e-14,
     "loop_sum_var_mm": 1.4210854715202004e-14
    }
   ],
-  "poly_check_mm": 0.002003904930148792,
+  "poly_check_mm": 0.002003904930163003,
   "link": {
    "bar_mm": 21.632,
    "max_ratio_error_deg": 0.40966064376302835,
@@ -267,17 +267,17 @@
     "strand": "pip.flex",
     "mcp_abd": 0.0,
     "mcp_flex": 0.18624567234127198,
-    "own_mm_per_deg": -0.12217304763960284,
-    "own_nonlin_mm": 2.842170943040401e-14,
-    "loop_sum_var_mm": 0.0
+    "own_mm_per_deg": -0.1221730476396028,
+    "own_nonlin_mm": 1.4210854715202004e-14,
+    "loop_sum_var_mm": 2.842170943040401e-14
    },
    {
     "strand": "pip.ext",
     "mcp_abd": 0.0,
     "mcp_flex": 0.11273212841068414,
-    "own_mm_per_deg": 0.12217304763960304,
-    "own_nonlin_mm": 2.842170943040401e-14,
-    "loop_sum_var_mm": 0.0
+    "own_mm_per_deg": 0.1221730476396031,
+    "own_nonlin_mm": 1.4210854715202004e-14,
+    "loop_sum_var_mm": 2.842170943040401e-14
    }
   ],
   "poly_check_mm": 0.0019700582387827126,
@@ -457,7 +457,7 @@
     "strand": "pip.flex",
     "mcp_abd": 0.0,
     "mcp_flex": 0.18942994411997915,
-    "own_mm_per_deg": -0.12217304763960289,
+    "own_mm_per_deg": -0.1221730476396029,
     "own_nonlin_mm": 1.4210854715202004e-14,
     "loop_sum_var_mm": 1.4210854715202004e-14
    },
@@ -465,8 +465,8 @@
     "strand": "pip.ext",
     "mcp_abd": 0.0,
     "mcp_flex": 0.11350214251844193,
-    "own_mm_per_deg": 0.12217304763960345,
-    "own_nonlin_mm": 2.1316282072803006e-14,
+    "own_mm_per_deg": 0.12217304763960327,
+    "own_nonlin_mm": 1.4210854715202004e-14,
     "loop_sum_var_mm": 1.4210854715202004e-14
    }
   ],
@@ -644,21 +644,21 @@
    {
     "strand": "pip.flex",
     "mcp_abd": 0.0,
-    "mcp_flex": 0.19209186562315494,
+    "mcp_flex": 0.19334913691395172,
     "own_mm_per_deg": -0.12217304763960304,
-    "own_nonlin_mm": 7.105427357601002e-15,
+    "own_nonlin_mm": 1.4210854715202004e-14,
     "loop_sum_var_mm": 1.4210854715202004e-14
    },
    {
     "strand": "pip.ext",
     "mcp_abd": 0.0,
-    "mcp_flex": 0.1311455332844247,
-    "own_mm_per_deg": 0.12217304763960295,
+    "mcp_flex": 0.1311455332844389,
+    "own_mm_per_deg": 0.1221730476396033,
     "own_nonlin_mm": 1.4210854715202004e-14,
     "loop_sum_var_mm": 1.4210854715202004e-14
    }
   ],
-  "poly_check_mm": 0.0020470354330939244,
+  "poly_check_mm": 0.0020470354331081353,
   "link": {
    "bar_mm": 17.1768,
    "max_ratio_error_deg": 0.42430922980517094,
@@ -755,14 +755,6 @@
    "(0.0, 90.0, 95.0)": [],
    "(15.0, 90.0, 95.0)": []
   },
-  "strand_in_solid": [
-   [
-    "{'mcp_flex': -10, 'pip': -5}",
-    "pip.flex",
-    "eyelet_flex",
-    7,
-    187
-   ]
-  ]
+  "strand_in_solid": []
  }
 }

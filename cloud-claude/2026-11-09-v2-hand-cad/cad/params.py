@@ -28,6 +28,19 @@ PRESS_FIT = -0.1
 PIN_D_FINGER = 2.0
 PIN_D_BIG = 3.0  # thumb base, wrist
 
+# --- Joint bearings (owner, 2026-11-13) --------------------------------------------------------------
+# Every finger and thumb hinge: 2 x MR84ZZ, one in each side lug of the parent (owner's V0/V1 practice:
+# a fork; 4 mm axle bosses or a 4 mm steel axle on the child run in 8 mm seats). Parts named "bearing_*"
+# so the viewer can show/hide them.
+BEARING_JOINT = {"name": "MR84ZZ", "id": 4.0, "od": 8.0, "w": 3.0}
+BEARING_SEAT_D = 8.0 - 0.05  # light press in PETG (tune after a test print)
+BEARING_SHOULDER = 0.6  # radial step that stops the outer race (bore 6.8 behind the seat)
+JOINT_AXLE_D = 4.0  # child boss / steel axle through the inner races
+# Tendon track (owner, 2026-11-13): ONE groove per joint; one strand runs into it from the palm side,
+# goes over the drum, is knotted through a tie hole at the top of the track ring, and leaves on the back
+# side. Pulling either end turns the joint either way (antagonistic loop from one line).
+TIE_HOLE_D = 1.0
+
 # --- Fingers ---------------------------------------------------------------------------------------
 # mcp: MCP flexion axis centre (x, y, z); axes along -X/+X (flexion), abduction axis along Y.
 # abd_offset: MCP abduction axis sits this far proximal (-Z) of the flexion axis (V1 used 19 mm; a

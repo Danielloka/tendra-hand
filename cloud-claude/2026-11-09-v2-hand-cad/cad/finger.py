@@ -10,15 +10,26 @@ Joints (positive = closing):
     pip      axis +X through (0, 0, L1)
     dip      axis +X through (0, 0, L1 + L2)        no servo: dip = f(pip) through a rigid bar (~0.75 x pip)
 
-Tendon drive (one antagonistic loop per servo joint, drum radius params.R_DRUM = 7 mm on every joint):
-    mcp_abd   drum = disc about Y on the dorsal end of the yoke; its 2 strands go to sheaths fixed in the palm.
-    mcp_flex  drum = proximal phalanx base; grooves at x = -4.3 (flex, palm side) / +4.3 (ext, back side).
-    pip       drum = middle phalanx base; grooves at x = -1.4 (flex) / +1.4 (ext).
+Tendon drive (owner's track, 2026-11-13): ONE groove ("track") per servo joint, radius params.R_DRUM = 7 mm.
+One strand comes up from the palm-side sheath, wraps over the drum and goes down to the back-side sheath; at
+the "top" of the track ring (ANCHOR angle, the middle of the wrap over the joint range) both strand ends go
+into a TIE_HOLE_D tie hole in the groove's side wall and are knotted together in a knot well behind it.
+The knot cannot pass the hole, so pulling either end turns the joint either way.
+    mcp_abd   disc about Y on the dorsal end of the yoke, track at y = ABD_TRACK_Y; strands to palm sheaths.
+    mcp_flex  proximal phalanx base, track at x = X_MCP_TRACK (flex and ext strand in the same groove).
+    pip       middle phalanx base, track at x = X_PIP_TRACK = 0.
 The mcp_flex and pip strands arrive in PTFE sheaths that are clamped in the yoke (the abduction joint
-is crossed inside the sheaths = Bowden, exact). The pip strands cross the MCP flexion axis bare, through a
-stainless eyelet whose rim sits just proximal of the axis (see crossing_length(): < 0.2 mm). Every strand
-ends on a 1.5 mm steel post that sits flush with its groove floor (the strand runs from the drum onto the
-post without a reverse bend, 1-1.5 wraps, then a knot).
+is crossed inside the sheaths = Bowden, exact). The pip strands cross the MCP flexion axis bare, through two
+stainless eyelets at x = -/+X_PIP whose rims sit just proximal of the axis (crossing_length(): < 0.2 mm), then
+converge (2.4 deg fleet angle) to the single PIP track at x = 0.
+
+Joint bearings (owner, 2026-11-13): every flexion hinge runs on 2 x MR84ZZ (4x8x3), one in each side lug of
+the fork (MCP: yoke, PIP: proximal, DIP: distal). Seats are pressed in from the outer face against an inner
+shoulder; the child carries a Ø5 hub that touches only the inner races (zero axial play). Axles: MCP = two
+4 x 6 mm steel stubs (the centre stays free for the crossing pip strands), PIP and DIP = one 4 mm steel
+through-pin, pressed in the child. mcp_abd: 2 x MR63ZZ (3x6x2.5) in the palm's knuckle bosses, on two 3 mm
+steel stubs pressed in the yoke (MR84 does not fit beside the mcp flex sheath; see report 06).
+Bearings are separate parts "bearing_<joint>_<side>"; build(..., bearings=False) leaves them out.
 
 API: build(name, q=None) -> {"parts", "joints", "strands", "interface"}; see the bottom for __main__.
 Run: uv run --no-project --with cadquery --with trimesh --with numpy --with matplotlib --with scipy \
@@ -58,25 +69,45 @@ GROOVE_FLOOR = R - LINE_R  # 6.82
 GROOVE_W = P.GROOVE_W  # 1.0
 ABD_OFFSET = 11.5  # [REQ] MCP abduction axis below the flexion axis (params default 10, V1 19)
 KNUCKLE_MIN_W = 17.0  # MCP knuckle (yoke + drum) is at least this wide (little finger: 17 > 15.5)
-X_MCP_GROOVE = 4.3  # mcp_flex grooves (flex -x, ext +x)
-X_PIP = 1.4  # pip strands / grooves (flex -x, ext +x)
+X_MCP_TRACK = -3.3  # the single mcp_flex track (flex + ext strand); between the crossing slot and the -x lug
+X_PIP = 1.4  # pip strands where they cross the MCP (eyelets, yoke sheaths): flex -x, ext +x
+X_PIP_TRACK = 0.0  # the single PIP track on the middle phalanx
 SLOT_HALF = 2.2  # open slot in the MCP drum where the pip strands cross the axis
-STUB_X0 = 2.65  # MCP stub axles start here (the strand slot + eyelets stay free of steel)
+# --- bearings (params.BEARING_JOINT = MR84ZZ 4x8x3) ---
+BRG = P.BEARING_JOINT
+BRG_W = BRG["w"]  # 3.0
+LIP_T = 0.8  # axial thickness of the seat's inner shoulder (stops the outer race)
+LUG_T = BRG_W + LIP_T  # 3.8: side lug = seat + shoulder
+SEAT_D = P.BEARING_SEAT_D  # 7.95 light press
+LIP_BORE = SEAT_D - 2 * P.BEARING_SHOULDER  # 6.75: only the outer race rests on the shoulder
+HUB_R = 2.5  # child hub (touches the inner race only; MR84 inner ring land ~ dia 5.2)
+AXLE_D = P.JOINT_AXLE_D  # 4.0 steel
+STUB_L = 6.0  # MCP stubs: 4 x 6 mm dowels, flush with the yoke's outer face
+BRG_ABD = {"name": "MR63ZZ", "id": 3.0, "od": 6.0, "w": 2.5}  # abd: in the palm bosses
+ABD_SEAT_D = 6.0 - 0.05
+ABD_BRG_Y = {"palmar": (-12.6, -10.1), "dorsal": (15.55, 18.05)}  # finger-local y of the abd bearings
+ABD_LIP = {"palmar": (-10.1, -9.25), "dorsal": (14.85, 15.55)}  # palm shoulders (bore 4.8) next to them
+# --- track anchors / tie holes ---
+TIE_D = P.TIE_HOLE_D  # 1.0
+TIE_R = R - LINE_R - TIE_D / 2 + 0.1  # 6.42: tie hole centre; its top breaks 0.1 through the groove floor
+WELL_R = 0.8  # knot well radius (well = radial blind hole from r WELL_R0 out through the surface)
+WELL_R0 = 4.5
+WELL_WALL = 0.6  # groove side wall between the track and the knot well (the knot bears on it)
 SOCKET_TOP = -8.5  # yoke top face (sheath mouths); clears the MCP drum flange by >= 0.25
 TUBE_STOP = -9.5  # PTFE sheath ends here (2.2 bore below, 1.2 bore above)
 BASE_BOT = -16.0  # yoke bottom (sheaths leave the finger here, pointing -Z)
 YOKE_Y = (-9.0, 9.4)
 ABD_DISC_Y = (9.0, 14.6)
-ABD_GROOVE_Y = {"flex": 10.7, "ext": 13.3}  # flex = +x side strand (pulls toward the thumb)
-ABD_PIN_D = P.PIN_D_BIG  # 3 mm dowels, palmar + dorsal (pins far apart: stiff against finger twist)
+ABD_TRACK_Y = 11.8  # the single abd track (flex strand on the +x side, ext on -x)
+ABD_GROOVE_Y = {"flex": ABD_TRACK_Y, "ext": ABD_TRACK_Y}
+ABD_PIN_D = P.PIN_D_BIG  # 3 mm steel stubs, palmar + dorsal, pressed in the yoke, running in MR63s in the palm
 ABD_PIN_Y = {"palmar": (-12.5, -6.25), "dorsal": (8.0, 18.0)}  # palm holds y < -9.25 and y > 14.85
 PALM_GUIDE_DZ = 22.0  # sheath free span below the yoke before the palm's guide channel
 ABD_SOCKET_DZ = 12.0  # abd strands: sheath mouths in the palm this far below the abd axis
-PIN_D = P.PIN_D_FINGER  # 2 mm dowels: MCP stubs, PIP, DIP
-POST_D = 1.5  # anchor posts (steel), flush with the groove floor
-POST_R_C = GROOVE_FLOOR - POST_D / 2  # post centre radius (6.07)
-POCKET_R = 1.45  # cavity around a post so the strand can wrap it
-ANCHOR = {"mcp_flex": 50.0, "pip": 45.0}  # anchor (material) angle, deg, in the (y, z) plane, 0 = +y
+# Track anchor (tie hole) angle, deg, in the (y, z) plane from +y toward +z. MCP: 50 = 40 deg dorsal of the
+# finger axis at q = 0, i.e. straight up (+z of the yoke) at mid-range q = 40: 40 deg of wrap on each side at the
+# range ends. PIP: computed in geom() from its tangent points (same rule: equal wrap margins).
+ANCHOR = {"mcp_flex": 50.0, "pip": None}  # pip: g["anchor_pip"] (45.0 on all four fingers, 50.9 deg margins)
 LINK_PIN_D = 1.5  # DIP bar pins
 BAR_T, BAR_W = 1.2, 3.2  # DIP bar (stainless strip, or PETG for a first print)
 RECESS = 1.6  # the -x side face is recessed this much where the bar runs (bar stays inside W)
@@ -162,14 +193,17 @@ def geom(name: str) -> dict:
     hw, hh = W / 2, H / 2
     hk = max(W, KNUCKLE_MIN_W) / 2
     r_fl = max(R + 0.6, min(8.0, hh))  # drum flange radius (>= 0.6 above the line)
+    # PIP / DIP forks: -x lug outer face = the bar recess face (pl), lugs LUG_T thick, child between them
+    pl = -hw + RECESS
     g = dict(name=name, mcp=np.array(f["mcp"], float), L1=L1, L2=L2, L3=L3, W=W, H=H, hw=hw, hh=hh, hk=hk,
              r_fl=r_fl, r_boss=r_fl + CLR, r_band=r_fl + 2 * CLR,
-             xd=hk - 2.5,  # MCP drum half width (cheeks 2.25 thick)
-             xdp=min(5.0, hw - 4.0),  # PIP drum half width
-             xt=hw - 4.25,  # DIP tongue half width
+             xd=hk - LUG_T - CLR,  # MCP drum half width (yoke lugs LUG_T thick)
+             pl=pl, cl=pl + LUG_T, cr=hw - LUG_T,  # PIP/DIP lug faces: -x outer, -x inner, +x inner
+             xl=pl + LUG_T + CLR, xr=hw - LUG_T - CLR,  # PIP drum / DIP tongue from xl to xr (asymmetric)
              z_pip=L1, z_dip=L1 + L2, z_tip=L1 + L2 + L3)
-    # DIP bar (V1 maths, lengths from params). Bar sits outside the axle heads -> AXIS_CLEAR 2 mm is fine.
-    DL.AXIS_CLEAR = 2.0
+    # DIP bar (V1 maths, lengths from params). Pins A and B must clear the Ø8 bearings in the -x lugs:
+    # r >= 5.0 (pin A web to the seat 0.27 mm); bar centreline within +-6.5 of the phalanx axis.
+    DL.AXIS_CLEAR, DL.PIN_R_MIN, DL.PIN_R_MAX, DL.HALF_HEIGHT = 2.0, 5.0, 6.5, 6.5
     g["link"] = DL.design(float(L2))
     # eyelet entrance: optimise its height so the pip strands' length change over the MCP range is smallest
     best = None
@@ -179,7 +213,22 @@ def geom(name: str) -> dict:
         if best is None or e < best[0]:
             best = (e, float(z0))
     g["z0"] = best[1]
+    # PIP track anchor: equal wrap margins at both range ends (flex strand at pip max, ext at pip min)
+    C = np.array([0.0, L1])
+    th = {}
+    for side, key in ((-1, "flex"), (1, "ext")):
+        T = eyelet_axis(g, side)[2]
+        th[key] = math.degrees(math.atan2(*(T - C)[::-1]))
+    th["flex"] %= 360
+    th["ext"] = (th["ext"] + 180) % 360 - 180
+    lo, hi = LIMITS["pip"]
+    g["anchor_pip"] = (th["flex"] + th["ext"] - hi - lo) / 2
+    g["wrap_margin_pip"] = th["flex"] - g["anchor_pip"] - hi
     return g
+
+
+def anchor_deg(g, joint):
+    return ANCHOR["mcp_flex"] if joint == "mcp_flex" else g["anchor_pip"]
 
 
 def dip_of(g, pip_deg):
@@ -302,8 +351,8 @@ def strands(g, q):
     Tb = body_transforms(g, q)
     out = []
     # --- mcp_flex: (u, v) = (y, z) in the proximal frame; drum centre (0, 0)
-    for role, x, th_t in (("flex", -X_MCP_GROOVE, 180.0), ("ext", X_MCP_GROOVE, 0.0)):
-        th_a = ANCHOR["mcp_flex"] + q["mcp_flex"]  # anchor angle in space-aligned coordinates
+    for role, x, th_t in (("flex", X_MCP_TRACK, 180.0), ("ext", X_MCP_TRACK, 0.0)):
+        th_a = ANCHOR["mcp_flex"] + q["mcp_flex"]  # anchor (tie hole) angle in space-aligned coordinates
         mouth = np.array([R if role == "ext" else -R, SOCKET_TOP])
         arc_sp = _arc((0, 0), R, th_a, th_t)  # space-aligned (yoke frame) arc from anchor to tangent
         wrap = (th_t - th_a) if role == "flex" else (th_a - th_t)
@@ -318,17 +367,20 @@ def strands(g, q):
         P0, u, T = eyelet_axis(g, side)
         C = np.array([0.0, g["L1"]])
         th_t = math.degrees(math.atan2(*(T - C)[::-1]))  # tangent angle (proximal frame, fixed)
-        th_a = ANCHOR["pip"] + q["pip"]  # anchor angle seen from the proximal frame
+        th_a = g["anchor_pip"] + q["pip"]  # anchor (tie hole) angle seen from the proximal frame
         if role == "flex":
             th_t = th_t % 360
             wrap = th_t - th_a
         else:
             th_t = (th_t + 180) % 360 - 180
             wrap = th_a - th_t
-        L = Lc + R * math.radians(wrap)
+        # the strand leaves the eyelet plane x = +-X_PIP and runs straight to the track at x = X_PIP_TRACK:
+        # that last segment is fixed in the proximal frame, so the x step only adds a constant length
+        d2 = float(np.linalg.norm(np.asarray(cpts[-1]) - np.asarray(cpts[-2])))
+        L = Lc + math.hypot(d2, x - X_PIP_TRACK) - d2 + R * math.radians(wrap)
         arc_p = _arc(C, R, th_a, th_t)
         cross_p = np.array(cpts[::-1])  # from T back to the mouth (proximal frame)
-        pts = np.vstack([xf(Tb["proximal"], lift(x, arc_p)), xf(Tb["proximal"], lift(x, cross_p[1:])),
+        pts = np.vstack([xf(Tb["proximal"], lift(X_PIP_TRACK, arc_p)), xf(Tb["proximal"], lift(x, cross_p[1:])),
                          xf(Tb["yoke"], [[x, 0.0, BASE_BOT]])])
         out.append(dict(joint="pip", role=role, x_local=x, points=pts.tolist(), length=L, wrap_deg=wrap,
                         sheathed_exit=True))
@@ -442,16 +494,51 @@ def stop_windows(lo, hi):
     return parent, child
 
 
+def bearing_solid(p0, p1, spec=None):
+    """Ball bearing at its real size between face centres p0 -> p1: outer race, inner race and a shield
+    (recessed 0.2 mm) in one solid with the ID bore, like a ZZ bearing seen from outside."""
+    spec = spec or BRG
+    p0, p1 = np.asarray(p0, float), np.asarray(p1, float)
+    u = (p1 - p0) / np.linalg.norm(p1 - p0)
+    ro, ri = spec["od"] / 2, spec["id"] / 2
+    t = 0.3 * (ro - ri)  # race wall thickness
+    def ann(a, b, r_out, r_in):
+        return cyl(r_out, a, b).cut(cyl(r_in, a - u, b + u))
+    outer = ann(p0, p1, ro, ro - t)
+    inner = ann(p0, p1, ri + t, ri)
+    shield = ann(p0 + u * 0.2, p1 - u * 0.2, ro - t + 0.01, ri + t - 0.01)
+    return U(outer, inner, shield)
+
+
+def seat_cut_x(xo, inward, zc):
+    """Bearing seat (dia SEAT_D, BRG_W deep, open on the outer face xo) + the shoulder bore behind it."""
+    s = inward
+    return U(cylx(SEAT_D / 2, xo - s * 1.0, xo + s * BRG_W, 0, zc),
+             cylx(LIP_BORE / 2, xo + s * (BRG_W - 0.01), xo + s * (LUG_T + 0.5), 0, zc))
+
+
+def tie_cuts(x_track, phi, zc, x_dir=1.0, r_out=14.0):
+    """Owner's tie point on a track (axis along X through (0, zc)): a TIE_D hole through the groove's side wall at
+    angle phi (deg from +y toward +z) and radius TIE_R (its top flush with the groove floor), into a knot well
+    (radial blind hole, WELL_R, from WELL_R0 out through the part's surface) on the x_dir side of the groove."""
+    c, s = math.cos(math.radians(phi)), math.sin(math.radians(phi))
+    xw = x_track + x_dir * (GROOVE_W / 2 + WELL_WALL + WELL_R)
+    hole = cylx(TIE_D / 2, x_track, xw, TIE_R * c, zc + TIE_R * s)
+    well = cyl(WELL_R, (xw, WELL_R0 * c, zc + WELL_R0 * s), (xw, r_out * c, zc + r_out * s))
+    return [hole, well]
+
+
 @functools.cache
 def local_parts(name: str) -> dict:
     """All solids of one finger in the finger-local frame at q = 0 (cached; build() places copies)."""
     g = geom(name)
-    hw, hh, hk, xd, xdp, xt = g["hw"], g["hh"], g["hk"], g["xd"], g["xdp"], g["xt"]
+    hw, hh, hk, xd = g["hw"], g["hh"], g["hk"], g["xd"]
+    pl, cl, cr, xl, xr = g["pl"], g["cl"], g["cr"], g["xl"], g["xr"]
     L1, zp, zd, zt = g["L1"], g["z_pip"], g["z_dip"], g["z_tip"]
     r_fl, r_boss, r_band = g["r_fl"], g["r_boss"], g["r_band"]
     parts = {}
 
-    # ---------------- yoke (MCP clevis + abduction drum + sheath clamps) ----------------
+    # ---------------- yoke (MCP fork with 2 x MR84 + abduction drum + sheath clamps) ----------------
     mcp_par, mcp_chi = stop_windows(*LIMITS["mcp_flex"])
     base = fbox(-hk, hk, YOKE_Y[0], YOKE_Y[1], BASE_BOT, SOCKET_TOP, 1.5)
     cheeks = []
@@ -465,23 +552,26 @@ def local_parts(name: str) -> dict:
     disc = cyl(r_fl, (0, ABD_DISC_Y[0], -ABD_OFFSET), (0, ABD_DISC_Y[1], -ABD_OFFSET))
     yoke = U(yoke, disc)
     cut = []
-    for role, y in ABD_GROOVE_Y.items():  # abd grooves (full circle) + post pocket at the top
-        ring = cyl(r_fl + 1, (0, y - GROOVE_W / 2, -ABD_OFFSET), (0, y + GROOVE_W / 2, -ABD_OFFSET)).cut(
-            cyl(GROOVE_FLOOR, (0, y - 1, -ABD_OFFSET), (0, y + 1, -ABD_OFFSET)))
-        cut += [ring, cyl(POCKET_R, (0, y - 0.8, -ABD_OFFSET + POST_R_C), (0, y + 0.8, -ABD_OFFSET + POST_R_C))]
-    cut.append(cyl(POST_D / 2, (0, ABD_DISC_Y[0] + 0.4, -ABD_OFFSET + POST_R_C), (0, ABD_DISC_Y[1] + 1, -ABD_OFFSET + POST_R_C)))
-    cut.append(cyl(ABD_PIN_D / 2, (0, YOKE_Y[0] - 1, -ABD_OFFSET), (0, -6.0, -ABD_OFFSET)))  # palmar pin, blind
+    # abd: ONE track (full circle) + tie hole at the top of the disc into a knot notch on its dorsal end
+    y = ABD_TRACK_Y
+    cut.append(cyl(r_fl + 1, (0, y - GROOVE_W / 2, -ABD_OFFSET), (0, y + GROOVE_W / 2, -ABD_OFFSET)).cut(
+        cyl(GROOVE_FLOOR, (0, y - 1, -ABD_OFFSET), (0, y + 1, -ABD_OFFSET))))
+    yw0 = y + GROOVE_W / 2 + WELL_WALL
+    cut.append(cyl(TIE_D / 2, (0, y, -ABD_OFFSET + TIE_R), (0, yw0 + 0.8, -ABD_OFFSET + TIE_R)))
+    cut.append(box(-WELL_R - 0.1, WELL_R + 0.1, yw0, ABD_DISC_Y[1] + 1, -ABD_OFFSET + WELL_R0, -ABD_OFFSET + r_fl + 1))
+    cut.append(cyl(ABD_PIN_D / 2, (0, YOKE_Y[0] - 1, -ABD_OFFSET), (0, -6.0, -ABD_OFFSET)))  # palmar stub (press)
     cut.append(cyl(ABD_PIN_D / 2, (0, ABD_PIN_Y["dorsal"][0], -ABD_OFFSET), (0, ABD_DISC_Y[1] + 1, -ABD_OFFSET)))
-    cut.append(cylx(PIN_D / 2, -hk - 1, -xd - 0.01))  # MCP stub axle seats (press)
-    cut.append(cylx(PIN_D / 2, xd + 0.01, hk + 1))
-    for x, y in ((-X_MCP_GROOVE, -R), (X_MCP_GROOVE, R), (-X_PIP, 0.0), (X_PIP, 0.0)):
-        cut.append(cyl(SHEATH_BORE / 2, (x, y, BASE_BOT - 1), (x, y, TUBE_STOP)))
-        cut.append(cyl(BARE_BORE / 2, (x, y, TUBE_STOP - 0.01), (x, y, SOCKET_TOP + 1)))
+    for s in (-1, 1):  # MCP bearing seats, pressed in from the outer faces
+        cut.append(seat_cut_x(s * hk, -s, 0.0))
+    for x, yy in ((X_MCP_TRACK, -R), (X_MCP_TRACK, R), (-X_PIP, 0.0), (X_PIP, 0.0)):
+        cut.append(cyl(SHEATH_BORE / 2, (x, yy, BASE_BOT - 1), (x, yy, TUBE_STOP)))
+        cut.append(cyl(BARE_BORE / 2, (x, yy, TUBE_STOP - 0.01), (x, yy, SOCKET_TOP + 1)))
     parts["yoke"] = yoke.cut(U(*cut)).clean()
 
-    # ---------------- proximal phalanx (MCP drum, shaft, PIP clevis) ----------------
+    # ---------------- proximal phalanx (MCP drum + hubs, shaft, PIP fork with 2 x MR84) ----------------
     pip_par, pip_chi = stop_windows(*LIMITS["pip"])
     drum = cylx(r_fl, -xd, xd)
+    hubs = [cylx(HUB_R, s * (xd - 0.01), s * (hk - BRG_W - 0.05)) for s in (-1, 1)]  # touch the inner races
     neck = box(-xd, xd, -hh, hh, 0, r_band + 0.5)
     shaft = fbox(-hw, hw, -hh, hh, r_band, zp - r_boss, 3.0)
     heels = []
@@ -490,18 +580,19 @@ def local_parts(name: str) -> dict:
         heels.append(sector_x(mcp_chi[0], 0.0, 10.0, x0, x1, 0.0, r_in=r_band))
         heels.append(box(x0, x1, -hh, hh, 0.0, r_band + 0.01).cut(cylx(r_band, x0 - 1, x1 + 1)))
     pcheeks = []
-    for s in (-1, 1):
-        x0, x1 = sorted((s * (xdp + CLR), s * hw))
+    for x0, x1 in ((-hw, cl), (cr, hw)):
         arm = box(x0, x1, -hh, hh, zp - r_band - 3, zp)
         lug = sector_x(pip_par[1] - 42, pip_par[1], 10.0, x0, x1, zp, r_in=r_boss - 0.5)
         ch = U(cylx(r_boss, x0, x1, 0, zp), arm, lug)
         pcheeks.append(keep_near_joint(ch, zp, pip_par[0], pip_par[1], r_boss))
-    prox = U(drum, neck, shaft, *heels, *pcheeks)
+    prox = U(drum, *hubs, neck, shaft, *heels, *pcheeks)
     prox = keep_near_joint(prox, 0.0, mcp_chi[0], mcp_chi[1], r_fl + 0.01)
     prox = keep_near_joint(prox, zp, pip_par[0], pip_par[1], r_boss + 0.01)  # PIP flexion stop at ~96 deg
-    # 1 mm groove slot reaches r 12: at 90 deg the flex strand runs through the root of the shaft
-    cut = [ring_groove_x(s * X_MCP_GROOVE, GROOVE_FLOOR, 12.0) for s in (-1, 1)]
-    cut += [cylx(PIN_D / 2 + CLR / 2, s * STUB_X0, s * (xd + 1)) for s in (-1, 1)]  # stub axles, running fit
+    # the single MCP track; 1 mm groove slot reaches r 12 (at 90 deg the flex strand runs through the shaft root)
+    cut = [ring_groove_x(X_MCP_TRACK, GROOVE_FLOOR, 12.0)]
+    cut += tie_cuts(X_MCP_TRACK, ANCHOR["mcp_flex"], 0.0, x_dir=+1.0)
+    x_stub = max(hk - STUB_L - 0.3, SLOT_HALF + 0.3)  # blind end of the stub hole (keeps 0.3 to the slot)
+    cut += [cylx(AXLE_D / 2, s * x_stub, s * (hk + 0.1)) for s in (-1, 1)]  # 4 mm stubs (press)
     # pip strands: open slot under the eyelets (strand fan), eyelet bosses kept, eyelet + strand bores
     slot = box(-SLOT_HALF, SLOT_HALF, -12, 12, -12, g["z0"] + 1.6)  # eyelet sticks out 0.6 below the plastic
     bosses, bores = [], []
@@ -511,63 +602,60 @@ def local_parts(name: str) -> dict:
         uu = np.array([0, *u])
         bosses.append(cyl(1.25, p0 + uu * 0.6, p0 + uu * 2.0))
         bores.append(cyl(EYELET_OD / 2, p0 - uu * 0.5, p0 + uu * (EYELET_L + 0.01)))
-        bores.append(cyl(BARE_BORE / 2, p0 + uu * (EYELET_L - 0.2), np.array([x, *T]) + uu * 2))
+        pe = p0 + uu * (EYELET_L - 0.2)
+        T3 = np.array([X_PIP_TRACK, *T])
+        dv = (T3 - pe) / np.linalg.norm(T3 - pe)
+        bores.append(cyl(BARE_BORE / 2, pe, T3 + dv * 2))  # straight, converging to the PIP track (2.4 deg)
     cut.append(slot.cut(U(*bosses)))
     cut += bores
-    pa = np.array([POST_R_C * math.cos(math.radians(ANCHOR["mcp_flex"])), POST_R_C * math.sin(math.radians(ANCHOR["mcp_flex"]))])
-    cut.append(cylx(POST_D / 2, -(X_MCP_GROOVE + 1.5), X_MCP_GROOVE + 1.5, pa[0], pa[1]))
-    for s in (-1, 1):
-        cut.append(cylx(POCKET_R, s * X_MCP_GROOVE - 0.8, s * X_MCP_GROOVE + 0.8, pa[0], pa[1]))
-    cut.append(cylx(PIN_D / 2, -hw - 1, hw + 1, 0, zp))  # PIP axle seat (press in the cheeks)
+    cut.append(seat_cut_x(pl, +1, zp))  # PIP bearing seats: -x from the bar recess face, +x from the side face
+    cut.append(seat_cut_x(hw, -1, zp))
     cut.append(box(-hw - 1, -hw + RECESS, -20, 20, zp - 12, zp + 12))  # bar recess
     A, B = link_pins_local(g)
-    cut.append(cylx(LINK_PIN_D / 2, -hw + RECESS - 0.01, -hw + RECESS + 1.5, A[0], A[1]))  # blind, 1.5 deep
+    cut.append(cylx(LINK_PIN_D / 2, pl - 0.01, pl + 1.5, A[0], A[1]))  # blind, 1.5 deep (0.27 web to the seat)
     parts["proximal"] = prox.cut(U(*cut)).clean()
 
-    # ---------------- middle phalanx (PIP drum, body, DIP tongue) ----------------
+    # ---------------- middle phalanx (PIP drum + hubs, body, DIP tongue + hubs) ----------------
     dip_lo, dip_hi = float(dip_of(g, LIMITS["pip"][0])), float(dip_of(g, LIMITS["pip"][1]))
     g["dip_range"] = (dip_lo, dip_hi)
     dip_par, dip_chi = stop_windows(dip_lo, dip_hi)
-    xn = min(xdp, xt)
-    mdrum = cylx(r_fl, -xdp, xdp, 0, zp)
-    mneck = box(-xdp, xdp, -hh, hh, zp, zp + r_band + 0.5)
-    mnarrow = box(-xn, xn, -hh, hh, zp, zd)
-    tongue = cylx(r_fl, -xt, xt, 0, zd)
+    mdrum = cylx(r_fl, xl, xr, 0, zp)
+    mneck = box(xl, xr, -hh, hh, zp, zp + r_band + 0.5)
+    mnarrow = box(xl, xr, -hh, hh, zp, zd)
+    tongue = cylx(r_fl, xl, xr, 0, zd)
+    mhubs = []
+    for zc in (zp, zd):
+        mhubs += [cylx(HUB_R, xl + 0.01, pl + BRG_W + 0.05, 0, zc), cylx(HUB_R, xr - 0.01, hw - BRG_W - 0.05, 0, zc)]
     mbody = fbox(-hw + RECESS, hw, -hh, hh, zp + r_band, zd - r_band, 2.5)
     mheels = []
-    for s in (-1, 1):
-        x0, x1 = sorted((s * (xdp + CLR), s * (hw if s > 0 else hw - RECESS)))
+    for x0, x1 in ((pl, cl), (cr, hw)):
         mheels.append(sector_x(pip_chi[0], 0.0, 10.0, x0, x1, zp, r_in=r_band))
-    mid = U(mdrum, mneck, mnarrow, tongue, mbody, *mheels)
+    mid = U(mdrum, mneck, mnarrow, tongue, mbody, *mheels, *mhubs)
     mid = keep_near_joint(mid, zp, pip_chi[0], pip_chi[1], r_fl + 0.01)
     mid = keep_near_joint(mid, zd, dip_par[0], dip_par[1], r_fl + 0.01)
-    cut = [ring_groove_x(s * X_PIP, GROOVE_FLOOR, 11.0, zp) for s in (-1, 1)]  # slot to r 11 (strand at 95 deg)
-    cut.append(cylx(PIN_D / 2 + CLR / 2, -xdp - 1, xdp + 1, 0, zp))  # PIP axle, running fit
-    cut.append(cylx(PIN_D / 2 + CLR / 2, -xt - 1, xt + 1, 0, zd))  # DIP axle, running fit
-    pm = np.array([POST_R_C * math.cos(math.radians(ANCHOR["pip"])), zp + POST_R_C * math.sin(math.radians(ANCHOR["pip"]))])
-    cut.append(cylx(POST_D / 2, -(X_PIP + 1.5), X_PIP + 1.5, pm[0], pm[1]))
-    cut.append(cylx(POCKET_R, -X_PIP - 0.8, X_PIP + 0.8, pm[0], pm[1]))
+    cut = [ring_groove_x(X_PIP_TRACK, GROOVE_FLOOR, 11.0, zp)]  # the single PIP track, slot to r 11 (strand at 95)
+    cut += tie_cuts(X_PIP_TRACK, g["anchor_pip"], zp, x_dir=+1.0)
+    cut.append(cylx(AXLE_D / 2, pl - 1, hw + 1, 0, zp))  # PIP through-pin (press in the middle)
+    cut.append(cylx(AXLE_D / 2, pl - 1, hw + 1, 0, zd))  # DIP through-pin (press in the middle)
     parts["middle"] = mid.cut(U(*cut)).clean()
 
-    # ---------------- distal phalanx (DIP clevis + fingertip) ----------------
+    # ---------------- distal phalanx (DIP fork with 2 x MR84 + fingertip) ----------------
     hwt = 0.92 * hw
     dcheeks = []
-    for s in (-1, 1):
-        x0, x1 = sorted((s * (xt + CLR), s * (hw if s > 0 else hw - RECESS)))
+    for x0, x1 in ((pl, cl), (cr, hw)):
         arm = box(x0, x1, -hh + PAD_T, hh, zd, zd + r_band + 1)
         dcheeks.append(U(cylx(r_boss, x0, x1, 0, zd), arm))
     r_tip = min(hwt - 0.6, 6.0)  # plan-view corner radius of the fingertip
-    tip_end = zt - r_tip
     tbody = fbox(-hwt, hwt, -hh + PAD_T, hh, zd + r_boss, zt, r_tip, "|Y and >Z")
     try:  # round the dorsal edges (nail side)
         tbody = _cq().Workplane().add(tbody).edges(">Y").fillet(2.0).val()
     except Exception:
         pass
-    dist = U(*dcheeks, tbody, box(-xt - CLR - 0.01, xt + CLR + 0.01, -hh + PAD_T, hh, zd + r_boss, zd + r_band + 1))
+    dist = U(*dcheeks, tbody, box(cl - 0.01, cr + 0.01, -hh + PAD_T, hh, zd + r_boss, zd + r_band + 1))
     dist = keep_near_joint(dist, zd, dip_chi[0], dip_chi[1], r_boss + 0.01)
-    cut = [cylx(PIN_D / 2, -hw - 1, hw + 1, 0, zd)]
+    cut = [seat_cut_x(pl, +1, zd), seat_cut_x(hw, -1, zd)]
     cut.append(box(-hw - 1, -hw + RECESS, -20, 20, zd - 12, zd + 9))
-    cut.append(cylx(LINK_PIN_D / 2, -hw + RECESS - 0.01, -hw + RECESS + 1.8, B[0], B[1]))
+    cut.append(cylx(LINK_PIN_D / 2, pl - 0.01, pl + 1.8, B[0], B[1]))
     parts["distal"] = dist.cut(U(*cut)).clean()
 
     # ---------------- TPU pads ----------------
@@ -580,41 +668,62 @@ def local_parts(name: str) -> dict:
     except Exception:
         pass
     parts["pad_tip"] = pad.clean()
-    parts["pad_proximal"] = fbox(-hw + 1.8, hw - 1.8, -hh - 1.5, -hh, r_band + 4, zp - r_boss - 3, 1.0, "|Y")
+    # starts r_band + 6 (was + 4): at MCP 90 deg its proximal corner otherwise grazes the palmar abd bearing / palm boss
+    parts["pad_proximal"] = fbox(-hw + 1.8, hw - 1.8, -hh - 1.5, -hh, r_band + 6, zp - r_boss - 3, 1.0, "|Y")
     mz0, mz1 = zp + r_band + 0.5, zd - r_band - 0.5
     if mz1 - mz0 > 3:
         parts["pad_middle"] = fbox(-hw + RECESS + 1.0, hw - 1.8, -hh - 1.2, -hh, mz0, mz1, 0.8, "|Y")
 
-    # ---------------- steel: pins, posts, eyelets; PTFE sheath ends ----------------
+    # ---------------- steel: axles, pins, eyelets; PTFE sheath ends; bearings ----------------
     st = {}
-    st["pin_mcp_l"] = cylx(PIN_D / 2, -hk, -STUB_X0 - 0.3)
-    st["pin_mcp_r"] = cylx(PIN_D / 2, STUB_X0 + 0.3, hk)
-    st["pin_pip"] = cylx(PIN_D / 2, -hw + RECESS, hw, 0, zp)
-    st["pin_dip"] = cylx(PIN_D / 2, -hw + RECESS, hw, 0, zd)
-    st["post_mcp"] = cylx(POST_D / 2, -(X_MCP_GROOVE + 1.5), X_MCP_GROOVE + 1.5, pa[0], pa[1])
-    st["post_pip"] = cylx(POST_D / 2, -(X_PIP + 1.5), X_PIP + 1.5, pm[0], pm[1])
-    st["post_abd"] = cyl(POST_D / 2, (0, ABD_DISC_Y[0] + 0.4, -ABD_OFFSET + POST_R_C), (0, ABD_DISC_Y[1], -ABD_OFFSET + POST_R_C))
+    st["pin_mcp_l"] = cylx(AXLE_D / 2, -hk, -(hk - STUB_L))  # 4 x 6 stub, pressed in the proximal
+    st["pin_mcp_r"] = cylx(AXLE_D / 2, hk - STUB_L, hk)
+    st["pin_pip"] = cylx(AXLE_D / 2, pl, hw, 0, zp)  # 4 mm through-pin, pressed in the middle
+    st["pin_dip"] = cylx(AXLE_D / 2, pl, hw, 0, zd)
     st["pin_abd_palmar"] = cyl(ABD_PIN_D / 2, (0, ABD_PIN_Y["palmar"][0], -ABD_OFFSET), (0, ABD_PIN_Y["palmar"][1], -ABD_OFFSET))
     st["pin_abd_dorsal"] = cyl(ABD_PIN_D / 2, (0, ABD_PIN_Y["dorsal"][0], -ABD_OFFSET), (0, ABD_PIN_Y["dorsal"][1], -ABD_OFFSET))
-    st["pin_link_a"] = cylx(LINK_PIN_D / 2, -hw, -hw + RECESS + 1.5, A[0], A[1])
-    st["pin_link_b"] = cylx(LINK_PIN_D / 2, -hw, -hw + RECESS + 1.8, B[0], B[1])
+    st["pin_link_a"] = cylx(LINK_PIN_D / 2, -hw, pl + 1.5, A[0], A[1])
+    st["pin_link_b"] = cylx(LINK_PIN_D / 2, -hw, pl + 1.8, B[0], B[1])
     for side, x, key in ((-1, -X_PIP, "eyelet_flex"), (1, X_PIP, "eyelet_ext")):
         P0, u, T = eyelet_axis(g, side)
         p0, uu = np.array([x, *P0]), np.array([0, *u])
         st[key] = cyl(EYELET_OD / 2, p0, p0 + uu * EYELET_L).cut(cyl(EYELET_ID / 2, p0 - uu, p0 + uu * (EYELET_L + 1)))
-    for x, y, key in ((-X_MCP_GROOVE, -R, "ptfe_mcp_flex"), (X_MCP_GROOVE, R, "ptfe_mcp_ext"),
+    for x, y, key in ((X_MCP_TRACK, -R, "ptfe_mcp_flex"), (X_MCP_TRACK, R, "ptfe_mcp_ext"),
                       (-X_PIP, 0.0, "ptfe_pip_flex"), (X_PIP, 0.0, "ptfe_pip_ext")):
         st[key] = cyl(SHEATH_OD / 2, (x, y, BASE_BOT), (x, y, TUBE_STOP)).cut(cyl(P.SHEATH_ID / 2, (x, y, BASE_BOT - 1), (x, y, TUBE_STOP + 1)))
     parts.update(st)
+    parts.update(bearing_parts(g))
     return parts
 
 
+def bearing_parts(g):
+    """The joint bearings as separate parts (finger-local frame, q = 0). l = -x side, r = +x side."""
+    hk, hw, pl, zp, zd = g["hk"], g["hw"], g["pl"], g["z_pip"], g["z_dip"]
+    b = {}
+    b["bearing_mcp_l"] = bearing_solid((-hk, 0, 0), (-hk + BRG_W, 0, 0))
+    b["bearing_mcp_r"] = bearing_solid((hk, 0, 0), (hk - BRG_W, 0, 0))
+    for j, zc in (("pip", zp), ("dip", zd)):
+        b[f"bearing_{j}_l"] = bearing_solid((pl, 0, zc), (pl + BRG_W, 0, zc))
+        b[f"bearing_{j}_r"] = bearing_solid((hw, 0, zc), (hw - BRG_W, 0, zc))
+    for side, (y0, y1) in ABD_BRG_Y.items():  # MR63 in the palm's knuckle bosses (body: palm)
+        b[f"bearing_abd_{side}"] = bearing_solid((0, y0, -ABD_OFFSET), (0, y1, -ABD_OFFSET), BRG_ABD)
+    return b
+
+
+BEARINGS = {  # part -> (type, body, joint)
+    "bearing_mcp_l": ("MR84ZZ", "yoke", "mcp_flex"), "bearing_mcp_r": ("MR84ZZ", "yoke", "mcp_flex"),
+    "bearing_pip_l": ("MR84ZZ", "proximal", "pip"), "bearing_pip_r": ("MR84ZZ", "proximal", "pip"),
+    "bearing_dip_l": ("MR84ZZ", "distal", "dip"), "bearing_dip_r": ("MR84ZZ", "distal", "dip"),
+    "bearing_abd_palmar": ("MR63ZZ", "palm", "mcp_abd"), "bearing_abd_dorsal": ("MR63ZZ", "palm", "mcp_abd"),
+}
 BODY_OF = {"yoke": "yoke", "proximal": "proximal", "middle": "middle", "distal": "distal", "pad_tip": "distal",
-           "pad_proximal": "proximal", "pad_middle": "middle", "pin_mcp_l": "yoke", "pin_mcp_r": "yoke",
-           "pin_pip": "proximal", "pin_dip": "distal", "post_mcp": "proximal", "post_pip": "middle",
-           "post_abd": "yoke", "pin_abd_palmar": "palm", "pin_abd_dorsal": "palm", "pin_link_a": "proximal",
-           "pin_link_b": "distal", "eyelet_flex": "proximal", "eyelet_ext": "proximal",
-           "ptfe_mcp_flex": "yoke", "ptfe_mcp_ext": "yoke", "ptfe_pip_flex": "yoke", "ptfe_pip_ext": "yoke"}
+           "pad_proximal": "proximal", "pad_middle": "middle", "pin_mcp_l": "proximal", "pin_mcp_r": "proximal",
+           "pin_pip": "middle", "pin_dip": "middle", "pin_abd_palmar": "yoke", "pin_abd_dorsal": "yoke",
+           "pin_link_a": "proximal", "pin_link_b": "distal", "eyelet_flex": "proximal", "eyelet_ext": "proximal",
+           "ptfe_mcp_flex": "yoke", "ptfe_mcp_ext": "yoke", "ptfe_pip_flex": "yoke", "ptfe_pip_ext": "yoke",
+           **{k: v[1] for k, v in BEARINGS.items()}}
+# press fits modelled at their print size (bearing seats SEAT_D < 8): ignore these pairs in interference checks
+PRESS_FIT_PAIRS = [("bearing_mcp_*", "yoke"), ("bearing_pip_*", "proximal"), ("bearing_dip_*", "distal")]
 MATERIAL = {"yoke": "PETG", "proximal": "PETG", "middle": "PETG", "distal": "PETG", "bar": "stainless 1.2 mm (or PETG)",
             "pad_tip": "TPU 95A", "pad_proximal": "TPU 95A", "pad_middle": "TPU 95A"}
 
@@ -642,14 +751,17 @@ def bar_shape(g, q, Tb):
 # ------------------------------------------------------------------------------------------------
 
 
-def build(name: str, q: dict | None = None, with_parts: bool = True) -> dict:
-    """Finger `name` at joint angles q (deg: mcp_abd, mcp_flex, pip; dip follows the bar)."""
+def build(name: str, q: dict | None = None, with_parts: bool = True, bearings: bool = True) -> dict:
+    """Finger `name` at joint angles q (deg: mcp_abd, mcp_flex, pip; dip follows the bar).
+    bearings=False leaves the 8 bearing_* parts out (to see the seats)."""
     g = geom(name)
     qf = full_q(g, q)
     Tb = body_transforms(g, qf)
     parts = {}
     if with_parts:
         for k, s in local_parts(name).items():
+            if not bearings and k in BEARINGS:
+                continue
             parts[k] = place_shape(s, Tb[BODY_OF[k]])
         parts["bar"], bar_len = bar_shape(g, qf, Tb)
     dip_rng = (float(dip_of(g, LIMITS["pip"][0])), float(dip_of(g, LIMITS["pip"][1])))
@@ -689,7 +801,16 @@ def interface(g, q, Tb, st):
                       "pin_d": ABD_PIN_D,
                       "palm_holds_y": [[m[1] + ABD_PIN_Y["palmar"][0], m[1] + YOKE_Y[0] - CLR],
                                        [m[1] + ABD_DISC_Y[1] + CLR, m[1] + ABD_PIN_Y["dorsal"][1]]],
-                      "note": "two coaxial 3 mm dowels; the palm holds the outer ends; yoke runs on them"},
+                      "note": "two coaxial 3 mm steel stubs pressed in the yoke; their outer ends run in two MR63ZZ "
+                              "bearings that the palm holds (bearing_seats)"},
+        "abd_bearing_seats": [
+            {"side": side, "bearing": BRG_ABD["name"], "id_od_w": [BRG_ABD["id"], BRG_ABD["od"], BRG_ABD["w"]],
+             "axis_point": np.round(m + [0, 0, -ABD_OFFSET], 3).tolist(), "axis_dir": [0, 1, 0],
+             "seat_d": ABD_SEAT_D, "seat_y": [round(float(m[1] + v), 3) for v in ABD_BRG_Y[side]],
+             "shoulder_bore_d": 4.8, "shoulder_y": [round(float(m[1] + v), 3) for v in ABD_LIP[side]],
+             "open_to": "palm surface (palmar face / back), press in from outside; seat bore continues to the surface",
+             "boss_d_min": BRG_ABD["od"] + 2 * P.WALL_MIN}
+            for side in ("palmar", "dorsal")],
         "yoke_envelope": {"min": np.round(env.min(0) - CLR, 2).tolist(), "max": np.round(env.max(0) + CLR, 2).tolist(),
                           "note": "box swept by the yoke + abd disc over mcp_abd range (+0.25 mm); leave clear"},
         "strand_exits": exits,
@@ -764,7 +885,7 @@ def collision_check(name, quick=False):
     res = {}
     for a, m, p in combos:
         parts = build(name, {"mcp_abd": a, "mcp_flex": m, "pip": p})["parts"]
-        hits = interference(parts, threshold=0.05)
+        hits = interference(parts, threshold=0.05, ignore=PRESS_FIT_PAIRS)
         res[(a, m, p)] = hits
     return res
 
@@ -805,7 +926,7 @@ def sheath_check(name):
     worst = math.inf
     for a in LIMITS["mcp_abd"]:
         Tb = body_transforms(g, full_q(g, {"mcp_abd": a}))
-        for x, y in ((-X_MCP_GROOVE, -R), (X_MCP_GROOVE, R), (-X_PIP, 0.0), (X_PIP, 0.0)):
+        for x, y in ((X_MCP_TRACK, -R), (X_MCP_TRACK, R), (-X_PIP, 0.0), (X_PIP, 0.0)):
             top = xf(Tb["yoke"], [[x, y, BASE_BOT]])[0]
             dtop = Tb["yoke"][:3, :3] @ np.array([0, 0, -1.0])
             bot = xf(Tb["palm"], [[x, y, BASE_BOT - PALM_GUIDE_DZ]])[0]
@@ -869,6 +990,8 @@ def colours(parts):
             c[k] = "#1f77b4" if k.endswith("flex") else "#2ca02c"
         elif k.startswith("ptfe"):
             c[k] = "#f2f2f2"
+        elif k.startswith("bearing"):
+            c[k] = "#d4a017"
         else:
             c[k] = "#9aa0a6"
     return c
@@ -886,6 +1009,75 @@ def render_finger(name, q, out_png, views=("iso", "front", "side", "top"), cut_x
         parts = {k: (v.intersect(half) if hasattr(v, "intersect") else v) for k, v in parts.items()}
         parts = {k: v for k, v in parts.items() if v.Volume() > 1e-6 or k.startswith("strand")}
     return render(parts, out_png, views=views, colors=colours(parts), title=title or f"{name} {q}")
+
+
+def bearing_fits(name):
+    """Walls and widths around the bearings (mm), per joint."""
+    g = geom(name)
+    hk, hw, pl = g["hk"], g["hw"], g["pl"]
+    A, B = link_pins_local(g)
+    rA = float(np.hypot(A[0], A[1] - g["z_pip"]))
+    rB = float(np.hypot(B[0], B[1] - g["z_dip"]))
+    return {
+        "mcp": {"knuckle_w": 2 * hk, "lug_t": LUG_T, "drum_w": 2 * g["xd"], "lug_radial_wall": round(g["r_boss"] - SEAT_D / 2, 2),
+                "track_flanges": [round(-X_MCP_TRACK - GROOVE_W / 2 - SLOT_HALF, 2), round(g["xd"] + X_MCP_TRACK - GROOVE_W / 2, 2)],
+                "stub_in_child": round(g["xd"] - max(hk - STUB_L, SLOT_HALF + 0.3), 2)},
+        "pip": {"finger_w": 2 * hw, "lug_t": LUG_T, "drum_x": [round(g["xl"], 2), round(g["xr"], 2)],
+                "lug_radial_wall": round(g["r_boss"] - SEAT_D / 2, 2), "pin_a_web_to_seat": round(rA - LINK_PIN_D / 2 - SEAT_D / 2, 2)},
+        "dip": {"tongue_x": [round(g["xl"], 2), round(g["xr"], 2)], "pin_b_web_to_seat": round(rB - LINK_PIN_D / 2 - SEAT_D / 2, 2)},
+    }
+
+
+def render_bearings(name, out_dir=OUT):
+    """Bearing / track views of one finger: axis-plane section, track cuts with the tie holes, exploded view,
+    and the same finger with and without its bearings."""
+    from tools.render import render
+    g = geom(name)
+    m = g["mcp"]
+    b = build(name, {})
+    parts = dict(b["parts"])
+    keep = {k: v for k, v in parts.items() if not k.startswith("ptfe")}
+    # 1) section through all three flexion axes (plane y = 0 of the finger), seen from the back
+    half = box(-200, 200, -200, m[1], -200, 400)
+    sec = {k: v.intersect(half) for k, v in keep.items()}
+    sec = {k: v for k, v in sec.items() if v.Volume() > 1e-6}
+    render(sec, out_dir / f"{name}_bearing_section.png", views=("back", (35, 60)), colors=colours(sec),
+           title=f"{name}: section through the MCP/PIP/DIP axes (gold = MR84ZZ, grey = 4 mm steel axles)")
+    # 2) cuts through the MCP track and the PIP track (side view): tie hole + knot well at the anchor
+    st = strand_solids(b["strands"])
+    xw = GROOVE_W / 2 + WELL_WALL + WELL_R  # knot well centre, +x of its track
+    for tag, xc in (("mcp", X_MCP_TRACK), ("pip", X_PIP_TRACK), ("mcp_knot", X_MCP_TRACK + xw),
+                    ("pip_knot", X_PIP_TRACK + xw)):
+        cutb = box(-200, m[0] + xc, -200, 200, -200, 400)
+        pp = {k: v.intersect(cutb) for k, v in keep.items() if BODY_OF.get(k) in ("yoke", "proximal", "middle")}
+        pp = {k: v for k, v in pp.items() if v.Volume() > 1e-6}
+        pp.update({k: v for k, v in st.items() if tag.split("_")[0] in k})
+        what = "knot well + tie hole" if "knot" in tag else "track"
+        render(pp, out_dir / f"{name}_{tag}_cut.png", views=("side", (15, 50)), colors=colours(pp), legend=False,
+               title=f"{name}: cut at the {tag.split('_')[0]} {what} (x = {xc:+.1f})")
+    # 3) exploded: bearings 7 mm and axles 14 mm out along their own axes (finger-local x / y)
+    ex = {}
+    for k, v in keep.items():
+        d = np.zeros(3)
+        if k in BEARINGS or k.startswith("pin_mcp") or k in ("pin_pip", "pin_dip") or k.startswith("pin_abd"):
+            c = np.array(v.Center().toTuple()) - m
+            if k.startswith("bearing_abd") or k.startswith("pin_abd"):
+                d = np.array([0.0, 7.0 * np.sign(c[1]), 0.0])
+            elif k in ("pin_pip", "pin_dip"):
+                d = np.array([-16.0, 0.0, 0.0])
+            else:
+                d = np.array([7.0 * np.sign(c[0]) * (2.0 if k.startswith("pin") else 1.0), 0.0, 0.0])
+        M = np.eye(4)
+        M[:3, 3] = d
+        ex[k] = place_shape(v, M) if d.any() else v
+    render(ex, out_dir / f"{name}_exploded.png", views=("iso", "front"), colors=colours(ex), legend=False,
+           title=f"{name}: bearings and axles pulled out (MR84ZZ x 6, MR63ZZ x 2 for the palm)")
+    # 4) with / without bearings
+    nob = {k: v for k, v in keep.items() if k not in BEARINGS}
+    render(nob, out_dir / f"{name}_no_bearings.png", views=("iso", "left"), colors=colours(nob), legend=False,
+           title=f"{name}: bearings removed (build(..., bearings=False)) - empty seats")
+    render(keep, out_dir / f"{name}_with_bearings.png", views=("iso", "left"), colors=colours(keep), legend=False,
+           title=f"{name}: with its bearings")
 
 
 # ------------------------------------------------------------------------------------------------
@@ -926,6 +1118,16 @@ def main(argv=None):
         s["link"] = link_report(n)
         s["sheath_min_bend_mm"] = sheath_check(n)
         s["force"] = force_estimate(n)
+        s["tracks"] = {"mcp_flex": {"x_local": X_MCP_TRACK, "anchor_deg_from_+y": ANCHOR["mcp_flex"],
+                                    "wrap_margin_deg": ANCHOR["mcp_flex"] + LIMITS["mcp_flex"][0]},
+                       "pip": {"x_local": X_PIP_TRACK, "anchor_deg_from_+y": round(g["anchor_pip"], 2),
+                               "wrap_margin_deg": round(g["wrap_margin_pip"], 2)},
+                       "mcp_abd": {"y_local": ABD_TRACK_Y, "anchor": "top of the disc", "wrap_margin_deg": 75.0},
+                       "tie_hole_d": TIE_D, "tie_hole_r": TIE_R, "knot_well": {"d": 2 * WELL_R, "wall": WELL_WALL}}
+        s["bearings"] = bearing_fits(n)
+        print(f"  tracks: mcp x {X_MCP_TRACK:+.1f} anchor {ANCHOR['mcp_flex']:.0f} deg, pip x {X_PIP_TRACK:+.1f} anchor "
+              f"{g['anchor_pip']:.1f} deg (wrap margin {g['wrap_margin_pip']:.1f}); abd y {ABD_TRACK_Y}")
+        print(f"  bearings: {s['bearings']}")
         print(f"  DIP bar {s['link']['bar_mm']:.2f} mm, max |dip-0.75 pip| {s['link']['max_ratio_error_deg']:.2f} deg, "
               f"transmission >= {s['link']['min_transmission_deg']:.0f} deg, dip range {s['link']['dip_range'][0]:.1f}..{s['link']['dip_range'][1]:.1f}")
         print(f"  sheath free span min bend radius over abd range: {s['sheath_min_bend_mm']:.1f} mm (need >= {P.SHEATH_MIN_BEND_R})")
@@ -951,6 +1153,7 @@ def main(argv=None):
             render_finger(n, {}, OUT / f"{n}_q0.png", title=f"{n} q=0")
             render_finger(n, {"mcp_flex": 60, "pip": 70, "mcp_abd": 10}, OUT / f"{n}_curl.png",
                           title=f"{n} abd 10 mcp 60 pip 70")
+            render_bearings(n)
             if n == "index":
                 render_finger(n, {}, OUT / f"{n}_cut.png", views=("side", (20, 60), "front", (10, 120)),
                               cut_x=1.4, title="index cutaway x<1.4 (pip flex strand plane)")

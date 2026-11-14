@@ -88,8 +88,8 @@ ABD_SEAT_D = 6.0 - 0.05
 ABD_BRG_Y = {"palmar": (-12.6, -10.1), "dorsal": (15.55, 18.05)}  # finger-local y of the abd bearings
 ABD_LIP = {"palmar": (-10.1, -9.25), "dorsal": (14.85, 15.55)}  # palm shoulders (bore 4.8) next to them
 # --- track anchors / tie holes ---
-TIE_D = P.TIE_HOLE_D  # 1.0
-TIE_R = R - LINE_R - TIE_D / 2 + 0.1  # 6.42: tie hole centre; its top breaks 0.1 through the groove floor
+TIE_D = P.TIE_HOLE_D  # 1.7, lined with a 16G tube (P.TIE_LINER)
+TIE_R = R - LINE_R - TIE_D / 2 + 0.1  # 6.07 (1.7 hole): tie hole centre; its top breaks 0.1 through the groove floor
 WELL_R = 0.8  # knot well radius (well = radial blind hole from r WELL_R0 out through the surface)
 WELL_R0 = 4.5
 WELL_WALL = 0.6  # groove side wall between the track and the knot well (the knot bears on it)
@@ -532,6 +532,21 @@ def tie_cuts(x_track, phi, zc, x_dir=1.0, r_out=14.0):
     return [hole, well]
 
 
+def liner_tube(p0, p1):
+    """16G stainless tie-hole liner (OD/ID/len from params.TIE_LINER) from p0 along p1 - p0 (its direction)."""
+    L = P.TIE_LINER
+    p0, p1 = np.asarray(p0, float), np.asarray(p1, float)
+    u = (p1 - p0) / np.linalg.norm(p1 - p0)
+    return cyl(L["od"] / 2, p0, p0 + u * L["len"]).cut(cyl(L["id"] / 2, p0 - u, p0 + u * (L["len"] + 1)))
+
+
+def tie_liner_x(x_track, phi, zc, x_dir=1.0):
+    """Liner of a tie_cuts() hole: starts at the groove's side wall, 0.5 mm of it ends inside the knot well."""
+    c, s = math.cos(math.radians(phi)), math.sin(math.radians(phi))
+    x0 = x_track + x_dir * GROOVE_W / 2
+    return liner_tube((x0, TIE_R * c, zc + TIE_R * s), (x0 + x_dir, TIE_R * c, zc + TIE_R * s))
+
+
 @functools.cache
 def local_parts(name: str) -> dict:
     """All solids of one finger in the finger-local frame at q = 0 (cached; build() places copies)."""
@@ -695,6 +710,10 @@ def local_parts(name: str) -> dict:
     for x, y, key in ((X_MCP_TRACK, -R, "ptfe_mcp_flex"), (X_MCP_TRACK, R, "ptfe_mcp_ext"),
                       (-X_PIP, 0.0, "ptfe_pip_flex"), (X_PIP, 0.0, "ptfe_pip_ext")):
         st[key] = cyl(SHEATH_OD / 2, (x, y, BASE_BOT), (x, y, TUBE_STOP)).cut(cyl(P.SHEATH_ID / 2, (x, y, BASE_BOT - 1), (x, y, TUBE_STOP + 1)))
+    st["tie_liner_mcp"] = tie_liner_x(X_MCP_TRACK, ANCHOR["mcp_flex"], 0.0)  # in the proximal
+    st["tie_liner_pip"] = tie_liner_x(X_PIP_TRACK, g["anchor_pip"], zp)  # in the middle
+    ya = ABD_TRACK_Y + GROOVE_W / 2
+    st["tie_liner_abd"] = liner_tube((0, ya, -ABD_OFFSET + TIE_R), (0, ya + 1, -ABD_OFFSET + TIE_R))  # in the yoke
     parts.update(st)
     parts.update(bearing_parts(g))
     return parts
@@ -722,12 +741,13 @@ BEARINGS = {  # part -> (type, body, joint)
 }
 BODY_OF = {"yoke": "yoke", "proximal": "proximal", "middle": "middle", "distal": "distal", "pad_tip": "distal",
            "pad_proximal": "proximal", "pad_middle": "middle", "pin_mcp_l": "proximal", "pin_mcp_r": "proximal",
-           "pin_pip": "middle", "pin_dip": "middle", "pin_abd_palmar": "yoke", "pin_abd_dorsal": "yoke",
+           "pin_pip": "middle", "pin_dip": "middle", "tie_liner_mcp": "proximal", "tie_liner_pip": "middle", "tie_liner_abd": "yoke", "pin_abd_palmar": "yoke", "pin_abd_dorsal": "yoke",
            "pin_link_a": "proximal", "pin_link_b": "distal", "eyelet_flex": "proximal", "eyelet_ext": "proximal",
            "ptfe_mcp_flex": "yoke", "ptfe_mcp_ext": "yoke", "ptfe_pip_flex": "yoke", "ptfe_pip_ext": "yoke",
            **{k: v[1] for k, v in BEARINGS.items()}}
 # press fits modelled at their print size (bearing seats SEAT_D < 8): ignore these pairs in interference checks
-PRESS_FIT_PAIRS = [("bearing_mcp_*", "yoke"), ("bearing_pip_*", "proximal"), ("bearing_dip_*", "distal")]
+PRESS_FIT_PAIRS = [("tie_liner_mcp", "proximal"), ("tie_liner_pip", "middle"), ("tie_liner_abd", "yoke"),
+                   ("bearing_mcp_*", "yoke"), ("bearing_pip_*", "proximal"), ("bearing_dip_*", "distal")]
 MATERIAL = {"yoke": "PETG", "proximal": "PETG", "middle": "PETG", "distal": "PETG", "bar": "stainless 1.2 mm (or PETG)",
             "pad_tip": "TPU 95A", "pad_proximal": "TPU 95A", "pad_middle": "TPU 95A"}
 

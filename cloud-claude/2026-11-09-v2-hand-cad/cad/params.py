@@ -39,7 +39,12 @@ JOINT_AXLE_D = 4.0  # child boss / steel axle through the inner races
 # Tendon track (owner, 2026-11-13): ONE groove per joint; one strand runs into it from the palm side,
 # goes over the drum, is knotted through a tie hole at the top of the track ring, and leaves on the back
 # side. Pulling either end turns the joint either way (antagonistic loop from one line).
-TIE_HOLE_D = 1.0
+TIE_HOLE_D = 1.7  # integrator 2026-11-13: lined with a 16G stainless tube (see TIE_LINER); was 1.0 unlined
+# The knot bears ~80 MPa on PETG at SCS0009 stall (45 N): every tie hole gets a short stainless tube liner
+# (16G hypodermic, OD 1.65 / ID 1.19) glued into the TIE_HOLE_D bore. Parts are named tie_liner_<joint>.
+TIE_LINER = {"name": "16G stainless tube", "od": 1.65, "id": 1.19, "len": 1.2}
+BEARING_ABD = {"name": "MR63ZZ", "id": 3.0, "od": 6.0, "w": 2.5}  # finger mcp_abd, in the palm's knuckle bosses
+BEARING_MASS_G = {"MR84ZZ": 0.7, "MR63ZZ": 0.3}
 
 # --- Fingers ---------------------------------------------------------------------------------------
 # mcp: MCP flexion axis centre (x, y, z); axes along -X/+X (flexion), abduction axis along Y.

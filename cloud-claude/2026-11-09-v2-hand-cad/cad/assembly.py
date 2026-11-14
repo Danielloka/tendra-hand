@@ -143,7 +143,7 @@ def classify(name):
         return "PTFE"
     if any(k in n for k in ("bearing", "rot_idlers")):
         return "bearing"
-    if any(k in n for k in ("pin", "post", "stub", "nip", "eyelet", "_bar", "thumb_guides", "rod_", "_rod", "barrel",
+    if any(k in n for k in ("tie_liner", "pin", "post", "stub", "nip", "eyelet", "_bar", "thumb_guides", "rod_", "_rod", "barrel",
                             "strands", "gears", "crank")):
         return "steel"
     if "servo" in n:
@@ -259,7 +259,9 @@ def mass_table(parts):
             continue
         sh = s.val() if hasattr(s, "val") and len(s.vals()) == 1 else (cq.Compound.makeCompound(s.vals()) if hasattr(s, "vals") else s)
         vol = float(sh.Volume()) / 1000.0  # cm^3
-        if cl == "servo":
+        if cl == "bearing" and "bearing" in n:
+            g = P.BEARING_MASS_G["MR63ZZ" if "bearing_abd" in n else "MR84ZZ"]  # catalogue, not volume x density
+        elif cl == "servo":
             g = 55.0 if "W_" in n else 13.0
         elif cl == "electronics":
             g = {"esp32": 10.0, "urt": 8.0, "power": 12.0}[next(k for k in ("esp32", "urt", "power") if k in n.lower())]
@@ -273,6 +275,23 @@ def mass_table(parts):
         grp = ("fingers" if n.split("_")[0] in FINGERS else {"T": "thumb", "P": "palm", "W": "wrist", "F": "forearm"}[n.split("_")[0]])
         groups[grp] = round(groups.get(grp, 0) + r["grams"], 1)
     return rows, groups
+
+
+def bearing_bill(parts):
+    """Count and mass of the joint bearings in the assembly, by type and by hand part (finger / thumb)."""
+    bill = {"MR84ZZ": {"count": 0, "mass_g": 0.0, "by": {}}, "MR63ZZ": {"count": 0, "mass_g": 0.0, "by": {}}}
+    for n in parts:
+        if "bearing" not in n or n.startswith(("W_", "F_")) or n.endswith(("bearing_top", "bearing_bottom")):
+            continue
+        t = "MR63ZZ" if "bearing_abd" in n else "MR84ZZ"
+        who = n.split("_")[0] if n.split("_")[0] in FINGERS else "thumb"
+        bill[t]["count"] += 1
+        bill[t]["mass_g"] = round(bill[t]["mass_g"] + P.BEARING_MASS_G[t], 2)
+        bill[t]["by"][who] = bill[t]["by"].get(who, 0) + 1
+    other = {n: ("6704ZZ" if n.endswith(("bearing_top", "bearing_bottom")) else "623ZZ/other") for n in parts
+             if "bearing" in n and (n.startswith(("W_", "F_")) or n.endswith(("bearing_top", "bearing_bottom")))}
+    bill["other_bearing_parts"] = other
+    return bill
 
 
 def dims(parts, names=None):
@@ -314,7 +333,9 @@ def main(argv=None):
             rows, groups = mass_table(parts)
             lo, hi = dims(parts)
             hlo, hhi = dims(parts, names=[*FINGERS, "T_", "P_"])
+            bb = bearing_bill(parts)
             (OUT / "mass.json").write_text(json.dumps({"groups": groups, "total_g": round(sum(groups.values()), 1),
+                                                       "bearings": bb,
                                                        "dims_all": [lo, hi], "dims_hand": [hlo, hhi], "parts": rows}, indent=1))
             print("  mass groups", groups, "total", round(sum(groups.values()), 1))
             paths = export_all(parts, OUT, "tendra_v2_open", colors=colours(parts), tol=0.12, ang=0.35)

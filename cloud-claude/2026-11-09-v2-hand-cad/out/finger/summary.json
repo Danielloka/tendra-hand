@@ -22,6 +22,9 @@
    "ptfe_mcp_ext": true,
    "ptfe_pip_flex": true,
    "ptfe_pip_ext": true,
+   "tie_liner_mcp": true,
+   "tie_liner_pip": true,
+   "tie_liner_abd": true,
    "bearing_mcp_l": true,
    "bearing_mcp_r": true,
    "bearing_pip_l": true,
@@ -32,9 +35,9 @@
    "bearing_abd_dorsal": true
   },
   "volumes_cm3": {
-   "yoke": 4.843,
-   "proximal": 10.137,
-   "middle": 5.447,
+   "yoke": 4.842,
+   "proximal": 10.135,
+   "middle": 5.445,
    "distal": 4.526,
    "pad_tip": 0.649,
    "pad_proximal": 0.35,
@@ -138,8 +141,8 @@
     "anchor": "top of the disc",
     "wrap_margin_deg": 75.0
    },
-   "tie_hole_d": 1.0,
-   "tie_hole_r": 6.42,
+   "tie_hole_d": 1.7,
+   "tie_hole_r": 6.07,
    "knot_well": {
     "d": 1.6,
     "wall": 0.6
@@ -212,6 +215,9 @@
    "ptfe_mcp_ext": true,
    "ptfe_pip_flex": true,
    "ptfe_pip_ext": true,
+   "tie_liner_mcp": true,
+   "tie_liner_pip": true,
+   "tie_liner_abd": true,
    "bearing_mcp_l": true,
    "bearing_mcp_r": true,
    "bearing_pip_l": true,
@@ -222,9 +228,9 @@
    "bearing_abd_dorsal": true
   },
   "volumes_cm3": {
-   "yoke": 4.843,
-   "proximal": 10.973,
-   "middle": 6.218,
+   "yoke": 4.842,
+   "proximal": 10.971,
+   "middle": 6.216,
    "distal": 4.752,
    "pad_tip": 0.683,
    "pad_proximal": 0.415,
@@ -328,8 +334,8 @@
     "anchor": "top of the disc",
     "wrap_margin_deg": 75.0
    },
-   "tie_hole_d": 1.0,
-   "tie_hole_r": 6.42,
+   "tie_hole_d": 1.7,
+   "tie_hole_r": 6.07,
    "knot_well": {
     "d": 1.6,
     "wall": 0.6
@@ -402,6 +408,9 @@
    "ptfe_mcp_ext": true,
    "ptfe_pip_flex": true,
    "ptfe_pip_ext": true,
+   "tie_liner_mcp": true,
+   "tie_liner_pip": true,
+   "tie_liner_abd": true,
    "bearing_mcp_l": true,
    "bearing_mcp_r": true,
    "bearing_pip_l": true,
@@ -412,9 +421,9 @@
    "bearing_abd_dorsal": true
   },
   "volumes_cm3": {
-   "yoke": 4.588,
-   "proximal": 9.501,
-   "middle": 5.249,
+   "yoke": 4.586,
+   "proximal": 9.499,
+   "middle": 5.247,
    "distal": 4.173,
    "pad_tip": 0.609,
    "pad_proximal": 0.355,
@@ -518,8 +527,8 @@
     "anchor": "top of the disc",
     "wrap_margin_deg": 75.0
    },
-   "tie_hole_d": 1.0,
-   "tie_hole_r": 6.42,
+   "tie_hole_d": 1.7,
+   "tie_hole_r": 6.07,
    "knot_well": {
     "d": 1.6,
     "wall": 0.6
@@ -591,6 +600,9 @@
    "ptfe_mcp_ext": true,
    "ptfe_pip_flex": true,
    "ptfe_pip_ext": true,
+   "tie_liner_mcp": true,
+   "tie_liner_pip": true,
+   "tie_liner_abd": true,
    "bearing_mcp_l": true,
    "bearing_mcp_r": true,
    "bearing_pip_l": true,
@@ -601,9 +613,9 @@
    "bearing_abd_dorsal": true
   },
   "volumes_cm3": {
-   "yoke": 4.514,
-   "proximal": 6.332,
-   "middle": 3.011,
+   "yoke": 4.512,
+   "proximal": 6.33,
+   "middle": 3.009,
    "distal": 3.196,
    "pad_tip": 0.484,
    "pad_proximal": 0.16
@@ -706,8 +718,8 @@
     "anchor": "top of the disc",
     "wrap_margin_deg": 75.0
    },
-   "tie_hole_d": 1.0,
-   "tie_hole_r": 6.42,
+   "tie_hole_d": 1.7,
+   "tie_hole_r": 6.07,
    "knot_well": {
     "d": 1.6,
     "wall": 0.6

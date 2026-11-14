@@ -1,18 +1,18 @@
 warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
 thumb design: V2 design ranges {'cmc_rot': [-31.0, 110.0], 'cmc_flex': [-37.0, 63.0], 'mcp_flex': [-10.0, 70.0], 'ip': [-15.0, 85.0]}
 lengths L1 L2 L3 = 46.7 36.0 31.6
-  rest parts built in 3.3 s
+  rest parts built in 3.1 s
 validity:
   thumb_mount        ok=True solids=1 vol=13989
   bearing_top        ok=True solids=1 vol=1034
   bearing_bottom     ok=True solids=1 vol=1034
   base_cap           ok=True solids=1 vol=421
   neck_top           ok=True solids=1 vol=33
-  thumb_base         ok=True solids=1 vol=5268
-  thumb_metacarpal   ok=True solids=1 vol=13251
+  thumb_base         ok=True solids=1 vol=5266
+  thumb_metacarpal   ok=True solids=1 vol=13247
   thenar_pad         ok=True solids=1 vol=926
-  thumb_proximal     ok=True solids=1 vol=8308
-  thumb_distal       ok=True solids=1 vol=5581
+  thumb_proximal     ok=True solids=1 vol=8306
+  thumb_distal       ok=True solids=1 vol=5577
   thumb_pad          ok=True solids=1 vol=794
   nip_cmc_a          ok=True solids=1 vol=5
   nip_cmc_b          ok=True solids=1 vol=5
@@ -23,12 +23,17 @@ validity:
   pin_mcp_a          ok=True solids=1 vol=101
   pin_mcp_b          ok=True solids=1 vol=101
   pin_ip_axle        ok=True solids=1 vol=253
+  tie_liner_rot      ok=True solids=1 vol=1
+  tie_liner_cmc_flex ok=True solids=1 vol=2
+  tie_liner_mcp_flex ok=True solids=1 vol=1
+  tie_liner_ip       ok=True solids=1 vol=1
   bearing_cmc_flex_l ok=True solids=1 vol=109
   bearing_cmc_flex_r ok=True solids=1 vol=109
   bearing_mcp_flex_l ok=True solids=1 vol=109
   bearing_mcp_flex_r ok=True solids=1 vol=109
   bearing_ip_l       ok=True solids=1 vol=109
   bearing_ip_r       ok=True solids=1 vol=109
+  viewer: /home/user/tendra-hand/cloud-claude/2026-11-09-v2-hand-cad/out/thumb/thumb_viewer.html
 routing (max length change, mm):
   cmc_rot_flex    cmc_rot=0.000 cmc_flex=0.000 mcp_flex=0.000 ip=0.000  own slope -0.1222 mm/deg
   cmc_rot_ext     cmc_rot=0.000 cmc_flex=0.000 mcp_flex=0.000 ip=0.000  own slope 0.1222 mm/deg
@@ -54,7 +59,7 @@ tracks (one per joint; knot = tie hole):
   ip_ext          wrap 51.3..151.3 deg, knot >= 6.27 mm inside the wrap
   loop flex+ext over the full 4-joint grid: {'cmc_rot': (68.99, '1.42e-14'), 'cmc_flex': (97.52, '3.56e-01'), 'mcp_flex': (189.55, '6.03e-01'), 'ip': (261.67, '7.31e-01')}
 interface:
-  envelope hull bounds [[-48.3, -129.2, -11.8], [139.3, 26.4, 158.6]]  base sweep bounds [[18.3, -32.7, 25.3], [54.8, 4.7, 64.7]]
+  envelope hull bounds [[-48.3, -129.2, -11.8], [139.3, 26.5, 158.6]]  base sweep bounds [[18.3, -32.7, 25.3], [54.8, 4.7, 64.7]]
 renders...
 hard stops:
   stop cmc_rot: first contact {'max': 2.0, 'min': 2.0} deg past the limit (None = no stop within 30.0)

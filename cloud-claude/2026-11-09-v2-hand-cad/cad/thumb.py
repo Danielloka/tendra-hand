@@ -71,6 +71,9 @@ SPACER_GAP = 0.05  # spacer to inner race (modelled gap; it touches when the for
 # and leaves on the extend side. Pulling either end turns the joint either way; flex + ext stay a constant loop.
 # Tie hole = TIE_HOLE_D bore parallel to the joint axis, from the groove's side wall at r = R_DRUM into a knot
 # pocket that is open on the hub's side face (tie it before the hub goes into the fork; the cheek then covers it).
+# Integrator 2026-11-13: TIE_HOLE_D 1.7 with a 16G stainless liner (P.TIE_LINER); the hole centre sits at TIE_RT
+# so that its top stays 0.1 mm through the groove floor (the strand dives straight in), like the fingers.
+TIE_RT = R - P.LINE_D / 2 - P.TIE_HOLE_D / 2 + 0.1  # 6.07 for 1.7
 KNOT_D, KNOT_DEPTH, KNOT_RC = 2.4, 1.7, 6.6  # knot pocket diameter, depth from the hub face, centre radius
 TIE_MARGIN_MIN = 15.0  # deg: smallest wrap allowed between a tangent point and the knot over the range
 
@@ -633,7 +636,7 @@ def _track(j):
     a = STRANDS[f"{j}_flex"]["drum"]["anchor"]
     x_wall, x_pk, x_face = gx + sd * 0.5, sd * (W - KNOT_DEPTH), sd * W
     tools = _grooves(j, (gx,), HUB_R[j])
-    tools.append(cyl_x(P.TIE_HOLE_D / 2, *sorted((x_wall - sd * 0.1, x_pk + sd * 0.1)), *_yz(a, R)))
+    tools.append(cyl_x(P.TIE_HOLE_D / 2, *sorted((x_wall - sd * 0.1, x_pk + sd * 0.1)), *_yz(a, TIE_RT)))
     tools.append(cyl_x(KNOT_D / 2, *sorted((x_pk, x_face + sd * 0.5)), *_yz(a, KNOT_RC)))
     return tools
 
@@ -675,6 +678,35 @@ def make_joint_bearings(j):
         for xf in (x0, x1):  # shield recesses (looks only)
             b = b.cut(ring_x(2.75, 3.45, xf - 0.15, xf + 0.15))
         out[f"bearing_{j}_{tag}"] = place(b, J0[j])
+    return out
+
+
+def _liner_x(j):
+    """Tie-hole liner (16G stainless tube) of a hinge track, child joint frame of j, from the groove wall into the pocket."""
+    gx, sd = TRACK_X[j], TIE_SIDE[j]
+    a = STRANDS[f"{j}_flex"]["drum"]["anchor"]
+    y, z = _yz(a, TIE_RT)
+    L = P.TIE_LINER
+    x0 = gx + sd * 0.5
+    x1 = x0 + sd * L["len"]
+    tube = cyl_x(L["od"] / 2, *sorted((x0, x1)), y, z)
+    return tube.cut(cyl_x(L["id"] / 2, *sorted((x0 - 1, x1 + 1)), y, z))
+
+
+def _liner_rot():
+    """cmc_rot tie liner (base frame C): axial tube from the track's upper wall into the knot slot."""
+    a = STRANDS["cmc_rot_flex"]["drum"]["anchor"]
+    x, y = _yz(a, TIE_RT)
+    z0 = ROT_TRACK_Z + 0.5
+    L = P.TIE_LINER
+    tube = cyl_z(L["od"] / 2, z0, z0 + L["len"], x, y)
+    return tube.cut(cyl_z(L["id"] / 2, z0 - 1, z0 + L["len"] + 1, x, y))
+
+
+def make_liners():
+    out = {"tie_liner_rot": place(_liner_rot(), J0["C"])}
+    for j in ("cmc_flex", "mcp_flex", "ip"):
+        out[f"tie_liner_{j}"] = place(_liner_x(j), J0[j])
     return out
 
 
@@ -772,7 +804,7 @@ def make_base():
     z = ROT_TRACK_Z
     tools.append(ring_z(GROOVE_FLOOR, ROT_DRUM_FLANGE + 1, z - 0.5, z + 0.5))
     a = STRANDS["cmc_rot_flex"]["drum"]["anchor"]
-    tools.append(cyl_z(P.TIE_HOLE_D / 2, z + 0.4, ROT_KNOT_Z[0] + 0.3, *_yz(a, R)))
+    tools.append(cyl_z(P.TIE_HOLE_D / 2, z + 0.4, ROT_KNOT_Z[0] + 0.3, *_yz(a, TIE_RT)))
     tools.append(box(5.6, ROT_DRUM_FLANGE + 0.5, -KNOT_D / 2, KNOT_D / 2, *ROT_KNOT_Z)
                  .rotate(V(0, 0, 0), V(0, 0, 1), float(np.degrees(a))))
     tools += _cheek_seats("cmc_flex")  # 2 x MR84 in the base cheeks (C frame x = a2 = cmc_flex axis)
@@ -998,6 +1030,7 @@ def rest_parts():
     for i, p in enumerate(pins_m):
         parts[f"nip_mcp_{'ab'[i]}"] = p
     parts.update(make_axles())
+    parts.update(make_liners())
     for j in ("cmc_flex", "mcp_flex", "ip"):
         parts.update(make_joint_bearings(j))
     print(f"  rest parts built in {time.time() - t0:.1f} s")
@@ -1012,7 +1045,9 @@ PART_BODY = {"thumb_mount": "mount", "bearing_top": "mount", "bearing_bottom": "
              "bearing_mcp_flex_l": "metacarpal", "bearing_mcp_flex_r": "metacarpal",
              "thumb_proximal": "proximal", "nip_mcp_a": "proximal", "nip_mcp_b": "proximal", "pin_mcp_a": "proximal",
              "pin_mcp_b": "proximal", "bearing_ip_l": "proximal", "bearing_ip_r": "proximal",
-             "thumb_distal": "distal", "thumb_pad": "distal", "pin_ip_axle": "distal"}
+             "thumb_distal": "distal", "thumb_pad": "distal", "pin_ip_axle": "distal",
+             "tie_liner_rot": "base", "tie_liner_cmc_flex": "metacarpal", "tie_liner_mcp_flex": "proximal",
+             "tie_liner_ip": "distal"}
 MATERIAL = {"thumb_mount": "PETG", "thumb_base": "PETG", "thumb_metacarpal": "PETG", "thumb_proximal": "PETG",
             "thumb_distal": "PETG", "thumb_pad": "TPU 95A (or cast silicone A30)", "thenar_pad": "TPU 95A",
             "bearing_top": "6704ZZ 20x27x4", "bearing_bottom": "6704ZZ 20x27x4", "base_cap": "PETG, 3 x M2x6",
@@ -1111,7 +1146,9 @@ IGNORE = [("pin_cmc_*", "thumb_metacarpal"), ("nip_cmc_*", "thumb_metacarpal"), 
           ("bearing_ip_*", "thumb_proximal"), ("bearing_cmc_flex_*", "pin_cmc_*"), ("bearing_mcp_flex_*", "pin_mcp_*"),
           ("bearing_ip_*", "pin_ip_axle"), ("bearing_top", "thumb_base"), ("bearing_bottom", "thumb_base"),
           ("bearing_top", "thumb_mount"), ("bearing_bottom", "thumb_mount"), ("neck_top", "base_cap"),
-          ("thumb_pad", "thumb_distal"), ("thenar_pad", "thumb_metacarpal")]
+          ("thumb_pad", "thumb_distal"), ("thenar_pad", "thumb_metacarpal"),
+          ("tie_liner_rot", "thumb_base"), ("tie_liner_cmc_flex", "thumb_metacarpal"),
+          ("tie_liner_mcp_flex", "thumb_proximal"), ("tie_liner_ip", "thumb_distal")]
 
 
 def routing_report(n=13):

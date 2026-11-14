@@ -5,7 +5,7 @@ sheath clamp pocket, rounded heel) and carries the 32 tendon sheaths from each f
 the wrist's palm sheath clamp (paths from routing.py -> out/assembly/routes.json).
 
 Parts (hand frame = palm frame at wrist q = 0, mm):
-    palm_shell        PETG, the structure: knuckle lips with the 3 mm abd dowel bores, sheath channels (2.2 bore),
+    palm_shell        PETG, the structure: knuckle lips with 2 x MR63ZZ seats per finger (abd axis, press in from outside), sheath channels (2.2 bore),
                       free-span pockets under each yoke, thumb seat (mount bore, 3 x M3 inserts), thenar heel
                       (cmc_rot idlers + steel guide tubes), flange seat (4 x M3 from inside), clamp pocket, heel.
                       Print lying on its back (dorsal face down): knuckle lips and channel curves in the build plane.
@@ -272,12 +272,20 @@ def pocket_from_paths(paths, pad=1.6, zmax=None):
 
 
 def pin_bores(fi):
+    """Per finger two MR63ZZ seats for the abduction axis (2026-11-13, finger report 06 s4): Ø5.95 x 2.5 pressed in
+    from OUTSIDE (the bore continues to the boss face), then a 0.85 mm shoulder with a Ø4.8 bore that stops the outer
+    race and passes the 3 mm stub, which runs on into the yoke gap. The bosses stay Ø9.2 (1.6 mm wall)."""
     out = []
     for f in FINGERS:
-        ap = np.array(fi[f]["interface"]["abd_pivot"]["axis_point"])
-        (p0, p1), (d0, d1) = fi[f]["interface"]["abd_pivot"]["palm_holds_y"]
-        out.append(cyl((ap[0], LIP_PALMAR - 0.5, ap[2]), (ap[0], p1 + 0.3, ap[2]), PIN_HOLE / 2))
-        out.append(cyl((ap[0], d0 - 0.3, ap[2]), (ap[0], LIP_DORSAL + 0.5, ap[2]), PIN_HOLE / 2))
+        for s in fi[f]["interface"]["abd_bearing_seats"]:
+            ap = np.array(s["axis_point"])
+            (s0, s1), (h0, h1) = s["seat_y"], s["shoulder_y"]
+            palmar = s["side"] == "palmar"
+            y_out = (LIP_PALMAR - 0.5) if palmar else (LIP_DORSAL + 0.5)  # open to the boss face
+            y_seat = s1 if palmar else s0  # seat floor = the shoulder side of the seat
+            y_in = h1 + 0.3 if palmar else h0 - 0.3  # shoulder bore runs 0.3 into the yoke gap
+            out.append(cyl((ap[0], y_out, ap[2]), (ap[0], y_seat, ap[2]), s["seat_d"] / 2))
+            out.append(cyl((ap[0], y_seat, ap[2]), (ap[0], y_in, ap[2]), s["shoulder_bore_d"] / 2))
     return out
 
 

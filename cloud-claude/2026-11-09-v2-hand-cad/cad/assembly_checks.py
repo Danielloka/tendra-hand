@@ -30,7 +30,9 @@ FINGERS = A.FINGERS
 F_BODIES = ("yoke", "proximal", "middle", "distal", "pad_tip", "pad_proximal", "pad_middle", "bar")
 T_BODIES = ("thumb_mount", "thumb_base", "thumb_metacarpal", "thenar_pad", "thumb_proximal", "thumb_distal", "thumb_pad")
 P_BODIES = ("shell", "back_plate", "palm_pad", "hypothenar_pad", "knuckle_pad", "rot_idlers")
-INTENDED = [("T_thumb_mount", "P_shell"), ("P_rot_idlers", "P_shell"), ("W_palm_flange", "P_shell"),
+# 2026-11-13: bearing_* and tie_liner_* parts are tested against every module except the body that holds their seat
+# (same-finger / same-thumb pairs are ignored below); the MR63 abd bearings sit in the palm's seats (press fit)
+INTENDED = [(f"{f}_bearing_abd_*", "P_shell") for f in FINGERS] + [("T_thumb_mount", "P_shell"), ("P_rot_idlers", "P_shell"), ("W_palm_flange", "P_shell"),
             ("W_palm_sheath_clamp", "P_shell"), ("P_back_plate", "P_shell"), ("P_rot_idlers", "T_thumb_mount")]
 
 
@@ -45,9 +47,15 @@ def select(parts, fingers=FINGERS, thumb=True, palm=True, wrist=(), extra=()):
         for b in F_BODIES:
             if f"{f}_{b}" in parts:
                 out[f"{f}_{b}"] = parts[f"{f}_{b}"]
+        for k in parts:
+            if k.startswith((f"{f}_bearing", f"{f}_tie_liner")):
+                out[k] = parts[k]
     if thumb:
         for b in T_BODIES:
             out[f"T_{b}"] = parts[f"T_{b}"]
+        for k in parts:
+            if k.startswith(("T_bearing_", "T_tie_liner")):
+                out[k] = parts[k]
     if palm:
         for b in P_BODIES:
             k = f"P_{b}"

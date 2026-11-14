@@ -765,9 +765,9 @@ def wrist_cell_map(strands, swaps=()):
     return m
 
 
-def polish(path=OUT / "routes.json", passes=4, verbose=True):
-    """Continue optimising the PTFE paths from a saved routes.json (L-BFGS-B, dense sampling, margins)."""
-    global N_S, _T, _B, _B1, _B2, W_CLEAR
+def _load_for_opt(path):
+    """Dense sampling (N_S 140) + target radius 16.8, strands re-built from a saved routes.json (x, cells, steel paths)."""
+    global N_S, _T, _B, _B1, _B2
     N_S = 140
     _T = np.linspace(0, 1, N_S)
     _B = np.array([[math.comb(DEG_N, i) * t ** i * (1 - t) ** (DEG_N - i) for i in range(DEG_N + 1)] for t in _T])
@@ -777,7 +777,6 @@ def polish(path=OUT / "routes.json", passes=4, verbose=True):
     d = json.loads(Path(path).read_text())
     st = strand_table()
     by = {r["name"]: r for r in d["strands"]}
-    C = cells()
     for s in st:
         r = by[s["name"]]
         set_end(s, r["cell"], r.get("tilt", 0.0))
@@ -786,6 +785,61 @@ def polish(path=OUT / "routes.json", passes=4, verbose=True):
             s["pts"] = np.array(r["points"])
             s["corners"] = r.get("corners")
         s["J"] = 0.0
+    if "--warm-prev" in sys.argv:  # strands whose source, direction and cell did not change keep their committed path
+        prev = {r["name"]: r for r in json.loads((OUT / "routes_prev.json").read_text())["strands"]}
+        kept = []
+        for s in st:
+            r = prev.get(s["name"])
+            if (r is not None and s["mat"] == "ptfe" and r["cell"] == s["cell"]
+                    and np.allclose(r["start"], s["start"], atol=2e-3) and np.allclose(r["start_dir"], s["dir"], atol=1e-3)):
+                s["x"] = np.array(r["x"])
+                kept.append(s["name"])
+        print(f"warm start from routes_prev.json for {len(kept)} unchanged strands: {kept}", flush=True)
+    return st
+
+
+def fixup(path=OUT / "routes.json", rounds=5, verbose=True):
+    """Targeted repair: re-optimise the failing PTFE strands (and the strands they touch) one at a time with all
+    others frozen, from the current path, a fresh initial guess and random restarts. Saves after every round."""
+    global W_CLEAR
+    st = _load_for_opt(path)
+    W_CLEAR = 8000.0
+    rng = np.random.default_rng(7)
+    name_i = {s["name"]: i for i, s in enumerate(st)}
+    for rnd in range(rounds):
+        rows, allp = evaluate(st)
+        bad = [i for i, r in enumerate(rows) if not r["ok"] and st[i]["mat"] == "ptfe"]
+        if verbose:
+            print(f"fix round {rnd}: {len(bad)} failing: {[st[i]['name'] for i in bad]}", flush=True)
+        if not bad:
+            break
+        targets = set(bad) | {name_i[rows[i]["nearest"]] for i in bad if rows[i]["nearest"] and st[name_i[rows[i]["nearest"]]]["mat"] == "ptfe"}
+        for i in sorted(targets, key=lambda i: rows[i]["clearance"]):
+            s = st[i]
+            others = _others(st, i, 9)
+            best = (cost(s["x"], s, others), s["x"])
+            starts = [s["x"], initial(s)] + [s["x"] + np.r_[rng.normal(0, 0.8, 4), rng.normal(0, 3.0, 6)] for _ in range(4)]
+            for x0 in starts:
+                r = minimize(cost, x0, args=(s, others), method="Powell", options=dict(maxiter=2500, xtol=1e-3, ftol=1e-7))
+                r2 = minimize(cost, r.x, args=(s, others), method="L-BFGS-B", options=dict(maxiter=200))
+                r = r2 if r2.fun < r.fun else r
+                if r.fun < best[0]:
+                    best = (float(r.fun), r.x)
+            s["x"], s["J"] = best[1], best[0]
+            if verbose:
+                print(f"   {s['name']}: J {best[0]:.1f}", flush=True)
+        rows, allp = evaluate(st)
+        save(st, rows, allp, path)
+    rows, allp = evaluate(st)
+    save(st, rows, allp, path)
+    _print(rows)
+    return st
+
+
+def polish(path=OUT / "routes.json", passes=4, verbose=True):
+    """Continue optimising the PTFE paths from a saved routes.json (L-BFGS-B, dense sampling, margins)."""
+    global W_CLEAR
+    st = _load_for_opt(path)
     order = [i for i, s in enumerate(st) if s["mat"] == "ptfe"]
     for ps, w in zip(range(passes), (1500.0, 3000.0, 5000.0, 8000.0)):
         W_CLEAR = w
@@ -836,7 +890,9 @@ def route_fan(cell_map, passes=6, verbose=True, weights=(200.0, 1500.0, 5000.0, 
     warm = {}
     fp = OUT / "fan_routes.json"
     if "--warm" in sys.argv and fp.exists():
-        warm = {r["name"]: r["x"] for r in json.loads(fp.read_text())["strands"] if "x" in r}
+        # warm start only where the strand still ends in the same comb cell (a changed cell starts cold)
+        warm = {r["name"]: r["x"] for r in json.loads(fp.read_text())["strands"]
+                if "x" in r and cell_map.get(r["name"]) == r.get("cell")}
     C = cells()
     fan = []
     inv = {v: k for k, v in P.SERVO_IDS.items()}
@@ -906,6 +962,11 @@ def main():
         else:
             route_fan(cm)
         return
+    if "--fix" in sys.argv:
+        st = fixup(rounds=int(sys.argv[sys.argv.index("--fix") + 1]) if len(sys.argv) > sys.argv.index("--fix") + 1 else 5)
+        rows, _ = evaluate(st)
+        print("forearm fan with this cell map:", forearm_fan_check({s["name"]: s["cell"] for s in st}, st))
+        return
     if "--polish" in sys.argv:
         st, cmap = polish()
         rows, allp = evaluate(st)
@@ -916,6 +977,9 @@ def main():
         return
     st = strand_table()
     cmap = palm_cell_map(st)
+    if "--prev-map" in sys.argv:  # keep the committed cell map (forearm fan unchanged) -- the Hungarian re-pick after the
+        # bearings round only swapped 3 abd cells (both abd mouths now at the same y), which would force a fan re-route
+        cmap.update(json.loads((OUT / "routes_prev.json").read_text())["cell_map"])
     route(st, cmap, passes=3)
     rows, allp = evaluate(st)
     p = save(st, rows, allp)

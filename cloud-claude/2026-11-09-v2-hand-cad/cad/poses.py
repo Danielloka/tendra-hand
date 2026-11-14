@@ -61,6 +61,8 @@ def _finger_bodies(f):
             b = finger.BODY_OF[k]
             if any(t in k for t in ("pin", "post", "eyelet", "ptfe")):
                 continue
+            # bearing_* and tie_liner_* stay in the body that holds their seat (press fits): they are tested against
+            # every OTHER body, never against their own seat (same rigid body, so never against each other)
             groups.setdefault(b, []).append(s)
         _B[key] = {b: Body(v) for b, v in groups.items() if b in ("yoke", "proximal", "middle", "distal")}
     return _B[key]
@@ -73,7 +75,9 @@ def _thumb_bodies():
         groups = {}
         for k, s in rp.items():
             b = thumb.PART_BODY[k]
-            if b == "mount" or any(t in k for t in ("pin", "nip", "bearing", "neck", "cap")):
+            # bearing_* (MR84 in the cheeks) and tie_liner_* stay in their body (press fits: tested against every
+            # other body, never against their own seat); the 6704 pair of the mount ("mount" body) is skipped
+            if b == "mount" or any(t in k for t in ("pin", "nip", "neck", "cap")):
                 continue
             groups.setdefault(b, []).append(s)
         _B["T"] = {b: Body(v) for b, v in groups.items()}

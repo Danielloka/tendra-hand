@@ -1,0 +1,640 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body>
+<title>Tendra Skin Glove</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a large 3D stage on the left, a quiet control panel on the right (stacks on phones). Tendra design system: light, Inter, one blue accent for clickable things. */
+:root{
+  --bg:#f5f7fa; --surface:#ffffff; --fg:#1d1d1f; --muted:#5d6672; --line:#dfe5ec;
+  --accent:#0066cc; --accent-soft:#e8f1fb; --scene:#eef2f6; --grid:#d3dbe4; --grid2:#e2e8ee;
+  --ok:#1f7a45; --warn:#a85a00; --bad:#c0392b;
+  --font:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1216; --surface:#171b21; --fg:#eef1f5; --muted:#9aa4b1; --line:#29303a;
+  --accent:#4d9bff; --accent-soft:#16263b; --scene:#12161b; --grid:#2a323c; --grid2:#1c222a;
+  --ok:#4cc27e; --warn:#f0a44a; --bad:#ff6b5e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1216; --surface:#171b21; --fg:#eef1f5; --muted:#9aa4b1; --line:#29303a;
+  --accent:#4d9bff; --accent-soft:#16263b; --scene:#12161b; --grid:#2a323c; --grid2:#1c222a;
+  --ok:#4cc27e; --warn:#f0a44a; --bad:#ff6b5e; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:14px;line-height:1.5}
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 32px;max-width:1500px;margin:0 auto}
+header{display:flex;flex-wrap:wrap;gap:8px 24px;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
+.eyebrow{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{font-size:28px;line-height:1.15;margin:4px 0 6px;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+header p{margin:0;color:var(--muted);max-width:68ch}
+.stats{display:flex;gap:18px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column}
+.stat b{font-size:18px;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:16px;align-items:start}
+.stage{position:relative;background:var(--scene);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;height:calc(100vh - 150px);min-height:520px;position:sticky;top:12px}
+#scene{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.overlay{position:absolute;left:12px;top:12px;display:flex;gap:6px;flex-wrap:wrap}
+.hint{position:absolute;left:12px;bottom:10px;font-size:12px;color:var(--muted);pointer-events:none}
+.scale{position:absolute;right:12px;bottom:10px;font-size:12px;color:var(--muted);font-family:var(--mono)}
+button{font:inherit}
+.pill{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer}
+.pill:hover{border-color:var(--accent);color:var(--accent)}
+.pill[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.pill:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+aside{display:flex;flex-direction:column;gap:12px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;min-width:0}
+.card h2{font-size:13px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+#info h3{margin:0 0 4px;font-size:17px}
+#info .spec{font-family:var(--mono);font-size:12px;color:var(--muted);margin:0 0 8px}
+#info p{margin:0 0 6px}
+#info .meta{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.slider{display:grid;grid-template-columns:120px minmax(0,1fr) 44px;gap:8px;align-items:center;margin:6px 0}
+.slider label{font-size:13px}
+.slider output{font-family:var(--mono);font-size:12px;text-align:right;color:var(--muted)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.layers{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
+.layers label{display:flex;gap:8px;align-items:center;font-size:13px;cursor:pointer}
+.sw{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:600;color:var(--muted);font-size:11.5px}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono)}
+tr.sel td{background:var(--accent-soft)}
+tbody tr{cursor:pointer}
+.flag-ok{color:var(--ok)} .flag-warn{color:var(--warn)} .flag-bad{color:var(--bad)}
+.note{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+.total td{font-weight:600;border-bottom:none}
+.qs{margin:0;padding-left:18px}
+.qs li{margin:4px 0}
+@media (max-width:980px){
+  .grid{grid-template-columns:minmax(0,1fr)}
+  .stage{position:relative;top:0;height:62vh;min-height:380px}
+}
+@media (max-width:420px){.slider{grid-template-columns:96px minmax(0,1fr) 40px}.layers{grid-template-columns:1fr}}
+</style>
+
+<div class="wrap">
+<header>
+  <div>
+    <div class="eyebrow">Tendra Hand · data glove concept v0.3 · two gloves · right shown, left is its exact mirror · all sizes in mm</div>
+    <h1>Tendra Skin glove</h1>
+    <p>Magnets on one finger bone, a 3D Hall sensor on the next. The field direction gives the joint angle. Everything sits on the back of the hand, so the palm and fingertip pads stay bare. Drag to orbit, scroll to zoom, click any part.</p>
+  </div>
+  <div class="stats" aria-label="Glove summary">
+    <div class="stat"><b>15</b><span>Hall sensors / glove</span></div>
+    <div class="stat"><b>14</b><span>magnets / glove</span></div>
+    <div class="stat"><b>2</b><span>IMUs / glove</span></div>
+    <div class="stat"><b id="wTotal">~77 g</b><span>per glove</span></div>
+    <div class="stat"><b id="cTotal">~2,360 kr</b><span>both gloves</span></div>
+  </div>
+</header>
+
+<div class="grid">
+  <div class="stage">
+    <canvas id="scene" aria-label="3D model of the Tendra Skin data glove on a right hand"></canvas>
+    <div class="overlay" role="group" aria-label="Camera views">
+      <button class="pill" data-view="persp">3/4 view</button>
+      <button class="pill" data-view="top">Back of hand</button>
+      <button class="pill" data-view="side">Side</button>
+      <button class="pill" data-view="palm">Palm</button>
+      <button class="pill" data-view="thumb">Thumb</button>
+    </div>
+    <div class="hint">Drag: orbit · Right-drag: pan · Scroll: zoom · Click: inspect</div>
+    <div class="scale">grid = 10 mm</div>
+  </div>
+
+  <aside>
+    <div class="card" id="info" aria-live="polite">
+      <h2>Selected part</h2>
+      <h3>Click a part</h3>
+      <p class="spec">Rings, magnets, sensors, the plate or the wrist pod</p>
+      <p>Every part is modelled at its real size. Click a sensor to see which magnet it reads, and its live field values.</p>
+    </div>
+
+    <div class="card">
+      <h2>Pose</h2>
+      <div class="presets" role="group" aria-label="Pose presets">
+        <button class="pill" data-pose="flat">Flat (zero)</button>
+        <button class="pill" data-pose="relaxed">Relaxed</button>
+        <button class="pill" data-pose="power">Power grasp</button>
+        <button class="pill" data-pose="pinch">O-pinch</button>
+        <button class="pill" data-pose="point">Point</button>
+        <button class="pill" data-pose="fist">Fist</button>
+      </div>
+      <div class="slider"><label for="sCurl">Close fingers</label><input id="sCurl" type="range" min="0" max="1" step="0.01" value="0.25"><output id="oCurl"></output></div>
+      <div class="slider"><label for="sSpread">Spread</label><input id="sSpread" type="range" min="-0.3" max="1" step="0.01" value="0.2"><output id="oSpread"></output></div>
+      <div class="slider"><label for="sOpp">Thumb across</label><input id="sOpp" type="range" min="0" max="1" step="0.01" value="0.3"><output id="oOpp"></output></div>
+      <div class="slider"><label for="sTbend">Thumb bend</label><input id="sTbend" type="range" min="0" max="1" step="0.01" value="0.2"><output id="oTbend"></output></div>
+      <div class="slider"><label for="sSkin">Skin opacity</label><input id="sSkin" type="range" min="0.1" max="1" step="0.01" value="1"><output id="oSkin"></output></div>
+    </div>
+
+    <div class="card">
+      <h2>Layers</h2>
+      <div class="layers" id="layers"></div>
+    </div>
+
+    <div class="card">
+      <h2>Live sensor readings</h2>
+      <div class="tablewrap"><table id="sensTable">
+        <thead><tr><th>Sensor reads</th><th class="n">|B| mT</th><th class="n">Neighbour</th><th class="n">Joint</th><th class="n">Field turn</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+      <p class="note">Computed from the dipole formula for every magnet at its modelled position, plus Earth's field in Norway (~50 µT). "Neighbour" is the field from the other magnets as a share of the paired magnet's field. TMAG5273A1 range: ±40 mT, noise ~10 µT, so aim for 0.3–40 mT. "Field turn" is how far the field vector has rotated since the flat pose. Calibration maps it to the joint angle.</p>
+    </div>
+
+    <div class="card">
+      <h2>Parts and cost for two gloves (estimates, NOK incl. VAT)</h2>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Part</th><th class="n">Qty (pair)</th><th class="n">g / glove</th><th class="n">kr</th></tr></thead>
+        <tbody id="bom"></tbody>
+      </table></div>
+      <p class="note">Prices are estimates. Check them in a live cart. The Hall and IMU boards are tiny chips, so JLCPCB assembles them on one order and you don't hand-solder them.</p>
+    </div>
+
+    <div class="card">
+      <h2>Things to give feedback on</h2>
+      <ol class="qs">
+        <li>Decided (v0.3): slim tabs, open-palm glove, standing magnets, battery + wireless pod on the wrist, no buzzers, two gloves.</li>
+        <li>Build order: one-finger test, then the full right glove, then copy it for the left?</li>
+        <li>Ring sizes: measure the width of each of your finger bones (calliper or paper strip) so the rings fit.</li>
+        <li>Cameras: with ~2,360 kr for the gloves, start with cheap wrist cameras and add the D405 later?</li>
+      </ol>
+      <p class="note">Tell Claude in the chat what to change. This is v0.3 of the concept.</p>
+    </div>
+  </aside>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const canvas=$('#scene');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.outputEncoding=THREE.sRGBEncoding;
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(30,1,1,5000);
+const controls=new THREE.OrbitControls(camera,canvas);
+controls.enableDamping=true; controls.dampingFactor=0.09;
+controls.minDistance=80; controls.maxDistance=900;
+scene.add(new THREE.HemisphereLight(0xffffff,0x7c8796,0.85));
+const d1=new THREE.DirectionalLight(0xffffff,0.85); d1.position.set(120,260,140); scene.add(d1);
+const d2=new THREE.DirectionalLight(0xffffff,0.35); d2.position.set(-200,60,-160); scene.add(d2);
+const d3=new THREE.DirectionalLight(0xffffff,0.25); d3.position.set(0,-200,60); scene.add(d3);
+
+/* ---------- theme ---------- */
+let grid;
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
+function applyTheme(){
+  scene.background=new THREE.Color(css('--scene'));
+  if(grid) scene.remove(grid);
+  grid=new THREE.GridHelper(400,40,new THREE.Color(css('--grid')),new THREE.Color(css('--grid2')));
+  grid.position.set(-10,-62,-10); scene.add(grid);
+}
+applyTheme();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme);
+new MutationObserver(applyTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+/* ---------- materials ---------- */
+const M={
+  skin:new THREE.MeshStandardMaterial({color:0xdcae94,roughness:0.62,transparent:true,opacity:1}),
+  fabric:new THREE.MeshStandardMaterial({color:0x323a47,roughness:1}),
+  elastic:new THREE.MeshStandardMaterial({color:0x4a5466,roughness:1}),
+  tpu:new THREE.MeshStandardMaterial({color:0x3c78c8,roughness:0.55}),
+  petg:new THREE.MeshPhysicalMaterial({color:0xd9e3ec,roughness:0.35,transparent:true,opacity:0.8}),
+  pod:new THREE.MeshPhysicalMaterial({color:0xcfd8e1,roughness:0.4,transparent:true,opacity:0.45}),
+  pcb:new THREE.MeshStandardMaterial({color:0x165c38,roughness:0.6}),
+  pcbDark:new THREE.MeshStandardMaterial({color:0x1b1f26,roughness:0.55}),
+  pcbBlue:new THREE.MeshStandardMaterial({color:0x1f4e9a,roughness:0.6}),
+  chip:new THREE.MeshStandardMaterial({color:0x111111,roughness:0.4}),
+  metal:new THREE.MeshStandardMaterial({color:0xc9ced5,metalness:0.85,roughness:0.3}),
+  magnet:new THREE.MeshStandardMaterial({color:0xc7ccd3,metalness:0.9,roughness:0.25}),
+  north:new THREE.MeshStandardMaterial({color:0xd8423a,roughness:0.5}),
+  wire:new THREE.MeshStandardMaterial({color:0xd4891d,roughness:0.5}),
+  battery:new THREE.MeshStandardMaterial({color:0x8d96a3,metalness:0.4,roughness:0.5}),
+  cable:new THREE.MeshStandardMaterial({color:0x202328,roughness:0.7}),
+  nail:new THREE.MeshPhysicalMaterial({color:0xf3e6e0,roughness:0.25,transparent:true,opacity:0.9}),
+  led:new THREE.MeshStandardMaterial({color:0xff3030,emissive:0xff2020,emissiveIntensity:1.2}),
+  motor:new THREE.MeshStandardMaterial({color:0xa9afb8,metalness:0.7,roughness:0.35}),
+  field:new THREE.LineBasicMaterial({color:0xe0533f,transparent:true,opacity:0.45}),
+};
+
+/* ---------- parts catalogue (click info) ---------- */
+const PARTS={
+  hall:{t:'3D Hall sensor board',s:'TI TMAG5273A1/B1/C1/D1 · SOT-23-6 on a 6 × 6 × 0.8 mm board · ±40 mT · 12-bit · I²C 1 MHz',p:'Measures the 3D field of the magnet across the joint. The knuckle sensors give bend AND spread from one chip: bending changes the up/forward field components (By, Bz), spreading changes the sideways one (Bx). Four address versions let 3–4 share one I²C wire.',c:'~25 kr assembled',w:'0.1 g'},
+  hallRef:{t:'Reference Hall sensor',s:'TMAG5273D1 · on the hand plate, ≥35 mm from any magnet',p:'Sees only the outside world: Earth, steel pans, knives, motors. When it changes by more than ~150 µT, frames are marked "low confidence" and the camera takes over.',c:'~25 kr',w:'0.1 g'},
+  magnet:{t:'Neodymium magnet',s:'N52 disc Ø4 × 2 mm · axially magnetised · standing up, north pole facing the sensor · m ≈ 0.029 A·m²',p:'Glued into a pocket on a TPU tab or a press-on nail, 4 mm tall. It points along the bone at the sensor across the joint, so bending (down) and spreading (sideways) both rotate it, which gives a strong signal for both angles.',c:'~1 kr',w:'0.19 g'},
+  ring:{t:'TPU finger ring',s:'TPU 95A · open C-shape · 1.2 mm wall · 7 mm wide · 3 sizes (S/M/L)',p:'Sits mid-bone, where skin slides least. The flat saddle stops it rotating. The rear tab carries the magnet for the joint behind; the front tab carries the sensor for the joint ahead. The open side faces the palm, so it slips on and leaves the grip surface bare.',c:'printed',w:'~1.0 g'},
+  thumbPod:{t:'Thumb metacarpal pod',s:'TPU saddle + IMU board + front sensor tab · held by the elastic thumb loop',p:'The thumb base moves too far for a magnet, so an IMU here and one on the hand plate measure it from their relative orientation (cmc_rot + cmc_flex). The front tab senses the thumb MCP magnet.',c:'printed',w:'~2.5 g'},
+  imu:{t:'IMU board',s:'TDK ICM-42688-P · 6-axis, no magnetometer · 10 × 10 mm board',p:'Relative orientation between the thumb metacarpal and the hand plate. Pitch and roll are drift-free (gravity); yaw drifts slowly and is corrected by the camera. The plate IMU also gives hand orientation and feels the sync tap.',c:'~50 kr assembled',w:'0.3 g'},
+  nail:{t:'Press-on nail with magnet',s:'Cosmetic press-on nail · magnet glued at its base · nail glue tabs',p:'Holds the DIP (and thumb IP) magnet without covering the fingertip pad. On and off in seconds.',c:'~10 kr each',w:'0.3 g'},
+  plate:{t:'Hand plate',s:'PETG 1.5 mm · curved to the back of the hand · 4 knuckle tabs · sewn onto the glove',p:'Carries the 4 knuckle sensors (8 mm before each knuckle), the hand IMU and the reference sensor. Holds the finger bus connectors.',c:'printed',w:'~10 g'},
+  tab:{t:'Cantilever tab',s:'Part of the plate or ring · 5 mm wide · 1.2 mm thick',p:'Brings the sensor or magnet close to the joint without touching the joint crease, so skin folding doesn’t move it.',c:'printed',w:'—'},
+  glove:{t:'Open-palm glove base',s:'Lycra back panel · 20 mm elastic palm strap · thumb loop · Velcro wrist cuff',p:'Made by cutting a compression glove. No fabric on the fingers or the grip surface of the palm, so touch and grip are almost unchanged.',c:'~150 kr',w:'~18 g'},
+  xiao:{t:'Seeed XIAO ESP32-S3',s:'21 × 17.5 mm · dual-core 240 MHz · Wi-Fi/BLE · LiPo charger on board',p:'Reads all sensors at 200 Hz (~2 ms per sweep) and sends raw fields with a µs timestamp over ESP-NOW to a second XIAO plugged into the PC (a USB dongle). One dongle receives both gloves, and its clock time-stamps both, so left and right stay in sync. ESP-NOW is fast (~2–4 ms) and needs no router. Charges through its USB-C port.',c:'~110 kr',w:'3 g'},
+  battery:{t:'LiPo battery',s:'1S 3.7 V · ~500 mAh · about 30 × 20 × 5 mm ("502030")',p:'The glove draws ~120–150 mA (ESP32 radio ~90 mA + 15 sensors ~35 mA), so 500 mAh gives about 3 hours of recording. Charges from USB-C in ~1 hour.',c:'~60 kr',w:'~10 g'},
+  sw:{t:'Power switch',s:'Small slide switch on the pod side',p:'Cuts the battery so it doesn’t drain in a drawer.',c:'~3 kr',w:'—'},
+  mux:{t:'I²C multiplexer',s:'TCA9548A · 8 channels · 1 channel per finger + thumb + plate',p:'One short bus per finger, so a broken wire only loses one finger and the address versions repeat on every finger.',c:'~30 kr',w:'2 g'},
+  led:{t:'Sync LED',s:'0603 red LED behind a window in the pod',p:'Blinks a 4-bit code at the start of each recording. The wrist and head cameras see it, which lines up glove time and video time to < 5 ms.',c:'~1 kr',w:'—'},
+  podCase:{t:'Wrist pod',s:'PETG case 38 × 34 × 13 mm on the Velcro cuff',p:'Holds the battery (bottom), the mux and the XIAO (top), away from the hand so the fingers stay light. Wireless, so no cable pulls on your arm.',c:'printed',w:'~10 g'},
+  wire:{t:'Finger bus cable',s:'4-core (3V3, GND, SDA, SCL) Ø1.2 mm silicone or 1 mm-pitch FFC · slack loop over each joint',p:'Runs on top of the rings. The loop over each joint lets the skin stretch without pulling the sensors.',c:'~120 kr all',w:'~6 g'},
+
+  motor:{t:'Haptic buzzer (optional)',s:'Coin vibration motor Ø10 × 2.7 mm · on the side of each proximal ring',p:'Buzzes when your finger pose is one Tendra can’t reach, so you learn to demonstrate the robot’s way.',c:'~10 kr each',w:'0.9 g'},
+  hand:{t:'Your hand',s:'Adult right hand, approximate size',p:'The palm and fingertip pads have no glove material on them.',c:'—',w:'—'},
+};
+
+/* ---------- registry ---------- */
+const clickables=[]; const LAYERS={};
+function layer(name,obj){(LAYERS[name]=LAYERS[name]||[]).push(obj);return obj}
+function reg(mesh,part,label,lay){mesh.userData.part=part;mesh.userData.label=label||PARTS[part].t;clickables.push(mesh);if(lay)layer(lay,mesh);return mesh}
+function mk(geo,mat,part,label,lay){const m=new THREE.Mesh(geo,mat);if(part)reg(m,part,label,lay);else if(lay)layer(lay,m);return m}
+
+/* ---------- geometry helpers ---------- */
+function capsuleZ(r,len){const g=new THREE.CapsuleGeometry(r,len,8,20);g.rotateX(Math.PI/2);g.translate(0,0,len/2);return g}
+function arcRingGeo(rIn,rOut,width,a0,a1){const s=new THREE.Shape();s.absarc(0,0,rOut,a0,a1,false);s.absarc(0,0,rIn,a1,a0,true);s.closePath();const g=new THREE.ExtrudeGeometry(s,{depth:width,bevelEnabled:false,curveSegments:28});g.translate(0,0,-width/2);return g}
+function boxAt(w,h,d,x,y,z,mat,part,label,lay){const m=mk(new THREE.BoxGeometry(w,h,d),mat,part,label,lay);m.position.set(x,y,z);return m}
+const deg=Math.PI/180;
+
+/* ---------- hand ---------- */
+const hand=new THREE.Group(); scene.add(hand);
+// palm outline in (x,z); extruded through y (dorsal = +y)
+const palmPts=[[-28,-46],[28,-46],[35,-20],[34,22],[29,34],[19,41],[9,44],[0,46],[-9,47],[-18,46],[-27,44],[-35,38],[-38,20],[-38,-10],[-35,-32]];
+const palmShape=new THREE.Shape(palmPts.map(p=>new THREE.Vector2(p[0],p[1])));
+const palmGeo=new THREE.ExtrudeGeometry(palmShape,{depth:22,bevelEnabled:true,bevelThickness:4,bevelSize:4,bevelSegments:4,curveSegments:12});
+palmGeo.rotateX(Math.PI/2); palmGeo.translate(0,11,0);
+hand.add(mk(palmGeo,M.skin,'hand','Palm','hand'));
+const thenar=mk(new THREE.SphereGeometry(1,32,20),M.skin,'hand','Thenar (thumb muscle)','hand');
+thenar.scale.set(15,12,24); thenar.position.set(-30,-5,-18); hand.add(thenar);
+const forearm=mk(new THREE.CylinderGeometry(1,1.08,120,40),M.skin,'hand','Wrist and forearm','hand');
+forearm.rotation.x=Math.PI/2; forearm.scale.set(29,1,20); forearm.position.set(0,-1,-108); hand.add(forearm);
+
+/* ---------- glove (fabric) ---------- */
+const panelGeo=new THREE.ExtrudeGeometry(palmShape,{depth:0.8,bevelEnabled:false});
+panelGeo.rotateX(Math.PI/2); panelGeo.translate(0,15.8,0);
+const panel=mk(panelGeo,M.fabric,'glove','Glove back panel','glove'); hand.add(panel);
+function band(rx,ry,h,z,y,mat,label){const m=mk(new THREE.CylinderGeometry(1,1,h,48,1,true),mat,'glove',label,'glove');m.material=mat.clone();m.material.side=THREE.DoubleSide;m.rotation.x=Math.PI/2;m.scale.set(rx,1,ry);m.position.set(0,y,z);hand.add(m);return m}
+band(43.5,16.3,20,-8,0,M.elastic,'Elastic palm strap (20 mm)');
+band(30.8,21.6,26,-70,-1,M.fabric,'Velcro wrist cuff');
+// back panel over the wrist
+const wristPanel=boxAt(52,0.8,26,0,16,-58,M.fabric,'glove','Glove back panel','glove'); hand.add(wristPanel);
+
+/* ---------- hand plate ---------- */
+const plateY=x=>16.95-0.0016*x*x;
+(function(){const g=new THREE.BoxGeometry(70,1.5,40,28,1,14);const p=g.attributes.position;for(let i=0;i<p.count;i++){const x=p.getX(i);p.setY(i,p.getY(i)+plateY(x));}g.computeVertexNormals();const m=mk(g,M.petg,'plate',null,'plate');m.position.set(-2,0,8);hand.add(m);})();
+
+/* ---------- fingers ---------- */
+const FINGERS=[
+  {n:'Index', x:-27,z:42,base:-0.07,k:-0.20,L:[44,26,21],r:[9.0,8.3,7.6]},
+  {n:'Middle',x:-9, z:45,base:-0.01,k:-0.05,L:[49,30,23],r:[9.3,8.6,7.9]},
+  {n:'Ring',  x:9,  z:42,base:0.05, k:0.10, L:[46,29,22],r:[8.7,8.0,7.4]},
+  {n:'Little',x:26, z:33,base:0.13, k:0.26, L:[36,21,19],r:[7.6,7.0,6.5]},
+];
+const JY=3.5; // joint axis height
+const magnets=[]; const sensors=[]; const anchors={}; const imus=[];
+
+function makeMagnet(parent,x,y,z,label){
+  const g=new THREE.Group(); g.position.set(x,y+1,z); g.rotation.x=-Math.PI/2; // standing: axis along the bone, north facing the sensor behind it
+  const body=mk(new THREE.CylinderGeometry(2,2,2,28),M.magnet.clone(),'magnet',label,'magnets'); g.add(body);
+  const n=mk(new THREE.CylinderGeometry(1.98,1.98,0.12,28),M.north,null,null,'magnets'); n.position.y=1.02; g.add(n);
+  g.add(layer('field',fieldLines()));
+  parent.add(g); magnets.push({obj:g,body,label}); body.userData.magnetIndex=magnets.length-1; return magnets.length-1;
+}
+function makeSensor(parent,x,y,z,label,joint,own,partKey){
+  const g=new THREE.Group(); g.position.set(x,y,z);
+  const pcb=mk(new THREE.BoxGeometry(6,0.8,6),M.pcb.clone(),partKey||'hall',label,'sensors'); g.add(pcb);
+  const chip=mk(new THREE.BoxGeometry(1.6,1.1,2.9),M.chip,partKey||'hall',label,'sensors'); chip.position.y=0.95; g.add(chip);
+  const anc=new THREE.Object3D(); anc.position.y=0.6; g.add(anc);
+  parent.add(g);
+  const s={obj:g,pcb,chip,label,joint,own,anchor:anc,rest:null,arrow:null};
+  sensors.push(s); pcb.userData.sensorIndex=chip.userData.sensorIndex=sensors.length-1; return s;
+}
+function makeRing(seg,r,L,zc,opts){
+  const ro=r+1.4;
+  const ring=mk(arcRingGeo(r+0.15,ro,7,-40*deg,220*deg),M.tpu,'ring',opts.label,'rings');
+  ring.scale.x=1.12; ring.position.z=zc; seg.add(ring);
+  seg.add(boxAt(8,1.2,7,0,r+1.7,zc,M.tpu,'ring',opts.label,'rings'));
+  const ty=r+1.9;
+  if(opts.rear){const z0=opts.rearEnd,z1=zc-3.5;seg.add(boxAt(5,1.2,z1-z0,0,ty,(z0+z1)/2,M.tpu,'tab','Rear tab (magnet)','rings'));}
+  if(opts.front){const z0=zc+3.5,z1=opts.frontEnd;seg.add(boxAt(5,1.2,z1-z0,0,ty,(z0+z1)/2,M.tpu,'tab','Front tab (sensor)','rings'));}
+  const sad=new THREE.Object3D(); sad.position.set(0,r+3,zc); seg.add(sad);
+  if(opts.motor){const m=mk(new THREE.CylinderGeometry(5,5,2.7,28),M.motor,'motor',opts.n+' haptic buzzer','haptics');m.rotation.z=Math.PI/2;m.position.set(r*1.12+2.8,1.5,zc);seg.add(m);}
+  return {ty:ty+0.6,sad};
+}
+function segMesh(parent,r,L,label,tip){const m=mk(capsuleZ(r,tip?L-r:L),M.skin,'hand',label,'hand');m.scale.x=1.12;parent.add(m);return m}
+
+FINGERS.forEach((f,i)=>{
+  const root=new THREE.Group(); root.position.set(f.x,JY,f.z); hand.add(root);
+  const abd=new THREE.Group(); root.add(abd);
+  const mcp=new THREE.Group(); abd.add(mcp);
+  const pip=new THREE.Group(); pip.position.z=f.L[0]; mcp.add(pip);
+  const dip=new THREE.Group(); dip.position.z=f.L[1]; pip.add(dip);
+  f.g={root,abd,mcp,pip,dip};
+  segMesh(mcp,f.r[0],f.L[0],f.n+' proximal phalanx');
+  segMesh(pip,f.r[1],f.L[1],f.n+' middle phalanx');
+  segMesh(dip,f.r[2],f.L[2],f.n+' distal phalanx',true);
+  // proximal ring: magnet for MCP (rear), sensor for PIP (front)
+  const zp=f.L[0]*0.5;
+  const rp=makeRing(mcp,f.r[0],f.L[0],zp,{rear:true,rearEnd:3,front:true,frontEnd:f.L[0]-3,label:f.n+' proximal ring',motor:true,n:f.n});
+  const mMcp=makeMagnet(mcp,0,rp.ty+1,5,f.n+' MCP magnet');
+  // middle ring: magnet for PIP (rear), sensor for DIP (front)
+  const zm=f.L[1]*0.5;
+  const rm=makeRing(pip,f.r[1],f.L[1],zm,{rear:true,rearEnd:2.5,front:true,frontEnd:f.L[1]-2.5,label:f.n+' middle ring'});
+  const mPip=makeMagnet(pip,0,rm.ty+1,4.5,f.n+' PIP magnet');
+  // nail with DIP magnet
+  const nail=mk(arcRingGeo(f.r[2]-0.1,f.r[2]+0.6,12,35*deg,145*deg),M.nail,'nail',f.n+' press-on nail','nails');
+  nail.scale.x=1.12; nail.position.z=f.L[2]-f.r[2]*0.3-6; dip.add(nail);
+  const mDip=makeMagnet(dip,0,f.r[2]+0.6+1,f.L[2]-f.r[2]*0.3-10,f.n+' DIP magnet');
+  // sensors
+  const sPip=makeSensor(mcp,0,rp.ty+0.4,f.L[0]-5,f.n+' PIP sensor',{f:i,j:'pip'},mPip);
+  const sDip=makeSensor(pip,0,rm.ty+0.4,f.L[1]-4.5,f.n+' DIP sensor',{f:i,j:'dip'},mDip);
+  // plate tab + MCP sensor (fixed to hand)
+  const tz0=27, tz1=f.z-6;
+  if(tz1>tz0) hand.add(boxAt(6,1.5,tz1-tz0,f.x,plateY(f.x),(tz0+tz1)/2,M.petg,'plate',f.n+' knuckle tab','plate'));
+  const sMcp=makeSensor(hand,f.x,plateY(f.x)+1.15,f.z-8.5,f.n+' MCP sensor',{f:i,j:'mcp'},mMcp);
+  f.s={sMcp,sPip,sDip}; f.sad={p:rp.sad,m:rm.sad};
+});
+
+/* ---------- thumb ---------- */
+const T={L:[44,31,26],r:[11,9.6,9.0]};
+(function(){
+  const root=new THREE.Group(); root.position.set(-22,-3,-30); hand.add(root);
+  const base=new THREE.Group(); root.add(base);      // cmc_rot (yaw + roll)
+  const cmcF=new THREE.Group(); base.add(cmcF);     // cmc_flex
+  const mcp=new THREE.Group(); mcp.position.z=T.L[0]; cmcF.add(mcp);
+  const ip=new THREE.Group(); ip.position.z=T.L[1]; mcp.add(ip);
+  T.g={root,base,cmcF,mcp,ip};
+  segMesh(cmcF,T.r[0],T.L[0],'Thumb metacarpal');
+  segMesh(mcp,T.r[1],T.L[1],'Thumb proximal phalanx');
+  segMesh(ip,T.r[2],T.L[2],'Thumb distal phalanx',true);
+  // metacarpal pod with IMU + MCP sensor tab, elastic thumb loop
+  const zc=T.L[0]*0.62, r=T.r[0];
+  const loop=mk(arcRingGeo(r+0.1,r+1.0,14,-30*deg,210*deg),M.elastic,'glove','Elastic thumb loop','glove'); loop.scale.x=1.12; loop.position.z=zc; cmcF.add(loop);
+  cmcF.add(boxAt(13,1.6,14,0,r+1.6,zc,M.tpu,'thumbPod',null,'rings'));
+  const imuB=boxAt(10,1,10,0,r+2.9,zc,M.pcbDark,'imu','Thumb IMU','sensors'); cmcF.add(imuB);
+  cmcF.add(boxAt(3,0.9,2.5,0,r+3.8,zc,M.chip,'imu','Thumb IMU','sensors'));
+  cmcF.add(boxAt(5,1.2,T.L[0]-3-(zc+7),0,r+1.9,(zc+7+T.L[0]-3)/2,M.tpu,'tab','Front tab (sensor)','rings'));
+  const tA=new THREE.Object3D(); tA.position.set(0,r+4,zc-5); cmcF.add(tA); anchors.thumbPod=tA;
+  // proximal ring: MCP magnet rear, IP sensor front
+  const zp=T.L[1]*0.5;
+  const rp=makeRing(mcp,T.r[1],T.L[1],zp,{rear:true,rearEnd:3,front:true,frontEnd:T.L[1]-3,label:'Thumb proximal ring',motor:true,n:'Thumb'});
+  const mMcp=makeMagnet(mcp,0,rp.ty+1,5,'Thumb MCP magnet');
+  const nail=mk(arcRingGeo(T.r[2]-0.1,T.r[2]+0.6,13,35*deg,145*deg),M.nail,'nail','Thumb press-on nail','nails');
+  nail.scale.x=1.12; nail.position.z=T.L[2]-T.r[2]*0.3-6.5; ip.add(nail);
+  const mIp=makeMagnet(ip,0,T.r[2]+0.6+1,T.L[2]-T.r[2]*0.3-10.5,'Thumb IP magnet');
+  T.s={
+    sMcp:makeSensor(cmcF,0,r+2.5,T.L[0]-5,'Thumb MCP sensor',{t:'mcp'},mMcp),
+    sIp:makeSensor(mcp,0,rp.ty+0.4,T.L[1]-5,'Thumb IP sensor',{t:'ip'},mIp)
+  };
+  T.sad=rp.sad;
+})();
+
+/* ---------- plate electronics ---------- */
+hand.add(boxAt(10,1,10,-6,plateY(-6)+1.25,6,M.pcbDark,'imu','Hand IMU','sensors'));
+hand.add(boxAt(3,0.9,2.5,-6,plateY(-6)+2.2,6,M.chip,'imu','Hand IMU','sensors'));
+const sRef=makeSensor(hand,16,plateY(16)+1.15,-6,'Reference (no magnet)',{ref:true},-1,'hallRef');
+// connector header row at rear edge of plate
+hand.add(boxAt(30,2.4,4,-4,plateY(-4)+1.9,-9,M.pcbDark,'plate','Bus connectors (JST-SH)','plate'));
+
+/* ---------- wrist pod ---------- */
+const podY=22.6;
+(function(){
+  const s=new THREE.Shape();const w=19,d=17,rr=4;
+  s.moveTo(-w+rr,-d);s.lineTo(w-rr,-d);s.quadraticCurveTo(w,-d,w,-d+rr);s.lineTo(w,d-rr);s.quadraticCurveTo(w,d,w-rr,d);s.lineTo(-w+rr,d);s.quadraticCurveTo(-w,d,-w,d-rr);s.lineTo(-w,-d+rr);s.quadraticCurveTo(-w,-d,-w+rr,-d);
+  const g=new THREE.ExtrudeGeometry(s,{depth:13,bevelEnabled:false});g.rotateX(Math.PI/2);g.translate(0,podY+13,-70);
+  hand.add(mk(g,M.pod,'podCase',null,'electronics'));
+  hand.add(boxAt(30,5,20,0,podY+3,-70,M.battery,'battery',null,'electronics'));
+  hand.add(boxAt(16,1,18,0,podY+6.3,-70,M.pcbDark,'mux',null,'electronics'));
+  hand.add(boxAt(4,0.7,4,0,podY+7.1,-70,M.chip,'mux',null,'electronics'));
+  hand.add(boxAt(17.5,1,21,0,podY+9.4,-70,M.pcbBlue,'xiao',null,'electronics'));
+  hand.add(boxAt(12.5,2.2,12,0,podY+11,-68,M.metal,'xiao','ESP32-S3 module (shield can)','electronics'));
+  hand.add(boxAt(9,3.2,7.4,0,podY+9.6,-82,M.metal,'xiao','USB-C charging port','electronics'));
+  hand.add(boxAt(2.5,3,7,-19.5,podY+6.5,-72,M.cable,'sw',null,'electronics'));
+  hand.add(boxAt(1.6,0.8,1.0,10,podY+13.2,-58,M.led,'led',null,'electronics'));
+})();
+
+/* ---------- field lines (dipole, magnet axis = local y) ---------- */
+function fieldLines(){
+  const grp=new THREE.Group();
+  [3,5,8,13].forEach(k=>{for(let a=0;a<6;a++){const phi=a/6*Math.PI*2;const pts=[];
+    for(let t=0.12;t<=Math.PI-0.12+1e-6;t+=Math.PI/70){const r=k*Math.sin(t)**2;if(r<2.2)continue;pts.push(new THREE.Vector3(r*Math.sin(t)*Math.cos(phi),r*Math.cos(t),r*Math.sin(t)*Math.sin(phi)));}
+    if(pts.length>2)grp.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),M.field));}});
+  return grp;
+}
+
+/* ---------- wires (rebuilt when the pose changes) ---------- */
+const wireGroup=new THREE.Group(); scene.add(wireGroup); layer('wires',wireGroup);
+const V=()=>new THREE.Vector3();
+function wp(o,dx=0,dy=0,dz=0){const v=new THREE.Vector3(dx,dy,dz);return o.localToWorld(v)}
+function upOf(o){const q=new THREE.Quaternion();o.getWorldQuaternion(q);return new THREE.Vector3(0,1,0).applyQuaternion(q)}
+function tube(points,r,mat,part,label){const c=new THREE.CatmullRomCurve3(points,false,'centripetal');const m=new THREE.Mesh(new THREE.TubeGeometry(c,Math.max(16,points.length*10),r,6,false),mat);m.userData.part=part;m.userData.label=label;return m}
+function buildWires(){
+  wireGroup.children.forEach(c=>{c.geometry.dispose()}); wireGroup.clear();
+  for(let i=clickables.length-1;i>=0;i--) if(clickables[i].userData.isWire) clickables.splice(i,1);
+  const add=(pts,r,mat,part,label)=>{const t=tube(pts,r,mat,part,label);t.userData.isWire=true;clickables.push(t);wireGroup.add(t)};
+  FINGERS.forEach(f=>{
+    const a=wp(f.s.sMcp.anchor,0,0.4,-1.5), b=wp(f.sad.p), c=wp(f.s.sPip.anchor,0,0.4,-1.5), d=wp(f.sad.m), e=wp(f.s.sDip.anchor,0,0.4,-1.5);
+    const back=new THREE.Vector3(f.x,plateY(f.x)+1.4,-6);
+    const m1=a.clone().add(b).multiplyScalar(0.5).add(upOf(f.g.mcp).multiplyScalar(5));
+    const m2=c.clone().add(d).multiplyScalar(0.5).add(upOf(f.g.pip).multiplyScalar(4));
+    add([back,new THREE.Vector3(f.x,plateY(f.x)+1.4,(f.z-8)/2),a,m1,b,c],0.6,M.wire,'wire',f.n+' bus cable');
+    add([c,m2,d,e],0.5,M.wire,'wire',f.n+' bus cable');
+  });
+  // thumb
+  const p0=new THREE.Vector3(-30,plateY(-30)+1.4,-4), tp=wp(anchors.thumbPod), ts=wp(T.s.sMcp.anchor,0,0.4,-1.5), sad=wp(T.sad), ti=wp(T.s.sIp.anchor,0,0.4,-1.5);
+  const mid=p0.clone().add(tp).multiplyScalar(0.5).add(new THREE.Vector3(-4,6,0));
+  const m3=ts.clone().add(sad).multiplyScalar(0.5).add(upOf(T.g.mcp).multiplyScalar(5));
+  add([p0,mid,tp,ts,m3,sad,ti],0.6,M.wire,'wire','Thumb bus cable');
+  // plate → wrist pod bundle
+  for(let k=0;k<6;k++){const x=-10+k*2.6;add([new THREE.Vector3(x,plateY(x)+2.6,-10),new THREE.Vector3(x*0.8,19.5,-30),new THREE.Vector3(x*0.5,podY+3,-56)],0.55,M.wire,'wire','Bus cable to wrist pod');}
+  wireGroup.visible=layerOn.wires!==false;
+}
+
+/* ---------- field arrows ---------- */
+sensors.forEach(s=>{s.arrow=new THREE.ArrowHelper(new THREE.Vector3(0,1,0),new THREE.Vector3(),9,0x0066cc,2.6,1.6);scene.add(s.arrow);layer('field',s.arrow)});
+
+/* ---------- pose ---------- */
+const POSES={
+  flat:   {mcp:[0,0,0,0],pip:[0,0,0,0],dip:[0,0,0,0],abd:[0,0,0,0],opp:0,tflex:0,tmcp:0,tip:0},
+  relaxed:{mcp:[.35,.4,.45,.5],pip:[.5,.55,.6,.65],dip:[.3,.35,.4,.45],abd:[0.04,0.01,-0.02,-0.04],opp:.3,tflex:.15,tmcp:.15,tip:.2},
+  power:  {mcp:[1.0,1.05,1.1,1.15],pip:[1.25,1.3,1.3,1.3],dip:[.75,.8,.8,.8],abd:[0,0,0,0],opp:.8,tflex:.35,tmcp:.45,tip:.35},
+  pinch:  {mcp:[.85,.55,.6,.65],pip:[1.05,.7,.75,.8],dip:[.55,.45,.5,.5],abd:[0.02,0,0,0],opp:1,tflex:.45,tmcp:.35,tip:.25},
+  point:  {mcp:[0,1.45,1.45,1.45],pip:[0,1.7,1.7,1.7],dip:[0,1.1,1.1,1.1],abd:[0,0,0,0],opp:.85,tflex:.5,tmcp:.8,tip:.6},
+  fist:   {mcp:[1.45,1.5,1.5,1.5],pip:[1.7,1.75,1.75,1.75],dip:[1.1,1.15,1.15,1.15],abd:[0,0,0,0],opp:.9,tflex:.5,tmcp:.85,tip:.6},
+};
+const clone=p=>JSON.parse(JSON.stringify(p));
+let cur=clone(POSES.relaxed), target=clone(POSES.relaxed), dirty=true;
+let spread=0.2;
+function applyPose(p){
+  FINGERS.forEach((f,i)=>{
+    f.g.abd.rotation.y=f.base+f.k*spread+p.abd[i];
+    f.g.mcp.rotation.x=p.mcp[i]; f.g.pip.rotation.x=p.pip[i]; f.g.dip.rotation.x=p.dip[i];
+  });
+  T.g.base.rotation.set(0,-0.95+0.62*p.opp,0.75+0.75*p.opp);
+  T.g.cmcF.rotation.x=0.08+0.55*p.tflex;
+  T.g.mcp.rotation.x=p.tmcp; T.g.ip.rotation.x=p.tip;
+}
+function lerpPose(a,b,t){let moved=false;const L=(x,y)=>{const v=x+(y-x)*t;if(Math.abs(y-v)>1e-4)moved=true;return Math.abs(y-v)<1e-4?y:v};
+  ['mcp','pip','dip','abd'].forEach(k=>{for(let i=0;i<4;i++)a[k][i]=L(a[k][i],b[k][i])});
+  ['opp','tflex','tmcp','tip'].forEach(k=>a[k]=L(a[k],b[k]));return moved}
+
+/* ---------- magnetic field ---------- */
+const EARTH=new THREE.Vector3(0.000014,-0.000048,0); // Tesla, world (−y = down)
+const MOM=0.029; // A·m²
+function magState(){return magnets.map(m=>{const p=V();m.obj.getWorldPosition(p);const q=new THREE.Quaternion();m.obj.getWorldQuaternion(q);return{p:p.multiplyScalar(1e-3),m:new THREE.Vector3(0,MOM,0).applyQuaternion(q)}})}
+function dipole(at,mg){const r=at.clone().sub(mg.p);const d=r.length();const rh=r.divideScalar(d);const mdr=mg.m.dot(rh);return rh.multiplyScalar(3*mdr).sub(mg.m).multiplyScalar(1e-7/(d*d*d))}
+function sensorFields(){
+  const ms=magState();
+  return sensors.map(s=>{const p=V();s.chip.getWorldPosition(p);p.multiplyScalar(1e-3);
+    const own=s.own>=0?dipole(p,ms[s.own]):new THREE.Vector3();
+    const other=new THREE.Vector3();ms.forEach((m,i)=>{if(i!==s.own)other.add(dipole(p,m))});
+    const total=own.clone().add(other).add(EARTH);
+    const q=new THREE.Quaternion();s.chip.getWorldQuaternion(q);const qi=q.clone().invert();
+    return{own,other,total,ownLocal:own.clone().applyQuaternion(qi),totalWorld:total}});
+}
+
+/* ---------- table ---------- */
+const tbody=$('#sensTable tbody');
+sensors.forEach((s,i)=>{const tr=document.createElement('tr');tr.dataset.i=i;tr.innerHTML=`<td>${s.label.replace(' sensor','')}</td><td class="n"></td><td class="n"></td><td class="n"></td><td class="n"></td>`;tr.addEventListener('click',()=>select(s.chip));tbody.appendChild(tr)});
+const imuRow=document.createElement('tr');imuRow.innerHTML='<td>Thumb CMC (2 IMUs)</td><td class="n">—</td><td class="n">—</td><td class="n"></td><td class="n">—</td>';tbody.appendChild(imuRow);
+function jointText(s){const j=s.joint;if(j.ref)return'—';
+  if(j.t){return Math.round((j.t==='mcp'?cur.tmcp:cur.tip)/deg)+'°'}
+  const f=FINGERS[j.f];if(j.j==='mcp')return Math.round(cur.mcp[j.f]/deg)+'° / '+Math.round((f.base+f.k*spread+cur.abd[j.f])/deg)+'°';
+  return Math.round(cur[j.j][j.f]/deg)+'°'}
+let lastFields=null;
+function updateReadouts(){
+  const F=sensorFields(); lastFields=F;
+  F.forEach((r,i)=>{const s=sensors[i];const tr=tbody.children[i];const c=tr.children;
+    const ownT=r.own.length()*1e3, tot=r.total.length()*1e3, oth=r.other.length()*1e3;
+    if(s.rest===null&&s.own>=0)s.rest=null;
+    c[1].textContent=tot.toFixed(tot<1?2:1);
+    c[1].className='n '+(s.own<0?'':(ownT<0.3?'flag-bad':ownT>40?'flag-bad':ownT<0.8?'flag-warn':'flag-ok'));
+    if(s.own<0){c[2].textContent='—';c[4].textContent='—';}
+    else{const ct=oth/ownT*100;c[2].textContent=ct.toFixed(ct<10?1:0)+'%';c[2].className='n '+(ct>20?'flag-bad':ct>8?'flag-warn':'flag-ok');
+      const ang=s.restVec?s.restVec.angleTo(r.ownLocal)/deg:0;c[4].textContent=Math.round(ang)+'°';}
+    c[3].textContent=jointText(s);
+    // arrow
+    const p=V();s.chip.getWorldPosition(p);s.arrow.position.copy(p).add(new THREE.Vector3(0,0.8,0));
+    const dir=(s.own>=0?r.own:r.total).clone().normalize();s.arrow.setDirection(dir);
+    s.arrow.setLength(4+Math.min(10,Math.max(0,Math.log10(Math.max(ownT,0.01)/0.05)*4)),2.4,1.5);
+  });
+  imuRow.children[3].textContent=Math.round(cur.opp*100)+'% / '+Math.round((0.08+0.55*cur.tflex)/deg)+'°';
+  if(selected&&selected.userData.sensorIndex!==undefined)showInfo(selected);
+}
+function captureRest(){applyPose(POSES.flat);scene.updateMatrixWorld(true);const F=sensorFields();sensors.forEach((s,i)=>{s.restVec=F[i].ownLocal.clone()});}
+
+/* ---------- selection ---------- */
+let selected=null; const hl=[];
+function clearHl(){hl.forEach(m=>{if(m.material.emissive)m.material.emissive.setHex(m.userData._em||0)});hl.length=0}
+function highlight(m,hex){if(!m.material.emissive)return;if(m.userData._em===undefined)m.userData._em=m.material.emissive.getHex();m.material.emissive.setHex(hex);hl.push(m)}
+function select(m){
+  clearHl(); selected=m;
+  document.querySelectorAll('#sensTable tbody tr').forEach(tr=>tr.classList.remove('sel'));
+  if(!m){return}
+  if(m.userData.sensorIndex!==undefined){const s=sensors[m.userData.sensorIndex];highlight(s.pcb,0x0a4fa0);
+    if(s.own>=0)highlight(magnets[s.own].body,0x8a1a10);
+    tbody.children[m.userData.sensorIndex].classList.add('sel');}
+  else if(m.userData.magnetIndex!==undefined){highlight(m,0x8a1a10);const si=sensors.findIndex(s=>s.own===m.userData.magnetIndex);if(si>=0){highlight(sensors[si].pcb,0x0a4fa0);tbody.children[si].classList.add('sel')}}
+  showInfo(m);
+}
+function showInfo(m){
+  const P=PARTS[m.userData.part]||{t:m.userData.label,s:'',p:'',c:'',w:''};
+  let extra='';
+  if(m.userData.sensorIndex!==undefined&&lastFields){const s=sensors[m.userData.sensorIndex];const r=lastFields[m.userData.sensorIndex];const b=r.ownLocal.clone().multiplyScalar(1e3);
+    if(s.own>=0){const pm=V(),ps=V();magnets[s.own].obj.getWorldPosition(pm);s.chip.getWorldPosition(ps);
+      extra=`<p><b>Reads:</b> ${magnets[s.own].label} · distance ${pm.distanceTo(ps).toFixed(1)} mm<br><b>Field in chip frame:</b> <span style="font-family:var(--mono)">Bx ${b.x.toFixed(2)} · By ${b.y.toFixed(2)} · Bz ${b.z.toFixed(2)} mT</span></p>`;}
+    else extra=`<p><b>Field here:</b> <span style="font-family:var(--mono)">${(r.total.length()*1e6).toFixed(0)} µT</span> (Earth + far magnets)</p>`;}
+  if(m.userData.magnetIndex!==undefined){const si=sensors.findIndex(s=>s.own===m.userData.magnetIndex);if(si>=0)extra=`<p><b>Read by:</b> ${sensors[si].label}</p>`;}
+  $('#info').innerHTML=`<h2>Selected part</h2><h3>${m.userData.label}</h3><p class="spec">${P.s}</p><p>${P.p}</p>${extra}<div class="meta"><span>Cost: ${P.c}</span><span>Weight: ${P.w}</span></div>`;
+}
+const ray=new THREE.Raycaster(); const mouse=new THREE.Vector2(); let downAt=null;
+canvas.addEventListener('pointerdown',e=>{downAt=[e.clientX,e.clientY]});
+canvas.addEventListener('pointerup',e=>{if(!downAt)return;const dx=e.clientX-downAt[0],dy=e.clientY-downAt[1];downAt=null;if(dx*dx+dy*dy>25)return;
+  const r=canvas.getBoundingClientRect();mouse.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(mouse,camera);
+  const vis=clickables.filter(o=>{let p=o;while(p){if(!p.visible)return false;p=p.parent}return true});
+  const hits=ray.intersectObjects(vis,false).filter(h=>!(h.object.material.transparent&&h.object.material.opacity<0.35&&h.object.userData.part==='hand'));
+  // prefer glove parts over skin when both are hit at nearly the same depth
+  let hit=hits[0];if(hit&&hit.object.userData.part==='hand'){const alt=hits.find(h=>h.object.userData.part!=='hand'&&h.distance<hit.distance+3);if(alt)hit=alt;}
+  select(hit?hit.object:null);
+});
+
+/* ---------- layers UI ---------- */
+const layerDefs=[['hand','Hand (skin)','#dcae94'],['glove','Glove fabric','#323a47'],['plate','Hand plate','#b9c7d4'],['rings','Rings and tabs','#3c78c8'],['nails','Press-on nails','#e9d6cd'],['magnets','Magnets','#c7ccd3'],['sensors','Sensors and IMUs','#165c38'],['wires','Wiring','#d4891d'],['electronics','Wrist pod','#1f4e9a'],['field','Field lines and arrows','#e0533f']];
+const layerOn={haptics:false};
+const lw=$('#layers');
+layerDefs.forEach(([k,label,col])=>{const id='L_'+k;const lab=document.createElement('label');lab.innerHTML=`<input type="checkbox" id="${id}" ${layerOn[k]===false?'':'checked'}><span class="sw" style="background:${col}"></span>${label}`;lw.appendChild(lab);
+  lab.querySelector('input').addEventListener('change',e=>{layerOn[k]=e.target.checked;setLayer(k,e.target.checked)})});
+function setLayer(k,on){(LAYERS[k]||[]).forEach(o=>o.visible=on)}
+setLayer('haptics',false);
+
+/* ---------- controls UI ---------- */
+function setOut(id,v,fmt){$(id).textContent=fmt(v)}
+const sl={curl:$('#sCurl'),spread:$('#sSpread'),opp:$('#sOpp'),tb:$('#sTbend'),skin:$('#sSkin')};
+function fromSliders(){const c=+sl.curl.value;const t=+sl.tb.value;
+  target={mcp:[0,0,0,0].map((_,i)=>c*(1.42+i*0.03)),pip:[0,0,0,0].map(()=>c*1.72),dip:[0,0,0,0].map(()=>c*1.12),abd:[0,0,0,0],opp:+sl.opp.value,tflex:t*0.6,tmcp:t*0.85,tip:t*0.7};
+  setPressed(null);}
+function outs(){setOut('#oCurl',+sl.curl.value,v=>Math.round(v*100)+'%');setOut('#oSpread',+sl.spread.value,v=>Math.round(v*100)+'%');setOut('#oOpp',+sl.opp.value,v=>Math.round(v*100)+'%');setOut('#oTbend',+sl.tb.value,v=>Math.round(v*100)+'%');setOut('#oSkin',+sl.skin.value,v=>Math.round(v*100)+'%')}
+[sl.curl,sl.opp,sl.tb].forEach(s=>s.addEventListener('input',()=>{fromSliders();outs();dirty=true}));
+sl.spread.addEventListener('input',()=>{spread=+sl.spread.value;outs();dirty=true});
+sl.skin.addEventListener('input',()=>{M.skin.opacity=+sl.skin.value;M.skin.depthWrite=M.skin.opacity>0.95;outs()});
+function setPressed(k){document.querySelectorAll('[data-pose]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.pose===k)))}
+document.querySelectorAll('[data-pose]').forEach(b=>b.addEventListener('click',()=>{target=clone(POSES[b.dataset.pose]);setPressed(b.dataset.pose);
+  sl.curl.value=(target.mcp[1]/1.45).toFixed(2);sl.opp.value=target.opp;sl.tb.value=(target.tmcp/0.85).toFixed(2);if(b.dataset.pose==='flat'){spread=0;sl.spread.value=0}outs();
+  if(reduceMotion){cur=clone(target)}dirty=true}));
+outs();
+
+/* ---------- views ---------- */
+const VIEWS={persp:[[260,250,250],[-15,-5,0]],top:[[0,470,20],[-15,0,0]],side:[[-430,60,20],[-15,-5,0]],palm:[[20,-440,30],[-15,0,0]],thumb:[[-250,110,260],[-35,-5,5]]};
+let camAnim=null;
+function goView(k,instant){const [p,t]=VIEWS[k];const P=new THREE.Vector3(...p),Tt=new THREE.Vector3(...t);
+  if(instant||reduceMotion){camera.position.copy(P);controls.target.copy(Tt);camAnim=null;return}
+  camAnim={p0:camera.position.clone(),t0:controls.target.clone(),p1:P,t1:Tt,s:performance.now()}}
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>goView(b.dataset.view)));
+camera.up.set(0,1,0);
+goView('persp',true);
+
+/* ---------- BOM ---------- */
+const BOM=[
+ ['3D Hall sensor boards (TMAG5273)',30,1.5,750],
+ ['IMU boards (ICM-42688-P)',4,0.6,200],
+ ['N52 magnets Ø4×2 mm (one pack of 50)',28,2.7,60],
+ ['TPU rings, tabs, thumb pods (printed)',20,12,40],
+ ['PETG hand plates + wrist pod cases',4,18,40],
+ ['Press-on nails (one pack)',10,1.5,50],
+ ['XIAO ESP32-S3, one per glove',2,3,220],
+ ['TCA9548A I²C mux',2,2,60],
+ ['LiPo 500 mAh + power switch',2,10,130],
+ ['Bus cables, JST-SH connectors',2,6,200],
+ ['Open-palm glove base, pair (cut gloves, elastic, Velcro)',1,20,150],
+ ['PC dongle: one XIAO receives both gloves (ESP-NOW)',1,0,110],
+ ['JLCPCB order for both gloves: shipping + assembly',1,0,350],
+];
+const OPT=null;
+const bt=$('#bom');let g=0,c=0;
+BOM.forEach(r=>{g+=r[2];c+=r[3];bt.insertAdjacentHTML('beforeend',`<tr><td>${r[0]}</td><td class="n">${r[1]}</td><td class="n">${r[2]||'—'}</td><td class="n">${r[3]}</td></tr>`)});
+bt.insertAdjacentHTML('beforeend',`<tr class="total"><td>Total</td><td></td><td class="n">~${Math.round(g)}</td><td class="n">~${c.toLocaleString('en-US')}</td></tr>`);
+if(OPT)bt.insertAdjacentHTML('beforeend',`<tr><td>${OPT[0]}</td><td class="n">${OPT[1]}</td><td class="n">${OPT[2]}</td><td class="n">+${OPT[3]}</td></tr>`);
+$('#wTotal').textContent='~'+Math.round(g)+' g';$('#cTotal').textContent='~'+c.toLocaleString('en-US')+' kr';
+
+/* ---------- loop ---------- */
+captureRest(); applyPose(cur); scene.updateMatrixWorld(true); buildWires(); updateReadouts();
+function resize(){const r=canvas.parentElement.getBoundingClientRect();renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix()}
+new ResizeObserver(resize).observe(canvas.parentElement); resize();
+let lastRead=0;
+function frame(now){
+  requestAnimationFrame(frame);
+  if(camAnim){const t=Math.min(1,(now-camAnim.s)/650);const e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;camera.position.lerpVectors(camAnim.p0,camAnim.p1,e);controls.target.lerpVectors(camAnim.t0,camAnim.t1,e);if(t>=1)camAnim=null}
+  const moved=lerpPose(cur,target,reduceMotion?1:0.14);
+  if(moved||dirty){applyPose(cur);scene.updateMatrixWorld(true);buildWires();if(now-lastRead>60||!moved){updateReadouts();lastRead=now}dirty=moved;}
+  controls.update(); renderer.render(scene,camera);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body></html>

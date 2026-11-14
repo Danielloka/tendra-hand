@@ -11,6 +11,12 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** what I learned and what to try next
 ```
 
+## 2026-11-14: Data glove "Tendra Skin" (agent team, cloud session)
+**Goal:** a cheap, slim, accurate glove (two gloves) to record human demonstrations for imitation learning, worn during everyday tasks, with a depth camera.
+**Setup:** 4 research/design agents (sensing, prior art, sourcing on Sonnet; architecture on Opus), then a BOM-verification agent (Sonnet) and a firmware agent (Opus); KiCad 9.0.9 and PlatformIO in the cloud container. Everything is in `cloud-claude/2026-11-14-data-glove/`.
+**Result:** chosen design: magnet (Ø4 × 2 mm N52, standing) + TMAG5273 3D Hall sensor across each joint on the back of the hand, open palm, press-on-nail magnets, 2 IMUs for the thumb base; 15 Hall + 2 IMU per glove, ESP32-S3 wrist pod with 500 mAh LiPo, ESP-NOW to one dongle. Estimated 3–4° per finger joint, ~3.3 h per charge, ≈ 2,360 NOK for two gloves (not measured). Datasheet checks forced: I2C at 400 kHz (TMAG5273 sinks only 2 mA), TCA9548A instead of the out-of-stock PCA9848, TPS63802 divider 511 k / 91 k, BQ24074 input ≤ 10 µF. GW-POD schematic: ERC 0/0, 231/231 pins verified. Firmware: both builds pass, 40/40 host tests. Nothing built or flashed.
+**Conclusion / next:** one-finger bench test (slip, steel, crosstalk, accuracy) before ordering boards; then GW-PLATE schematic. A study, not a decision: move accepted parts into `hardware/` and `firmware/` later.
+
 ## 2026-11-12: V2 concept hand in code CAD (agent team)
 **Goal:** model a complete hand with thumb, 2-DOF wrist and forearm, with one common drum radius ("same distance on each degree"), DIP coupled to PIP, PTFE tubes through the wrist and the best thumb possible.
 **Setup:** 5-agent team (tools, finger, thumb, wrist/forearm, integrator) and an adversarial reviewer; CadQuery 2.8, renders via three.js in headless Chromium. Everything is in `cloud-claude/2026-11-09-v2-hand-cad/`.

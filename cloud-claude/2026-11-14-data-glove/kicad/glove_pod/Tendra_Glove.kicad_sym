@@ -1,0 +1,286 @@
+(kicad_symbol_lib
+  (version 20220914)
+  (generator tendra_schgen)
+  (symbol "MAX17048G+T10"
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U"
+      (at 0 15.24 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "MAX17048G+T10"
+      (at 0 12.7 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Package_DFN_QFN:TDFN-8-1EP_2x2mm_P0.5mm_EP0.8x1.2mm"
+      (at 0 -19.05 0)
+      (effects
+        (font (size 1.27 1.27))
+        hide
+      )
+    )
+    (property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/MAX17048-MAX17049.pdf"
+      (at 0 -21.59 0)
+      (effects
+        (font (size 1.27 1.27))
+        hide
+      )
+    )
+    (property "Description" "1-cell ModelGauge fuel gauge, I2C 0x36, 400 kHz. CTG and QSTRT to GND; CELL not connected on MAX17048."
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+        hide
+      )
+    )
+    (symbol "MAX17048G+T10_0_1"
+      (rectangle
+        (start -7.62 10.16)
+        (end 7.62 -12.7)
+        (stroke
+          (width 0.254)
+          (type default)
+        )
+        (fill (type background))
+      )
+    )
+    (symbol "MAX17048G+T10_1_1"
+      (pin power_in line
+        (at -10.16 7.62 0)
+        (length 2.54)
+        (name "VDD"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin no_connect line
+        (at -10.16 5.08 0)
+        (length 2.54)
+        (name "CELL"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -10.16 2.54 0)
+        (length 2.54)
+        (name "CTG"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -10.16 0 0)
+        (length 2.54)
+        (name "QSTRT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "6"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 10.16 7.62 180)
+        (length 2.54)
+        (name "SDA"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "8"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at 10.16 5.08 180)
+        (length 2.54)
+        (name "SCL"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "7"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin open_collector line
+        (at 10.16 2.54 180)
+        (length 2.54)
+        (name "~{ALRT}"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "5"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at -2.54 -15.24 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 2.54 -15.24 90)
+        (length 2.54)
+        (name "EP"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "9"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "TPS63802DLA"
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U"
+      (at 0 15.24 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "TPS63802DLAR"
+      (at 0 12.7 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Tendra_Glove:TI_DLA0010A_VSON-HR-10_2x3mm"
+      (at 0 -19.05 0)
+      (effects
+        (font (size 1.27 1.27))
+        hide
+      )
+    )
+    (property "Datasheet" "https://www.ti.com/lit/ds/symlink/tps63802.pdf"
+      (at 0 -21.59 0)
+      (effects
+        (font (size 1.27 1.27))
+        hide
+      )
+    )
+    (property "Description" "2-A buck-boost, VFB 0.5 V, R1 = R2 x (VOUT/VFB - 1). No exposed pad."
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+        hide
+      )
+    )
+    (symbol "TPS63802DLA_0_1"
+      (rectangle
+        (start -7.62 10.16)
+        (end 7.62 -12.7)
+        (stroke
+          (width 0.254)
+          (type default)
+        )
+        (fill (type background))
+      )
+    )
+    (symbol "TPS63802DLA_1_1"
+      (pin power_in line
+        (at -10.16 7.62 0)
+        (length 2.54)
+        (name "VIN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "10"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -10.16 5.08 0)
+        (length 2.54)
+        (name "EN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -10.16 2.54 0)
+        (length 2.54)
+        (name "MODE"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -10.16 -2.54 0)
+        (length 2.54)
+        (name "FB"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 10.16 7.62 180)
+        (length 2.54)
+        (name "L1"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "9"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 10.16 5.08 180)
+        (length 2.54)
+        (name "L2"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "7"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_out line
+        (at 10.16 0 180)
+        (length 2.54)
+        (name "VOUT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "6"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin open_collector line
+        (at 10.16 -2.54 180)
+        (length 2.54)
+        (name "PG"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "5"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at -2.54 -15.24 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "8"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 2.54 -15.24 90)
+        (length 2.54)
+        (name "AGND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+)

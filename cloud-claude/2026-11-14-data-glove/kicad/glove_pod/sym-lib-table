@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "Tendra_Glove")(type "KiCad")(uri "${KIPRJMOD}/Tendra_Glove.kicad_sym")(options "")(descr "Tendra glove custom symbols"))
+)

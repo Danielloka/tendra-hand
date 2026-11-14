@@ -11,6 +11,15 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** what I learned and what to try next
 ```
 
+## 2026-11-14: V2 study: bearings in every joint, one knotted track per joint
+**Goal:** the owner's request: 2 bearings (4 × 8 × 3) per joint, and one tendon per joint tied at the top of the track ring, so the motor pulls both ways. Parts must be easy to remove and add back.
+**Setup:** finger and thumb designers plus an integrator in `cloud-claude/2026-11-09-v2-hand-cad/` (CadQuery). Reports 06–08.
+- MR84ZZ on finger MCP/PIP/DIP and thumb cmc_flex/MCP/IP; MR63ZZ on finger abduction (MR84 does not fit there).
+- 4 mm steel axles, 7 mm drum on every joint, 16G stainless liner in each tie hole, knot in a well open on the back.
+**Result:** 30 MR84ZZ + 8 MR63ZZ per hand; 266 parts, 783 g; all 7 test poses clear of interference; servo ratio unchanged (0.1222 mm/°).
+- Knots take about 87–90 % of the strand pull. Thin walls (0.6–0.7 mm) and an untested seat fit are open; a thumb-mount sliver is still in the palm.
+**Conclusion / next:** print a seat and pin test coupon first; use stronger line and a figure-8 knot; fix the palm sliver at source on the next rebuild.
+
 ## 2026-11-12: V2 concept hand in code CAD (agent team)
 **Goal:** model a complete hand with thumb, 2-DOF wrist and forearm, with one common drum radius ("same distance on each degree"), DIP coupled to PIP, PTFE tubes through the wrist and the best thumb possible.
 **Setup:** 5-agent team (tools, finger, thumb, wrist/forearm, integrator) and an adversarial reviewer; CadQuery 2.8, renders via three.js in headless Chromium. Everything is in `cloud-claude/2026-11-09-v2-hand-cad/`.

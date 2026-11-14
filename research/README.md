@@ -7,3 +7,4 @@ Research hub: lab notebook, experiments, references.
 - `experiments/`: data and scripts for individual experiments
 - `references/`: notes on papers and related projects
   - `references/hands/`: the state of the art in robot hands (1X NEO, humanoid company hands, ORCA/LEAP/Aero and other open-source hands, tendon mechanics, sensing, actuators and control). Start with its `README.md`, which has the overview and the prioritised plan for Tendra.
+- `archive/`: historical and intermediate material (agent-session studies, superseded experiments). Keeps the main tree focused on live work.

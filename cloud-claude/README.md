@@ -1,10 +1,10 @@
 # cloud-claude/
 
-Research done by Claude in cloud sessions (claude.ai/code), usually by an agent team. Each study gets
-a dated folder with a `README.md` (summary and recommendation first) and one report per agent.
+Research done by Claude in cloud sessions (claude.ai/code), usually by an agent team. Each study gets a dated folder with a `README.md` (summary and recommendation first) and one report per agent.
 
-These are **studies, not decisions**. Accepted results move into the real places: `research/log.md`,
-`research/references/`, `hardware/`, `sim/`, and `CLAUDE.md`.
+**These are studies, not decisions.** Accepted results move into the real places: `research/log.md`, `research/references/`, `hardware/`, `sim/`, and `CLAUDE.md`.
+
+This directory is working / exploratory material. Completed or superseded sessions will gradually be moved under [`research/archive/`](../research/archive/) so the repository root stays focused on the live project.
 
 | Folder | Topic |
 |---|---|

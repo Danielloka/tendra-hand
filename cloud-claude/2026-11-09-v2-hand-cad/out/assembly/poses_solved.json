@@ -74,5 +74,73 @@
   "thumb_inside_fingers_pts": 0,
   "thumb_inside_palm_pts": 0,
   "cost": 5.711858317817533e-27
+ },
+ "fist": {
+  "fingers": {
+   "index": {
+    "mcp_abd": 0.0,
+    "mcp_flex": 80.0,
+    "pip": 95.0
+   },
+   "middle": {
+    "mcp_abd": 0.0,
+    "mcp_flex": 80.0,
+    "pip": 95.0
+   },
+   "ring": {
+    "mcp_abd": 0.0,
+    "mcp_flex": 82.5,
+    "pip": 95.0
+   },
+   "little": {
+    "mcp_abd": 0.0,
+    "mcp_flex": 87.5,
+    "pip": 87.5
+   }
+  },
+  "thumb": {
+   "cmc_rot": 54.79232568117885,
+   "cmc_flex": 27.37607234894102,
+   "mcp_flex": 63.094509020585306,
+   "ip": 56.534104184513815
+  },
+  "thumb_pad_gap_to_index_middle": 0.69,
+  "thumb_inside_fingers_pts": 0,
+  "thumb_inside_palm_pts": 0,
+  "cost": 0.16466083116606248
+ },
+ "pinch_tip_pinch": {
+  "finger_q": {
+   "mcp_abd": 12.354266292247582,
+   "mcp_flex": 31.831225923885395,
+   "pip": 31.136248409751094
+  },
+  "thumb": {
+   "cmc_rot": 25.010087612357967,
+   "cmc_flex": 31.210747338890314,
+   "mcp_flex": 26.260161835486993,
+   "ip": 35.74735833677611
+  },
+  "pad_gap_mm": 0.36,
+  "thumb_inside_finger_pts": 0,
+  "thumb_inside_palm_pts": 0,
+  "cost": 0.013458867267558955
+ },
+ "pinch_little": {
+  "finger_q": {
+   "mcp_abd": 9.0,
+   "mcp_flex": 31.51531809712064,
+   "pip": 25.000000000000004
+  },
+  "thumb": {
+   "cmc_rot": -15.801556278494841,
+   "cmc_flex": 51.94063557488745,
+   "mcp_flex": -6.988308409057634,
+   "ip": -11.61577228435352
+  },
+  "pad_gap_mm": 0.3,
+  "thumb_inside_finger_pts": 0,
+  "thumb_inside_palm_pts": 0,
+  "cost": 5.592161001401888e-28
  }
 }

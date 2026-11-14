@@ -212,6 +212,12 @@ def build(pose, forearm=True, sheaths=True, verbose=False):
             hand[f"{f}_{k}"] = s
     tb = thumb.build(pose.get("thumb", {}))["parts"]
     pbm = _palm()["parts"].get("thumb_mount_bored")
+    if pbm is not None:  # a bore that grazes the mount's skin can leave an inverted (negative-volume) sliver solid in
+        v_ = pbm.val() if hasattr(pbm, "val") else pbm  # the compound; it makes OCC booleans return the other part whole
+        good = [q for q in v_.Solids() if q.Volume() > 0.0]
+        if len(good) != len(v_.Solids()):
+            import cadquery as cq
+            pbm = cq.Workplane(obj=good[0] if len(good) == 1 else cq.Compound.makeCompound(good))
     for k, s in tb.items():
         hand[f"T_{k}"] = pbm if (k == "thumb_mount" and pbm is not None) else s
     pb = _palm()

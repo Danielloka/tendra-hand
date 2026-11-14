@@ -1,7 +1,7 @@
 {
  "validity": {
-  "parts": 225,
-  "ok": 223,
+  "parts": 266,
+  "ok": 264,
   "not_ok": {
    "T_thumb_mount": {
     "valid": true,
@@ -19,16 +19,10 @@
   "a_open": [],
   "b_fist": [],
   "c_tip_pinch": [],
+  "d_thumb_little": [],
   "e_power55": [],
   "f_flex50_pinch": [],
-  "g_dev-30": [],
-  "d_thumb_little": [
-   [
-    "T_thenar_pad",
-    "P_shell",
-    0.92
-   ]
-  ]
+  "g_dev-30": []
  },
  "thumb_vs_palm": {
   "rot-31_flex-37": [],
@@ -37,17 +31,22 @@
    [
     "T_thumb_metacarpal",
     "P_shell",
-    649.655
+    616.361
    ],
    [
     "T_thumb_metacarpal",
     "P_knuckle_pad",
-    479.11
+    507.951
    ],
    [
     "T_thenar_pad",
     "P_shell",
-    210.174
+    139.741
+   ],
+   [
+    "T_bearing_mcp_flex_r",
+    "P_shell",
+    109.007
    ],
    [
     "T_thenar_pad",
@@ -55,14 +54,24 @@
     41.113
    ],
    [
-    "T_thumb_proximal",
+    "T_bearing_mcp_flex_r",
     "P_knuckle_pad",
-    28.341
+    22.593
+   ],
+   [
+    "index_bearing_abd_palmar",
+    "T_thumb_metacarpal",
+    21.033
    ],
    [
     "index_yoke",
     "T_thumb_metacarpal",
-    0.887
+    17.853
+   ],
+   [
+    "T_thumb_proximal",
+    "P_knuckle_pad",
+    12.695
    ]
   ],
   "rot+40_flex-37": [],
@@ -136,5 +145,5 @@
   "n_gap_lt_0.4": 4
  },
  "abd_pair_table": "out/assembly/abd_pair_table.json",
- "runtime_s": 31
+ "runtime_s": 343
 }

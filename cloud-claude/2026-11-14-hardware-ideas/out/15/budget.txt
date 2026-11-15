@@ -1,0 +1,63 @@
+40 sensors on 7 I2C buses, no address clash
+counts: {'angle': 20, 'tip3': 5, 'pad': 14, 'range': 1}
+
+I2C load per bus (bus clock 400 kHz: MLX90393 limit; TMAG5273/BMP581 allow 1 MHz)
+  index@400k        40.8 % busy
+  middle@400k       40.8 % busy
+  ring@400k         40.8 % busy
+  little@400k       40.8 % busy
+  thumb@400k        40.8 % busy
+  palm_a@400k        7.6 % busy
+  palm_b@400k        6.6 % busy
+  palm_a@1000k       3.4 % busy
+  palm_b@1000k       3.0 % busy
+  worst bus at 400 kHz: 40.8 % (target < 60 %)
+  ALL buses on one 400 kHz master through a TCA9548A (+1 mux write per bus per 500 Hz frame): 239 % -> does not fit
+
+link frame 110 B at 500 Hz -> 55.0 kB/s; UART 2 Mbaud load 28 %
+  latency: frame time on the wire 550 us + one 2 ms bus cycle
+
+wire twist strain (parallel bundle, square for 4 wires, hexagon ring for 6); limit 0.2 % for 1e6 cycles [M]
+  finger dip (pin bore -x end to radial x +3.2)        38 AWG PTFE (7x0.04), OD 0.30       0.049 %  OK
+  finger dip (pin bore -x end to radial x +3.2)        36 AWG silicone (7x0.05), OD 0.50   0.136 %  OK
+  finger pip (pin bore -x end -5.65 to radial x +3.6)  38 AWG PTFE (7x0.04), OD 0.30       0.081 %  OK
+  finger pip (pin bore -x end -5.65 to radial x +3.6)  36 AWG silicone (7x0.05), OD 0.50   0.225 %  TOO HIGH
+  finger mcp (axle bore radial x +3.0 to -x end -7.4)  38 AWG PTFE (7x0.04), OD 0.30       0.063 %  OK
+  finger mcp (axle bore radial x +3.0 to -x end -7.4)  36 AWG silicone (7x0.05), OD 0.50   0.176 %  OK
+  finger abd (palmar stub Ø3 tube, 6.8 long)           38 AWG PTFE (7x0.04), OD 0.30       0.017 %  OK
+  finger abd (palmar stub Ø3 tube, 6.8 long)           36 AWG silicone (7x0.05), OD 0.50   0.048 %  OK
+  thumb ip / mcp (same module as the pip)              38 AWG PTFE (7x0.04), OD 0.30       0.085 %  OK
+  thumb ip / mcp (same module as the pip)              36 AWG silicone (7x0.05), OD 0.50   0.235 %  TOO HIGH
+  thumb cmc_flex / cmc_rot (Ø5 hollow pin, 10 mm)      38 AWG PTFE (7x0.04), OD 0.30       0.136 %  OK
+  thumb cmc_flex / cmc_rot (Ø5 hollow pin, 10 mm)      36 AWG silicone (7x0.05), OD 0.50   0.378 %  TOO HIGH
+  wrist flex (Ø5 hollow pin, bore 2.4, 6 wires)        38 AWG PTFE (7x0.04), OD 0.30       0.169 %  OK
+  wrist flex (Ø5 hollow pin, bore 2.4, 6 wires)        36 AWG silicone (7x0.05), OD 0.50   0.469 %  TOO HIGH
+  wrist dev (Ø5 hollow pin, bore 2.4, 6 wires)         38 AWG PTFE (7x0.04), OD 0.30       0.042 %  OK
+  wrist dev (Ø5 hollow pin, bore 2.4, 6 wires)         36 AWG silicone (7x0.05), OD 0.50   0.117 %  OK
+  bend, R  3.0 mm: strand Ø0.05 -> 0.83 %, strand Ø0.127 (solid 36 AWG) -> 2.12 %
+  bend, R 10.0 mm: strand Ø0.05 -> 0.25 %, strand Ø0.127 (solid 36 AWG) -> 0.64 %
+  bend, R 15.0 mm: strand Ø0.05 -> 0.17 %, strand Ø0.127 (solid 36 AWG) -> 0.42 %
+
+power: sensors 87 mA at 3.3 V, RP2040 ~25 mA -> 112 mA from the hub LDO (0.56 W from 5 V)
+  drop over 0.5 m of 36 AWG (out + back): 153 mV of 5 V: fine
+
+BOM (whole hand sensing)
+   20 x   1.60    32.00  TMAG5273 A1/B1/C1/D1 bare chip (5 of each variant + spares)  [M]
+    5 x   4.50    22.50  MLX90393 QFN -014 bare chip  [M]
+   14 x   2.50    35.00  BMP581 bare chip  [M]
+    1 x   4.00     4.00  VL53L1X module (palm range)  [05 [bg]]
+    1 x  12.00    12.00  Diametric magnets Ø2 x 1.5 + Ø3 x 1 N45 (packs of 50)  [M]
+   12 x   4.50    54.00  Open full-ceramic ZrO2 MR84 4x8x2 (8) + MR63 (4), sensor side  [M]
+    1 x   4.00     4.00  Axial magnet Ø3 x 1 N42 (tips, pack 20)  [M]
+    1 x  18.00    18.00  Sensor boards: 21 x 4.6 mm joint, 5 tip, 14 pad (one JLCPCB 0.6 mm panel, 5 copies min)  [M (10-review: setup ~25-40 incl. assembly)]
+    1 x   4.00     4.00  RP2040-Zero  [14 V2]
+    1 x   6.00     6.00  Palm hub carrier PCB (or perfboard)  [M]
+    1 x   1.00     1.00  3.3 V LDO 300 mA (on the hub) + caps  [M]
+    2 x   1.50     3.00  SN65HVD / MAX3485 RS-485 pair (optional, if the UART is noisy)  [M]
+    1 x  12.00    12.00  38 AWG PTFE stranded wire, 4 colours x 5 m  [M]
+    1 x   4.00     4.00  6-core 36 AWG silicone cable 1 m (wrist link)  [M]
+    7 x   0.60     4.20  JST SH 1.0 4-pin pigtail pairs (fingers) + 6-pin (wrist)  [14 V2 / M]
+    0 x  35.00     0.00  Silicone (Dragon Skin 20 trial kit, shared with skins)  [05 (already budgeted)]
+    1 x   5.00     5.00  Brass rod Ø3 + 316 Ø2 pins (non-magnetic pins A/B, abd stubs)  [M]
+  TOTAL ~ EUR 221
+  per finger module (chips, magnets, boards, wire, plug): ~EUR 22

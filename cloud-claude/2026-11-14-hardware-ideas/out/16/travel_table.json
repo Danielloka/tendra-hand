@@ -1,0 +1,328 @@
+{
+ "about": "Shared servo travel + coupling table (agent 07, round 2, 2026-11-15). Finger values from cad/12_budget.py; measured coupling coefficients are re-written by cad/12_finger.py into 'measured_k'. 09 adds the wrist column.",
+ "convention": {
+  "sign": "positive = closing. servo_cmd_joint_equiv_deg = q_own + sum_j k_j * q_j ; servo_deg = G * that.",
+  "G": "servo deg per joint deg = drum line radius / spool line radius",
+  "wrist": "09 adds per-eye wrist compensation (servo deg) = |dL_wrist| / r_spool; budget below is what is left"
+ },
+ "servo": {
+  "SCS0009": {
+   "travel_deg_datasheet": 300.0,
+   "travel_deg_measured": null,
+   "calibration_margin_deg": 15.0,
+   "note": "300 deg from memory: MEASURE day 1 (review #11a) and fill travel_deg_measured"
+  },
+  "HLS3606M": {
+   "multi_turn": null,
+   "note": "multi-turn mode from memory: verify (review #11b)"
+  }
+ },
+ "spool_r_mm": 5.0,
+ "drum_R_mm": 7.235,
+ "idler_rho_mm": 3.235,
+ "G": 1.447,
+ "fingers": {
+  "index_pip": {
+   "servo_id": 1,
+   "own_range_deg": [
+    -5.0,
+    95.0
+   ],
+   "own_joint_deg": 100.0,
+   "k": {
+    "mcp_flex": 0.44713199723565994,
+    "mcp_abd": 0.1243953006219765
+   },
+   "couplings_joint_deg": {
+    "mcp_flex": 44.71319972356599,
+    "mcp_abd": 3.731859018659295
+   },
+   "servo_deg_without_wrist": 214.7,
+   "wrist_budget_servo_deg_SCS": 70.3,
+   "wrist_budget_strand_mm_SCS": 6.13,
+   "total_with_wrist_deg": null,
+   "k_measured_signed": {
+    "mcp_flex": 0.44713199723566016,
+    "mcp_abd": -0.12319138427841639
+   },
+   "firmware": "servo_joint_equiv = q_pip +0.447*q_mcp_flex -0.123*q_mcp_abd"
+  },
+  "index_mcp_flex": {
+   "servo_id": 2,
+   "own_range_deg": [
+    -10.0,
+    90.0
+   ],
+   "own_joint_deg": 100.0,
+   "k": {
+    "mcp_abd": 0.82930200414651
+   },
+   "couplings_joint_deg": {
+    "mcp_abd": 24.879060124395302
+   },
+   "servo_deg_without_wrist": 180.4,
+   "wrist_budget_servo_deg_SCS": 104.6,
+   "wrist_budget_strand_mm_SCS": 9.13,
+   "total_with_wrist_deg": null,
+   "k_measured_signed": {
+    "mcp_abd": -0.8212677860745324
+   },
+   "firmware": "servo_joint_equiv = q_mcp_flex -0.821*q_mcp_abd"
+  },
+  "index_mcp_abd": {
+   "servo_id": 3,
+   "own_range_deg": [
+    -15.0,
+    15.0
+   ],
+   "own_joint_deg": 30.0,
+   "k": {},
+   "couplings_joint_deg": {},
+   "servo_deg_without_wrist": 43.4,
+   "wrist_budget_servo_deg_SCS": 241.6,
+   "wrist_budget_strand_mm_SCS": 21.08,
+   "total_with_wrist_deg": null,
+   "k_measured_signed": {},
+   "firmware": "servo_joint_equiv = q_mcp_abd "
+  },
+  "middle_pip": {
+   "servo_id": 8,
+   "own_range_deg": [
+    -5.0,
+    95.0
+   ],
+   "own_joint_deg": 100.0,
+   "k": {
+    "mcp_flex": 0.44713199723565994,
+    "mcp_abd": 0.1243953006219765
+   },
+   "couplings_joint_deg": {
+    "mcp_flex": 44.71319972356599,
+    "mcp_abd": 3.731859018659295
+   },
+   "servo_deg_without_wrist": 214.7,
+   "wrist_budget_servo_deg_SCS": 70.3,
+   "wrist_budget_strand_mm_SCS": 6.13,
+   "total_with_wrist_deg": null,
+   "k_measured_signed": {
+    "mcp_flex": 0.44713199723566016,
+    "mcp_abd": -0.12319138427841639
+   },
+   "firmware": "servo_joint_equiv = q_pip +0.447*q_mcp_flex -0.123*q_mcp_abd"
+  },
+  "middle_mcp_flex": {
+   "servo_id": 9,
+   "own_range_deg": [
+    -10.0,
+    90.0
+   ],
+   "own_joint_deg": 100.0,
+   "k": {
+    "mcp_abd": 0.82930200414651
+   },
+   "couplings_joint_deg": {
+    "mcp_abd": 24.879060124395302
+   },
+   "servo_deg_without_wrist": 180.4,
+   "wrist_budget_servo_deg_SCS": 104.6,
+   "wrist_budget_strand_mm_SCS": 9.13,
+   "total_with_wrist_deg": null,
+   "k_measured_signed": {
+    "mcp_abd": -0.8212677860745324
+   },
+   "firmware": "servo_joint_equiv = q_mcp_flex -0.821*q_mcp_abd"
+  },
+  "middle_mcp_abd": {
+   "servo_id": 10,
+   "own_range_deg": [
+    -15.0,
+    15.0
+   ],
+   "own_joint_deg": 30.0,
+   "k": {},
+   "couplings_joint_deg": {},
+   "servo_deg_without_wrist": 43.4,
+   "wrist_budget_servo_deg_SCS": 241.6,
+   "wrist_budget_strand_mm_SCS": 21.08,
+   "total_with_wrist_deg": null,
+   "k_measured_signed": {},
+   "firmware": "servo_joint_equiv = q_mcp_abd "
+  },
+  "ring_pip": {
+   "servo_id": 11,
+   "own_range_deg": [
+    -5.0,
+    95.0
+   ],
+   "own_joint_deg": 100.0,
+   "k": {
+    "mcp_flex": 0.44713199723565994,
+    "mcp_abd": 0.1243953006219765
+   },
+   "couplings_joint_deg": {
+    "mcp_flex": 44.71319972356599,
+    "mcp_abd": 3.731859018659295
+   },
+   "servo_deg_without_wrist": 214.7,
+   "wrist_budget_servo_deg_SCS": 70.3,
+   "wrist_budget_strand_mm_SCS": 6.13,
+   "total_with_wrist_deg": null,
+   "k_measured_signed": {
+    "mcp_flex": 0.44713199723566016,
+    "mcp_abd": -0.12319138427841639
+   },
+   "firmware": "servo_joint_equiv = q_pip +0.447*q_mcp_flex -0.123*q_mcp_abd"
+  },
+  "ring_mcp_flex": {
+   "servo_id": 12,
+   "own_range_deg": [
+    -10.0,
+    90.0
+   ],
+   "own_joint_deg": 100.0,
+   "k": {
+    "mcp_abd": 0.82930200414651
+   },
+   "couplings_joint_deg": {
+    "mcp_abd": 24.879060124395302
+   },
+   "servo_deg_without_wrist": 180.4,
+   "wrist_budget_servo_deg_SCS": 104.6,
+   "wrist_budget_strand_mm_SCS": 9.13,
+   "total_with_wrist_deg": null,
+   "k_measured_signed": {
+    "mcp_abd": -0.8212677860745324
+   },
+   "firmware": "servo_joint_equiv = q_mcp_flex -0.821*q_mcp_abd"
+  },
+  "ring_mcp_abd": {
+   "servo_id": 13,
+   "own_range_deg": [
+    -15.0,
+    15.0
+   ],
+   "own_joint_deg": 30.0,
+   "k": {},
+   "couplings_joint_deg": {},
+   "servo_deg_without_wrist": 43.4,
+   "wrist_budget_servo_deg_SCS": 241.6,
+   "wrist_budget_strand_mm_SCS": 21.08,
+   "total_with_wrist_deg": null,
+   "k_measured_signed": {},
+   "firmware": "servo_joint_equiv = q_mcp_abd "
+  },
+  "little_pip": {
+   "servo_id": 14,
+   "own_range_deg": [
+    -5.0,
+    95.0
+   ],
+   "own_joint_deg": 100.0,
+   "k": {
+    "mcp_flex": 0.44713199723565994,
+    "mcp_abd": 0.1243953006219765
+   },
+   "couplings_joint_deg": {
+    "mcp_flex": 44.71319972356599,
+    "mcp_abd": 3.731859018659295
+   },
+   "servo_deg_without_wrist": 214.7,
+   "wrist_budget_servo_deg_SCS": 70.3,
+   "wrist_budget_strand_mm_SCS": 6.13,
+   "total_with_wrist_deg": null,
+   "k_measured_signed": {
+    "mcp_flex": 0.44713199723566016,
+    "mcp_abd": -0.12319138427841639
+   },
+   "firmware": "servo_joint_equiv = q_pip +0.447*q_mcp_flex -0.123*q_mcp_abd"
+  },
+  "little_mcp_flex": {
+   "servo_id": 15,
+   "own_range_deg": [
+    -10.0,
+    90.0
+   ],
+   "own_joint_deg": 100.0,
+   "k": {
+    "mcp_abd": 0.82930200414651
+   },
+   "couplings_joint_deg": {
+    "mcp_abd": 24.879060124395302
+   },
+   "servo_deg_without_wrist": 180.4,
+   "wrist_budget_servo_deg_SCS": 104.6,
+   "wrist_budget_strand_mm_SCS": 9.13,
+   "total_with_wrist_deg": null,
+   "k_measured_signed": {
+    "mcp_abd": -0.8212677860745324
+   },
+   "firmware": "servo_joint_equiv = q_mcp_flex -0.821*q_mcp_abd"
+  },
+  "little_mcp_abd": {
+   "servo_id": 16,
+   "own_range_deg": [
+    -15.0,
+    15.0
+   ],
+   "own_joint_deg": 30.0,
+   "k": {},
+   "couplings_joint_deg": {},
+   "servo_deg_without_wrist": 43.4,
+   "wrist_budget_servo_deg_SCS": 241.6,
+   "wrist_budget_strand_mm_SCS": 21.08,
+   "total_with_wrist_deg": null,
+   "k_measured_signed": {},
+   "firmware": "servo_joint_equiv = q_mcp_abd "
+  }
+ },
+ "thumb": {
+  "note": "not designed in 12; V2 ranges on r 5 with drum 7.235, couplings unknown (thumb designer)",
+  "thumb_cmc_rot": {
+   "own_range_deg": [
+    -31,
+    110
+   ],
+   "servo_deg_without_wrist": 204.0
+  },
+  "thumb_cmc_flex": {
+   "own_range_deg": [
+    -37,
+    63
+   ],
+   "servo_deg_without_wrist": 144.7
+  },
+  "thumb_mcp_flex": {
+   "own_range_deg": [
+    -10,
+    70
+   ],
+   "servo_deg_without_wrist": 115.8
+  },
+  "thumb_ip": {
+   "own_range_deg": [
+    -15,
+    85
+   ],
+   "servo_deg_without_wrist": 144.7
+  }
+ },
+ "measured_from": "cad/12_finger.py strand model (exact belt paths, abd in 3D), out/12/checks.json",
+ "lanes_at_abd_plane_mm": {
+  "pip_flex": {
+   "x": -0.9,
+   "y": 8.642825237989165
+  },
+  "pip_ext": {
+   "x": 0.9,
+   "y": 0.1186017304887963
+  },
+  "mcp_flex": {
+   "x": -6.0,
+   "y": -7.235
+  },
+  "mcp_ext": {
+   "x": 6.0,
+   "y": 7.235
+  }
+ }
+}

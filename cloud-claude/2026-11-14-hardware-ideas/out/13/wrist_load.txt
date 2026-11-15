@@ -1,0 +1,77 @@
+
+================================================================================================
+1. Load cases: compression through the wrist, bearing loads, torque on the wrist drive
+================================================================================================
+  palm plate load max   296 N, vector (palm frame) [  74.   -9. -286.]; forearm plate    27 N [ 3. 25.  9.]
+SCS 80 %, all 16 flex strands (fist squeeze):
+  axial compression    739 N (incl. 32 x 5 N pretension); line of action at (-0.11, -0.53) mm
+  per bearing: flex   372 N, dev   379 N   |  torque on the wrist drive: flex -0.39 N m, dev -0.08 N m (drive: flex 3.6 stall / 1.1 cont)
+  eye plate load: max   700 N at flex 50 dev -30; ring-frame vector (-370, -570, -170) N
+  palm plate load max   196 N, vector (palm frame) [  60.  -24. -185.]; forearm plate     7 N [4. 4. 4.]
+SCS power grasp, 12 strands at 50 %:
+  axial compression    431 N (incl. 32 x 5 N pretension); line of action at (-0.56, -0.56) mm
+  per bearing: flex   225 N, dev   221 N   |  torque on the wrist drive: flex -0.24 N m, dev -0.24 N m (drive: flex 3.6 stall / 1.1 cont)
+  eye plate load: max   409 N at flex 50 dev -30; ring-frame vector (-217, -333, -98) N
+  palm plate load max   290 N, vector (palm frame) [ 175.  -21. -230.]; forearm plate    17 N [17.  1.  4.]
+SCS pinch: index pip+mcp, 4 thumb at 80 %:
+  axial compression    377 N (incl. 32 x 5 N pretension); line of action at (-1.03, -0.41) mm
+  per bearing: flex   203 N, dev   192 N   |  torque on the wrist drive: flex -0.16 N m, dev -0.39 N m (drive: flex 3.6 stall / 1.1 cont)
+  eye plate load: max   358 N at flex 50 dev -30; ring-frame vector (-190, -290, -85) N
+  palm plate load max   669 N, vector (palm frame) [ 171.  -24. -646.]; forearm plate    69 N [ 7. 65. 21.]
+HLS 80 %, all 16 flex strands:
+  axial compression   1670 N (incl. 32 x 5 N pretension); line of action at (-0.12, -0.61) mm
+  per bearing: flex   843 N, dev   859 N   |  torque on the wrist drive: flex -1.01 N m, dev -0.20 N m (drive: flex 3.6 stall / 1.1 cont)
+  eye plate load: max  1585 N at flex 50 dev -30; ring-frame vector (-838, -1290, -385) N
+
+================================================================================================
+2. Bearings / bushes (static), per bearing; s0 = C0 / P0
+================================================================================================
+  623ZZ 3x10x4 (V2)                    capacity    220 N  s0 SCS 0.58  HLS 0.26   (ball)
+  624ZZ 4x13x5                         capacity    490 N  s0 SCS 1.29  HLS 0.57   (ball)
+  625ZZ 5x16x5                         capacity    670 N  s0 SCS 1.77  HLS 0.78   (ball)
+  6800ZZ 10x19x5                       capacity    840 N  s0 SCS 2.22  HLS 0.98   (ball)
+  HK0509 needle 5x9x9                  capacity   1400 N  s0 SCS 3.70  HLS 1.63   (needle (C0 1.4-1.9 kN, verify))
+  plain bush iglidur G 5x7x5 (W13)     capacity   2000 N  s0 SCS 5.28  HLS 2.33   (plain, p_static 80 MPa (igus, verify))
+  plain bush sintered bronze 5x8x5     capacity   1000 N  s0 SCS 2.64  HLS 1.16   (plain, p_static ~40 MPa (verify))
+  plain-bush friction torque on the wrist axis (mu 0.15, r 2.5): SCS 0.28 N m, HLS 0.63 N m (only while the hand squeezes at full force)
+
+================================================================================================
+3. Pins (hardened dowel), bending at the lug-to-bearing gap: sigma = F * lever / (pi d^3 / 32)
+================================================================================================
+  V2 (Ø3, 623 in a printed boss)           SCS: bending    492 MPa, shear   53 MPa (yield ~1500)
+  V2 (Ø3, 623 in a printed boss)           HLS: bending   1113 MPa, shear  119 MPa (yield ~1500)
+  W13 (Ø5, plain bush + 3 mm steel lug)    SCS: bending    137 MPa, shear   19 MPa (yield ~1500)
+  W13 (Ø5, plain bush + 3 mm steel lug)    HLS: bending    309 MPa, shear   43 MPa (yield ~1500)
+
+================================================================================================
+4. Ring out-of-plane bending, M ~ F * L_q / 8 per quadrant (approx.)
+================================================================================================
+  V2 printed PA-CF ring, x bar 1.5 x 7   SCS:    237 MPa vs allowed 15 (PA-CF sustained ~15 MPa (04 creep rule)) -> SF 0.06
+  V2 printed PA-CF ring, x bar 1.5 x 7   HLS:    537 MPa vs allowed 15 (PA-CF sustained ~15 MPa (04 creep rule)) -> SF 0.03
+  W13 ring 7075-T6, bar 2.9 x 7          SCS:    123 MPa vs allowed 333 (yield 500 / 1.5) -> SF 2.71
+  W13 ring 7075-T6, bar 2.9 x 7          HLS:    278 MPa vs allowed 333 (yield 500 / 1.5) -> SF 1.20
+  W13 ring 6061-T6, bar 2.9 x 7          SCS:    123 MPa vs allowed 183 (yield 275 / 1.5) -> SF 1.49
+  W13 ring 6061-T6, bar 2.9 x 7          HLS:    278 MPa vs allowed 183 (yield 275 / 1.5) -> SF 0.66
+
+================================================================================================
+5. Eye plate: bending between the ring bosses and the mounting
+================================================================================================
+  SCS: in-plane   679 N ->   33 MPa; out-of-plane  170 N ->  137 MPa (304 1/4-hard 515, 1/2-hard 760)
+      09 mount (4 x M1.6 into a printed boss): screw shear  138 MPa, thread bearing on the print   27 MPa (PA-CF ~15 sustained) -> FAILS; W13 tabs on aluminium ledges:   50 MPa (6061 yield 275)
+  HLS: in-plane  1538 N ->   76 MPa; out-of-plane  385 N ->  310 MPa (304 1/4-hard 515, 1/2-hard 760)
+      09 mount (4 x M1.6 into a printed boss): screw shear  312 MPa, thread bearing on the print   62 MPa (PA-CF ~15 sustained) -> FAILS; W13 tabs on aluminium ledges:  114 MPa (6061 yield 275)
+
+================================================================================================
+6. Lug plates (3 mm 304, pin pressed) and their foot on the printed flange / base
+================================================================================================
+  SCS: pin bearing in the plate   25 MPa (304 yield 215-515); foot 3 x 22 mm on the print  5.7 MPa (PA-CF ~15 sustained, PETG ~9)
+  HLS: pin bearing in the plate   57 MPa (304 yield 215-515); foot 3 x 22 mm on the print 13.0 MPa (PA-CF ~15 sustained, PETG ~9)
+
+================================================================================================
+7. Alternatives ruled out (numbers)
+================================================================================================
+  Central compression post / ball at the wrist centre: the 32 strands occupy the centre. A ring of eyes around a
+  Ø10 post puts every eye at r >= 6.5 mm -> compensation travel 10|x| + 20|y| up to ~190 deg: no SCS servo fits.
+  Spherical shell bearing around the bundle (Ø>=40, engaged over +-52 deg): collides with the cardan lugs and
+  the push-rod balls inside the 30 mm gap; not buildable at hobby scale.
+  Keep sheaths across the wrist (report 09 §7 fallback): the coil housings carry the compression instead (V2 path).

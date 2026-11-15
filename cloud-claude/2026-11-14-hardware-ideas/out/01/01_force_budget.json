@@ -1,0 +1,381 @@
+{
+ "v2_wrap_pinch": {
+  "min": 61.40611082999682,
+  "median": 184.68032956571253,
+  "max": 294.3085684240871
+ },
+ "arch_eta": {
+  "V2 (PTFE Bowden everywhere)": {
+   "mcp": 0.6780639332320046,
+   "mcp_deg": 222.6019521767008,
+   "pip": 0.6511514703138486,
+   "pip_deg": 245.80633714493666
+  },
+  "A: bare strands, rigid path, steel pins": {
+   "mcp": 0.8773057690983458,
+   "mcp_deg": 75.0,
+   "pip": 0.8325520209439861,
+   "pip_deg": 105.0
+  },
+  "A+: bare strands on idlers (MR63 / 3 mm pulleys)": {
+   "mcp": 0.9382546330525458,
+   "mcp_deg": 25.0,
+   "pip": 0.9288720867220203,
+   "pip_deg": 25.0
+  }
+ },
+ "moment_arms_pinch": {
+  "mcp": 43.14906421993848,
+  "pip": 34.95527069526109,
+  "dip": 15.000000000000004,
+  "pip_drive": 46.20527069526109
+ },
+ "ladder": [
+  {
+   "option": "0  V2 as designed (SCS0009, r 5, PTFE)",
+   "servo": "SCS0009",
+   "r_spool": 5.0,
+   "T": 45.2,
+   "tip_pinch": 4.458892288849462,
+   "tip_pinch_cont": 1.459991280419735,
+   "tip_straight": 2.648634919439584,
+   "limit": "PIP",
+   "G": 1.4,
+   "joint_speed": 428.5714285714286,
+   "servo_travel_per_100": 140.0
+  },
+  {
+   "option": "1  + A: bare strands, rigid path, steel pins",
+   "servo": "SCS0009",
+   "r_spool": 5.0,
+   "T": 45.2,
+   "tip_pinch": 5.701069498413178,
+   "tip_pinch_cont": 1.8667218711618365,
+   "tip_straight": 3.426907967194033,
+   "limit": "PIP",
+   "G": 1.4,
+   "joint_speed": 428.5714285714286,
+   "servo_travel_per_100": 140.0
+  },
+  {
+   "option": "2  + A+: idlers at the big bends",
+   "servo": "SCS0009",
+   "r_spool": 5.0,
+   "T": 45.2,
+   "tip_pinch": 6.360640762764533,
+   "tip_pinch_cont": 2.082687683383077,
+   "tip_straight": 3.664984764170685,
+   "limit": "PIP",
+   "G": 1.4,
+   "joint_speed": 428.5714285714286,
+   "servo_travel_per_100": 140.0
+  },
+  {
+   "option": "3  + 2:1 reeving at the PIP only (r_s 5.5)",
+   "servo": "SCS0009",
+   "r_spool": 5.5,
+   "T": 41.09090909090909,
+   "tip_pinch": 6.254507616679659,
+   "tip_pinch_cont": 2.0479361222756403,
+   "tip_straight": 3.331804331064259,
+   "limit": "MCP",
+   "G": 2.5454545454545454,
+   "joint_speed": 235.71428571428572,
+   "servo_travel_per_100": 254.54545454545453
+  },
+  {
+   "option": "3b + 2:1 reeving at MCP and PIP (r_s 5.5)",
+   "servo": "SCS0009",
+   "r_spool": 5.5,
+   "T": 41.09090909090909,
+   "tip_pinch": 10.2926732342917,
+   "tip_pinch_cont": 3.370167342201707,
+   "tip_straight": 5.930611709294381,
+   "limit": "PIP",
+   "G": 2.5454545454545454,
+   "joint_speed": 235.71428571428572,
+   "servo_travel_per_100": 254.54545454545453
+  },
+  {
+   "option": "4  HLS3606M, r 5, V2 routing (review's HLS case)",
+   "servo": "HLS3606M",
+   "r_spool": 5.0,
+   "T": 118.0,
+   "tip_pinch": 11.640471019562753,
+   "tip_pinch_cont": 2.959441784634598,
+   "tip_straight": 6.914577887032542,
+   "limit": "PIP",
+   "G": 1.4,
+   "joint_speed": 475.7142857142857,
+   "servo_travel_per_100": 140.0
+  },
+  {
+   "option": "5  HLS3606M, r 5, A+",
+   "servo": "HLS3606M",
+   "r_spool": 5.0,
+   "T": 118.0,
+   "tip_pinch": 16.60521261075697,
+   "tip_pinch_cont": 4.221664223073805,
+   "tip_straight": 9.567880579029664,
+   "limit": "PIP",
+   "G": 1.4,
+   "joint_speed": 475.7142857142857,
+   "servo_travel_per_100": 140.0
+  },
+  {
+   "option": "6  HLS3606M, r 5, A+, 2:1 reeving PIP only",
+   "servo": "HLS3606M",
+   "r_spool": 5.0,
+   "T": 118.0,
+   "tip_pinch": 17.96095328860663,
+   "tip_pinch_cont": 4.5663440564254145,
+   "tip_straight": 9.567880579029664,
+   "limit": "MCP",
+   "G": 2.8,
+   "joint_speed": 237.85714285714286,
+   "servo_travel_per_100": 280.0
+  },
+  {
+   "option": "6b HLS3606M, r 5, A+, 2:1 reeving MCP + PIP",
+   "servo": "HLS3606M",
+   "r_spool": 5.0,
+   "T": 118.0,
+   "tip_pinch": 29.5572784471474,
+   "tip_pinch_cont": 7.514562317071373,
+   "tip_straight": 17.0308274306728,
+   "limit": "PIP",
+   "G": 2.8,
+   "joint_speed": 237.85714285714286,
+   "servo_travel_per_100": 280.0
+  },
+  {
+   "option": "7  HLS3606M, r 3.7 metal hub, A+, reeve PIP",
+   "servo": "HLS3606M",
+   "r_spool": 3.7,
+   "T": 159.45945945945945,
+   "tip_pinch": 24.271558498117066,
+   "tip_pinch_cont": 6.170735211385695,
+   "tip_straight": 12.929568350040084,
+   "limit": "MCP",
+   "G": 3.7837837837837838,
+   "joint_speed": 176.0142857142857,
+   "servo_travel_per_100": 378.3783783783784
+  },
+  {
+   "option": "7b HLS3606M, r 3.7 metal hub, A+, reeve both",
+   "servo": "HLS3606M",
+   "r_spool": 3.7,
+   "T": 159.45945945945945,
+   "tip_pinch": 39.94226817182081,
+   "tip_pinch_cont": 10.15481394198834,
+   "tip_straight": 23.014631663071356,
+   "limit": "PIP",
+   "G": 3.7837837837837838,
+   "joint_speed": 176.0142857142857,
+   "servo_travel_per_100": 378.3783783783784
+  },
+  {
+   "option": "8  STS3215 12 V, r 7, A+, 2:1, capped 250 N",
+   "servo": "STS3215-12V",
+   "r_spool": 7.0,
+   "T": 250.0,
+   "tip_pinch": 62.62135264226144,
+   "tip_pinch_cont": 32.20526707316303,
+   "tip_straight": 36.082261505662714,
+   "limit": "PIP",
+   "G": 2.0,
+   "joint_speed": 135.0,
+   "servo_travel_per_100": 200.0
+  },
+  {
+   "option": "9  SCS0009 r 5, A+, FDP idler rho 3 (no reeving)",
+   "servo": "SCS0009",
+   "r_spool": 5.0,
+   "T": 45.2,
+   "tip_pinch": 6.360640762764533,
+   "tip_pinch_cont": 2.082687683383077,
+   "tip_straight": 4.992303570654122,
+   "limit": "PIP",
+   "G": 1.4,
+   "joint_speed": 428.5714285714286,
+   "servo_travel_per_100": 200.0
+  }
+ ],
+ "balanced": [
+  {
+   "design": "B0 SCS0009: MCP r 3.0 hub, PIP r 5.5 reeved",
+   "Tm": 75.33333333333333,
+   "Tp": 41.09090909090909,
+   "pinch": 10.2926732342917,
+   "pinch_cont": 3.370167342201707,
+   "straight": 6.108307940284474,
+   "G": [
+    2.3333333333333335,
+    2.5454545454545454
+   ],
+   "speed": 235.71428571428572
+  },
+  {
+   "design": "B1 HLS3606M: MCP r 3.5 hub, PIP r 5.0 reeved",
+   "Tm": 168.57142857142858,
+   "Tp": 118.0,
+   "pinch": 25.658504698009473,
+   "pinch_cont": 6.523348652036306,
+   "straight": 13.668400827185234,
+   "G": [
+    2.0,
+    2.8
+   ],
+   "speed": 237.85714285714286
+  },
+  {
+   "design": "B2 STS3215 12 V: MCP r 7, PIP r 7 reeved, 250 N cap",
+   "Tm": 250.0,
+   "Tp": 250.0,
+   "pinch": 38.052867136878454,
+   "pinch_cont": 19.57004595610892,
+   "straight": 20.270933430147593,
+   "G": [
+    1.0,
+    2.0
+   ],
+   "speed": 135.0
+  },
+  {
+   "design": "B3 STS3215 12 V: as B2, 300 N cap (200 lb line)",
+   "Tm": 300.0,
+   "Tp": 300.0,
+   "pinch": 45.663440564254145,
+   "pinch_cont": 19.57004595610892,
+   "straight": 24.32512011617711,
+   "G": [
+    1.0,
+    2.0
+   ],
+   "speed": 135.0
+  }
+ ],
+ "stiffness": [
+  {
+   "case": "V2: 50 lb braid + PTFE sheath",
+   "k": 4.978526776473792,
+   "K": 0.24394781204721583,
+   "sag": [
+    50.67188856899691,
+    101.34377713799383,
+    253.35944284498459
+   ]
+  },
+  {
+   "case": "V2: 50 lb braid + PEEK sheath",
+   "k": 19.515819473281,
+   "K": 0.9562751541907689,
+   "sag": [
+    12.926505822654832,
+    25.853011645309664,
+    64.63252911327417
+   ]
+  },
+  {
+   "case": "A: 80 lb braid, bare",
+   "k": 60.36521739130435,
+   "K": 2.9578956521739133,
+   "sag": [
+    4.179084660955553,
+    8.358169321911106,
+    20.895423304777765
+   ]
+  },
+  {
+   "case": "A: 150 lb braid, bare",
+   "k": 113.1,
+   "K": 5.5419,
+   "sag": [
+    2.230515950974778,
+    4.461031901949556,
+    11.152579754873893
+   ]
+  },
+  {
+   "case": "A: 200 lb braid, bare",
+   "k": 150.91304347826087,
+   "K": 7.394739130434783,
+   "sag": [
+    1.6716338643822215,
+    3.343267728764443,
+    8.358169321911108
+   ]
+  },
+  {
+   "case": "motor in palm: 80 lb, 40 mm",
+   "k": 347.1,
+   "K": 17.007900000000003,
+   "sag": [
+    0.7267973323400962,
+    1.4535946646801925,
+    3.6339866617004812
+   ]
+  },
+  {
+   "case": "A + 2:1 reeving: 80 lb, bare",
+   "k": 60.36521739130435,
+   "K": 9.371796584347827,
+   "sag": [
+    1.3189889726535642,
+    2.6379779453071284,
+    6.594944863267822
+   ]
+  }
+ ],
+ "strength": [
+  {
+   "cls": "SCS0009 r 5 (V2)",
+   "T": 45.2,
+   "line": "50 lb braid",
+   "sf_knot": 2.7013274336283186,
+   "sf_clamp": 4.420353982300885,
+   "groove": 14.947089947089948,
+   "brg": 60.5
+  },
+  {
+   "cls": "SCS0009 r 5.5 reeved",
+   "T": 41.1,
+   "line": "50 lb braid",
+   "sf_knot": 2.9708029197080292,
+   "sf_clamp": 4.861313868613139,
+   "groove": 13.591269841269842,
+   "brg": 55.375
+  },
+  {
+   "cls": "HLS3606M r 5 (reeved or not)",
+   "T": 118,
+   "line": "80 lb braid",
+   "sf_knot": 1.6593220338983052,
+   "sf_clamp": 2.715254237288136,
+   "groove": 30.538302277432713,
+   "brg": 151.5
+  },
+  {
+   "cls": "HLS3606M r 3.7",
+   "T": 159,
+   "line": "150 lb braid",
+   "sf_knot": 2.307232704402516,
+   "sf_clamp": 3.775471698113208,
+   "groove": 31.547619047619047,
+   "brg": 202.75
+  },
+  {
+   "cls": "STS3215 capped 250 N",
+   "T": 250,
+   "line": "200 lb braid",
+   "sf_knot": 1.9580000000000002,
+   "sf_clamp": 3.204,
+   "groove": 39.682539682539684,
+   "brg": 316.5
+  }
+ ],
+ "wrist_eye_plate": {
+  "worst_diff_mm": 4.260602736999683,
+  "worst_common_mm": 0.03609089844139035
+ }
+}

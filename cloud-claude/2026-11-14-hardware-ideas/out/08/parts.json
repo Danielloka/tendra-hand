@@ -1,0 +1,470 @@
+{
+ "base_plate": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 63215.8,
+  "bbox": [
+   150.0,
+   100.0,
+   5.0
+  ],
+  "mass_g_petg_25pct": 44.2,
+  "print": "flat, nut-pocket side down (bed side), PETG, 4 walls",
+  "watertight": true
+ },
+ "roller_post": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 10116.5,
+  "bbox": [
+   32.0,
+   48.0,
+   23.0
+  ],
+  "mass_g_petg_25pct": 7.1,
+  "print": "foot on the bed, PETG, teardrop dowel hole",
+  "watertight": true
+ },
+ "guide_post_tall": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 12996.5,
+  "bbox": [
+   32.0,
+   48.0,
+   41.0
+  ],
+  "mass_g_petg_25pct": 9.1,
+  "print": "foot on the bed, PETG/PAHT-CF",
+  "watertight": true
+ },
+ "guide_post_eye": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 14596.5,
+  "bbox": [
+   32.0,
+   48.0,
+   51.0
+  ],
+  "mass_g_petg_25pct": 10.2,
+  "print": "foot on the bed (line at 43 mm)",
+  "watertight": true
+ },
+ "guide_post_skew15": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 13026.3,
+  "bbox": [
+   33.8,
+   48.0,
+   41.0
+  ],
+  "mass_g_petg_25pct": 9.1,
+  "print": "foot on the bed, dowel turned 15 deg",
+  "watertight": true
+ },
+ "eye_post": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 7598.1,
+  "bbox": [
+   20.0,
+   48.0,
+   31.0
+  ],
+  "mass_g_petg_25pct": 5.3,
+  "print": "foot on the bed, PETG",
+  "watertight": true
+ },
+ "stop_block": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 3189.0,
+  "bbox": [
+   14.0,
+   30.0,
+   20.0
+  ],
+  "mass_g_petg_25pct": 2.2,
+  "print": "upright, teardrop holes, PETG",
+  "watertight": true
+ },
+ "clamp_block": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 4593.8,
+  "bbox": [
+   20.0,
+   48.0,
+   8.0
+  ],
+  "mass_g_petg_25pct": 3.2,
+  "print": "foot on the bed",
+  "watertight": true
+ },
+ "clamp_block_2": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 5420.3,
+  "bbox": [
+   20.0,
+   48.0,
+   8.0
+  ],
+  "mass_g_petg_25pct": 3.8,
+  "print": "foot on the bed (two lines, for R6)",
+  "watertight": true
+ },
+ "gauge_post": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 2777.5,
+  "bbox": [
+   10.0,
+   30.0,
+   26.0
+  ],
+  "mass_g_petg_25pct": 1.9,
+  "print": "foot on the bed",
+  "watertight": true
+ },
+ "flag_clip": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 614.8,
+  "bbox": [
+   10.0,
+   8.0,
+   8.0
+  ],
+  "mass_g_petg_25pct": 0.4,
+  "print": "as modelled",
+  "watertight": true
+ },
+ "fuse_seat": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 7486.2,
+  "bbox": [
+   26.0,
+   48.0,
+   12.0
+  ],
+  "mass_g_petg_25pct": 5.2,
+  "print": "foot on the bed, pocket up",
+  "watertight": true
+ },
+ "hang_drum": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 3094.4,
+  "bbox": [
+   26.0,
+   26.0,
+   10.0
+  ],
+  "mass_g_petg_25pct": 2.2,
+  "print": "axis vertical, PETG, 5 walls",
+  "watertight": true
+ },
+ "servo_cradle": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 9083.5,
+  "bbox": [
+   32.0,
+   48.0,
+   22.0
+  ],
+  "mass_g_petg_25pct": 6.3,
+  "print": "foot on the bed, PETG or PAHT-CF",
+  "watertight": true
+ },
+ "servo_cradle_tall": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 10200.4,
+  "bbox": [
+   32.0,
+   48.0,
+   32.0
+  ],
+  "mass_g_petg_25pct": 7.1,
+  "print": "foot on the bed (eye-plate rig, line at 43 mm)",
+  "watertight": true
+ },
+ "joint_fork": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 9715.1,
+  "bbox": [
+   20.0,
+   48.0,
+   48.0
+  ],
+  "mass_g_petg_25pct": 6.8,
+  "print": "foot on the bed",
+  "watertight": true
+ },
+ "puck_fork": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 9315.1,
+  "bbox": [
+   33.0,
+   48.0,
+   29.0
+  ],
+  "mass_g_petg_25pct": 6.5,
+  "print": "foot on the bed (edge version, two pucks side by side)",
+  "watertight": true
+ },
+ "lever_drum": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 4621.2,
+  "bbox": [
+   72.0,
+   12.0,
+   16.0
+  ],
+  "mass_g_petg_25pct": 3.2,
+  "print": "hub axis vertical (rotate 90 deg about x), PETG, 5 walls",
+  "watertight": true
+ },
+ "puck_bare": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 1562.2,
+  "bbox": [
+   15.0,
+   10.0,
+   15.0
+  ],
+  "mass_g_petg_25pct": 1.1,
+  "print": "axis vertical, PETG (the test material)",
+  "watertight": true
+ },
+ "puck_ring_seat": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 1494.4,
+  "bbox": [
+   15.0,
+   10.0,
+   15.0
+  ],
+  "mass_g_petg_25pct": 1.0,
+  "print": "axis vertical, PETG",
+  "watertight": true
+ },
+ "drum_ring": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 63.2,
+  "bbox": [
+   14.0,
+   14.0,
+   3.0
+  ],
+  "mass_g_petg_25pct": 0.0,
+  "print": "flat; metal in real use (slice of 14 x 0.5 mm tube), printed copy for fit check",
+  "watertight": true
+ },
+ "capstan_post": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 5712.1,
+  "bbox": [
+   28.0,
+   28.0,
+   30.0
+  ],
+  "mass_g_petg_25pct": 4.0,
+  "print": "foot on the bed",
+  "watertight": true
+ },
+ "sleeve_petg": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 945.1,
+  "bbox": [
+   8.0,
+   8.0,
+   22.0
+  ],
+  "mass_g_petg_25pct": 0.7,
+  "print": "axis vertical",
+  "watertight": true
+ },
+ "bend_form_180": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 9888.6,
+  "bbox": [
+   50.0,
+   34.0,
+   6.0
+  ],
+  "mass_g_petg_25pct": 6.9,
+  "print": "groove side up, no supports",
+  "watertight": true
+ },
+ "bend_form_90": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 14160.5,
+  "bbox": [
+   50.0,
+   48.0,
+   6.0
+  ],
+  "mass_g_petg_25pct": 9.9,
+  "print": "groove side up, no supports",
+  "watertight": true
+ },
+ "cup_coupon_t0p6": {
+  "valid": true,
+  "solids": 12,
+  "volume_mm3": 286.7,
+  "bbox": [
+   23.8,
+   14.5,
+   2.9
+  ],
+  "mass_g_petg_25pct": 0.2,
+  "print": "flat on the bed, chamber up, 12 cups",
+  "watertight": true
+ },
+ "cup_coupon_t0p8": {
+  "valid": true,
+  "solids": 12,
+  "volume_mm3": 315.3,
+  "bbox": [
+   23.8,
+   14.5,
+   3.1
+  ],
+  "mass_g_petg_25pct": 0.2,
+  "print": "flat on the bed, chamber up, 12 cups",
+  "watertight": true
+ },
+ "cup_coupon_t1p0": {
+  "valid": true,
+  "solids": 12,
+  "volume_mm3": 343.9,
+  "bbox": [
+   23.8,
+   14.5,
+   3.3
+  ],
+  "mass_g_petg_25pct": 0.2,
+  "print": "flat on the bed, chamber up, 12 cups",
+  "watertight": true
+ },
+ "cup_coupon_t1p2": {
+  "valid": true,
+  "solids": 12,
+  "volume_mm3": 372.5,
+  "bbox": [
+   23.8,
+   14.5,
+   3.5
+  ],
+  "mass_g_petg_25pct": 0.3,
+  "print": "flat on the bed, chamber up, 12 cups",
+  "watertight": true
+ },
+ "eye_platform": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 2541.9,
+  "bbox": [
+   26.0,
+   26.0,
+   21.0
+  ],
+  "mass_g_petg_25pct": 1.8,
+  "print": "disc on the bed, upright plate up",
+  "watertight": true
+ },
+ "hall_fork": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 8419.1,
+  "bbox": [
+   20.0,
+   48.0,
+   39.0
+  ],
+  "mass_g_petg_25pct": 5.9,
+  "print": "foot on the bed",
+  "watertight": true
+ },
+ "hall_arm": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 7655.4,
+  "bbox": [
+   48.0,
+   24.0,
+   34.0
+  ],
+  "mass_g_petg_25pct": 5.3,
+  "print": "foot on the bed",
+  "watertight": true
+ },
+ "pointer_post": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 2877.0,
+  "bbox": [
+   30.0,
+   17.0,
+   52.0
+  ],
+  "mass_g_petg_25pct": 2.0,
+  "print": "foot on the bed",
+  "watertight": true
+ },
+ "protractor_disc": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 5607.0,
+  "bbox": [
+   50.0,
+   50.0,
+   3.0
+  ],
+  "mass_g_petg_25pct": 3.9,
+  "print": "flat, ticks up",
+  "watertight": true
+ },
+ "hall_spacers": {
+  "valid": true,
+  "solids": 4,
+  "volume_mm3": 758.1,
+  "bbox": [
+   37.5,
+   7.5,
+   10.0
+  ],
+  "mass_g_petg_25pct": 0.5,
+  "print": "four rings, axis vertical",
+  "watertight": true
+ },
+ "friction_sled": {
+  "valid": true,
+  "solids": 1,
+  "volume_mm3": 15335.1,
+  "bbox": [
+   40.0,
+   46.0,
+   10.0
+  ],
+  "mass_g_petg_25pct": 10.7,
+  "print": "pocket (sliding) face up",
+  "watertight": true
+ }
+}

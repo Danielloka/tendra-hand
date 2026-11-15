@@ -1,0 +1,154 @@
+==============================================================================
+A. What load must a joint carry?
+==============================================================================
+Brief: 10 N at 60 mm -> M_MCP = 0.60 N*m. Needs tendon T = M/R = 86 N (eta=1).
+SCS0009 stall tendon 45 N -> 0.316 N*m -> 5.3 N tip at 60 mm (eta 1)
+HLS3606M stall tendon 118 N -> 0.826 N*m -> 13.8 N tip at 60 mm (eta 1)
+=> the 0.6 N*m / 10 N case is only reachable with HLS-class servos. Size structure for HLS stall x1.5 = 177 N tendon.
+
+Pin reaction in a one-loop-per-joint drive = flex strand + ext strand (both run proximal):
+  SCS stall        F_pin = T + T0 =   49.2 N  (+ ~10 N tip-shear component)
+  HLS stall        F_pin = T + T0 =  122.0 N  (+ ~10 N tip-shear component)
+  HLS x1.5 design  F_pin = T + T0 =  181.0 N  (+ ~10 N tip-shear component)
+
+==============================================================================
+B. Hinge types: friction torque as share of drive torque, and bearing pressure (MCP-class joint)
+==============================================================================
+Load case: HLS stall, F_pin = 132 N, drive torque (T-T0)*R = 798 N*mm
+type                                 M_fric N*mm % of drive   p MPa  vs creep  EUR/jt
+printed PETG pin in PETG hole               92.4      11.6%     5.5        OK    0.00
+4 mm steel dowel in reamed PETG             66.0       8.3%     5.5        OK    0.10
+2 mm steel stub in PETG (V2 old)            33.0       4.1%     8.6        OK    0.05
+4 mm steel in brass tube bush               39.6       5.0%     5.5        OK    0.40
+4 mm steel in igus J (dry)                  31.7       4.0%     5.5        OK    0.60
+MR84ZZ pair (V2)                             0.8       0.1%     5.5        OK    0.50
+Same at idle (pretension only, F_pin = 2*T0 = 8 N): stick-slip matters more than the % above.
+  printed PETG pin in PETG hole        breakaway torque   5.60 N*mm  (=  0.80 N of tendon force)
+  4 mm steel dowel in reamed PETG      breakaway torque   4.00 N*mm  (=  0.57 N of tendon force)
+  2 mm steel stub in PETG (V2 old)     breakaway torque   2.00 N*mm  (=  0.29 N of tendon force)
+  4 mm steel in brass tube bush        breakaway torque   2.40 N*mm  (=  0.34 N of tendon force)
+  4 mm steel in igus J (dry)           breakaway torque   1.92 N*mm  (=  0.27 N of tendon force)
+  MR84ZZ pair (V2)                     breakaway torque   0.05 N*mm  (=  0.01 N of tendon force)
+Reading: friction is 4-7 % of drive torque for a dowel. That is small next to the 25-55 % lost in the
+sheaths (review 05 #2). A bearing buys smoothness (no stick-slip, no wear), not strength.
+
+==============================================================================
+C. Lateral tip force: the load that really sizes a fork hinge
+==============================================================================
+A sideways tip force F at lever L is a moment F*L about an axis perpendicular to the hinge axle.
+A fork joint resists it as a couple on the two bearings: radial load per bearing = F*L/span.
+  mcp: L  85.0 / span 14.2 =  6.0 N radial per bearing per N of tip force
+  pip: L  47.0 / span 12.1 =  3.9 N radial per bearing per N of tip force
+  dip: L  18.0 / span 12.1 =  1.5 N radial per bearing per N of tip force
+
+Allowable lateral tip force for each weak point (static, no safety factor):
+weak point                                               P_allow N  tip F N
+MR84 static rating C0 (assumed 300 N)                          300     50.1
+MCP stub 4 mm, 3 mm in PETG hub (V2: stubs 4x6)                 50      8.4
+MCP stub, 5 mm engagement                                      104     17.4
+MCP stub, 5 mm engagement + 0.3 mm brass sleeve (p 45)         188     31.3
+MCP stub, 6 mm engagement + brass sleeve                       240     40.1
+PETG lug ring, 8 mm seat, 3 mm wide, p 20 MPa (cos peak)       320     53.5
+steel 4 mm axle bending, 2 supports 14 mm apart (400 MPa)       838    140.0
+Goal: >= 20 N lateral at the tip (2x the 10 N pinch). The V2 stubs (3 mm engagement) fail at ~8 N.
+PIP/DIP use a through-pin over the whole 8.3 mm tongue: embedment 8.3 mm:
+  pip: pin embedment OK to 203 N radial -> tip 52 N
+  dip: pin embedment OK to 203 N radial -> tip 137 N
+
+Cross-drilled axle option (strands pass THROUGH the axle at the axis, so MCP can use a 14 mm through-axle):
+  4 mm steel axle, 1.2 mm cross hole: bending section 3.1 mm3 vs 6.3 (-51 %).
+  axle bending: loads 3 mm from the lug, 400 MPa -> P_allow 411 N radial -> tip 69 N. PETG embedment over a 14 mm axle is no issue.
+
+==============================================================================
+D. Click-in (snap-out C-seat) bearing joints: killed by the lateral moment
+==============================================================================
+C-seat lip arm: t 1.6, width 3.0, L 10.0 mm, PETG E 1900 MPa -> k = 5.8 N/mm per arm
+ lip engagement mm  strain %  pop force N   lateral tip F that pops it (MCP)
+               0.3      0.72          6.5                               1.09
+               0.5      1.20         10.8                               1.81
+               0.8      1.92         17.3                               2.90
+               1.0      2.40         21.7                               3.62
+A bearing pushed out of an open seat by the couple F*85/14.2 = 6 F. To hold 15 N lateral at the tip the lips
+must hold 90 N; then the seat needs ~90 N to insert and no longer works as a hand-pressed fuse.
+VERDICT: no click-in seats at the MCP/PIP. A fuse must act on a path the lateral moment does not load (tendon, below).
+
+==============================================================================
+E. Drum groove pressure (line on PETG) and the effect of a liner ring
+==============================================================================
+  50 lb braid 0.36   SCS 45 N       : bare PETG groove p = T/(R*d) =  17.9 MPa  ( 1.5x creep limit)
+  50 lb braid 0.36   HLS 118 N      : bare PETG groove p = T/(R*d) =  46.8 MPa  ( 3.9x creep limit)
+  50 lb braid 0.36   HLS x1.5 177 N : bare PETG groove p = T/(R*d) =  70.2 MPa  ( 5.9x creep limit)
+  80 lb braid 0.45   SCS 45 N       : bare PETG groove p = T/(R*d) =  14.3 MPa  ( 1.2x creep limit)
+  80 lb braid 0.45   HLS 118 N      : bare PETG groove p = T/(R*d) =  37.5 MPa  ( 3.1x creep limit)
+  80 lb braid 0.45   HLS x1.5 177 N : bare PETG groove p = T/(R*d) =  56.2 MPa  ( 4.7x creep limit)
+With a metal ring (wall t) under the line the load spreads at ~45 deg through the ring:  p_PETG = T/(R*(d+2t))
+  ring wall 0.1 mm (w_eff 0.56): SCS 11.5 MPa, HLS 30.1 MPa, HLS*1.5 45.2 MPa
+  ring wall 0.5 mm (w_eff 1.36): SCS  4.7 MPa, HLS 12.4 MPa, HLS*1.5 18.6 MPa
+  ring wall 0.8 mm (w_eff 1.96): SCS  3.3 MPa, HLS  8.6 MPa, HLS*1.5 12.9 MPa
+  A 0.1 mm shim only guards against cutting; a 0.5-0.8 mm ring is what lowers the PETG pressure (3.7x / 2.6x vs bare at 0.36 line).
+  (estimate; the real value needs the drum compression test in the report)
+Capstan relief: the stress above is for the loaded strand's tangent point; it falls by e^(-mu*theta) around the drum.
+Bare PETG groove also wears: UHMWPE braid is hard on soft plastics; metal floor = no wear.
+
+==============================================================================
+F. Termination: ferrule bead in a keyhole with a printed fuse tab (replaces tie hole + knot)
+==============================================================================
+Bead (crimped 1.5-1.8 mm sleeve, holds 90-100 % of line) pulled against a slot lip of thickness t.
+  tab shear as a plug of bead diameter 1.8: F = pi*d_b*t*tau
+  across layers (tab flat on bed, pull along z)
+    t = 0.4 mm:     34 N
+    t = 0.6 mm:     51 N
+    t = 0.8 mm:     68 N
+    t = 1.0 mm:     85 N
+    t = 1.2 mm:    102 N
+  in the layer plane
+    t = 0.4 mm:     57 N
+    t = 0.6 mm:     85 N
+    t = 0.8 mm:    113 N
+    t = 1.0 mm:    141 N
+    t = 1.2 mm:    170 N
+  Target fuse: 1.5 x actuator stall: SCS -> 68 N (t ~0.8 in-plane), HLS -> 177 N needs 80 lb braid (break ~355 N).
+  Printed fuses scatter +-25 %: calibrate with the bench test; the next failure must be >= 2x higher.
+  What it protects: the servo. A tip load pushing the finger against its tendon makes T = F*L/R (not F*L/R_spool):
+    external tip force   2.0 N against the flexor -> tendon     24 N -> spool torque 0.121 N*m (0.5 x SCS stall)
+    external tip force   3.7 N against the flexor -> tendon     45 N -> spool torque 0.225 N*m (1.0 x SCS stall)
+    external tip force   5.0 N against the flexor -> tendon     61 N -> spool torque 0.304 N*m (1.3 x SCS stall)
+    external tip force  10.0 N against the flexor -> tendon    121 N -> spool torque 0.607 N*m (2.7 x SCS stall)
+
+==============================================================================
+G. DIP bar pins (printed phalanx, steel pins, bar on the outside)
+==============================================================================
+Bar load at 10 N tip force: 30 N (lever 18 mm / pin radius 6 mm)
+  PETG bar 3.2x1.6, hole 1.5                           net-section yield ~   115 N  ( 3.8x)
+  stainless strip 0.8 x 3.2 (laser cut, 1.5 holes)     net-section yield ~   680 N  (22.7x)
+  music wire 1.0 mm, bent, ends are the pins           net-section yield ~   589 N  (19.6x)
+Pin cantilevered from the phalanx side wall, bar thickness s, gap 0.2: wall embedment pressure p = 6*M/(d*Le^2)
+  pin 1.5 mm, Le 1.5 mm, bar 0.8 mm: p =  72.0 MPa  (too high)
+  pin 1.5 mm, Le 1.5 mm, bar 1.6 mm: p =  93.3 MPa  (too high)
+  pin 1.5 mm, Le 3.0 mm, bar 0.8 mm: p =  28.0 MPa  (too high)
+  pin 1.5 mm, Le 3.0 mm, bar 1.6 mm: p =  33.3 MPa  (too high)
+  pin 2.0 mm, Le 3.0 mm, bar 0.8 mm: p =  21.0 MPa  (too high)
+  pin 2.0 mm, Le 3.0 mm, bar 1.6 mm: p =  25.0 MPa  (too high)
+  pin 2.0 mm, Le 4.0 mm, bar 0.8 mm: p =  14.6 MPa  (OK)
+  pin 2.0 mm, Le 4.0 mm, bar 1.6 mm: p =  16.9 MPa  (OK)
+Pin A web to the bearing seat is 0.28 mm in V2 (not printable: one extrusion line is 0.42-0.45 mm).
+
+==============================================================================
+H. Wall rule for a 0.4 mm nozzle (line width ~0.42-0.45)
+==============================================================================
+  1 perimeters = 0.43 mm solid wall
+  2 perimeters = 0.86 mm solid wall
+  3 perimeters = 1.29 mm solid wall
+  4 perimeters = 1.72 mm solid wall
+  5 perimeters = 2.15 mm solid wall
+  < 0.86 mm (2 lines): does not print reliably; 1.29 (3 lines) minimum for a load-carrying wall; 1.72 (4 lines) around
+  press-fit seats. V2 flags: knot-well wall 0.6, pin A web 0.28, thumb MCP wall 0.7, spacer 0.6.
+
+==============================================================================
+I. Part count / mass / cost of the joint hardware in V2 vs options (per hand, 16 flex joints on 4 fingers + 4 thumb)
+==============================================================================
+  V2: 30 MR84 + 8 MR63 + pins                                                          bearings 38, bearing mass  23.4 g, cost ~EUR 11.8
+  Hybrid: MR84 at 8 finger MCP+PIP, thumb 3 joints (22 total) ; dowel+brass at DIP/abd bearings 22, bearing mass  15.4 g, cost ~EUR 10.8
+  All dowel in brass bush (38 bush)                                                    bearings  0, bearing mass   0.0 g, cost ~EUR 15.2
+Assembly time (press 8 mm seats by hand, 20-30 s each incl. checking): 38 x 25 s = 16 min per hand;
+hybrid 22 x 25 s = 9 min. Total bearing cost is not the issue; the 0.05 mm seat tolerance in FDM is.

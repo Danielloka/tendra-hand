@@ -1,0 +1,25 @@
+part,qty used,spec / where used,buy as,first-buy EUR (whole pack),per-finger share EUR
+MR84ZZ 4x8x3,3,"MCP lugs 2, PIP +x 1",10-pack,6.0,1.8
+MR63ZZ 3x6x2.5,4,"MCP idler, pip flex roller, abd (yoke) ... + 1 dorsal abd (base) = 4",10-pack,5.0,2.0
+stainless tube 3.0 x 0.5,2,"MCP inner axle 14.8 mm, palmar abd stub 6.9 mm",3 x 300 mm,6.0,0.6
+stainless tube 4.0 x 0.5,4,"MCP sleeves 2 x 6.0, PIP pin 12.3, DIP pin 13.4",3 x 300 mm,6.0,0.8
+brass tube 5.0 x 0.5,5,"cheek sleeves 2 x 2.7, PIP bush 3.0, DIP bushes 2 x 3.0",300 mm,4.0,0.3
+brass tube 14 x 0.5 (verify stock; else 14 x 0.45 / 14.3 x 0.65),4,"rings: MCP 2 x 1.6, PIP 3.0, abd 3.0",300 mm,7.0,0.6
+hardened dowel / pin assortment Ø1.5 / Ø2 / Ø3,1,"Ø3 roller, Ø3 ext dowel, Ø3 dorsal stub; Ø2 x 4 pip nips, Ø1.5 x 4 MCP nips, Ø2 bar pins",assortment box,12.0,2.0
+push-on star washers Ø2,2,DIP bar retention,pack,3.0,0.3
+stainless strip 0.8 mm (DIP bar),1,laser-cut service (min. order) or 0.8 sheet + drill/file,sheet 100 x 100,8.0,0.4
+PE#8 UHMWPE 8-strand braid 100 m,1,6 strands x 0.45 m; pre-stretch at <= 100 N (08's safety limit),fishing shop,15.0,0.2
+"2 x 2 mm crimp tubes (copper/brass), 100 pcs",1,"fuse-cup beads (line doubled), measure crushed size",beading shop,4.0,0.2
+"diametric magnets Ø3 x 1.5 N45, 10 pcs",1,MCP + PIP Hall magnets (on printed carriers),AliExpress,6.0,1.2
+TMAG5273 x 2 + MLX90393 x 1 on custom 4.6 / 9.2 mm boards,1,JLCPCB: setup + assembly + shipping (5 boards min.),JLCPCB,35.0,7.0
+"36 AWG silicone wire, 4 colours",1,I2C through the hollow axles,pack,8.0,0.5
+Dragon Skin 20 trial kit (or Smooth-Sil 940),1,tip skin (05 mould),Smooth-On reseller,33.0,0.6
+"2-part epoxy (plastic seats) + Loctite 641 (metal-metal only, review #13)",1,,hardware store,18.0,0.0
+"M5 x 12 + 2020 T-nuts, M3 x 12 + nuts",1,base mount,assortment,6.0,0.0
+2020 extrusion 300 mm + 2 corner brackets,1,bench frame,any,8.0,0.0
+0.25 mm stainless wire (threading leader),1,,pack,3.0,0.0
+PETG filament (about 60 g incl. spares; PA-CF only for HLS runs),1,,already owned,0.0,1.5
+SCS0009 servos,3,"abd, MCP, PIP (owner may have them)",Feetech reseller,39.0,39.0
+spool cartridges (02): 3 x (2 MR63 from the pack + Ø3 dowel + M2 screw/nut),3,printed; r 5 on every joint now,-,0.0,0.0
+"TOTAL first buy, without servos",,,,193.0,20.0
+"TOTAL first buy, with 3 SCS0009",,,,232.0,59.0

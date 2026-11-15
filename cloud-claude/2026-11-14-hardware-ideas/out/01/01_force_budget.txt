@@ -1,0 +1,137 @@
+
+====================================================================================================
+1. V2 drivetrain: total sliding wrap per FLEX strand (palm + forearm fan + finger internal), wrist straight
+====================================================================================================
+strand                       palm    fan  pinch   fist  eta pinch mu.10  mu.15
+index_mcp_flex_flex           119    104    223    223             0.68   0.56
+index_pip_flex                107    109    246    306             0.65   0.53
+index_mcp_abd_flex            103    136    239    239             0.66   0.54
+middle_mcp_flex_flex           20     45     64     64             0.89   0.84
+middle_pip_flex                83     31    144    204             0.78   0.69
+middle_mcp_abd_flex            32    137    170    170             0.74   0.64
+ring_mcp_flex_flex            106     38    144    144             0.78   0.69
+ring_pip_flex                 136     38    204    264             0.70   0.59
+ring_mcp_abd_flex             164     13    177    177             0.73   0.63
+little_mcp_flex_flex          132     53    184    184             0.72   0.62
+little_pip_flex               164     30    224    284             0.68   0.56
+little_mcp_abd_flex            82     53    135    135             0.79   0.70
+thumb_cmc_rot_flex            146    118    285    285             0.61   0.47
+thumb_cmc_flex_flex            92     74    186    186             0.72   0.62
+thumb_mcp_flex_flex            87    114    251    281             0.65   0.52
+thumb_ip_flex                  98    116    289    339             0.60   0.47
+All 32 strands, pinch pose: wrap min/median/max = 61 / 185 / 294 deg  -> eta(mu 0.10) = 0.60 / 0.72 / 0.90
+Add up to 58 deg at a wrist extreme (review 05).
+
+====================================================================================================
+2. Wrap / efficiency budget per architecture, index flex strands, tip-pinch pose, wrist straight
+====================================================================================================
+V2 (PTFE Bowden everywhere)                          MCP-flex:  223 deg sliding, eta 0.68 | PIP-flex:  246 deg, eta 0.65
+A: bare strands, rigid path, steel pins              MCP-flex:   75 deg sliding, eta 0.88 | PIP-flex:  105 deg, eta 0.83
+A+: bare strands on idlers (MR63 / 3 mm pulleys)     MCP-flex:   25 deg sliding, eta 0.94 | PIP-flex:   25 deg, eta 0.93
+Wrist bent 50 deg adds ~50 deg on the eye plate for A/A+ (eta x 0.92) and on the sheath for V2 (x 0.92 at mu .1).
+
+====================================================================================================
+3. Tip-pinch statics (index, MCP 30 / PIP 45 / DIP 34 deg). Torque per newton of tip force (N*mm/N)
+====================================================================================================
+moment arms: MCP 43.1 mm, PIP 35.0 mm, DIP 15.0 mm, PIP drive (PIP + 0.75 DIP) 46.2 mm
+straight finger, force normal to the pad: MCP 81.0, PIP drive 50.2 mm
+
+====================================================================================================
+4. Force ladder: index tip force at stall and continuous, PINCH pose and STRAIGHT push
+====================================================================================================
+option                                               T N  pinch p.cont  lim straight  lim joint deg/s servo deg/100
+0  V2 as designed (SCS0009, r 5, PTFE)                45    4.5    1.5  PIP      2.6  MCP         429           140
+1  + A: bare strands, rigid path, steel pins          45    5.7    1.9  PIP      3.4  MCP         429           140
+2  + A+: idlers at the big bends                      45    6.4    2.1  PIP      3.7  MCP         429           140
+3  + 2:1 reeving at the PIP only (r_s 5.5)            41    6.3    2.0  MCP      3.3  MCP         236           255
+3b + 2:1 reeving at MCP and PIP (r_s 5.5)             41   10.3    3.4  PIP      5.9  MCP         236           255
+4  HLS3606M, r 5, V2 routing (review's HLS case)     118   11.6    3.0  PIP      6.9  MCP         476           140
+5  HLS3606M, r 5, A+                                 118   16.6    4.2  PIP      9.6  MCP         476           140
+6  HLS3606M, r 5, A+, 2:1 reeving PIP only           118   18.0    4.6  MCP      9.6  MCP         238           280
+6b HLS3606M, r 5, A+, 2:1 reeving MCP + PIP          118   29.6    7.5  PIP     17.0  MCP         238           280
+7  HLS3606M, r 3.7 metal hub, A+, reeve PIP          159   24.3    6.2  MCP     12.9  MCP         176           378
+7b HLS3606M, r 3.7 metal hub, A+, reeve both         159   39.9   10.2  PIP     23.0  MCP         176           378
+8  STS3215 12 V, r 7, A+, 2:1, capped 250 N          250   62.6   32.2  PIP     36.1  MCP         135           200
+9  SCS0009 r 5, A+, FDP idler rho 3 (no reeving)      45    6.4    2.1  PIP      5.0  MCP         429           200
+T = strand tension at stall (capped at 250 N). pinch = MCP 30 / PIP 45; straight = finger straight, force normal
+to the pad. p.cont = at the servo's rated (continuous) torque. G = servo deg per joint deg. SCS0009 travel <= 300 deg;
+HLS3606M and STS3215 are multi-turn. Reeving: segment 2 loses 22 % on a sliding 3 mm turnaround pin (ETA_TURN).
+
+====================================================================================================
+4d. BALANCED designs: own spool per joint (MCP = smallest metal hub, plain drum; PIP = 2:1 reeved drum)
+====================================================================================================
+Why: the MCP drum has the pip strands passing through its middle, so a 2-groove reeved MCP does not fit in the
+8.8 mm between the MCP bearings. The PIP drum has room (7 mm). Each servo has its own spool, so each joint gets
+its own ratio. In an antagonistic loop the ratio is capped by the EXTENSOR path (its spool radius >= hub minimum),
+so reeving must double both strands (shared 2-groove track, as below).
+design                                                 Tm   Tp  pinch  cont  lim straight G mcp/pip  deg/s
+B0 SCS0009: MCP r 3.0 hub, PIP r 5.5 reeved            75   41   10.3   3.4  PIP      6.1 2.33/2.55    236
+B1 HLS3606M: MCP r 3.5 hub, PIP r 5.0 reeved          169  118   25.7   6.5  MCP     13.7 2.00/2.80    238
+B2 STS3215 12 V: MCP r 7, PIP r 7 reeved, 250 N cap   250  250   38.1  19.6  MCP     20.3 1.00/2.00    135
+B3 STS3215 12 V: as B2, 300 N cap (200 lb line)       300  300   45.7  19.6  MCP     24.3 1.00/2.00    135
+SCS0009 travel check B0: MCP 100 deg x 2.33 = 233 deg, PIP 100 x 2.55 = 255 deg (+ wrist compensation <= 45 deg).
+
+====================================================================================================
+4b. FDP idler at the MCP (PIP strand helps the MCP): gain vs radius, SCS0009 r 5, A+
+====================================================================================================
+rho 0 mm: pinch  6.36 N (MCP lim  6.88 / PIP lim  6.36); straight  3.66 N (MCP lim  3.66 / PIP lim  5.85); coupling 0.00
+rho 2 mm: pinch  6.36 N (MCP lim  9.91 / PIP lim  6.36); straight  4.45 N (MCP lim  4.45 / PIP lim  5.85); coupling 0.29
+rho 3 mm: pinch  6.36 N (MCP lim 12.72 / PIP lim  6.36); straight  4.99 N (MCP lim  4.99 / PIP lim  5.85); coupling 0.43
+rho 4 mm: pinch  6.36 N (MCP lim 17.73 / PIP lim  6.36); straight  5.68 N (MCP lim  5.68 / PIP lim  5.85); coupling 0.57
+In a pinch with the DIP coupled, the PIP runs out first, so the FDP idler only helps straight / power poses.
+
+====================================================================================================
+4c. Which joint limits? Pose sweep, plain drums, equal strand force (N tip per 100 N strand x eta 1)
+====================================================================================================
+MCP   0 PIP   0: arms MCP  81.0  PIP-drive  50.2 mm -> MCP limits
+MCP  15 PIP  20: arms MCP  72.6  PIP-drive  49.4 mm -> MCP limits
+MCP  30 PIP  45: arms MCP  43.1  PIP-drive  46.2 mm -> PIP limits
+MCP  45 PIP  60: arms MCP  21.1  PIP-drive  43.2 mm -> PIP limits
+MCP  60 PIP  80: arms MCP   5.2  PIP-drive  38.2 mm -> PIP limits
+
+====================================================================================================
+5. Loop stiffness and fingertip sag (MCP flex strand, servo holds position, extensor slack under load)
+====================================================================================================
+strand length V2 ~235 mm (sheath 205); A ~230 mm
+case                                k N/mm K_mcp N*m/rad sag deg @5N tip   @10N   @25N
+V2: 50 lb braid + PTFE sheath          5.0          0.24            50.7  101.3  253.4
+V2: 50 lb braid + PEEK sheath         19.5          0.96            12.9   25.9   64.6
+A: 80 lb braid, bare                  60.4          2.96             4.2    8.4   20.9
+A: 150 lb braid, bare                113.1          5.54             2.2    4.5   11.2
+A: 200 lb braid, bare                150.9          7.39             1.7    3.3    8.4
+motor in palm: 80 lb, 40 mm          347.1         17.01             0.7    1.5    3.6
+A + 2:1 reeving: 80 lb, bare          60.4          9.37             1.3    2.6    6.6
+Sag = MCP torque / joint stiffness; only the MCP compliance is counted (PIP adds ~40 % more).
+A joint-angle sensor (magnet + Hall) at MCP/PIP lets the ESP32 servo the JOINT, and the sag becomes a force sensor:
+  80 lb bare, 230 mm: 60 N/mm -> 1 deg of MCP = 7.4 N strand = 1.20 N at the tip. A 12-bit Hall (0.1 deg) resolves ~0.05 N.
+
+====================================================================================================
+6. Strength checks per load class (strand tension at stall)
+====================================================================================================
+class                                T N         line SF knot SF clamp groove MPa MCP brg N spool shaft N
+SCS0009 r 5 (V2)                      45  50 lb braid     2.7      4.4         15        60            49
+SCS0009 r 5.5 reeved                  41  50 lb braid     3.0      4.9         14        55            45
+HLS3606M r 5 (reeved or not)         118  80 lb braid     1.7      2.7         31       152           122
+HLS3606M r 3.7                       159 150 lb braid     2.3      3.8         32       203           163
+STS3215 capped 250 N                 250 200 lb braid     2.0      3.2         40       316           254
+PETG: ~45 MPa yield, creeps above ~15 MPa sustained -> groove pressure > 15 MPa needs a metal drum surface
+(brass tube / steel washer stack) or PA. MR84ZZ static rating C0 ~ 0.2 kN per bearing (verify; two per joint).
+MR63ZZ (spool outboard support in V2) C0 ~ 0.1 kN (verify): too small above ~100 N strand -> 684ZZ / 694ZZ.
+
+====================================================================================================
+7. Wrist eye plate: strands pass eyes in the gimbal mid-plane (z = 0); forearm guide at z = -H, palm guide z = +H
+====================================================================================================
+32 eyes on a 1.6 mm grid (max offset 4.7 mm)
+worst differential length change (= joint motion the firmware must cancel): 4.26 mm = 34.9 deg of joint, 49 deg of servo at r 5
+worst common-mode change for a point-symmetric flex/ext pair (= pretension change): 0.036 mm -> 2.2 N with 80 lb bare braid
+strand through the exact centre, wrist 50 deg: 0.000 mm
+Compare V2 sheaths: -6.7...+6.1 mm per tube taken up by a forearm fan that does not hold it (review #4).
+
+====================================================================================================
+8. Actuator sets (16 servo joints): cost, mass, index tip pinch (A+ routing, 2:1 reeving at the PIP)
+====================================================================================================
+16 x SCS0009 (now), r 5.5                EUR  144  servo mass  211 g  strand   41 N  pinch   6.3 N (cont  2.0)
+11 x HLS3606M r 3.7 + 5 x SCS0009        EUR  353  servo mass  293 g  strand  159 N  pinch  24.3 N (cont  6.2)
+16 x HLS3606M r 3.7                      EUR  448  servo mass  330 g  strand  159 N  pinch  24.3 N (cont  6.2)
+11 x STS3215 r 7 + 5 x SCS0009           EUR  221  servo mass  671 g  strand  250 N  pinch  38.1 N (cont 19.6)
+Prices: single-unit retail, rough (SCS0009 ~9, HLS3606M ~28, STS3215 ~16 EUR). Strand capped at 250 N.

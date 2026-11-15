@@ -1,0 +1,102 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+reorder: straight lines 47 pairs < 0.97 (min 0.00); after: 2 pairs, min 0.04 mm, hole spacing 0.04; reorder bend median 20.2, max 70.6 deg
+built 17 parts in 8 s
+  ring_w13                     valid True watertight False vol 2903.6
+  eye_plate_w13                valid True watertight True vol 413.1
+  palm_yoke_w13                valid True watertight True vol 5517.4
+  palm_plate_w13               valid True watertight True vol 413.1
+  reorder_plate                valid True watertight True vol 800.1
+  reorder_spacer               valid True watertight True vol 1791.5
+  forearm_yoke_w13             valid True watertight True vol 5135.5
+  forearm_plate_w13            valid True watertight True vol 413.1
+  forearm_plate_carrier_w13    valid True watertight True vol 1473.8
+  pin_flex_R_hollow            valid True watertight True vol 151.1
+  pin_flex_L                   valid True watertight True vol 166.9
+  pin_dev_B_hollow             valid True watertight True vol 153.3
+  pin_dev_F                    valid True watertight True vol 166.9
+  bush_flex_L                  valid True watertight True vol 84.8
+  bush_flex_R                  valid True watertight True vol 84.8
+  bush_dev_F                   valid True watertight True vol 84.8
+  bush_dev_B                   valid True watertight True vol 84.8
+  flex  -50.0 dev  -30.0: clear  strand min 0.19 mm (9 s)
+  flex  -50.0 dev  -23.8: clear  strand min 1.11 mm (15 s)
+  flex  -50.0 dev  -17.5: clear  strand min 1.14 mm (22 s)
+  flex  -50.0 dev  -11.2: clear  strand min 1.14 mm (29 s)
+  flex  -50.0 dev   -5.0: clear  strand min 1.14 mm (35 s)
+  flex  -50.0 dev    1.2: clear  strand min 1.14 mm (42 s)
+  flex  -50.0 dev    7.5: clear  strand min 1.14 mm (48 s)
+  flex  -50.0 dev   13.8: clear  strand min 1.14 mm (55 s)
+  flex  -50.0 dev   20.0: clear  strand min 1.14 mm (63 s)
+  flex  -37.5 dev  -30.0: clear  strand min 0.19 mm (70 s)
+  flex  -37.5 dev  -23.8: clear  strand min 1.11 mm (77 s)
+  flex  -37.5 dev  -17.5: clear  strand min 1.11 mm (84 s)
+  flex  -37.5 dev  -11.2: clear  strand min 1.11 mm (91 s)
+  flex  -37.5 dev   -5.0: clear  strand min 1.11 mm (98 s)
+  flex  -37.5 dev    1.2: clear  strand min 1.11 mm (105 s)
+  flex  -37.5 dev    7.5: clear  strand min 1.11 mm (113 s)
+  flex  -37.5 dev   13.8: clear  strand min 1.11 mm (120 s)
+  flex  -37.5 dev   20.0: clear  strand min 1.11 mm (127 s)
+  flex  -25.0 dev  -30.0: clear  strand min 0.19 mm (134 s)
+  flex  -25.0 dev  -23.8: clear  strand min 1.09 mm (142 s)
+  flex  -25.0 dev  -17.5: clear  strand min 1.09 mm (149 s)
+  flex  -25.0 dev  -11.2: clear  strand min 1.09 mm (157 s)
+  flex  -25.0 dev   -5.0: clear  strand min 1.09 mm (165 s)
+  flex  -25.0 dev    1.2: clear  strand min 1.09 mm (173 s)
+  flex  -25.0 dev    7.5: clear  strand min 1.09 mm (180 s)
+  flex  -25.0 dev   13.8: clear  strand min 1.09 mm (187 s)
+  flex  -25.0 dev   20.0: clear  strand min 1.09 mm (194 s)
+  flex  -12.5 dev  -30.0: clear  strand min 0.19 mm (201 s)
+  flex  -12.5 dev  -23.8: clear  strand min 1.07 mm (209 s)
+  flex  -12.5 dev  -17.5: clear  strand min 1.07 mm (217 s)
+  flex  -12.5 dev  -11.2: clear  strand min 1.07 mm (225 s)
+  flex  -12.5 dev   -5.0: clear  strand min 1.07 mm (233 s)
+  flex  -12.5 dev    1.2: clear  strand min 1.07 mm (241 s)
+  flex  -12.5 dev    7.5: clear  strand min 1.07 mm (249 s)
+  flex  -12.5 dev   13.8: clear  strand min 1.07 mm (256 s)
+  flex  -12.5 dev   20.0: clear  strand min 1.07 mm (263 s)
+  flex    0.0 dev  -30.0: clear  strand min 0.19 mm (271 s)
+  flex    0.0 dev  -23.8: clear  strand min 1.06 mm (278 s)
+  flex    0.0 dev  -17.5: clear  strand min 1.06 mm (287 s)
+  flex    0.0 dev  -11.2: clear  strand min 1.06 mm (296 s)
+  flex    0.0 dev   -5.0: clear  strand min 1.06 mm (304 s)
+  flex    0.0 dev    1.2: clear  strand min 1.06 mm (313 s)
+  flex    0.0 dev    7.5: clear  strand min 1.06 mm (321 s)
+  flex    0.0 dev   13.8: clear  strand min 1.06 mm (328 s)
+  flex    0.0 dev   20.0: clear  strand min 1.06 mm (337 s)
+  flex   12.5 dev  -30.0: clear  strand min 0.19 mm (345 s)
+  flex   12.5 dev  -23.8: clear  strand min 1.07 mm (353 s)
+  flex   12.5 dev  -17.5: clear  strand min 1.07 mm (361 s)
+  flex   12.5 dev  -11.2: clear  strand min 1.07 mm (369 s)
+  flex   12.5 dev   -5.0: clear  strand min 1.07 mm (378 s)
+  flex   12.5 dev    1.2: clear  strand min 1.07 mm (386 s)
+  flex   12.5 dev    7.5: clear  strand min 1.07 mm (393 s)
+  flex   12.5 dev   13.8: clear  strand min 1.07 mm (401 s)
+  flex   12.5 dev   20.0: clear  strand min 1.07 mm (408 s)
+  flex   25.0 dev  -30.0: clear  strand min 0.19 mm (415 s)
+  flex   25.0 dev  -23.8: clear  strand min 1.09 mm (422 s)
+  flex   25.0 dev  -17.5: clear  strand min 1.09 mm (430 s)
+  flex   25.0 dev  -11.2: clear  strand min 1.09 mm (437 s)
+  flex   25.0 dev   -5.0: clear  strand min 1.09 mm (445 s)
+  flex   25.0 dev    1.2: clear  strand min 1.09 mm (452 s)
+  flex   25.0 dev    7.5: clear  strand min 1.09 mm (459 s)
+  flex   25.0 dev   13.8: clear  strand min 1.09 mm (465 s)
+  flex   25.0 dev   20.0: clear  strand min 1.09 mm (472 s)
+  flex   37.5 dev  -30.0: clear  strand min 0.19 mm (479 s)
+  flex   37.5 dev  -23.8: clear  strand min 1.11 mm (485 s)
+  flex   37.5 dev  -17.5: clear  strand min 1.11 mm (492 s)
+  flex   37.5 dev  -11.2: clear  strand min 1.11 mm (498 s)
+  flex   37.5 dev   -5.0: clear  strand min 1.11 mm (505 s)
+  flex   37.5 dev    1.2: clear  strand min 1.11 mm (512 s)
+  flex   37.5 dev    7.5: clear  strand min 1.11 mm (519 s)
+  flex   37.5 dev   13.8: clear  strand min 1.11 mm (527 s)
+  flex   37.5 dev   20.0: clear  strand min 1.11 mm (535 s)
+  flex   50.0 dev  -30.0: clear  strand min 0.19 mm (542 s)
+  flex   50.0 dev  -23.8: clear  strand min 1.11 mm (548 s)
+  flex   50.0 dev  -17.5: clear  strand min 1.14 mm (556 s)
+  flex   50.0 dev  -11.2: clear  strand min 1.14 mm (564 s)
+  flex   50.0 dev   -5.0: clear  strand min 1.14 mm (571 s)
+  flex   50.0 dev    1.2: clear  strand min 1.14 mm (578 s)
+  flex   50.0 dev    7.5: clear  strand min 1.14 mm (586 s)
+  flex   50.0 dev   13.8: clear  strand min 1.14 mm (594 s)
+  flex   50.0 dev   20.0: clear  strand min 1.14 mm (601 s)
+done in 680 s

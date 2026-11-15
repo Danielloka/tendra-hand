@@ -1,0 +1,719 @@
+{
+ "strands": {
+  "pip": {
+   "loop_sum_variation_mm": 0.02059483403522222,
+   "flex_mm_per_deg": {
+    "abd": 0.017015606473959624,
+    "mcp": 0.07391469382195957,
+    "pip": -0.12627457138179013
+   },
+   "flex_linear_fit_residual_mm": 0.005605165426700864
+  },
+  "mcp": {
+   "loop_sum_variation_mm": 0.02852040997171912,
+   "flex_mm_per_deg": {
+    "abd": 0.10885560000836622,
+    "mcp": -0.12627457138179,
+    "pip": -1.6066409215842536e-16
+   },
+   "flex_linear_fit_residual_mm": 0.010425098097485375
+  },
+  "abd": {
+   "loop_sum_variation_mm": 0.0,
+   "flex_mm_per_deg": {
+    "abd": -0.12627457138178882,
+    "mcp": 1.4553348539764016e-16,
+    "pip": 8.321908511001303e-17
+   },
+   "flex_linear_fit_residual_mm": 2.4158453015843406e-13
+  },
+  "coupling_deg_per_deg": {
+   "pip_per_mcp": -0.585348997926741,
+   "pip_per_abd": -0.13475085512278698,
+   "mcp_per_abd": -0.8620547970758288
+  },
+  "min_wrap_deg_per_element": {
+   "pip_flex": [
+    55.84853489633699,
+    5.848534896337022,
+    9.999999999999982,
+    9.999999999999913
+   ],
+   "pip_ext": [
+    55.848534896336965,
+    15.848534896337023,
+    90.0,
+    9.999999999999986,
+    9.999999999999913
+   ],
+   "mcp_flex": [
+    40.00000000000001,
+    9.99999999999999,
+    10.000000000000037
+   ],
+   "mcp_ext": [
+    40.0,
+    9.99999999999998,
+    9.999999999999913
+   ]
+  },
+  "pip_anchor_deg": 45.0,
+  "pip_wrap_margin_deg": 55.848534896337014,
+  "grid": {
+   "abd": [
+    -15,
+    -7.5,
+    0,
+    7.5,
+    15
+   ],
+   "mcp": [
+    -10.0,
+    0.0,
+    10.0,
+    20.0,
+    30.0,
+    40.0,
+    50.0,
+    60.0,
+    70.0,
+    80.0,
+    90.0
+   ],
+   "pip": [
+    -5.0,
+    5.0,
+    15.0,
+    25.0,
+    35.0,
+    45.0,
+    55.0,
+    65.0,
+    75.0,
+    85.0,
+    95.0
+   ]
+  },
+  "dip": {
+   "max_err_vs_0p75_deg": 0.42994117913983043,
+   "dip_at_pip95": 71.40076023144147
+  }
+ },
+ "parts": {
+  "base": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 17947.6,
+   "stl_watertight": true
+  },
+  "yoke": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 3168.2,
+   "stl_watertight": true
+  },
+  "proximal": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 8877.9,
+   "stl_watertight": true
+  },
+  "middle": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 3869.7,
+   "stl_watertight": true
+  },
+  "distal": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 3475.2,
+   "stl_watertight": true
+  },
+  "cup_abd": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 16.0,
+   "stl_watertight": true
+  },
+  "cup_mcp_flex": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 13.4,
+   "stl_watertight": true
+  },
+  "cup_mcp_ext": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 13.4,
+   "stl_watertight": true
+  },
+  "cup_pip": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 17.0,
+   "stl_watertight": true
+  },
+  "tip_skin": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 609.0,
+   "stl_watertight": true
+  },
+  "tip_pcb": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 66.2
+  },
+  "tip_chip": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 9.0
+  },
+  "tip_magnet": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 10.6
+  },
+  "nail_shim": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 8.8
+  },
+  "mcp_axle": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 93.4
+  },
+  "mcp_magnet": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 14.1
+  },
+  "mcp_sleeve_n": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 19.5
+  },
+  "mcp_brg_n_in": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 26.0
+  },
+  "mcp_brg_n_out": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 41.8
+  },
+  "mcp_ring_n": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 31.4
+  },
+  "mcp_sleeve_p": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 20.5
+  },
+  "mcp_brg_p_in": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 26.0
+  },
+  "mcp_brg_p_out": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 41.8
+  },
+  "mcp_ring_p": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 31.4
+  },
+  "idler_in": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 26.0
+  },
+  "idler_out": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 41.8
+  },
+  "dowel_redirect": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 56.5
+  },
+  "dowel_pipflex": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 56.5
+  },
+  "dowel_pipext": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 56.5
+  },
+  "dowel_mcpflex": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 29.7
+  },
+  "dowel_mcpext": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 29.7
+  },
+  "abd_stub_palmar": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 27.1
+  },
+  "abd_stub_dorsal": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 45.9
+  },
+  "abd_brg_p_in": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 17.0
+  },
+  "abd_brg_p_out": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 25.4
+  },
+  "abd_brg_d_in": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 17.0
+  },
+  "abd_brg_d_out": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 25.4
+  },
+  "abd_ring": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 58.8
+  },
+  "pip_pin": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 80.7
+  },
+  "pip_magnet": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 14.1
+  },
+  "pip_bush": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 21.2
+  },
+  "pip_brg_in": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 26.0
+  },
+  "pip_brg_out": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 41.8
+  },
+  "pip_ring": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 58.7
+  },
+  "dip_pin": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 106.9
+  },
+  "dip_bush_n": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 21.2
+  },
+  "dip_bush_p": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 21.2
+  },
+  "pin_A": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 21.8
+  },
+  "pin_B": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 21.8
+  },
+  "hall_mcp_pcb": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 16.2
+  },
+  "hall_mcp_chip": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 4.6
+  },
+  "hall_pip_pcb": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 16.2
+  },
+  "hall_pip_chip": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 4.6
+  },
+  "base_dowel_pip_flex": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 113.1
+  },
+  "base_dowel_pip_ext": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 127.2
+  },
+  "base_dowel_mcp_flex": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 74.9
+  },
+  "base_dowel_mcp_ext": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 74.9
+  }
+ },
+ "printed_mass_g_100pct": {
+  "base": 22.79,
+  "yoke": 4.02,
+  "proximal": 11.27,
+  "middle": 4.91,
+  "distal": 4.41,
+  "cup_abd": 0.02,
+  "cup_mcp_flex": 0.02,
+  "cup_mcp_ext": 0.02,
+  "cup_pip": 0.02,
+  "tip_skin": 0.65
+ },
+ "interference": {
+  "threshold_mm3": 0.05,
+  "poses": [
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 0,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 0,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 0,
+     "pip": 100
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 45,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 45,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 45,
+     "pip": 100
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 90,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 90,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 90,
+     "pip": 100
+    },
+    "hits": [
+     [
+      "base",
+      "tip_skin",
+      7.916
+     ]
+    ]
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 90,
+     "pip": 95
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 0,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 0,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 0,
+     "pip": 100
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 45,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 45,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 45,
+     "pip": 100
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 90,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 90,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 90,
+     "pip": 100
+    },
+    "hits": [
+     [
+      "base",
+      "tip_skin",
+      0.362
+     ]
+    ]
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 90,
+     "pip": 95
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 0,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 0,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 0,
+     "pip": 100
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 45,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 45,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 45,
+     "pip": 100
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 90,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 90,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 90,
+     "pip": 100
+    },
+    "hits": [
+     [
+      "base",
+      "tip_skin",
+      7.915
+     ]
+    ]
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 90,
+     "pip": 95
+    },
+    "hits": []
+   }
+  ],
+  "n_poses": 30,
+  "clear": 27
+ },
+ "strand_centreline_inside_solids": {
+  "{\"abd\": 0, \"mcp\": 0, \"pip\": 0}": {
+   "pip_flex": {},
+   "pip_ext": {},
+   "mcp_flex": {},
+   "mcp_ext": {},
+   "abd_flex": {},
+   "abd_ext": {}
+  },
+  "{\"abd\": 15, \"mcp\": 45, \"pip\": 50}": {
+   "pip_flex": {},
+   "pip_ext": {},
+   "mcp_flex": {},
+   "mcp_ext": {},
+   "abd_flex": {},
+   "abd_ext": {}
+  },
+  "{\"abd\": -15, \"mcp\": 90, \"pip\": 95}": {
+   "pip_flex": {},
+   "pip_ext": {},
+   "mcp_flex": {},
+   "mcp_ext": {},
+   "abd_flex": {},
+   "abd_ext": {}
+  }
+ },
+ "dip_link": {
+  "pin_a": {
+   "r": 5.1,
+   "deg": 28.75
+  },
+  "pin_b": {
+   "r": 6.6,
+   "deg": -89.75
+  },
+  "bar": 21.55114647356114,
+  "err_deg": 0.42994117913983004,
+  "L2": 24.0,
+  "clear": {
+   "axis_clear_mm": 3.2129973523268176,
+   "min_transmission_deg": 36.049155534457846
+  }
+ }
+}

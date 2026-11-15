@@ -1,0 +1,104 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+built 18 parts in 4 s
+  eye_plate                          valid True watertight True vol 268.2
+  eye_block_R                        valid True watertight True vol 56.5
+  eye_block_L                        valid True watertight True vol 56.5
+  palm_plate                         valid True watertight True vol 268.2
+  palm_plate_carrier                 valid True watertight True vol 422.6
+  forearm_plate                      valid True watertight True vol 268.2
+  forearm_plate_carrier              valid True watertight True vol 1331.5
+  index_trough                       valid True watertight True vol 32691.3
+  index_trough_lid                   valid True watertight True vol 2595.6
+  index_idler_dowel_flex             valid True watertight True vol 56.5
+  bearing_MR63_index_flex            valid True watertight True vol 53.0
+  washer_M3_index_flex_-10.8         valid True watertight True vol 5.8
+  washer_M3_index_flex_-7.8          valid True watertight True vol 5.8
+  index_idler_dowel_ext              valid True watertight True vol 56.5
+  bearing_MR63_index_ext             valid True watertight True vol 53.0
+  washer_M3_index_ext_+3.2           valid True watertight True vol 5.8
+  washer_M3_index_ext_+6.2           valid True watertight True vol 5.8
+  index_idler_block                  valid True watertight True vol 539.9
+own interference: none
+  pose flex  -50.0 dev  -30.0: clear  strand clearance min 0.15 mm  (8 s)
+  pose flex  -50.0 dev  -23.8: clear  strand clearance min 1.13 mm  (13 s)
+  pose flex  -50.0 dev  -17.5: clear  strand clearance min 2.04 mm  (19 s)
+  pose flex  -50.0 dev  -11.2: clear  strand clearance min 2.92 mm  (24 s)
+  pose flex  -50.0 dev   -5.0: clear  strand clearance min 3.16 mm  (29 s)
+  pose flex  -50.0 dev    1.2: clear  strand clearance min 3.16 mm  (33 s)
+  pose flex  -50.0 dev    7.5: clear  strand clearance min 3.16 mm  (39 s)
+  pose flex  -50.0 dev   13.8: clear  strand clearance min 2.57 mm  (44 s)
+  pose flex  -50.0 dev   20.0: clear  strand clearance min 1.68 mm  (51 s)
+  pose flex  -37.5 dev  -30.0: clear  strand clearance min 0.15 mm  (57 s)
+  pose flex  -37.5 dev  -23.8: clear  strand clearance min 1.13 mm  (63 s)
+  pose flex  -37.5 dev  -17.5: clear  strand clearance min 2.04 mm  (68 s)
+  pose flex  -37.5 dev  -11.2: clear  strand clearance min 2.92 mm  (75 s)
+  pose flex  -37.5 dev   -5.0: clear  strand clearance min 3.32 mm  (82 s)
+  pose flex  -37.5 dev    1.2: clear  strand clearance min 3.32 mm  (88 s)
+  pose flex  -37.5 dev    7.5: clear  strand clearance min 3.34 mm  (94 s)
+  pose flex  -37.5 dev   13.8: clear  strand clearance min 2.57 mm  (100 s)
+  pose flex  -37.5 dev   20.0: clear  strand clearance min 1.68 mm  (107 s)
+  pose flex  -25.0 dev  -30.0: clear  strand clearance min 0.15 mm  (113 s)
+  pose flex  -25.0 dev  -23.8: clear  strand clearance min 1.13 mm  (120 s)
+  pose flex  -25.0 dev  -17.5: clear  strand clearance min 2.04 mm  (126 s)
+  pose flex  -25.0 dev  -11.2: clear  strand clearance min 2.92 mm  (132 s)
+  pose flex  -25.0 dev   -5.0: clear  strand clearance min 3.26 mm  (140 s)
+  pose flex  -25.0 dev    1.2: clear  strand clearance min 3.26 mm  (146 s)
+  pose flex  -25.0 dev    7.5: clear  strand clearance min 3.26 mm  (152 s)
+  pose flex  -25.0 dev   13.8: clear  strand clearance min 2.57 mm  (158 s)
+  pose flex  -25.0 dev   20.0: clear  strand clearance min 1.68 mm  (165 s)
+  pose flex  -12.5 dev  -30.0: clear  strand clearance min 0.15 mm  (171 s)
+  pose flex  -12.5 dev  -23.8: clear  strand clearance min 1.13 mm  (177 s)
+  pose flex  -12.5 dev  -17.5: clear  strand clearance min 2.04 mm  (182 s)
+  pose flex  -12.5 dev  -11.2: clear  strand clearance min 2.92 mm  (189 s)
+  pose flex  -12.5 dev   -5.0: clear  strand clearance min 3.17 mm  (194 s)
+  pose flex  -12.5 dev    1.2: clear  strand clearance min 3.17 mm  (199 s)
+  pose flex  -12.5 dev    7.5: clear  strand clearance min 3.17 mm  (204 s)
+  pose flex  -12.5 dev   13.8: clear  strand clearance min 2.57 mm  (209 s)
+  pose flex  -12.5 dev   20.0: clear  strand clearance min 1.68 mm  (215 s)
+  pose flex    0.0 dev  -30.0: clear  strand clearance min 0.15 mm  (219 s)
+  pose flex    0.0 dev  -23.8: clear  strand clearance min 1.13 mm  (224 s)
+  pose flex    0.0 dev  -17.5: clear  strand clearance min 2.04 mm  (229 s)
+  pose flex    0.0 dev  -11.2: clear  strand clearance min 2.92 mm  (233 s)
+  pose flex    0.0 dev   -5.0: clear  strand clearance min 3.14 mm  (238 s)
+  pose flex    0.0 dev    1.2: clear  strand clearance min 3.14 mm  (242 s)
+  pose flex    0.0 dev    7.5: clear  strand clearance min 3.14 mm  (247 s)
+  pose flex    0.0 dev   13.8: clear  strand clearance min 2.57 mm  (252 s)
+  pose flex    0.0 dev   20.0: clear  strand clearance min 1.68 mm  (256 s)
+  pose flex   12.5 dev  -30.0: clear  strand clearance min 0.15 mm  (261 s)
+  pose flex   12.5 dev  -23.8: clear  strand clearance min 1.13 mm  (266 s)
+  pose flex   12.5 dev  -17.5: clear  strand clearance min 2.04 mm  (271 s)
+  pose flex   12.5 dev  -11.2: clear  strand clearance min 2.92 mm  (276 s)
+  pose flex   12.5 dev   -5.0: clear  strand clearance min 3.17 mm  (281 s)
+  pose flex   12.5 dev    1.2: clear  strand clearance min 3.17 mm  (286 s)
+  pose flex   12.5 dev    7.5: clear  strand clearance min 3.17 mm  (291 s)
+  pose flex   12.5 dev   13.8: clear  strand clearance min 2.57 mm  (296 s)
+  pose flex   12.5 dev   20.0: clear  strand clearance min 1.68 mm  (301 s)
+  pose flex   25.0 dev  -30.0: clear  strand clearance min 0.15 mm  (305 s)
+  pose flex   25.0 dev  -23.8: clear  strand clearance min 1.13 mm  (310 s)
+  pose flex   25.0 dev  -17.5: clear  strand clearance min 2.04 mm  (315 s)
+  pose flex   25.0 dev  -11.2: clear  strand clearance min 2.92 mm  (320 s)
+  pose flex   25.0 dev   -5.0: clear  strand clearance min 3.26 mm  (324 s)
+  pose flex   25.0 dev    1.2: clear  strand clearance min 3.26 mm  (329 s)
+  pose flex   25.0 dev    7.5: clear  strand clearance min 3.26 mm  (333 s)
+  pose flex   25.0 dev   13.8: clear  strand clearance min 2.57 mm  (338 s)
+  pose flex   25.0 dev   20.0: clear  strand clearance min 1.68 mm  (343 s)
+  pose flex   37.5 dev  -30.0: clear  strand clearance min 0.15 mm  (348 s)
+  pose flex   37.5 dev  -23.8: clear  strand clearance min 1.13 mm  (353 s)
+  pose flex   37.5 dev  -17.5: clear  strand clearance min 2.04 mm  (357 s)
+  pose flex   37.5 dev  -11.2: clear  strand clearance min 2.92 mm  (363 s)
+  pose flex   37.5 dev   -5.0: clear  strand clearance min 3.32 mm  (368 s)
+  pose flex   37.5 dev    1.2: clear  strand clearance min 3.32 mm  (373 s)
+  pose flex   37.5 dev    7.5: clear  strand clearance min 3.34 mm  (377 s)
+  pose flex   37.5 dev   13.8: clear  strand clearance min 2.57 mm  (382 s)
+  pose flex   37.5 dev   20.0: clear  strand clearance min 1.68 mm  (387 s)
+  pose flex   50.0 dev  -30.0: clear  strand clearance min 0.15 mm  (393 s)
+  pose flex   50.0 dev  -23.8: clear  strand clearance min 1.13 mm  (398 s)
+  pose flex   50.0 dev  -17.5: clear  strand clearance min 2.04 mm  (403 s)
+  pose flex   50.0 dev  -11.2: clear  strand clearance min 2.92 mm  (408 s)
+  pose flex   50.0 dev   -5.0: clear  strand clearance min 3.16 mm  (413 s)
+  pose flex   50.0 dev    1.2: clear  strand clearance min 3.16 mm  (417 s)
+  pose flex   50.0 dev    7.5: clear  strand clearance min 3.16 mm  (422 s)
+  pose flex   50.0 dev   13.8: clear  strand clearance min 2.57 mm  (427 s)
+  pose flex   50.0 dev   20.0: clear  strand clearance min 1.68 mm  (432 s)
+abd crossing: {'a=0.0': [-0.0091, -0.0012, 0.0012, 0.0102], 'a=4.5': [-0.1141, -0.0281, -0.0272, -0.1069]}
+done in 498 s

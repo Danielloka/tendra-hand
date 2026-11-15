@@ -1,0 +1,46 @@
+test,variant,sample,load_N,param,reading1,reading2,reading3,unit,pass_if,protects (budget number),notes
+T0,luggage scale vs kitchen scale,1,49,known mass 5 kg,,,,N,within 2 %,every later number,calibrate first
+D1,SCS0009 range 0 ticks to 1023 ticks,1,,protractor,,,,deg,>=300 (kill <285),servo travel table (review #2: 285 or 290 deg),do before printing anything
+D2,SCS0009 hold torque on (80 % back-off),1,,arm 60 mm,,,,N held 10 s w/o back-off,>=3.0 N (80 % of 0.226 N m),pinch at the 80 % cap,watch load % with the F command
+D2,SCS0009 stall (yields),1,,arm 60 mm,,,,N,>=3.4 N (90 % of 3.8),stall number in the budget,
+D3,SCS0009 gear strip (sacrificial servo),1,,arm 50 mm,,,,N m at slip/strip,>=0.34 N m (1.5x stall),fuse trip = servo protection,destroys the servo
+D3,SCS0009 backdrive torque off,1,,arm 50 mm,,,,N m at turn,info,holding without power,
+D4,PE#8 diameter (calliper 3 spots),1,,,,,,mm,0.47 +- 0.03,line size in every drum calc,datasheets: HLS multi-turn y/n; MR84 C0; 623 C0
+T1,steel dowel d3 180 deg,1,49,hold N,,,,pull N,mu<=0.12,eta of every guide,
+T1,MR63 roller 180 deg,1,49,hold N,,,,pull N,mu<=0.05,redirect roller (review #1),
+T1,brass ring 14x0.5 on puck 90 deg,1,49,hold N,,,,pull N,mu<=0.12,drum friction in eta 0.90,
+T1,PETG sleeve 180 deg,1,49,hold N,,,,pull N,info,printed groove,
+T2,doubled PE#8 2x2 crimp tube in cup seat (no cup),1,,,,,,N at slip or break,>=1.5x cup trip and >=100 N,crimp holds longer than the fuse,note where it fails
+T2,M2 clamp flat washers,1,,,,,,N at slip,>=100 N,spool anchor,
+T2,3 wraps on drum + half hitches,1,,,,,,N at slip,>=100 N,spool anchor,
+T2,overhand knot,1,,,,,,N at slip,reference,,
+T3,cup t=0.6 flat,1,,chamber D from 07/12,,,,N at pull-through (10 cups),SCS >=54 N (07: 67); HLS >=142 N; CV<15 %,trip >=1.5x capped strand (36 N SCS),record spread
+T3,cup t=0.8 flat,1,,,,,,N,same,same,
+T3,cup t=1.0 flat,1,,,,,,N,same,same,
+T3,cup t=1.2 flat,1,,,,,,N,same,same,also 1.2 on its side
+T4,eye stainless throat 0.65 / lip r 0.4,1,20,cycles,,,,cycles to first broken filament,>=16000 (=10000 x 12 mm),eye loss eta 0.88 per eye and strand life,loupe every 1000
+T4,eye brass throat 0.84,1,20,cycles,,,,cycles,>=16000,same,
+T4,eye pretension swing,1,5,wrist +-50 deg,,,,N min..max,5 +- 3 N,loop pretension (review #9),luggage scale on loop
+T4,eye friction at 50 deg,1,20,pull N / hold N,,,,eta,>=0.88,wrist eye eta in the route budget,
+T4,used line vs fresh at 150 N,1,150,hold 10 s,,,,held? Y/N,both hold,line strength after wear,never above 150 N
+T5,PE#8 stretch,1,5/15/30/45,L=100 mm,,,,mm flag shift,strain <=1.0 % at 45 N,joint angle error from stretch,
+T5,PE#8 pre-stretch 90 N 24 h,1,90,L=500 mm,,,,mm before/after,settles <0.1 mm after 24 h,bedding before assembly,SCS rule (<=100 N)
+T5,PE#8 loop creep 5 N 1 week,1,5,L=500 mm,,,,mm per week,<=0.1 mm per 533 mm loop,pretension 5 +- 2 N after 1 week,two plates
+T6,magnet inside race (d 1 mm),1,,pin steel,,,,deg worst error,<2 (offset removed),Hall angle error on the finger,AGC and magnet flags too
+T6,d 4 mm,1,,pin steel,,,,deg,<2,,
+T6,d 6 mm,1,,pin steel,,,,deg,<2,,
+T6,d 8 mm,1,,pin steel,,,,deg,<2,,
+T6,no bearing (control),1,,pin steel,,,,deg,<0.5,,
+T6,d 1 mm,1,,pin brass,,,,deg,<2,,
+T7,Ø3 dowel 90 deg,1,20,cycles,,,,cycles to first broken filament,>=50000,redirect dowel life,
+T7,MR63 roller,1,20,cycles,,,,cycles,>=50000,,
+T7,skew 15 deg dowel,1,20,cycles,,,,cycles,>=10000,abd fleet angle (review #8),
+T8,lever eta bearings only,1,,lever 60 mm,,,,eta,>=0.93 (finger 0.90 with bush),pinch 5.1 N at the 80 % cap,python cad/08_capstan_mu.py pinch --eta ...
+T9,bare PETG groove,1,49,days,,,,mm groove depth change,reference,drum ring need,
+T9,brass ring puck,1,49,days,,,,mm,<0.05,drum ring at stall,
+T10,PETG,1,4.9,glass,,,,N pull (mean of 5),reference,pad material,
+T10,silicone skin,1,4.9,glass,,,,N pull (mean of 5),>=3x PETG,pad material,
+T12,PTFE 1x2 housing L1 35 mm (only if T4 fails),1,45,L1=35,,,,mm flag shift,predicted <=0.6 mm at 140 mm,fallback only,
+T12,PTFE 1x2 housing L2 90 mm,1,45,L2=90,,,,mm flag shift,,,
+T12,bare line reference,1,45,,,,,mm flag shift,,,
+T13,PTFE in R15 keyhole groove (only if T4 fails),1,2,side load N,,,,pops out? Y/N,no pop-out,fallback only,

@@ -11,6 +11,25 @@ Lab notebook for Tendra Hand. Newest entries at the top.
 **Conclusion / next:** what I learned and what to try next
 ```
 
+## 2026-11-15: V2.1 round 2: fixes and sensors on every joint (agent team)
+**Goal:** the owner's request: fix what the review found, and plan and add joint-angle sensors on every joint, pressure sensing, wiring and placement.
+**Setup:** 5 agents in `cloud-claude/2026-11-14-hardware-ideas/` (Opus: finger, wrist, sensing architect; Sonnet: sensor parts survey, bench kit). CadQuery, numpy. Nothing printed.
+**Result:**
+- No crossed tendons (PIP flex on the palm side over an MR63 roller); pinch 5.9 N SCS0009 / 16.6 N HLS3606M with every lever, pretension and friction counted. One shared servo-travel table: all 16 servos fit SCS0009 (worst 280°).
+- Wrist: bare strands push 0.74 / 1.67 kN through it, so the cardan becomes metal (CNC 7075 ring and yokes, Ø5 pins in iglidur bushes). Palm reorder plate failed.
+- Sensors: TMAG5273 + diametric magnet in every joint pin end (20 joints, ≈ 0.5° after calibration, needs a non-magnetic bearing beside it), MLX90393 tips, 14 BMP581 pads, tendon force from spool − joint angle. 4 × 38 AWG per finger through hollow pins (twist only), JST SH plug per finger, 6 wires through hollow Ø5 wrist pins, palm RP2040 hub to the ESP32-S3 by UART. About €220 per hand.
+**Conclusion / next:** verify the ZrO2 bearing load rating and the SCS0009 range; bench-test steel vs ceramic bearing next to the magnet, 38 AWG twist life and tip saturation; round 2 still needs an adversarial review.
+
+## 2026-11-15: "V2.1" hardware study: better printed parts and drivetrain (agent team)
+**Goal:** the owner's request: make the hardware better, mostly the 3D-printed parts; many creative ideas, first principles, wide then narrow.
+**Setup:** 10 agents in `cloud-claude/2026-11-14-hardware-ideas/` (Opus for architecture, drivetrain, finger, wrist and review; Sonnet for joints, printing, contact/sensing, prior art, bench kit). CadQuery, numpy. Nothing printed.
+- Wide: 6 reports (~170 ideas). Narrow: a complete V2.1 bench index finger (57 parts, BOM), a bare-strand wrist eye plate with palm/forearm plates, 7 bench rigs, a fit test coupon.
+**Result:**
+- Bare strands over metal guides instead of PTFE sheaths: efficiency 0.74 → 0.92, loop ~12× stiffer. Wrist crossed by rounded steel eyes at the wrist centre plus one linear firmware term per servo.
+- Bench finger pinch (after the review's correction): 5.6 N SCS0009, 11.6 N HLS3606M; 6.7 / 17.6 N after one CAD fix (V2: ~2–2.5 N).
+- Review: servo travel doesn't close when 07 and 09 are combined (MCP spool back to r 5); bare strands push 0.5–1.7 kN through the wrist (V2 cardan too weak); fuse cup trips at SCS stall; knuckle module too wide.
+**Conclusion / next:** measure SCS0009 range and gear strip torque, apply 3 CAD fixes, print the coupon, then bench-test μ, fuse cup and eye-plate wear (the architecture decider) before the bench finger. Owner decides architecture and load class.
+
 ## 2026-11-14: V2 study: bearings in every joint, one knotted track per joint
 **Goal:** the owner's request: 2 bearings (4 × 8 × 3) per joint, and one tendon per joint tied at the top of the track ring, so the motor pulls both ways. Parts must be easy to remove and add back.
 **Setup:** finger and thumb designers plus an integrator in `cloud-claude/2026-11-09-v2-hand-cad/` (CadQuery). Reports 06–08.

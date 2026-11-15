@@ -1,0 +1,394 @@
+{
+ "about": "Wrist column for out/12/travel_table.json (agent 09, report 13). Servo deg on r 5. servo_deg += c_flex*wrist_flex_deg + c_dev*wrist_dev_deg.",
+ "source": "out/13/kin/eyeplate_kin.json (round 2: own travel from out/12, margin 15, palm plate z 30, wrist torque balanced)",
+ "joints": {
+  "index_pip": {
+   "servo_id": 1,
+   "eye_flex": [
+    -6.45,
+    0.0
+   ],
+   "eye_ext": [
+    6.45,
+    0.0
+   ],
+   "c_flex": 0.0,
+   "c_dev": -1.2538,
+   "wrist_servo_deg": 62.2,
+   "own_servo_deg": 214.7,
+   "total_with_wrist_deg": 276.9,
+   "fits_285": true,
+   "lin_residual_mm": 0.058,
+   "pretension_change_N": [
+    -1.51,
+    0.91
+   ]
+  },
+  "index_mcp_flex": {
+   "servo_id": 2,
+   "eye_flex": [
+    2.15,
+    2.15
+   ],
+   "eye_ext": [
+    -2.15,
+    -2.15
+   ],
+   "c_flex": -0.3901,
+   "c_dev": 0.4178,
+   "wrist_servo_deg": 58.3,
+   "own_servo_deg": 180.4,
+   "total_with_wrist_deg": 238.7,
+   "fits_285": true,
+   "lin_residual_mm": 0.081,
+   "pretension_change_N": [
+    -1.6,
+    1.2
+   ]
+  },
+  "index_mcp_abd": {
+   "servo_id": 3,
+   "eye_flex": [
+    -2.15,
+    4.3
+   ],
+   "eye_ext": [
+    2.15,
+    -4.3
+   ],
+   "c_flex": -0.7796,
+   "c_dev": -0.4176,
+   "wrist_servo_deg": 95.8,
+   "own_servo_deg": 43.4,
+   "total_with_wrist_deg": 139.2,
+   "fits_285": true,
+   "lin_residual_mm": 0.146,
+   "pretension_change_N": [
+    -1.82,
+    2.97
+   ]
+  },
+  "thumb_ip": {
+   "servo_id": 4,
+   "eye_flex": [
+    -6.45,
+    -2.15
+   ],
+   "eye_ext": [
+    6.45,
+    2.15
+   ],
+   "c_flex": 0.3901,
+   "c_dev": -1.2537,
+   "wrist_servo_deg": 99.8,
+   "own_servo_deg": 144.7,
+   "total_with_wrist_deg": 244.5,
+   "fits_285": true,
+   "lin_residual_mm": 0.12,
+   "pretension_change_N": [
+    -1.39,
+    1.22
+   ]
+  },
+  "thumb_mcp_flex": {
+   "servo_id": 5,
+   "eye_flex": [
+    4.3,
+    -4.3
+   ],
+   "eye_ext": [
+    -4.3,
+    4.3
+   ],
+   "c_flex": 0.7796,
+   "c_dev": 0.8359,
+   "wrist_servo_deg": 116.6,
+   "own_servo_deg": 115.8,
+   "total_with_wrist_deg": 232.4,
+   "fits_285": true,
+   "lin_residual_mm": 0.163,
+   "pretension_change_N": [
+    -1.37,
+    2.35
+   ]
+  },
+  "thumb_cmc_flex": {
+   "servo_id": 6,
+   "eye_flex": [
+    -4.3,
+    -2.15
+   ],
+   "eye_ext": [
+    4.3,
+    2.15
+   ],
+   "c_flex": 0.3901,
+   "c_dev": -0.8358,
+   "wrist_servo_deg": 79.1,
+   "own_servo_deg": 144.7,
+   "total_with_wrist_deg": 223.8,
+   "fits_285": true,
+   "lin_residual_mm": 0.1,
+   "pretension_change_N": [
+    -1.64,
+    1.32
+   ]
+  },
+  "thumb_cmc_rot": {
+   "servo_id": 7,
+   "eye_flex": [
+    0.0,
+    2.15
+   ],
+   "eye_ext": [
+    0.0,
+    -2.15
+   ],
+   "c_flex": -0.3901,
+   "c_dev": -0.0001,
+   "wrist_servo_deg": 37.6,
+   "own_servo_deg": 204.0,
+   "total_with_wrist_deg": 241.6,
+   "fits_285": true,
+   "lin_residual_mm": 0.063,
+   "pretension_change_N": [
+    -1.58,
+    1.21
+   ]
+  },
+  "middle_pip": {
+   "servo_id": 8,
+   "eye_flex": [
+    -2.15,
+    2.15
+   ],
+   "eye_ext": [
+    2.15,
+    -2.15
+   ],
+   "c_flex": -0.3902,
+   "c_dev": -0.4178,
+   "wrist_servo_deg": 58.3,
+   "own_servo_deg": 214.7,
+   "total_with_wrist_deg": 273.0,
+   "fits_285": true,
+   "lin_residual_mm": 0.081,
+   "pretension_change_N": [
+    -1.45,
+    1.05
+   ]
+  },
+  "middle_mcp_flex": {
+   "servo_id": 9,
+   "eye_flex": [
+    4.3,
+    -2.15
+   ],
+   "eye_ext": [
+    -4.3,
+    2.15
+   ],
+   "c_flex": 0.39,
+   "c_dev": 0.8355,
+   "wrist_servo_deg": 79.0,
+   "own_servo_deg": 180.4,
+   "total_with_wrist_deg": 259.4,
+   "fits_285": true,
+   "lin_residual_mm": 0.102,
+   "pretension_change_N": [
+    -1.52,
+    1.32
+   ]
+  },
+  "middle_mcp_abd": {
+   "servo_id": 10,
+   "eye_flex": [
+    0.0,
+    -4.3
+   ],
+   "eye_ext": [
+    0.0,
+    4.3
+   ],
+   "c_flex": 0.7796,
+   "c_dev": -0.0003,
+   "wrist_servo_deg": 75.1,
+   "own_servo_deg": 43.4,
+   "total_with_wrist_deg": 118.5,
+   "fits_285": true,
+   "lin_residual_mm": 0.129,
+   "pretension_change_N": [
+    -1.84,
+    3.03
+   ]
+  },
+  "ring_pip": {
+   "servo_id": 11,
+   "eye_flex": [
+    -2.15,
+    0.0
+   ],
+   "eye_ext": [
+    2.15,
+    0.0
+   ],
+   "c_flex": 0.0,
+   "c_dev": -0.418,
+   "wrist_servo_deg": 20.7,
+   "own_servo_deg": 214.7,
+   "total_with_wrist_deg": 235.4,
+   "fits_285": true,
+   "lin_residual_mm": 0.019,
+   "pretension_change_N": [
+    -1.64,
+    0.82
+   ]
+  },
+  "ring_mcp_flex": {
+   "servo_id": 12,
+   "eye_flex": [
+    6.45,
+    -2.15
+   ],
+   "eye_ext": [
+    -6.45,
+    2.15
+   ],
+   "c_flex": 0.39,
+   "c_dev": 1.2533,
+   "wrist_servo_deg": 99.8,
+   "own_servo_deg": 180.4,
+   "total_with_wrist_deg": 280.2,
+   "fits_285": true,
+   "lin_residual_mm": 0.121,
+   "pretension_change_N": [
+    -1.46,
+    1.29
+   ]
+  },
+  "ring_mcp_abd": {
+   "servo_id": 13,
+   "eye_flex": [
+    4.3,
+    4.3
+   ],
+   "eye_ext": [
+    -4.3,
+    -4.3
+   ],
+   "c_flex": -0.7796,
+   "c_dev": 0.8361,
+   "wrist_servo_deg": 116.6,
+   "own_servo_deg": 43.4,
+   "total_with_wrist_deg": 160.0,
+   "fits_285": true,
+   "lin_residual_mm": 0.162,
+   "pretension_change_N": [
+    -1.76,
+    3.02
+   ]
+  },
+  "little_pip": {
+   "servo_id": 14,
+   "eye_flex": [
+    -4.3,
+    0.0
+   ],
+   "eye_ext": [
+    4.3,
+    0.0
+   ],
+   "c_flex": -0.0,
+   "c_dev": -0.8355,
+   "wrist_servo_deg": 41.5,
+   "own_servo_deg": 214.7,
+   "total_with_wrist_deg": 256.2,
+   "fits_285": true,
+   "lin_residual_mm": 0.04,
+   "pretension_change_N": [
+    -1.56,
+    0.82
+   ]
+  },
+  "little_mcp_flex": {
+   "servo_id": 15,
+   "eye_flex": [
+    -2.15,
+    -4.3
+   ],
+   "eye_ext": [
+    2.15,
+    4.3
+   ],
+   "c_flex": 0.7796,
+   "c_dev": -0.4179,
+   "wrist_servo_deg": 95.8,
+   "own_servo_deg": 180.4,
+   "total_with_wrist_deg": 276.2,
+   "fits_285": true,
+   "lin_residual_mm": 0.144,
+   "pretension_change_N": [
+    -1.47,
+    2.47
+   ]
+  },
+  "little_mcp_abd": {
+   "servo_id": 16,
+   "eye_flex": [
+    6.45,
+    -4.3
+   ],
+   "eye_ext": [
+    -6.45,
+    4.3
+   ],
+   "c_flex": 0.7796,
+   "c_dev": 1.2531,
+   "wrist_servo_deg": 137.3,
+   "own_servo_deg": 43.4,
+   "total_with_wrist_deg": 180.7,
+   "fits_285": true,
+   "lin_residual_mm": 0.185,
+   "pretension_change_N": [
+    -1.63,
+    3.04
+   ]
+  }
+ },
+ "forearm_slots": {
+  "1": 1,
+  "2": 15,
+  "3": 11,
+  "4": 4,
+  "5": 5,
+  "6": 6,
+  "7": 7,
+  "8": 8,
+  "9": 12,
+  "10": 16,
+  "11": 10,
+  "12": 9,
+  "13": 3,
+  "14": 14,
+  "15": 2,
+  "16": 13
+ },
+ "spool_flips": {
+  "1": true,
+  "2": true,
+  "3": true,
+  "4": true,
+  "5": true,
+  "6": true,
+  "7": true,
+  "8": false,
+  "9": true,
+  "10": true,
+  "11": true,
+  "12": false,
+  "13": false,
+  "14": false,
+  "15": false,
+  "16": true
+ }
+}

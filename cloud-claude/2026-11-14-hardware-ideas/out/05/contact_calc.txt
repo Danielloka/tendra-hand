@@ -1,0 +1,94 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+== squeeze force per fingertip to hold a vertical weight, SF 1.5
+2-finger pinch (2 contacts)
+   200 g | PETG bare:  4.91 | PLA bare:  4.91 | TPU 95A smooth:  2.45 | TPU 85A smooth:  1.84 | TPU 95A + 0.8mm grooves:  2.10 | Silicone Shore A40:  1.47 | Dragon Skin 10 (A10):  1.13 | Ecoflex 00-30 (00-30):  0.92
+   500 g | PETG bare: 12.26 | PLA bare: 12.26 | TPU 95A smooth:  6.13 | TPU 85A smooth:  4.60 | TPU 95A + 0.8mm grooves:  5.26 | Silicone Shore A40:  3.68 | Dragon Skin 10 (A10):  2.83 | Ecoflex 00-30 (00-30):  2.30
+  1000 g | PETG bare: 24.53 | PLA bare: 24.53 | TPU 95A smooth: 12.26 | TPU 85A smooth:  9.20 | TPU 95A + 0.8mm grooves: 10.51 | Silicone Shore A40:  7.36 | Dragon Skin 10 (A10):  5.66 | Ecoflex 00-30 (00-30):  4.60
+tripod (3 contacts, thumb+2)
+   200 g | PETG bare:  3.27 | PLA bare:  3.27 | TPU 95A smooth:  1.64 | TPU 85A smooth:  1.23 | TPU 95A + 0.8mm grooves:  1.40 | Silicone Shore A40:  0.98 | Dragon Skin 10 (A10):  0.75 | Ecoflex 00-30 (00-30):  0.61
+   500 g | PETG bare:  8.18 | PLA bare:  8.18 | TPU 95A smooth:  4.09 | TPU 85A smooth:  3.07 | TPU 95A + 0.8mm grooves:  3.50 | Silicone Shore A40:  2.45 | Dragon Skin 10 (A10):  1.89 | Ecoflex 00-30 (00-30):  1.53
+  1000 g | PETG bare: 16.35 | PLA bare: 16.35 | TPU 95A smooth:  8.18 | TPU 85A smooth:  6.13 | TPU 95A + 0.8mm grooves:  7.01 | Silicone Shore A40:  4.91 | Dragon Skin 10 (A10):  3.77 | Ecoflex 00-30 (00-30):  3.07
+power wrap (thumb + 4 fingers + palm ~ 6 eff.)
+   200 g | PETG bare:  1.64 | PLA bare:  1.64 | TPU 95A smooth:  0.82 | TPU 85A smooth:  0.61 | TPU 95A + 0.8mm grooves:  0.70 | Silicone Shore A40:  0.49 | Dragon Skin 10 (A10):  0.38 | Ecoflex 00-30 (00-30):  0.31
+   500 g | PETG bare:  4.09 | PLA bare:  4.09 | TPU 95A smooth:  2.04 | TPU 85A smooth:  1.53 | TPU 95A + 0.8mm grooves:  1.75 | Silicone Shore A40:  1.23 | Dragon Skin 10 (A10):  0.94 | Ecoflex 00-30 (00-30):  0.77
+  1000 g | PETG bare:  8.18 | PLA bare:  8.18 | TPU 95A smooth:  4.09 | TPU 85A smooth:  3.07 | TPU 95A + 0.8mm grooves:  3.50 | Silicone Shore A40:  2.45 | Dragon Skin 10 (A10):  1.89 | Ecoflex 00-30 (00-30):  1.53
+
+== max mass held by a 2-finger pinch with tip normal force F (SF 1.5)
+F=1.7 N: PETG bare:    69 g | PLA bare:    69 g | TPU 95A smooth:   139 g | TPU 85A smooth:   185 g | TPU 95A + 0.8mm grooves:   162 g | Silicone Shore A40:   231 g | Dragon Skin 10 (A10):   300 g | Ecoflex 00-30 (00-30):   370 g
+F=2.5 N: PETG bare:   102 g | PLA bare:   102 g | TPU 95A smooth:   204 g | TPU 85A smooth:   272 g | TPU 95A + 0.8mm grooves:   238 g | Silicone Shore A40:   340 g | Dragon Skin 10 (A10):   442 g | Ecoflex 00-30 (00-30):   544 g
+F=3.4 N: PETG bare:   139 g | PLA bare:   139 g | TPU 95A smooth:   277 g | TPU 85A smooth:   370 g | TPU 95A + 0.8mm grooves:   323 g | Silicone Shore A40:   462 g | Dragon Skin 10 (A10):   601 g | Ecoflex 00-30 (00-30):   739 g
+F=9.0 N: PETG bare:   367 g | PLA bare:   367 g | TPU 95A smooth:   734 g | TPU 85A smooth:   979 g | TPU 95A + 0.8mm grooves:   856 g | Silicone Shore A40:  1223 g | Dragon Skin 10 (A10):  1590 g | Ecoflex 00-30 (00-30):  1957 g
+
+== PETG vs silicone A40 ratio of squeeze: 3.3333333333333335 ; vs Dragon Skin 10: 4.333333333333334
+
+== Young's modulus from Shore A (Gent)
+Shore A 10: E = 0.41 MPa
+Shore A 30: E = 1.14 MPa
+Shore A 40: E = 1.69 MPa
+Shore A 50: E = 2.46 MPa
+Shore A 85: E = 13.18 MPa
+Shore A 95: E = 43.83 MPa
+
+== Hertz patch of a fingertip pad (R=8 mm tip) on a FLAT object, normal force N; patch radius a = (3 N R /(4 E*))^(1/3), E*=E/(2(1-nu^2))*... ~E/1.5 (rubber nu .5)
+N=1.0 N
+  Ecoflex 00-30                  a =  4.2 mm, twist capacity =  2.81 N mm
+  Dragon Skin 10                 a =  3.3 mm, twist capacity =  2.17 N mm
+  Dragon Skin 30                 a =  2.1 mm, twist capacity =  1.39 N mm
+  Silicone A40 (Smooth-Sil 940)  a =  1.8 mm, twist capacity =  1.19 N mm
+  TPU 85A                        a =  1.0 mm, twist capacity =  0.40 N mm
+  TPU 95A                        a =  0.7 mm, twist capacity =  0.28 N mm
+  PETG                           a =  0.2 mm, twist capacity =  0.07 N mm
+N=3.0 N
+  Ecoflex 00-30                  a =  6.1 mm, twist capacity = 12.16 N mm
+  Dragon Skin 10                 a =  4.7 mm, twist capacity =  9.40 N mm
+  Dragon Skin 30                 a =  3.0 mm, twist capacity =  6.00 N mm
+  Silicone A40 (Smooth-Sil 940)  a =  2.6 mm, twist capacity =  5.13 N mm
+  TPU 85A                        a =  1.4 mm, twist capacity =  1.73 N mm
+  TPU 95A                        a =  1.0 mm, twist capacity =  1.22 N mm
+  PETG                           a =  0.3 mm, twist capacity =  0.30 N mm
+
+== stiffness chain at the fingertip (N/m); tendon k reflected to the tip by (drum/lever)^2, drum 7 mm, lever 60 mm
+ tendon nylon line 0.94 N/mm: tip stiffness (tendon only) =      13 N/m = 0.01 N/mm
+    + PETG tip (no pad)        k_pad=   80000000 N/m  k_series=     13  impact peak  0.08 N  force for 0.3 mm tip jitter 0.004 N
+    + TPU95 2mm,10x10          k_pad=    1300000 N/m  k_series=     13  impact peak  0.08 N  force for 0.3 mm tip jitter 0.004 N
+    + DS10 3mm,10x10           k_pad=       8667 N/m  k_series=     13  impact peak  0.08 N  force for 0.3 mm tip jitter 0.004 N
+    + Ecoflex 00-30 5mm,10x10  k_pad=       2400 N/m  k_series=     13  impact peak  0.08 N  force for 0.3 mm tip jitter 0.004 N
+ tendon Dyneema braid 12.6 N/mm: tip stiffness (tendon only) =     172 N/m = 0.17 N/mm
+    + PETG tip (no pad)        k_pad=   80000000 N/m  k_series=    171  impact peak  0.29 N  force for 0.3 mm tip jitter 0.051 N
+    + TPU95 2mm,10x10          k_pad=    1300000 N/m  k_series=    171  impact peak  0.29 N  force for 0.3 mm tip jitter 0.051 N
+    + DS10 3mm,10x10           k_pad=       8667 N/m  k_series=    168  impact peak  0.29 N  force for 0.3 mm tip jitter 0.050 N
+    + Ecoflex 00-30 5mm,10x10  k_pad=       2400 N/m  k_series=    160  impact peak  0.28 N  force for 0.3 mm tip jitter 0.048 N
+ tendon ideal stiff 100 N/mm: tip stiffness (tendon only) =    1361 N/m = 1.36 N/mm
+    + PETG tip (no pad)        k_pad=   80000000 N/m  k_series=   1361  impact peak  0.82 N  force for 0.3 mm tip jitter 0.408 N
+    + TPU95 2mm,10x10          k_pad=    1300000 N/m  k_series=   1360  impact peak  0.82 N  force for 0.3 mm tip jitter 0.408 N
+    + DS10 3mm,10x10           k_pad=       8667 N/m  k_series=   1176  impact peak  0.77 N  force for 0.3 mm tip jitter 0.353 N
+    + Ecoflex 00-30 5mm,10x10  k_pad=       2400 N/m  k_series=    869  impact peak  0.66 N  force for 0.3 mm tip jitter 0.261 N
+  => the tendon is already 30..1000x softer than any fingertip pad: pads do NOT filter at the fingertip.
+
+== PALM / phalanx pad vs a stiff ARM (the arm is position-controlled, k_arm ~ 50 N/mm at the hand, assumed)
+  PETG palm                                  k_pad=4800000.0 N/mm  series   50.0 N/mm  force for 0.5 mm arm error  25.00 N  (rigid:  25.0 N)
+  TPU95 2mm, 40x60                           k_pad=  31200.0 N/mm  series   49.9 N/mm  force for 0.5 mm arm error  24.96 N  (rigid:  25.0 N)
+  DS10 3mm, 40x60                            k_pad=    208.0 N/mm  series   40.3 N/mm  force for 0.5 mm arm error  20.16 N  (rigid:  25.0 N)
+  Ecoflex 00-30 10mm, 40x60                  k_pad=     28.8 N/mm  series   18.3 N/mm  force for 0.5 mm arm error   9.14 N  (rigid:  25.0 N)
+  Ecoflex 00-30 10mm, 20x30 (phalanx-size)   k_pad=      7.2 N/mm  series    6.3 N/mm  force for 0.5 mm arm error   3.15 N  (rigid:  25.0 N)
+
+== magnet field on axis, N45 (Br 1.34 T)
+  D3x1.5: z=2.0:  79.8 mT | z=3.0:  36.4 mT | z=4.0:  19.1 mT | z=5.0:  11.1 mT
+  D4x1.0: z=2.0:  83.7 mT | z=3.0:  41.8 mT | z=4.0:  22.8 mT | z=5.0:  13.5 mT
+  D4x2.0: z=2.0: 125.5 mT | z=3.0:  64.6 mT | z=4.0:  36.4 mT | z=5.0:  22.1 mT
+  D5x2.0: z=2.0: 149.6 mT | z=3.0:  84.6 mT | z=4.0:  50.3 mT | z=5.0:  31.7 mT
+  MLX90393 range ~ +-5 .. +-50 mT depending on gain (x/y 0.15-1.2 uT/LSB class); TMAG5273 A1: +-40 mT, A2: +-80 mT
+  D3x1.5 dome 4 mm: compress 1 mm raises B by 17.3 mT; 1 mT resolution -> ~0.06 mm -> force step with DS10 dome k~(E=0.26MPa, A=12 mm2, h=4mm)=780 N/m: 0.045 N per mT
+  D4x1.0 dome 4 mm: compress 1 mm raises B by 19.0 mT; 1 mT resolution -> ~0.05 mm -> force step with DS10 dome k~(E=0.26MPa, A=12 mm2, h=4mm)=780 N/m: 0.041 N per mT
+
+== wires across a joint
+ bundle r=0.5mm twisted 95 deg over L=6 mm: strain 0.955 %
+ bundle r=0.5mm twisted 95 deg over L=10 mm: strain 0.344 %
+ bundle r=0.5mm twisted 95 deg over L=20 mm: strain 0.086 %
+ flex-PCB RA Cu loop, t=0.1 mm bend radius 3 mm: strain 1.67 % (RA Cu ~1e6 cycles at <= 0.3..0.5 %)
+ flex-PCB RA Cu loop, t=0.1 mm bend radius 5 mm: strain 1.00 % (RA Cu ~1e6 cycles at <= 0.3..0.5 %)
+ flex-PCB RA Cu loop, t=0.1 mm bend radius 10 mm: strain 0.50 % (RA Cu ~1e6 cycles at <= 0.3..0.5 %)
+ flex-PCB RA Cu loop, t=0.05 mm bend radius 3 mm: strain 0.83 % (RA Cu ~1e6 cycles at <= 0.3..0.5 %)
+ single 36AWG strand (0.127 mm solid) bent to R=3 mm:  2.1 % -> dies in 1e3..1e4 cycles; 7-strand 0.05 mm each: 0.8 %
+
+== joint angle sensor resolution: 12-bit => 0.088 deg; AS5600 12 bit; MT6701 14 bit => 0.022 deg; fingertip 80 mm lever: 0.088 deg = 0.123 mm

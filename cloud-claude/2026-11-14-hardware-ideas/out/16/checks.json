@@ -1,0 +1,938 @@
+{
+ "strands": {
+  "pip": {
+   "loop_sum_variation_mm": 2.2938540780614858e-05,
+   "flex_mm_per_deg": {
+    "abd": 0.015555939247686404,
+    "mcp": -0.05646140130201667,
+    "pip": -0.12627457138178994
+   },
+   "flex_linear_fit_residual_mm": 0.0008081804865156528
+  },
+  "mcp": {
+   "loop_sum_variation_mm": 0.0010209161459044935,
+   "flex_mm_per_deg": {
+    "abd": 0.10370523767623331,
+    "mcp": -0.12627457138179016,
+    "pip": -3.971390893365829e-16
+   },
+   "flex_linear_fit_residual_mm": 0.005552153530459236
+  },
+  "abd": {
+   "loop_sum_variation_mm": 0.0,
+   "flex_mm_per_deg": {
+    "abd": -0.1262745713817895,
+    "mcp": -1.4328717037978916e-17,
+    "pip": -5.3257805730637543e-17
+   },
+   "flex_linear_fit_residual_mm": 6.394884621840902e-14
+  },
+  "coupling_deg_per_deg": {
+   "pip_per_mcp": 0.44713199723566016,
+   "pip_per_abd": -0.12319138427841639,
+   "mcp_per_abd": -0.8212677860745324
+  },
+  "min_wrap_deg_per_element": {
+   "pip_flex": [
+    31.465023799905854,
+    14.534976200094095,
+    109.99999999999997
+   ],
+   "pip_ext": [
+    31.465023799905854,
+    5.0349762000941105,
+    20.49999999999997
+   ],
+   "mcp_flex": [
+    40.00000000000001
+   ],
+   "mcp_ext": [
+    40.0
+   ]
+  },
+  "pip_anchor_deg": {
+   "flex": 59.0,
+   "ext": 31.0
+  },
+  "pip_wrap_margin_deg": 31.465023799905907,
+  "grid": {
+   "abd": [
+    -15,
+    -7.5,
+    0,
+    7.5,
+    15
+   ],
+   "mcp": [
+    -10.0,
+    0.0,
+    10.0,
+    20.0,
+    30.0,
+    40.0,
+    50.0,
+    60.0,
+    70.0,
+    80.0,
+    90.0
+   ],
+   "pip": [
+    -5.0,
+    5.0,
+    15.0,
+    25.0,
+    35.0,
+    45.0,
+    55.0,
+    65.0,
+    75.0,
+    85.0,
+    95.0
+   ]
+  },
+  "dip": {
+   "max_err_vs_0p75_deg": 0.42994117913983043,
+   "dip_at_pip95": 71.40076023144147
+  }
+ },
+ "parts": {
+  "base": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 18430.1,
+   "stl_watertight": true
+  },
+  "yoke": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 3035.1,
+   "stl_watertight": true
+  },
+  "proximal": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 8643.3,
+   "stl_watertight": true
+  },
+  "middle": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 3650.0,
+   "stl_watertight": true
+  },
+  "distal": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 3302.5,
+   "stl_watertight": true
+  },
+  "cup_abd_flex": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 8.7,
+   "stl_watertight": true
+  },
+  "cup_abd_ext": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 8.7,
+   "stl_watertight": true
+  },
+  "cup_mcp_flex": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 13.1,
+   "stl_watertight": true
+  },
+  "cup_mcp_ext": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 13.1,
+   "stl_watertight": true
+  },
+  "cup_pip_flex": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 8.7,
+   "stl_watertight": true
+  },
+  "cup_pip_ext": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 8.7,
+   "stl_watertight": true
+  },
+  "tip_skin": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 609.0,
+   "stl_watertight": true
+  },
+  "tip_pcb": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 66.2
+  },
+  "tip_chip": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 9.0
+  },
+  "tip_magnet": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 7.1
+  },
+  "nail_shim": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 8.8
+  },
+  "tip_carrier": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 74.6
+  },
+  "mcp_axle_inner": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 53.6
+  },
+  "mcp_sleeve4_n": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 32.7
+  },
+  "mcp_sleeve5_n": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 19.1
+  },
+  "mcp_brg_n_in": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 26.0
+  },
+  "mcp_brg_n_out": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 41.8
+  },
+  "mcp_ring_n": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 30.5
+  },
+  "mcp_sleeve4_p": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 26.6
+  },
+  "mcp_sleeve5_p": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 18.5
+  },
+  "mcp_zro2_in": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 17.3
+  },
+  "mcp_zro2_out": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 27.9
+  },
+  "mcp_ring_p": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 30.5
+  },
+  "idler_in": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 17.0
+  },
+  "idler_out": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 25.4
+  },
+  "roller_in": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 17.0
+  },
+  "roller_out": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 25.4
+  },
+  "dowel_roller": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 56.5
+  },
+  "dowel_ext": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 25.8
+  },
+  "nip_pipflex_0": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 14.1
+  },
+  "nip_pipext_0": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 14.1
+  },
+  "nip_mcpflex_0": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 11.3
+  },
+  "nip_mcpext_0": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 11.3
+  },
+  "nip_pipflex_1": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 14.1
+  },
+  "nip_pipext_1": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 14.1
+  },
+  "nip_mcpflex_1": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 11.3
+  },
+  "nip_mcpext_1": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 11.3
+  },
+  "sensor_mcp_magnet": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 4.7
+  },
+  "sensor_mcp_chip": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 11.8
+  },
+  "sensor_mcp_board": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 12.9
+  },
+  "sensor_mcp_cap": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 26.6
+  },
+  "sensor_pip_magnet": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 7.1
+  },
+  "sensor_pip_chip": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 11.8
+  },
+  "sensor_pip_board": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 12.9
+  },
+  "sensor_pip_cap": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 26.6
+  },
+  "sensor_dip_magnet": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 7.1
+  },
+  "sensor_dip_chip": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 11.8
+  },
+  "sensor_dip_board": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 12.9
+  },
+  "sensor_dip_cap": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 26.6
+  },
+  "abd_stub_palmar": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 27.1
+  },
+  "abd_stub_dorsal": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 36.8
+  },
+  "sensor_abd_magnet": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 7.1
+  },
+  "sensor_abd_board": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 12.9
+  },
+  "sensor_abd_chip": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 11.8
+  },
+  "sensor_abd_cap": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 54.7
+  },
+  "knuckle_board": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 129.9
+  },
+  "jst_sh_socket": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 108.4
+  },
+  "jst_sh_plug": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 44.7
+  },
+  "abd_brg_p_in": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 17.0
+  },
+  "abd_brg_p_out": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 25.4
+  },
+  "abd_brg_d_in": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 17.0
+  },
+  "abd_brg_d_out": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 25.4
+  },
+  "abd_ring": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 52.9
+  },
+  "pip_pin": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 64.8
+  },
+  "pip_bush": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 21.2
+  },
+  "pip_zro2_in": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 17.3
+  },
+  "pip_zro2_out": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 27.9
+  },
+  "pip_ring": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 52.3
+  },
+  "dip_pin": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 64.6
+  },
+  "dip_bush_n": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 21.2
+  },
+  "dip_bush_p": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 10.6
+  },
+  "pin_A": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 21.8
+  },
+  "pin_B": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 21.8
+  },
+  "pad_prox_board": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 18.0
+  },
+  "pad_prox_chip": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 3.0
+  },
+  "pad_prox_silicone": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 166.1
+  },
+  "pad_mid_board": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 18.0
+  },
+  "pad_mid_chip": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 3.0
+  },
+  "pad_mid_silicone": {
+   "valid": true,
+   "solids": 1,
+   "volume_mm3": 150.2
+  }
+ },
+ "printed_mass_g_100pct": {
+  "base": 23.41,
+  "yoke": 3.85,
+  "proximal": 10.98,
+  "middle": 4.64,
+  "distal": 4.19,
+  "cup_abd_flex": 0.01,
+  "cup_abd_ext": 0.01,
+  "cup_mcp_flex": 0.02,
+  "cup_mcp_ext": 0.02,
+  "cup_pip_flex": 0.01,
+  "cup_pip_ext": 0.01,
+  "tip_skin": 0.65
+ },
+ "interference": {
+  "threshold_mm3": 0.05,
+  "poses": [
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 0,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 0,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 0,
+     "pip": 100
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 45,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 45,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 45,
+     "pip": 100
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 90,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 90,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 90,
+     "pip": 100
+    },
+    "hits": [
+     [
+      "base",
+      "tip_skin",
+      7.916
+     ]
+    ]
+   },
+   {
+    "q": {
+     "abd": -15,
+     "mcp": 90,
+     "pip": 95
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 0,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 0,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 0,
+     "pip": 100
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 45,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 45,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 45,
+     "pip": 100
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 90,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 90,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 90,
+     "pip": 100
+    },
+    "hits": [
+     [
+      "base",
+      "tip_skin",
+      0.362
+     ]
+    ]
+   },
+   {
+    "q": {
+     "abd": 0,
+     "mcp": 90,
+     "pip": 95
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 0,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 0,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 0,
+     "pip": 100
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 45,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 45,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 45,
+     "pip": 100
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 90,
+     "pip": 0
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 90,
+     "pip": 50
+    },
+    "hits": []
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 90,
+     "pip": 100
+    },
+    "hits": [
+     [
+      "base",
+      "tip_skin",
+      7.915
+     ]
+    ]
+   },
+   {
+    "q": {
+     "abd": 15,
+     "mcp": 90,
+     "pip": 95
+    },
+    "hits": []
+   }
+  ],
+  "n_poses": 30,
+  "clear": 27
+ },
+ "strand_centreline_inside_solids": {
+  "{\"abd\": 0, \"mcp\": 0, \"pip\": 0}": {
+   "pip_flex": {},
+   "pip_ext": {},
+   "mcp_flex": {},
+   "mcp_ext": {},
+   "abd_flex": {},
+   "abd_ext": {}
+  },
+  "{\"abd\": 15, \"mcp\": 45, \"pip\": 50}": {
+   "pip_flex": {},
+   "pip_ext": {},
+   "mcp_flex": {},
+   "mcp_ext": {},
+   "abd_flex": {},
+   "abd_ext": {}
+  },
+  "{\"abd\": -15, \"mcp\": 90, \"pip\": 95}": {
+   "pip_flex": {},
+   "pip_ext": {},
+   "mcp_flex": {},
+   "mcp_ext": {},
+   "abd_flex": {},
+   "abd_ext": {}
+  }
+ },
+ "sensor_wire_inside_solids": {
+  "{\"abd\": 0, \"mcp\": 0, \"pip\": 0}": {},
+  "{\"abd\": 15, \"mcp\": 45, \"pip\": 50}": {},
+  "{\"abd\": -15, \"mcp\": 90, \"pip\": 95}": {}
+ },
+ "dip_link": {
+  "pin_a": {
+   "r": 5.1,
+   "deg": 28.75
+  },
+  "pin_b": {
+   "r": 6.6,
+   "deg": -89.75
+  },
+  "bar": 21.55114647356114,
+  "err_deg": 0.42994117913983004,
+  "L2": 24.0,
+  "clear": {
+   "axis_clear_mm": 3.2129973523268176,
+   "min_transmission_deg": 36.049155534457846
+  }
+ },
+ "pitch_mm_needed": {
+  "with_sensors_R3": {
+   "mcp0_pip0_A-15_B-15": 19.93148127677019,
+   "mcp0_pip0_A-15_B-7.5": 18.6029115041326,
+   "mcp0_pip0_A-15_B0": 17.93265515436094,
+   "mcp0_pip0_A-15_B7.5": 16.01080248931937,
+   "mcp0_pip0_A-15_B15": 17.681980274548508,
+   "mcp0_pip0_A-7.5_B-15": 28.53442821121019,
+   "mcp0_pip0_A-7.5_B-7.5": 19.28923504932486,
+   "mcp0_pip0_A-7.5_B0": 17.70510436195159,
+   "mcp0_pip0_A-7.5_B7.5": 17.417615144316485,
+   "mcp0_pip0_A-7.5_B15": 15.885997630401514,
+   "mcp0_pip0_A0_B-15": 38.98683049990253,
+   "mcp0_pip0_A0_B-7.5": 28.214910508785962,
+   "mcp0_pip0_A0_B0": 18.9,
+   "mcp0_pip0_A0_B7.5": 17.705103653750882,
+   "mcp0_pip0_A0_B15": 17.93265515436094,
+   "mcp0_pip0_A7.5_B-15": 52.251881108157704,
+   "mcp0_pip0_A7.5_B-7.5": 40.06646614642587,
+   "mcp0_pip0_A7.5_B0": 28.37267154866835,
+   "mcp0_pip0_A7.5_B7.5": 19.16330326261399,
+   "mcp0_pip0_A7.5_B15": 18.60269220061124,
+   "mcp0_pip0_A15_B-15": 65.09167586700065,
+   "mcp0_pip0_A15_B-7.5": 52.2001733497483,
+   "mcp0_pip0_A15_B0": 39.5591491117447,
+   "mcp0_pip0_A15_B7.5": 29.234128023582883,
+   "mcp0_pip0_A15_B15": 19.439922639587024,
+   "mcp90_pip95_A-15_B-15": 19.603164976307966,
+   "mcp90_pip95_A-15_B-7.5": 20.051173955556045,
+   "mcp90_pip95_A-15_B0": 20.611105066732463,
+   "mcp90_pip95_A-15_B7.5": 22.270657486764332,
+   "mcp90_pip95_A-15_B15": 25.576850461929002,
+   "mcp90_pip95_A-7.5_B-15": 21.550851512940234,
+   "mcp90_pip95_A-7.5_B-7.5": 19.274836549374328,
+   "mcp90_pip95_A-7.5_B0": 19.641504827743272,
+   "mcp90_pip95_A-7.5_B7.5": 20.242659311416134,
+   "mcp90_pip95_A-7.5_B15": 22.27037313881252,
+   "mcp90_pip95_A0_B-15": 24.157980022934385,
+   "mcp90_pip95_A0_B-7.5": 21.31793728938686,
+   "mcp90_pip95_A0_B0": 18.9,
+   "mcp90_pip95_A0_B7.5": 18.611439853965877,
+   "mcp90_pip95_A0_B15": 19.835854680473076,
+   "mcp90_pip95_A7.5_B-15": 26.64001189532143,
+   "mcp90_pip95_A7.5_B-7.5": 23.69130607190603,
+   "mcp90_pip95_A7.5_B0": 21.095653035953248,
+   "mcp90_pip95_A7.5_B7.5": 19.146857931513686,
+   "mcp90_pip95_A7.5_B15": 18.654342618051366,
+   "mcp90_pip95_A15_B-15": 28.485802467076972,
+   "mcp90_pip95_A15_B-7.5": 25.941892598621827,
+   "mcp90_pip95_A15_B0": 23.492901233538944,
+   "mcp90_pip95_A15_B7.5": 21.367522702045555,
+   "mcp90_pip95_A15_B15": 19.549599760081865,
+   "mcp45_pip50_A-15_B-15": 19.97312439036112,
+   "mcp45_pip50_A-15_B-7.5": 18.612715258380696,
+   "mcp45_pip50_A-15_B0": 17.722222449928736,
+   "mcp45_pip50_A-15_B7.5": 16.01080248931937,
+   "mcp45_pip50_A-15_B15": 17.681980274548508,
+   "mcp45_pip50_A-7.5_B-15": 25.494110872704454,
+   "mcp45_pip50_A-7.5_B-7.5": 19.259468847335686,
+   "mcp45_pip50_A-7.5_B0": 17.70411893846706,
+   "mcp45_pip50_A-7.5_B7.5": 17.417615144316485,
+   "mcp45_pip50_A-7.5_B15": 15.97277316977134,
+   "mcp45_pip50_A0_B-15": 31.1428448586988,
+   "mcp45_pip50_A0_B-7.5": 25.158807755872218,
+   "mcp45_pip50_A0_B0": 18.9,
+   "mcp45_pip50_A0_B7.5": 17.704517903679168,
+   "mcp45_pip50_A0_B15": 17.93265515436094,
+   "mcp45_pip50_A7.5_B-15": 37.07523900534888,
+   "mcp45_pip50_A7.5_B-7.5": 30.937799035643657,
+   "mcp45_pip50_A7.5_B0": 24.856468836880634,
+   "mcp45_pip50_A7.5_B7.5": 19.154247309670005,
+   "mcp45_pip50_A7.5_B15": 18.593636247667256,
+   "mcp45_pip50_A15_B-15": 42.576648646287936,
+   "mcp45_pip50_A15_B-7.5": 37.37078031880458,
+   "mcp45_pip50_A15_B0": 31.113872456146623,
+   "mcp45_pip50_A15_B7.5": 24.919700683885388,
+   "mcp45_pip50_A15_B15": 19.71508943271139
+  }
+ }
+}

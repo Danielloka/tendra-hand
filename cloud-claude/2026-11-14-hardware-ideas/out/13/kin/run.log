@@ -1,0 +1,331 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+
+====================================================================================================
+0. First principles: what the eye plate does
+====================================================================================================
+A strand that crosses a joint changes length by (its moment arm about the axis) x (angle).
+Eye at (x, y) on the plate in the plane of both axes: palm segment arm about X = y, forearm segment arm
+about Y = x. So dL ~ y*flex + x*dev (first order), and the servo travel to cancel it over the range is
+  T = (|x|*50 deg + |y|*100 deg) / r_spool = 10.0|x| + 20.0|y| servo deg (x, y in mm)
+Pretension: a point-symmetric pair cancels the first order. What is left is second order, and above all
+WHERE the line pivots: a pivot a height h above the axis plane adds ~ h*theta^2/2 per strand, the same sign
+for flex and ext (common mode). The servo cannot cancel common mode: it only becomes pretension.
+Common-mode loop stiffness ~ EA/(L_flex + L_ext) = 11.1 kN / 520 mm = 21 N/mm (soft braid 13). Tolerance +-3.0 N -> +-0.14 mm per loop.
+  pivot height 0.00 mm, flex 50: pair common mode +0.017 mm = +0.4 N
+  pivot height 0.50 mm, flex 50: pair common mode +0.380 mm = +8.1 N
+  pivot height 1.25 mm, flex 50: pair common mode +0.944 mm = +20.2 N
+
+====================================================================================================
+1. Eye option torus_r0.6: drilled + fully rounded plate eye, 1.2 mm stainless/brass, throat 0.84, lip r 0.6  (pitch 2.25 mm, 8 x 4 grid)
+====================================================================================================
+    assignment pitch 2.25: cost 297.62, forearm-fan min distance 0.13 mm, crossings {'palm_cross': 38, 'fore_cross': 8, 'flex_eye_moment_mm': [-0.56, 0.0]}
+  assignment done in 3 s; servo slots (joint sid -> V2 slot of sid): {2: 9, 3: 14, 5: 2, 9: 15, 14: 3, 15: 5}, spool flips: [1, 2, 5, 6, 7, 9, 11, 12, 13]
+  near-crossings (centre distance < 0.97 mm) in the forearm fan: 8 pairs, max spacer bend 7.6 deg; palm fan: 38 pairs, max bend 89.8 deg (fixed bends at a spacer comb / trough)
+  exact shortest-path model: 32 strands x 81 poses in 37 s
+  joint                  eye flex        eye ext  c_flex   c_dev  lin res  travel  need+T          cm mm          dT N eye wrap
+  index_pip        (+3.38,-1.12) (-3.38,+1.12)  +0.204  +0.657    0.061    52.3   267.0 -0.208..-0.008  -4.3.. -0.2     56.7
+  index_mcp_flex   (-5.62,+1.12) (+5.62,-1.12)  -0.204  -1.093    0.084    74.0   254.4 -0.202..-0.006  -4.1.. -0.1     56.7
+  index_mcp_abd    (-3.38,-3.38) (+3.38,+3.38)  +0.612  -0.656    0.126    91.6   135.0 -0.198..-0.006  -4.9.. -0.1     58.0
+  thumb_ip         (-5.62,+3.38) (+5.62,-3.38)  -0.613  -1.094    0.148   113.3   258.0 -0.186..-0.008  -3.6.. -0.1     58.2
+  thumb_mcp_flex   (+7.88,-3.38) (-7.88,+3.38)  +0.613  +1.531    0.168   135.0   250.8 -0.179..-0.007  -3.4.. -0.1     59.0
+  thumb_cmc_flex   (-3.38,+3.38) (+3.38,-3.38)  -0.612  -0.656    0.126    91.6   236.3 -0.196..-0.008  -4.3.. -0.2     57.9
+  thumb_cmc_rot    (-5.62,-1.12) (+5.62,+1.12)  +0.204  -1.094    0.084    74.0   278.0 -0.198..-0.007  -4.0.. -0.1     57.6
+  middle_pip       (+1.12,-3.38) (-1.12,+3.38)  +0.613  +0.219    0.106    69.9   284.6 -0.207..-0.004  -3.8.. -0.1     58.4
+  middle_mcp_flex  (+7.88,-1.12) (-7.88,+1.12)  +0.204  +1.530    0.105    95.6   276.0 -0.191..-0.004  -3.9.. -0.1     58.0
+  middle_mcp_abd   (-7.88,-1.12) (+7.88,+1.12)  +0.204  -1.531    0.101    95.7   139.1 -0.190..-0.005  -4.6.. -0.1     57.0
+  ring_pip         (-1.12,-1.12) (+1.12,+1.12)  +0.204  -0.219    0.043    30.5   245.2 -0.216..-0.001  -4.5.. -0.0     57.5
+  ring_mcp_flex    (-3.38,-1.12) (+3.38,+1.12)  +0.204  -0.656    0.064    52.2   232.6 -0.209..-0.001  -4.2.. -0.0     57.3
+  ring_mcp_abd     (+5.62,+3.38) (-5.62,-3.38)  -0.612  +1.093    0.147   113.3   156.7 -0.185..-0.000  -4.5.. -0.0     58.7
+  little_pip       (+1.12,+3.38) (-1.12,-3.38)  -0.613  +0.219    0.107    69.9   284.6 -0.205..-0.005  -4.2.. -0.1     58.5
+  little_mcp_flex  (+1.12,-1.12) (-1.12,+1.12)  +0.204  +0.219    0.041    30.5   210.9 -0.217..-0.005  -4.3.. -0.1     57.1
+  little_mcp_abd   (+7.88,+3.38) (-7.88,-3.38)  -0.613  +1.531    0.169   135.0   178.4 -0.180..-0.001  -4.3.. -0.0     58.8
+  worst pretension change 4.9 N (median 4.3); all joints fit the 300 deg servo: True; worst linear residual 0.169 mm (1.34 joint deg)
+  WRIST FREE SPANS (forearm plate -> eye -> palm plate): min centreline distance over the 9x9 grid: 1.42 mm (index_mcp_flex_ext / thumb_ip_ext at flex 50 dev -18); surface gap 0.95 mm
+  comb hole spacing: palm 2.25 mm, forearm 2.25 mm (16G liner OD 1.65 + 1 mm web = 2.65)
+  lip pressure p = T/(r d): r 0.6 -> 160 MPa at SCS stall, 418 MPa at HLS stall
+
+====================================================================================================
+1. Eye option torus_r0.6_t0.65: as torus_r0.6 but throat Ø0.65 (play 0.09 per side instead of 0.185)  (pitch 2.15 mm, 8 x 4 grid)
+====================================================================================================
+    assignment pitch 2.15: cost 260.92, forearm-fan min distance 0.00 mm, crossings {'palm_cross': 50, 'fore_cross': 4, 'flex_eye_moment_mm': [-4.3, 2.69]}
+  assignment done in 3 s; servo slots (joint sid -> V2 slot of sid): {1: 16, 4: 1, 5: 9, 9: 12, 10: 13, 12: 15, 13: 14, 14: 4, 15: 5, 16: 10}, spool flips: [1, 4, 5, 6, 8, 11, 13]
+  near-crossings (centre distance < 0.97 mm) in the forearm fan: 4 pairs, max spacer bend 13.5 deg; palm fan: 50 pairs, max bend 85.2 deg (fixed bends at a spacer comb / trough)
+  exact shortest-path model: 32 strands x 81 poses in 35 s
+  joint                  eye flex        eye ext  c_flex   c_dev  lin res  travel  need+T          cm mm          dT N eye wrap
+  index_pip        (-3.23,-1.07) (+3.23,+1.07)  +0.195  -0.627    0.060    49.9   264.6 -0.077..+0.045  -1.6.. +0.9     57.2
+  index_mcp_flex   (+3.23,-3.23) (-3.23,+3.23)  +0.585  +0.627    0.122    87.5   267.9 -0.074..+0.089  -1.5.. +1.8     58.7
+  index_mcp_abd    (+7.53,-3.23) (-7.53,+3.23)  +0.585  +1.462    0.162   128.9   172.3 -0.069..+0.097  -1.7.. +2.4     59.1
+  thumb_ip         (+5.38,-1.07) (-5.38,+1.07)  +0.195  +1.045    0.079    70.7   215.4 -0.074..+0.045  -1.4.. +0.9     57.5
+  thumb_mcp_flex   (+7.53,+3.23) (-7.53,-3.23)  -0.585  +1.462    0.162   128.9   244.7 -0.070..+0.094  -1.4.. +1.8     59.1
+  thumb_cmc_flex   (-5.38,-3.23) (+5.38,+3.23)  +0.585  -1.045    0.142   108.2   252.9 -0.073..+0.086  -1.6.. +1.9     58.9
+  thumb_cmc_rot    (-1.07,-1.07) (+1.07,+1.07)  +0.195  -0.209    0.041    29.2   233.2 -0.079..+0.045  -1.6.. +0.9     57.3
+  middle_pip       (-1.07,+3.23) (+1.07,-3.23)  -0.585  -0.209    0.103    66.7   281.4 -0.079..+0.080  -1.4.. +1.5     58.4
+  middle_mcp_flex  (+3.23,+3.23) (-3.23,-3.23)  -0.585  +0.627    0.122    87.5   267.9 -0.076..+0.080  -1.6.. +1.6     58.5
+  middle_mcp_abd   (-7.53,-1.07) (+7.53,+1.07)  +0.195  -1.462    0.100    91.4   134.8 -0.071..+0.057  -1.7.. +1.4     57.8
+  ring_pip         (-1.07,-3.23) (+1.07,+3.23)  +0.585  -0.209    0.103    66.7   281.4 -0.077..+0.085  -1.6.. +1.8     58.8
+  ring_mcp_flex    (-3.23,+1.07) (+3.23,-1.07)  -0.195  -0.627    0.060    49.9   230.3 -0.078..+0.045  -1.6.. +0.9     57.6
+  ring_mcp_abd     (-5.38,-1.07) (+5.38,+1.07)  +0.195  -1.044    0.080    70.6   114.0 -0.073..+0.045  -1.8.. +1.1     57.6
+  little_pip       (-1.07,+1.07) (+1.07,-1.07)  -0.195  -0.209    0.040    29.2   243.9 -0.080..+0.045  -1.6.. +0.9     57.2
+  little_mcp_flex  (+7.53,-1.07) (-7.53,+1.07)  +0.195  +1.462    0.099    91.4   271.8 -0.072..+0.055  -1.4.. +1.1     58.0
+  little_mcp_abd   (-5.38,+3.23) (+5.38,-3.23)  -0.585  -1.045    0.142   108.2   151.6 -0.071..+0.086  -1.7.. +2.1     59.3
+  worst pretension change 2.4 N (median 1.7); all joints fit the 300 deg servo: True; worst linear residual 0.162 mm (1.29 joint deg)
+  WRIST FREE SPANS (forearm plate -> eye -> palm plate): min centreline distance over the 9x9 grid: 1.36 mm (ring_mcp_abd_ext / thumb_cmc_flex_ext at flex -50 dev -18); surface gap 0.89 mm
+  comb hole spacing: palm 2.15 mm, forearm 2.15 mm (16G liner OD 1.65 + 1 mm web = 2.65)
+  lip pressure p = T/(r d): r 0.6 -> 160 MPa at SCS stall, 418 MPa at HLS stall
+
+====================================================================================================
+1. Eye option torus_r0.6_t0.65_7x5: chosen eye on a 7 x 5 grid minus the centre (34 eyes, 32 used): outer columns at +-6.45  (pitch 2.15 mm, 7 x 5 grid)
+====================================================================================================
+    assignment pitch 2.15: cost 384.58, forearm-fan min distance 0.00 mm, crossings {'palm_cross': 41, 'fore_cross': 10, 'flex_eye_moment_mm': [-12.36, 0.54]}
+  assignment done in 3 s; servo slots (joint sid -> V2 slot of sid): {2: 15, 3: 11, 9: 12, 10: 16, 11: 10, 12: 9, 13: 3, 15: 2, 16: 13}, spool flips: [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 16]
+  near-crossings (centre distance < 0.97 mm) in the forearm fan: 10 pairs, max spacer bend 8.2 deg; palm fan: 41 pairs, max bend 84.2 deg (fixed bends at a spacer comb / trough)
+  exact shortest-path model: 32 strands x 81 poses in 38 s
+  joint                  eye flex        eye ext  c_flex   c_dev  lin res  travel  need+T          cm mm          dT N eye wrap
+  index_pip        (-6.45,+0.00) (+6.45,+0.00)  +0.000  -1.254    0.058    62.2   276.9 -0.073..+0.044  -1.5.. +0.9     57.1
+  index_mcp_flex   (+2.15,+2.15) (-2.15,-2.15)  -0.390  +0.418    0.081    58.3   238.7 -0.078..+0.059  -1.6.. +1.2     57.7
+  index_mcp_abd    (-2.15,+4.30) (+2.15,-4.30)  -0.780  -0.418    0.146    95.8   139.2 -0.075..+0.122  -1.8.. +3.0     59.2
+  thumb_ip         (-6.45,-2.15) (+6.45,+2.15)  +0.390  -1.254    0.120    99.8   244.5 -0.072..+0.063  -1.4.. +1.2     58.4
+  thumb_mcp_flex   (+4.30,-4.30) (-4.30,+4.30)  +0.780  +0.836    0.163   116.6   232.4 -0.071..+0.122  -1.4.. +2.4     59.5
+  thumb_cmc_flex   (-4.30,-2.15) (+4.30,+2.15)  +0.390  -0.836    0.100    79.1   223.8 -0.075..+0.060  -1.6.. +1.3     58.1
+  thumb_cmc_rot    (+0.00,+2.15) (+0.00,-2.15)  -0.390  -0.000    0.063    37.6   241.6 -0.079..+0.060  -1.6.. +1.2     57.8
+  middle_pip       (-2.15,+2.15) (+2.15,-2.15)  -0.390  -0.418    0.081    58.3   273.0 -0.079..+0.057  -1.4.. +1.0     57.7
+  middle_mcp_flex  (+4.30,-2.15) (-4.30,+2.15)  +0.390  +0.836    0.102    79.0   259.4 -0.074..+0.064  -1.5.. +1.3     58.4
+  middle_mcp_abd   (+0.00,-4.30) (+0.00,+4.30)  +0.780  -0.000    0.129    75.1   118.5 -0.075..+0.123  -1.8.. +3.0     59.6
+  ring_pip         (-2.15,+0.00) (+2.15,+0.00)  +0.000  -0.418    0.019    20.7   235.4 -0.080..+0.040  -1.6.. +0.8     56.9
+  ring_mcp_flex    (+6.45,-2.15) (-6.45,+2.15)  +0.390  +1.253    0.121    99.8   280.2 -0.072..+0.063  -1.5.. +1.3     58.4
+  ring_mcp_abd     (+4.30,+4.30) (-4.30,-4.30)  -0.780  +0.836    0.162   116.6   160.0 -0.071..+0.123  -1.8.. +3.0     59.5
+  little_pip       (-4.30,+0.00) (+4.30,+0.00)  -0.000  -0.836    0.040    41.5   256.2 -0.076..+0.040  -1.6.. +0.8     57.2
+  little_mcp_flex  (-2.15,-4.30) (+2.15,+4.30)  +0.780  -0.418    0.144    95.8   276.2 -0.074..+0.124  -1.5.. +2.5     59.4
+  little_mcp_abd   (+6.45,-4.30) (-6.45,+4.30)  +0.780  +1.253    0.185   137.3   180.7 -0.068..+0.126  -1.6.. +3.0     59.8
+  worst pretension change 3.0 N (median 1.6); all joints fit the 300 deg servo: True; worst linear residual 0.185 mm (1.47 joint deg)
+  WRIST FREE SPANS (forearm plate -> eye -> palm plate): min centreline distance over the 9x9 grid: 1.34 mm (ring_mcp_flex_flex / little_mcp_abd_flex at flex 50 dev -18); surface gap 0.87 mm
+  comb hole spacing: palm 2.15 mm, forearm 2.15 mm (16G liner OD 1.65 + 1 mm web = 2.65)
+  lip pressure p = T/(r d): r 0.6 -> 160 MPa at SCS stall, 418 MPa at HLS stall
+
+====================================================================================================
+1. Eye option torus_r0.4: as above, 0.8 mm plate, lip r 0.4  (pitch 1.85 mm, 8 x 4 grid)
+====================================================================================================
+    assignment pitch 1.85: cost 333.53, forearm-fan min distance 0.23 mm, crossings {'palm_cross': 48, 'fore_cross': 9, 'flex_eye_moment_mm': [-2.78, 0.46]}
+  assignment done in 3 s; servo slots (joint sid -> V2 slot of sid): {1: 11, 2: 6, 6: 7, 7: 15, 10: 13, 11: 1, 13: 16, 15: 2, 16: 10}, spool flips: [1, 2, 7, 8, 10, 11, 12, 15]
+  near-crossings (centre distance < 0.97 mm) in the forearm fan: 9 pairs, max spacer bend 16.5 deg; palm fan: 48 pairs, max bend 88.8 deg (fixed bends at a spacer comb / trough)
+  exact shortest-path model: 32 strands x 81 poses in 39 s
+  joint                  eye flex        eye ext  c_flex   c_dev  lin res  travel  need+T          cm mm          dT N eye wrap
+  index_pip        (+0.93,+0.93) (-0.93,-0.93)  -0.168  +0.180    0.035    25.1   239.8 -0.237..-0.007  -4.9.. -0.1     56.8
+  index_mcp_flex   (-0.93,-2.77) (+0.93,+2.77)  +0.504  -0.180    0.088    57.5   237.9 -0.223..-0.008  -4.6.. -0.2     57.8
+  index_mcp_abd    (-2.77,-0.93) (+2.77,+0.93)  +0.168  -0.540    0.049    43.0    86.4 -0.229..-0.008  -5.6.. -0.2     56.3
+  thumb_ip         (-0.93,+2.77) (+0.93,-2.77)  -0.504  -0.180    0.088    57.5   202.2 -0.226..-0.008  -4.4.. -0.1     57.6
+  thumb_mcp_flex   (+2.77,-2.77) (-2.77,+2.77)  +0.504  +0.540    0.102    75.4   191.2 -0.223..-0.008  -4.3.. -0.1     57.5
+  thumb_cmc_flex   (+6.47,+2.77) (-6.47,-2.77)  -0.504  +1.259    0.137   111.1   255.8 -0.206..-0.007  -4.5.. -0.2     58.3
+  thumb_cmc_rot    (-4.62,-0.93) (+4.62,+0.93)  +0.168  -0.899    0.069    60.8   264.8 -0.226..-0.007  -4.5.. -0.1     56.7
+  middle_pip       (-0.93,+0.93) (+0.93,-0.93)  -0.168  -0.180    0.033    25.1   239.8 -0.236..-0.005  -4.3.. -0.1     56.9
+  middle_mcp_flex  (-6.47,-0.93) (+6.47,+0.93)  +0.168  -1.259    0.084    78.7   259.1 -0.219..-0.004  -4.5.. -0.1     57.4
+  middle_mcp_abd   (+4.62,-2.77) (-4.62,+2.77)  +0.504  +0.898    0.127    93.2   136.6 -0.217..-0.003  -5.4.. -0.1     58.3
+  ring_pip         (+4.62,-0.93) (-4.62,+0.93)  +0.168  +0.900    0.066    60.9   275.6 -0.228..-0.005  -4.7.. -0.1     57.0
+  ring_mcp_flex    (-2.77,-2.77) (+2.77,+2.77)  +0.504  -0.539    0.105    75.4   255.8 -0.223..-0.001  -4.5.. -0.0     58.0
+  ring_mcp_abd     (+6.47,-0.93) (-6.47,+0.93)  +0.168  +1.259    0.086    78.7   122.1 -0.214..-0.002  -5.2.. -0.0     58.0
+  little_pip       (-2.77,+0.93) (+2.77,-0.93)  -0.168  -0.539    0.052    43.0   257.7 -0.234..-0.000  -4.8.. -0.0     57.4
+  little_mcp_flex  (+4.62,+2.77) (-4.62,-2.77)  -0.504  +0.899    0.120    93.3   273.7 -0.219..-0.004  -4.3.. -0.1     57.9
+  little_mcp_abd   (-6.47,+2.77) (+6.47,-2.77)  -0.504  -1.259    0.137   111.1   154.5 -0.206..-0.004  -4.9.. -0.1     58.8
+  worst pretension change 5.6 N (median 4.6); all joints fit the 300 deg servo: True; worst linear residual 0.137 mm (1.09 joint deg)
+  WRIST FREE SPANS (forearm plate -> eye -> palm plate): min centreline distance over the 9x9 grid: 1.17 mm (middle_mcp_flex_ext / thumb_cmc_flex_flex at flex -50 dev -30); surface gap 0.70 mm
+  comb hole spacing: palm 1.85 mm, forearm 1.85 mm (16G liner OD 1.65 + 1 mm web = 2.65)
+  lip pressure p = T/(r d): r 0.4 -> 240 MPa at SCS stall, 628 MPa at HLS stall
+
+====================================================================================================
+1. Eye option torus_r0.8: as above, 1.6 mm plate, lip r 0.8  (pitch 2.65 mm, 8 x 4 grid)
+====================================================================================================
+    assignment pitch 2.65: cost 5215.93, forearm-fan min distance 0.22 mm, crossings {'palm_cross': 47, 'fore_cross': 4, 'flex_eye_moment_mm': [-5.96, -1.33]}
+  assignment done in 3 s; servo slots (joint sid -> V2 slot of sid): {2: 15, 3: 4, 4: 3, 5: 9, 6: 12, 8: 5, 9: 8, 11: 13, 12: 6, 13: 11, 14: 16, 15: 2, 16: 14}, spool flips: [7, 9, 11, 14]
+  near-crossings (centre distance < 0.97 mm) in the forearm fan: 4 pairs, max spacer bend 7.0 deg; palm fan: 47 pairs, max bend 85.9 deg (fixed bends at a spacer comb / trough)
+  exact shortest-path model: 32 strands x 81 poses in 39 s
+  joint                  eye flex        eye ext  c_flex   c_dev  lin res  travel  need+T          cm mm          dT N eye wrap
+  index_pip        (+1.32,-1.32) (-1.32,+1.32)  +0.240  +0.258    0.049    36.0   250.7 -0.192..-0.008  -4.0.. -0.2     56.7
+  index_mcp_flex   (-1.32,+3.98) (+1.32,-3.98)  -0.721  -0.258    0.127    82.2   262.6 -0.194..+0.001  -4.0.. +0.0     59.0
+  index_mcp_abd    (-9.28,-3.98) (+9.28,+3.98)  +0.721  -1.804    0.195   158.9   202.3 -0.166..+0.018  -4.0.. +0.4     59.5
+  thumb_ip         (+6.62,+3.98) (-6.62,-3.98)  -0.721  +1.288    0.174   133.4   278.1 -0.174..+0.008  -3.4.. +0.2     59.0
+  thumb_mcp_flex   (-3.98,+3.98) (+3.98,-3.98)  -0.721  -0.773    0.152   107.8   223.6 -0.186..+0.007  -3.6.. +0.1     58.5
+  thumb_cmc_flex   (-9.28,-1.32) (+9.28,+1.32)  +0.240  -1.802    0.124   112.6   257.3 -0.173..-0.007  -3.8.. -0.1     57.5
+  thumb_cmc_rot    (-1.32,-3.98) (+1.32,+3.98)  +0.721  -0.257    0.132    82.2   286.2! -0.190..+0.012  -3.8.. +0.2     59.2
+  middle_pip       (+3.98,+1.32) (-3.98,-1.32)  -0.241  +0.773    0.074    61.5   276.2 -0.190..-0.006  -3.5.. -0.1     57.1
+  middle_mcp_flex  (+6.62,-1.32) (-6.62,+1.32)  +0.240  +1.288    0.099    87.0   267.4 -0.179..-0.005  -3.6.. -0.1     57.4
+  middle_mcp_abd   (+9.28,-3.98) (-9.28,+3.98)  +0.721  +1.802    0.206   158.9   202.3 -0.167..+0.014  -4.1.. +0.3     60.0
+  ring_pip         (+3.98,-1.32) (-3.98,+1.32)  +0.240  +0.772    0.075    61.5   276.2 -0.187..+0.000  -3.9.. +0.0     57.5
+  ring_mcp_flex    (-6.62,-1.32) (+6.62,+1.32)  +0.240  -1.288    0.097    87.1   267.5 -0.182..-0.004  -3.7.. -0.1     58.0
+  ring_mcp_abd     (-6.62,+3.98) (+6.62,-3.98)  -0.721  -1.287    0.181   133.3   176.7 -0.176..+0.017  -4.3.. +0.4     59.5
+  little_pip       (+1.32,+1.32) (-1.32,-1.32)  -0.240  +0.257    0.050    35.9   250.6 -0.197..-0.001  -4.0.. -0.0     57.5
+  little_mcp_flex  (-3.98,-3.98) (+3.98,+3.98)  +0.721  -0.773    0.152   107.8   288.2! -0.185..+0.013  -3.7.. +0.3     59.1
+  little_mcp_abd   (+9.28,-1.32) (-9.28,+1.32)  +0.240  +1.802    0.126   112.6   156.0 -0.168..+0.000  -4.0.. +0.0     58.4
+  worst pretension change 4.3 N (median 3.8); all joints fit the 300 deg servo: False; worst linear residual 0.206 mm (1.63 joint deg)
+  WRIST FREE SPANS (forearm plate -> eye -> palm plate): min centreline distance over the 9x9 grid: 1.67 mm (ring_mcp_flex_ext / thumb_ip_flex at flex -50 dev -11); surface gap 1.20 mm
+  comb hole spacing: palm 2.65 mm, forearm 2.65 mm (16G liner OD 1.65 + 1 mm web = 2.65)
+  lip pressure p = T/(r d): r 0.8 -> 120 MPa at SCS stall, 314 MPa at HLS stall
+
+====================================================================================================
+1. Eye option tube18G_2.5: 18G stainless tube eye 2.5 long, flared mouths r 0.4 (report 01 spec)  (pitch 1.6 mm, 8 x 4 grid)
+====================================================================================================
+    assignment pitch 1.6: cost 378.33, forearm-fan min distance 0.36 mm, crossings {'palm_cross': 56, 'fore_cross': 9, 'flex_eye_moment_mm': [-14.8, 0.8]}
+  assignment done in 3 s; servo slots (joint sid -> V2 slot of sid): {1: 10, 2: 15, 3: 1, 7: 8, 8: 7, 10: 3, 11: 14, 14: 11, 15: 2}, spool flips: [2, 10, 11, 13, 14, 15]
+  near-crossings (centre distance < 0.97 mm) in the forearm fan: 9 pairs, max spacer bend 14.1 deg; palm fan: 56 pairs, max bend 89.5 deg (fixed bends at a spacer comb / trough)
+  exact shortest-path model: 32 strands x 81 poses in 22 s
+  joint                  eye flex        eye ext  c_flex   c_dev  lin res  travel  need+T          cm mm          dT N eye wrap
+  index_pip        (-4.00,-0.80) (+4.00,+0.80)  +0.144  -0.776    0.062    52.4   267.1 -0.051..+0.592  -1.1..+12.2     57.9
+  index_mcp_flex   (+5.60,-0.80) (-5.60,+0.80)  +0.144  +1.086    0.079    67.7   248.1 -0.052..+0.604  -1.1..+12.4     58.7
+  index_mcp_abd    (+2.40,-2.40) (-2.40,+2.40)  +0.433  +0.466    0.097    64.7   108.1 -0.051..+0.613  -1.3..+15.1     58.8
+  thumb_ip         (-0.80,+2.40) (+0.80,-2.40)  -0.433  -0.155    0.081    49.3   194.0 -0.051..+0.606  -1.0..+11.7     58.9
+  thumb_mcp_flex   (-5.60,-0.80) (+5.60,+0.80)  +0.144  -1.087    0.078    67.8   183.6 -0.051..+0.602  -1.0..+11.6     58.1
+  thumb_cmc_flex   (+2.40,-0.80) (-2.40,+0.80)  +0.144  +0.466    0.047    37.0   181.7 -0.051..+0.585  -1.1..+12.8     57.7
+  thumb_cmc_rot    (-0.80,+0.80) (+0.80,-0.80)  -0.144  -0.155    0.031    21.6   225.6 -0.051..+0.589  -1.0..+11.8     58.2
+  middle_pip       (-0.80,-0.80) (+0.80,+0.80)  +0.144  -0.155    0.032    21.6   236.3 -0.052..+0.587  -0.9..+10.8     58.3
+  middle_mcp_flex  (-2.40,-2.40) (+2.40,+2.40)  +0.432  -0.465    0.098    64.6   245.0 -0.051..+0.623  -1.1..+12.8     59.4
+  middle_mcp_abd   (+5.60,-2.40) (-5.60,+2.40)  +0.433  +1.087    0.130    95.5   138.9 -0.051..+0.634  -1.3..+15.8     60.0
+  ring_pip         (-4.00,+0.80) (+4.00,-0.80)  -0.144  -0.775    0.064    52.4   267.1 -0.052..+0.600  -1.1..+12.4     58.8
+  ring_mcp_flex    (-4.00,-2.40) (+4.00,+2.40)  +0.433  -0.776    0.112    80.1   260.5 -0.053..+0.619  -1.1..+12.6     59.3
+  ring_mcp_abd     (-0.80,-2.40) (+0.80,+2.40)  +0.433  -0.155    0.079    49.3    92.7 -0.053..+0.613  -1.3..+15.1     59.4
+  little_pip       (-2.40,-0.80) (+2.40,+0.80)  +0.144  -0.466    0.048    37.0   251.7 -0.053..+0.588  -1.1..+12.0     58.8
+  little_mcp_flex  (+4.00,-2.40) (-4.00,+2.40)  +0.433  +0.776    0.111    80.1   260.5 -0.054..+0.616  -1.1..+12.3     59.8
+  little_mcp_abd   (+5.60,+2.40) (-5.60,-2.40)  -0.433  +1.086    0.127    95.5   138.9 -0.052..+0.630  -1.2..+15.1     59.4
+  worst pretension change 15.8 N (median 12.4); all joints fit the 300 deg servo: True; worst linear residual 0.130 mm (1.03 joint deg)
+  WRIST FREE SPANS (forearm plate -> eye -> palm plate): min centreline distance over the 9x9 grid: 1.02 mm (ring_pip_flex / little_mcp_flex_ext at flex -50 dev 20); surface gap 0.55 mm
+  comb hole spacing: palm 1.60 mm, forearm 1.60 mm (16G liner OD 1.65 + 1 mm web = 2.65)
+  lip pressure p = T/(r d): r 0.4 -> 240 MPa at SCS stall, 628 MPa at HLS stall
+
+====================================================================================================
+2. Crossed Ø3 dowel fairlead (approximate: point pivots at +-2 mm, pitch 3.6)
+====================================================================================================
+  servo travel for compensation: max 216 deg; joints that still fit 300 deg: 7/16
+  common mode at flex 50 (pivot +2 mm + wrap on r 1.73): +1.95 mm = +42 N
+  pressure: 64 / 167 MPa (SCS / HLS)
+
+====================================================================================================
+3. Chosen eye: torus_r0.6_t0.65_7x5 (best by the numbers: torus_r0.6_t0.65); eye table and firmware coefficients
+====================================================================================================
+  strand                          eye x,y            palm comb C         forearm comb F    dL min..max  wrap q0 (pc/eye/fc) eye wrap max
+  index_mcp_flex_flex      (+2.15,+2.15) ( +2.15, +2.15,+30.0) ( +2.15, +2.15,-30.0)  -2.36..+2.73       21.5/ 0.0/ 6.1     57.6
+  index_mcp_flex_ext       (-2.15,-2.15) ( -2.15, -2.15,+30.0) ( -2.15, -2.15,-30.0)  -2.69..+2.39       23.6/ 0.0/10.7     57.7
+  index_pip_flex           (-6.45,+0.00) ( -6.45, +0.00,+30.0) ( -6.45, +0.00,-30.0)  -3.25..+2.22       28.7/ 0.0/11.1     57.1
+  index_pip_ext            (+6.45,+0.00) ( +6.45, +0.00,+30.0) ( +6.45, +0.00,-30.0)  -2.24..+3.25       18.1/ 0.0/ 1.9     56.0
+  index_mcp_abd_flex       (-2.15,+4.30) ( -2.15, +4.30,+30.0) ( -2.15, +4.30,-30.0)  -4.30..+4.06       37.6/ 0.0/15.5     59.2
+  index_mcp_abd_ext        (+2.15,-4.30) ( +2.15, -4.30,+30.0) ( +2.15, -4.30,-30.0)  -3.97..+4.40       24.6/ 0.0/ 8.1     59.0
+  middle_mcp_flex_flex     (+4.30,-2.15) ( +4.30, -2.15,+30.0) ( +4.30, -2.15,-30.0)  -3.09..+3.81       11.4/ 0.0/ 4.6     57.6
+  middle_mcp_flex_ext      (-4.30,+2.15) ( -4.30, +2.15,+30.0) ( -4.30, +2.15,-30.0)  -3.76..+3.13        3.3/ 0.0/ 3.8     58.4
+  middle_pip_flex          (-2.15,+2.15) ( -2.15, +2.15,+30.0) ( -2.15, +2.15,-30.0)  -2.70..+2.39        4.7/ 0.0/ 6.9     57.7
+  middle_pip_ext           (+2.15,-2.15) ( +2.15, -2.15,+30.0) ( +2.15, -2.15,-30.0)  -2.36..+2.73        0.7/ 0.0/ 9.6     57.7
+  middle_mcp_abd_flex      (+0.00,-4.30) ( +0.00, -4.30,+30.0) ( +0.00, -4.30,-30.0)  -3.23..+3.34       20.2/ 0.0/11.6     59.0
+  middle_mcp_abd_ext       (+0.00,+4.30) ( +0.00, +4.30,+30.0) ( +0.00, +4.30,-30.0)  -3.22..+3.34       11.7/ 0.0/11.7     59.6
+  ring_mcp_flex_flex       (+6.45,-2.15) ( +6.45, -2.15,+30.0) ( +6.45, -2.15,-30.0)  -3.82..+4.89       32.6/ 0.0/ 4.4     57.4
+  ring_mcp_flex_ext        (-6.45,+2.15) ( -6.45, +2.15,+30.0) ( -6.45, +2.15,-30.0)  -4.83..+3.87       19.3/ 0.0/ 5.3     58.4
+  ring_pip_flex            (-2.15,+0.00) ( -2.15, +0.00,+30.0) ( -2.15, +0.00,-30.0)  -1.11..+0.74       21.7/ 0.0/10.4     56.9
+  ring_pip_ext             (+2.15,+0.00) ( +2.15, +0.00,+30.0) ( +2.15, +0.00,-30.0)  -0.77..+1.09       23.3/ 0.0/13.2     56.5
+  ring_mcp_abd_flex        (+4.30,+4.30) ( +4.30, +4.30,+30.0) ( +4.30, +4.30,-30.0)  -4.69..+5.48       24.0/ 0.0/ 4.6     59.1
+  ring_mcp_abd_ext         (-4.30,-4.30) ( -4.30, -4.30,+30.0) ( -4.30, -4.30,-30.0)  -5.37..+4.80       33.6/ 0.0/ 8.7     59.5
+  little_mcp_flex_flex     (-2.15,-4.30) ( -2.15, -4.30,+30.0) ( -2.15, -4.30,-30.0)  -4.30..+4.06       45.4/ 0.0/11.7     59.4
+  little_mcp_flex_ext      (+2.15,+4.30) ( +2.15, +4.30,+30.0) ( +2.15, +4.30,-30.0)  -3.96..+4.40       48.2/ 0.0/ 4.6     59.3
+  little_pip_flex          (-4.30,+0.00) ( -4.30, +0.00,+30.0) ( -4.30, +0.00,-30.0)  -2.18..+1.48       42.1/ 0.0/ 6.5     57.2
+  little_pip_ext           (+4.30,+0.00) ( +4.30, +0.00,+30.0) ( +4.30, +0.00,-30.0)  -1.51..+2.16       46.6/ 0.0/ 8.3     56.3
+  little_mcp_abd_flex      (+6.45,-4.30) ( +6.45, -4.30,+30.0) ( +6.45, -4.30,-30.0)  -5.43..+6.56       52.1/ 0.0/10.1     58.9
+  little_mcp_abd_ext       (-6.45,+4.30) ( -6.45, +4.30,+30.0) ( -6.45, +4.30,-30.0)  -6.43..+5.54       51.3/ 0.0/ 3.4     59.8
+  thumb_cmc_rot_flex       (+0.00,+2.15) ( +0.00, +2.15,+30.0) ( +0.00, +2.15,-30.0)  -1.62..+1.67      105.4/ 0.0/11.0    106.7
+  thumb_cmc_rot_ext        (+0.00,-2.15) ( +0.00, -2.15,+30.0) ( +0.00, -2.15,-30.0)  -1.62..+1.67      103.5/ 0.0/ 5.4    103.5
+  thumb_cmc_flex_flex      (-4.30,-2.15) ( -4.30, -2.15,+30.0) ( -4.30, -2.15,-30.0)  -3.77..+3.13       93.5/ 0.0/ 5.7     93.5
+  thumb_cmc_flex_ext       (+4.30,+2.15) ( +4.30, +2.15,+30.0) ( +4.30, +2.15,-30.0)  -3.09..+3.81      103.9/ 0.0/ 1.4    104.1
+  thumb_mcp_flex_flex      (+4.30,-4.30) ( +4.30, -4.30,+30.0) ( +4.30, -4.30,-30.0)  -4.70..+5.48      103.3/ 0.0/ 2.5    103.6
+  thumb_mcp_flex_ext       (-4.30,+4.30) ( -4.30, +4.30,+30.0) ( -4.30, +4.30,-30.0)  -5.37..+4.80      101.3/ 0.0/ 4.5    102.1
+  thumb_ip_flex            (-6.45,-2.15) ( -6.45, -2.15,+30.0) ( -6.45, -2.15,-30.0)  -4.83..+3.87       92.2/ 0.0/14.8     92.4
+  thumb_ip_ext             (+6.45,+2.15) ( +6.45, +2.15,+30.0) ( +6.45, +2.15,-30.0)  -3.82..+4.90       99.2/ 0.0/ 9.0     99.3
+
+====================================================================================================
+4. Firmware compensation: servo_offset_deg = c_flex * wrist_flex_deg + c_dev * wrist_dev_deg
+====================================================================================================
+  ID  1 index_pip        c_flex +0.000  c_dev -1.254   (linear residual 0.058 mm = 0.46 joint deg; with quadratic terms 0.034 mm)
+  ID  2 index_mcp_flex   c_flex -0.390  c_dev +0.418   (linear residual 0.081 mm = 0.65 joint deg; with quadratic terms 0.073 mm)
+  ID  3 index_mcp_abd    c_flex -0.780  c_dev -0.418   (linear residual 0.146 mm = 1.16 joint deg; with quadratic terms 0.136 mm)
+  ID  4 thumb_ip         c_flex +0.390  c_dev -1.254   (linear residual 0.120 mm = 0.95 joint deg; with quadratic terms 0.096 mm)
+  ID  5 thumb_mcp_flex   c_flex +0.780  c_dev +0.836   (linear residual 0.163 mm = 1.29 joint deg; with quadratic terms 0.148 mm)
+  ID  6 thumb_cmc_flex   c_flex +0.390  c_dev -0.836   (linear residual 0.100 mm = 0.80 joint deg; with quadratic terms 0.085 mm)
+  ID  7 thumb_cmc_rot    c_flex -0.390  c_dev -0.000   (linear residual 0.063 mm = 0.50 joint deg; with quadratic terms 0.062 mm)
+  ID  8 middle_pip       c_flex -0.390  c_dev -0.418   (linear residual 0.081 mm = 0.64 joint deg; with quadratic terms 0.073 mm)
+  ID  9 middle_mcp_flex  c_flex +0.390  c_dev +0.836   (linear residual 0.102 mm = 0.80 joint deg; with quadratic terms 0.085 mm)
+  ID 10 middle_mcp_abd   c_flex +0.780  c_dev -0.000   (linear residual 0.129 mm = 1.02 joint deg; with quadratic terms 0.125 mm)
+  ID 11 ring_pip         c_flex +0.000  c_dev -0.418   (linear residual 0.019 mm = 0.15 joint deg; with quadratic terms 0.011 mm)
+  ID 12 ring_mcp_flex    c_flex +0.390  c_dev +1.253   (linear residual 0.121 mm = 0.96 joint deg; with quadratic terms 0.096 mm)
+  ID 13 ring_mcp_abd     c_flex -0.780  c_dev +0.836   (linear residual 0.162 mm = 1.28 joint deg; with quadratic terms 0.148 mm)
+  ID 14 little_pip       c_flex -0.000  c_dev -0.836   (linear residual 0.040 mm = 0.31 joint deg; with quadratic terms 0.023 mm)
+  ID 15 little_mcp_flex  c_flex +0.780  c_dev -0.418   (linear residual 0.144 mm = 1.14 joint deg; with quadratic terms 0.136 mm)
+  ID 16 little_mcp_abd   c_flex +0.780  c_dev +1.253   (linear residual 0.185 mm = 1.47 joint deg; with quadratic terms 0.159 mm)
+
+====================================================================================================
+5. Servo travel budget (SCS0009 300 deg, verify)
+====================================================================================================
+  index_pip        own  214.7 + wrist  62.2 =  276.9 deg  OK  (spare  23.1)
+  index_mcp_flex   own  180.4 + wrist  58.3 =  238.7 deg  OK  (spare  61.3)
+  index_mcp_abd    own   43.4 + wrist  95.8 =  139.2 deg  OK  (spare 160.8)
+  thumb_ip         own  144.7 + wrist  99.8 =  244.5 deg  OK  (spare  55.5)
+  thumb_mcp_flex   own  115.8 + wrist 116.6 =  232.4 deg  OK  (spare  67.6)
+  thumb_cmc_flex   own  144.7 + wrist  79.1 =  223.8 deg  OK  (spare  76.2)
+  thumb_cmc_rot    own  204.0 + wrist  37.6 =  241.6 deg  OK  (spare  58.4)
+  middle_pip       own  214.7 + wrist  58.3 =  273.0 deg  OK  (spare  27.0)
+  middle_mcp_flex  own  180.4 + wrist  79.0 =  259.4 deg  OK  (spare  40.6)
+  middle_mcp_abd   own   43.4 + wrist  75.1 =  118.5 deg  OK  (spare 181.5)
+  ring_pip         own  214.7 + wrist  20.7 =  235.4 deg  OK  (spare  64.6)
+  ring_mcp_flex    own  180.4 + wrist  99.8 =  280.2 deg  OK  (spare  19.8)
+  ring_mcp_abd     own   43.4 + wrist 116.6 =  160.0 deg  OK  (spare 140.0)
+  little_pip       own  214.7 + wrist  41.5 =  256.2 deg  OK  (spare  43.8)
+  little_mcp_flex  own  180.4 + wrist  95.8 =  276.2 deg  OK  (spare  23.8)
+  little_mcp_abd   own   43.4 + wrist 137.3 =  180.7 deg  OK  (spare 119.3)
+  If the MCP flex servos get report 01's r 3 spool: own 100 deg x 7/3 = 233 deg, wrist part x 5/3:
+    index_mcp_flex   233 +  97.2 =  330.2 deg -> too much for SCS0009: use HLS (multi-turn, verify) or keep r 5
+    middle_mcp_flex  233 + 131.7 =  364.7 deg -> too much for SCS0009: use HLS (multi-turn, verify) or keep r 5
+    ring_mcp_flex    233 + 166.3 =  399.3 deg -> too much for SCS0009: use HLS (multi-turn, verify) or keep r 5
+    little_mcp_flex  233 + 159.7 =  392.7 deg -> too much for SCS0009: use HLS (multi-turn, verify) or keep r 5
+
+====================================================================================================
+6. Wrap and efficiency per strand: V2 (routes.json + fan) vs bare strand (palm anchor -> spool)
+====================================================================================================
+  V2 = palm turn + forearm fan turn (PTFE); +58 deg in the wrist bundle at the worst pose.
+  New = sliding wraps on comb/eye/comb (exact model) + fixed sliding pins (abd mouth, thumb pins) + rollers.
+  Finger-internal bends are the same in both and not included.
+  strand                    V2 q0 V2 worst  eta V2 eta V2 w | new q0 new worst roll eta new eta new w
+  index_mcp_flex_flex         223      281    0.68     0.61 |     30        89    1    0.94      0.85
+  index_mcp_flex_ext          134      192    0.79     0.71 |     42       100    1    0.92      0.83
+  index_pip_flex              216      274    0.69     0.62 |     40        98    1    0.92      0.83
+  index_pip_ext               171      229    0.74     0.67 |     27        82    1    0.94      0.86
+  index_mcp_abd_flex          239      297    0.66     0.60 |     96       154    0    0.85      0.76
+  index_mcp_abd_ext           185      243    0.72     0.65 |     57       120    0    0.90      0.81
+  middle_mcp_flex_flex         64      122    0.89     0.81 |     16        73    1    0.96      0.87
+  middle_mcp_flex_ext          61      119    0.90     0.81 |      7        64    1    0.98      0.89
+  middle_pip_flex             114      172    0.82     0.74 |     29        89    1    0.94      0.85
+  middle_pip_ext              104      162    0.83     0.75 |     10        70    1    0.97      0.88
+  middle_mcp_abd_flex         170      228    0.74     0.67 |     65       127    0    0.89      0.80
+  middle_mcp_abd_ext          139      197    0.78     0.71 |     35        93    0    0.94      0.85
+  ring_mcp_flex_flex          144      202    0.78     0.70 |     39        97    1    0.92      0.84
+  ring_mcp_flex_ext           162      220    0.75     0.68 |     25        83    1    0.95      0.86
+  ring_pip_flex               174      232    0.74     0.67 |     32        89    1    0.94      0.85
+  ring_pip_ext                140      198    0.78     0.71 |     36        93    1    0.93      0.84
+  ring_mcp_abd_flex           177      235    0.73     0.66 |     53       110    0    0.91      0.82
+  ring_mcp_abd_ext            121      179    0.81     0.73 |     79       142    0    0.87      0.78
+  little_mcp_flex_flex        184      242    0.72     0.66 |     64       123    1    0.89      0.80
+  little_mcp_flex_ext         208      266    0.70     0.63 |     53       112    1    0.90      0.81
+  little_pip_flex             194      252    0.71     0.64 |     51       107    1    0.91      0.82
+  little_pip_ext              155      213    0.76     0.69 |     55       112    1    0.90      0.81
+  little_mcp_abd_flex         135      193    0.79     0.71 |    114       175    0    0.82      0.74
+  little_mcp_abd_ext          157      215    0.76     0.69 |    106       164    0    0.83      0.75
+  thumb_cmc_rot_flex          265      323    0.63     0.57 |    155       213    0    0.76      0.69
+  thumb_cmc_rot_ext           238      296    0.66     0.60 |    143       200    0    0.78      0.71
+  thumb_cmc_flex_flex         166      224    0.75     0.68 |    106       165    0    0.83      0.75
+  thumb_cmc_flex_ext          200      258    0.71     0.64 |    124       181    0    0.81      0.73
+  thumb_mcp_flex_flex         201      259    0.70     0.64 |    123       181    0    0.81      0.73
+  thumb_mcp_flex_ext          158      216    0.76     0.69 |    130       191    0    0.80      0.72
+  thumb_ip_flex               214      272    0.69     0.62 |    115       175    0    0.82      0.74
+  thumb_ip_ext                219      277    0.68     0.62 |    127       184    0    0.80      0.73
+  median eta: V2 0.74 -> new 0.90 (wrist straight); worst pose 0.67 -> 0.81; min 0.63 -> 0.76
+
+====================================================================================================
+7. Wear at the eye
+====================================================================================================
+  SCS0009: lip pressure 160 MPa (Ø3 dowel 64, 18G rim r 0.43 224); at the 5 N pretension 18 MPa
+  HLS3606M: lip pressure 418 MPa (Ø3 dowel 167, 18G rim r 0.43 584); at the 5 N pretension 18 MPa
+  D/d at the lip = 2.6 (fibre rule: >= 8 static, >= 20 cyclic): the eye is a WEAR point, the
+  loaded wrap only exists while the wrist is bent; sliding per finger stroke = joint travel x 0.122 mm/deg.
+  eye wrap over the grid: median 58 deg, max 60 deg
+
+done in 233 s -> /home/user/tendra-hand/cloud-claude/2026-11-14-hardware-ideas/out/13/kin

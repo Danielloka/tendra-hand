@@ -1,0 +1,738 @@
+{
+ "frame_finger": "bench-finger frame of cad/07_finger.py (mm): MCP axis X through origin, finger +Z, -Y palm, +X thumb side; PIP z 42, DIP z 66, abd axis Y at z -13",
+ "frame_hand": "V2 hand frame: origin wrist centre, +Z to fingers, -Y palm, +X thumb",
+ "sensors": [
+  {
+   "id": "<finger>_mcp_flex",
+   "kind": "joint_angle",
+   "chip": "TMAG5273B1 (0x22)",
+   "range": "+-80 mT, X-Y angle mode (CORDIC); field at the die 56 mT (no steel nearby)",
+   "sensor_side_bearing": "OPEN full-ceramic ZrO2 MR84 4x8x2 at x 4.4-6.4 (was MR84ZZ 4.4-7.4); fallback 4x8x2 flanged iglidur/bronze bush",
+   "body": "proximal",
+   "magnet": {
+    "type": "\u00d82.0 x 1.5 N45 diametric",
+    "body": "yoke (R2 inner tube, cut to end at x 6.4)",
+    "x": [
+     4.9,
+     6.4
+    ],
+    "y": 0,
+    "z": 0.0,
+    "seat": "in the tube bore, face flush with the tube end = bearing outer face; keeper plug behind; epoxy"
+   },
+   "chip_x": [
+    6.7,
+    8.15
+   ],
+   "chip_faces": "-x (toward the magnet)",
+   "board": "\u00d86.4 x 0.4 FR4 behind the chip, 4 pads 1.0 x 0.9 on its outer face (bus in + out)",
+   "board_x": [
+    8.15,
+    8.55
+   ],
+   "die_gap_to_magnet": 1.2,
+   "pocket": {
+    "type": "\u00d86.75 counterbore from the bearing outer face to the lug face",
+    "d": 6.75,
+    "x": [
+     6.4,
+     9.0
+    ]
+   },
+   "outer_x": 8.75,
+   "lug_face_x": 9.0,
+   "width_change": 0.0,
+   "orientation": "chip X-Y plane = finger Y-Z plane; joint axis = chip Z",
+   "wire_exit": "0.6 x 1.2 slot in the cap toward +y, then the dorsal groove (see wiring)"
+  },
+  {
+   "id": "<finger>_pip",
+   "kind": "joint_angle",
+   "chip": "TMAG5273C1 (0x78)",
+   "range": "+-80 mT, X-Y angle mode (CORDIC); field at the die 66 mT (no steel nearby)",
+   "sensor_side_bearing": "OPEN full-ceramic ZrO2 MR84 4x8x2 at x 4.25-6.25 (was MR84ZZ 4.25-7.25); -x keeps the \u00d85 brass bush (bar pin A web)",
+   "body": "proximal",
+   "magnet": {
+    "type": "\u00d83.0 x 1.0 N45 diametric",
+    "body": "middle (pin, ends at x 6.25)",
+    "x": [
+     5.25,
+     6.25
+    ],
+    "y": 0,
+    "z": 42.0,
+    "seat": "in the tube bore, face flush with the tube end = bearing outer face; keeper plug behind; epoxy"
+   },
+   "chip_x": [
+    6.55,
+    8.0
+   ],
+   "chip_faces": "-x (toward the magnet)",
+   "board": "\u00d86.4 x 0.4 FR4 behind the chip, 4 pads 1.0 x 0.9 on its outer face (bus in + out)",
+   "board_x": [
+    8.0,
+    8.4
+   ],
+   "die_gap_to_magnet": 1.2,
+   "pocket": {
+    "type": "\u00d86.75 counterbore from the bearing outer face to the lug face",
+    "d": 6.75,
+    "x": [
+     6.25,
+     8.05
+    ]
+   },
+   "outer_x": 8.6,
+   "lug_face_x": 8.05,
+   "width_change": 0.55,
+   "orientation": "chip X-Y plane = finger Y-Z plane; joint axis = chip Z",
+   "wire_exit": "0.6 x 1.2 slot in the cap toward +y, then the dorsal groove (see wiring)"
+  },
+  {
+   "id": "<finger>_dip",
+   "kind": "joint_angle",
+   "chip": "TMAG5273D1 (0x44)",
+   "range": "+-80 mT, X-Y angle mode (CORDIC); field at the die 66 mT (no steel nearby)",
+   "sensor_side_bearing": "brass bushes (unchanged); +x bush x 4.5-6.0",
+   "body": "distal",
+   "magnet": {
+    "type": "\u00d83.0 x 1.0 N45 diametric",
+    "body": "middle (pin, shortened from 7.5 to 6.0)",
+    "x": [
+     5.0,
+     6.0
+    ],
+    "y": 0,
+    "z": 66.0,
+    "seat": "in the tube bore, face flush with the tube end = bearing outer face; keeper plug behind; epoxy"
+   },
+   "chip_x": [
+    6.3,
+    7.75
+   ],
+   "chip_faces": "-x (toward the magnet)",
+   "board": "\u00d86.4 x 0.4 FR4 behind the chip, 4 pads 1.0 x 0.9 on its outer face (bus in + out)",
+   "board_x": [
+    7.75,
+    8.15
+   ],
+   "die_gap_to_magnet": 1.2,
+   "pocket": {
+    "type": "\u00d86.75 counterbore from the bearing outer face to the lug face",
+    "d": 6.75,
+    "x": [
+     6.0,
+     7.5
+    ]
+   },
+   "outer_x": 8.35,
+   "lug_face_x": 7.5,
+   "width_change": 0.85,
+   "orientation": "chip X-Y plane = finger Y-Z plane; joint axis = chip Z",
+   "wire_exit": "0.6 x 1.2 slot in the cap toward +y, then the dorsal groove (see wiring)"
+  },
+  {
+   "id": "<finger>_mcp_abd",
+   "kind": "joint_angle",
+   "chip": "TMAG5273A1 (0x35)",
+   "body": "palm knuckle module (07 bench: base dorsal lug)",
+   "magnet": {
+    "type": "\u00d83 x 1 N45 diametric",
+    "body": "yoke",
+    "y": [
+     16.7,
+     17.7
+    ],
+    "x": 0,
+    "z": -13.0,
+    "seat": "glued (epoxy) on the end face of the dorsal abd stub; the stub becomes BRASS or 316 (not a hardened dowel)"
+   },
+   "board_y": [
+    18.2,
+    18.6
+   ],
+   "die_gap_to_magnet": 1.3,
+   "pocket": {
+    "type": "\u00d86.75 counterbore in the dorsal lug, coaxial with the abd axis",
+    "d": 6.75,
+    "y": [
+     18.2,
+     20.35
+    ],
+    "note": "replaces 07's \u00d84.8 x 1.4 bore at y 16.6..18.0; outer face moves from y 17.8 to 20.35"
+   },
+   "orientation": "chip Z = abd axis (Y)",
+   "wire_exit": "slot toward +z (distal) into the knuckle board; static wiring (palm side)"
+  },
+  {
+   "id": "<finger>_tip",
+   "kind": "tip_3axis",
+   "chip": "MLX90393 QFN-16, option -014 (0x18)",
+   "body": "distal",
+   "board": {
+    "size": [
+     9.2,
+     9.0,
+     0.8
+    ],
+    "x": [
+     -4.6,
+     4.6
+    ],
+    "y": [
+     -1.8,
+     -1.0
+    ],
+    "z": [
+     76.3,
+     85.3
+    ],
+    "note": "07 geometry unchanged"
+   },
+   "chip_box": {
+    "x": [
+     -1.5,
+     1.5
+    ],
+    "y": [
+     -2.8,
+     -1.8
+    ],
+    "z": [
+     79.5,
+     82.5
+    ],
+    "faces": "-y (palm)"
+   },
+   "magnet": {
+    "type": "\u00d83 x 1.0 N42 AXIAL (was \u00d83 x 1.5 N45 in 05/07: too strong, the MLX90393 saturates at 50 mT)",
+    "body": "tip_skin",
+    "y": [
+     -8.2,
+     -7.2
+    ],
+    "z": 81.0,
+    "seat": "05's \u00d82.8 hole in the skin, 0.6 silicone over it"
+   },
+   "carrier": {
+    "file": "out/15/tip_carrier.step",
+    "note": "tray 9.5 x 9.3 x 1.2 glued into the cavity roof; tongue into the \u00d82.6 bore clamps the 4 wires"
+   },
+   "rate_Hz": 200,
+   "signal": "Bx, By, Bz -> Fx, Fy, Fz by a per-tip 3x3 (or small MLP) calibration on a kitchen scale + shear jig"
+  },
+  {
+   "id": "<finger>_pad_prox",
+   "kind": "pad_pressure",
+   "chip": "BMP581 (0x46 SDO low)",
+   "body": "proximal",
+   "position": "proximal palm face, centre at z 22, y -8.0 (pocket floor), x 0",
+   "pocket": {
+    "size": [
+     8.0,
+     4.0,
+     10.0
+    ],
+    "note": "8 (x) x 10 (z) x 4 (y) pocket in the palm face; board 5 x 6 x 0.6 on the floor, chip faces -y; the phalanx pad silicone (05 #14, rivet-lock) is cast over it and fills the cup"
+   },
+   "rate_Hz": 200,
+   "signal": "pressure (Pa) -> normal force, + 0.1-0.6 kHz vibration for slip"
+  },
+  {
+   "id": "<finger>_pad_mid",
+   "kind": "pad_pressure",
+   "chip": "BMP581 (0x47 SDO high)",
+   "body": "middle",
+   "position": "middle palm face, centre at z 54, y -7.0 (pocket floor), x 0",
+   "pocket": {
+    "size": [
+     8.0,
+     4.0,
+     10.0
+    ],
+    "note": "8 (x) x 10 (z) x 4 (y) pocket in the palm face; board 5 x 6 x 0.6 on the floor, chip faces -y; the phalanx pad silicone (05 #14, rivet-lock) is cast over it and fills the cup"
+   },
+   "rate_Hz": 200,
+   "signal": "pressure (Pa) -> normal force, + 0.1-0.6 kHz vibration for slip"
+  }
+ ],
+ "parts": {
+  "joint_cap_mcp_flex": {
+   "body": "proximal",
+   "file": "out/15/joint_cap_mcp_flex.step"
+  },
+  "joint_cap_pip": {
+   "body": "proximal",
+   "file": "out/15/joint_cap_pip.step"
+  },
+  "joint_cap_dip": {
+   "body": "distal",
+   "file": "out/15/joint_cap_dip.step"
+  },
+  "hub_tray": {
+   "body": "palm (dorsal shell, under a removable dorsal cover)",
+   "frame": "hand",
+   "bbox": {
+    "x": [
+     -18,
+     18
+    ],
+    "y": [
+     8.5,
+     13.5
+    ],
+    "z": [
+     28,
+     58
+    ]
+   },
+   "contents": "carrier PCB 32 x 26 x 1.0 (on 4 x M2 bosses, 1.5 mm stand-off) with RP2040-Zero (23.5 x 18), 3.3 V LDO 300 mA, 7 x JST SH 4-pin (5 fingers + 2 palm-pad buses) and 1 x JST SH 6-pin (wrist)",
+   "keepout": "strands pass under the floor (y < 8.5); window 24 x 20 in the floor"
+  }
+ },
+ "wiring": {
+  "wire": "4 x 38 AWG PTFE-insulated stranded (7 x 0.04, OD ~0.30), colours: red 3V3, black GND, yellow SDA, blue SCL; PARALLEL, never pre-twisted, through every pin",
+  "bus": "one I2C bus per finger at 400 kHz, daisy-chained through each board's 4 pads (in + out wire on the same pad)",
+  "order": [
+   "tip board",
+   "dip board",
+   "DIP pin twist",
+   "PIP pin twist",
+   "pip board",
+   "mcp board",
+   "MCP axle twist",
+   "yoke dorsal exit",
+   "abd free loop",
+   "knuckle board (abd chip + JST SH socket)",
+   "palm harness",
+   "hub"
+  ],
+  "waypoints_finger": [
+   [
+    0.0,
+    -1.4,
+    76.3,
+    "tip board pads (proximal edge) -> tip_carrier channel"
+   ],
+   [
+    0.0,
+    -1.4,
+    73.6,
+    "\u00d82.6 cable bore (07) toward the DIP"
+   ],
+   [
+    5.5,
+    0.0,
+    72.0,
+    "distal internal channel \u00d81.2 up to the +x cheek: dip board pads (static)"
+   ],
+   [
+    5.5,
+    4.0,
+    70.5,
+    "back across the distal dorsal side in a 1.2 x 1.0 groove under the nail"
+   ],
+   [
+    -6.35,
+    0.0,
+    66.0,
+    "distal -x cheek wire layer (x -6.85..-5.85): glue point A (distal)"
+   ],
+   [
+    -5.85,
+    0.0,
+    66.0,
+    "into the DIP pin -x end (bore \u00d83)"
+   ],
+   [
+    3.2,
+    0.0,
+    66.0,
+    "radial exit \u00d81.2 along +y at x 3.2, z 66 (neutral axis for the drum load): glue point B (middle); free coaxial 9.0 mm"
+   ],
+   [
+    3.2,
+    3.0,
+    54.0,
+    "middle channel (07: teardrop \u00d81.6 at x 3.2, y 3.0)"
+   ],
+   [
+    3.6,
+    0.0,
+    42.0,
+    "PIP pin radial entry \u00d81.2 along +y at x 3.6: glue point C (middle)"
+   ],
+   [
+    -5.65,
+    0.0,
+    42.0,
+    "PIP pin -x end -> proximal -x lug wire layer: glue point D (proximal); free coaxial 9.2 mm"
+   ],
+   [
+    -6.0,
+    7.0,
+    40.0,
+    "up the -x face, across the dorsal back of the proximal in a 1.2 x 1.0 groove at z 38-40"
+   ],
+   [
+    7.6,
+    3.0,
+    42.0,
+    "pip board (proximal +x lug cap)"
+   ],
+   [
+    9.4,
+    3.0,
+    21.0,
+    "+x face groove of the proximal (1.2 x 1.0) down to the MCP"
+   ],
+   [
+    8.0,
+    3.0,
+    0.0,
+    "mcp board (proximal +x lug cap)"
+   ],
+   [
+    0.0,
+    8.0,
+    6.0,
+    "across the knuckle hood (dorsal) in a groove to -x"
+   ],
+   [
+    -8.2,
+    0.0,
+    0.0,
+    "proximal -x lug counterbore: glue point E (proximal)"
+   ],
+   [
+    -7.4,
+    0.0,
+    0.0,
+    "into the MCP axle -x end"
+   ],
+   [
+    3.0,
+    0.0,
+    0.0,
+    "radial exit \u00d81.2 along +y at x +3.0 through the R2 inner tube + +x sleeve + cheek (neutral axis): glue point F (yoke); free coaxial 10.4 mm. R2 has it at x -3.0: only 4.4 mm free -> 0.35 % strain (38 AWG): move it to +3.0"
+   ],
+   [
+    3.0,
+    6.0,
+    -8.0,
+    "yoke dorsal channel \u00d81.4 to the yoke's dorsal face beside the abd disc"
+   ],
+   [
+    -4.0,
+    9.0,
+    -13.0,
+    "yoke exit, 4 mm off the abd axis: free loop (abd +-15 deg -> 1.0 mm path change), R >= 8"
+   ],
+   [
+    0.0,
+    19.5,
+    -6.0,
+    "knuckle board (palm side): abd chip + JST SH 4-pin socket, dorsal, under the palm cover"
+   ]
+  ],
+  "fatigue": "see out/15/budget.txt: 38 AWG parallel bundle 0.05-0.17 % strain in every pin (limit 0.20 % for 1e6 cycles, assumed)",
+  "glue": "glue points: a drop of flexible silicone adhesive (Sil-Poxy) or soft epoxy, not CA, so the wire is held without a hard edge",
+  "replaces_07": "07's axle slot box (x -3.6..-2.4, z -2.1..-1.0, at the max-stress fibre) is replaced by a \u00d81.2 hole along +y at x +3.0 (neutral axis: I loss < 1 %)"
+ },
+ "connectors": {
+  "finger": "JST SH 1.0 mm 4-pin: socket on the knuckle board (palm), plug on the finger pigtail; swap = remove dorsal palm cover (2 x M2), unplug, pull 2 abd pins",
+  "thumb": "JST SH 4-pin at the thumb mount (palm side of the CMC), same scheme",
+  "palm_pads": "JST SH 4-pin x 2 (palm_a, palm_b buses)",
+  "wrist": "JST SH 6-pin at the hub; the forearm end is soldered to the ESP32-side RS-485/UART board (or a second 6-pin)",
+  "never": "no connector inside a finger: every connector joint is a failure point and adds 3-4 mm"
+ },
+ "wrist_passage": {
+  "chosen": "through one hollow flex pin and one hollow dev pin of the wrist cardan (twist only); 6 x 38 AWG PTFE",
+  "conductors": [
+   "5V",
+   "GND",
+   "UART TX (hub->ESP32)",
+   "UART RX (ESP32->hub)",
+   "USB D+ (hub flashing)",
+   "USB D-"
+  ],
+  "pin": {
+   "od": 5.0,
+   "bore": 2.4,
+   "file": "out/15/wrist_pin_hollow.step",
+   "exits": "\u00d81.6 radial, 3 mm from each end, on the side of the body that is FIXED to that pin; free coaxial length >= 8 mm",
+   "stress": "bore 2.4 in \u00d85: section modulus -5.6 %, 13's W13 numbers 139 -> 147 MPa (SCS), 315 -> 334 MPa (HLS)"
+  },
+  "path_waypoints_hand": [
+   [
+    0.0,
+    11.0,
+    26.0,
+    "hub cable leaves the hub tray (proximal wall), dorsal"
+   ],
+   [
+    14.0,
+    0.0,
+    6.0,
+    "palm flex lug: enters the flex-pin bore from the palm side (fixed to the palm)"
+   ],
+   [
+    16.0,
+    0.0,
+    0.0,
+    "inside the flex pin (twist about X, flex -50..+50)"
+   ],
+   [
+    14.0,
+    14.0,
+    0.0,
+    "around the ring outer face in a 2 x 2 groove under ring_cable_clip (90 deg, static)"
+   ],
+   [
+    0.0,
+    20.0,
+    0.0,
+    "into the dev-pin bore from the ring side"
+   ],
+   [
+    0.0,
+    20.0,
+    -6.0,
+    "exits into the forearm fork (fixed to the forearm), down the dorsal forearm wall"
+   ],
+   [
+    0.0,
+    25.0,
+    -120.0,
+    "ESP32-S3 + RS-485/UART at forearm level 3"
+   ]
+  ],
+  "note": "pin x/y positions are placeholders until report 13 fixes the new cardan (W13): keep the cable on the pin axes; never through the eye plate (centre cell (0,0) is free but a cable there kinks up to 58 deg)",
+  "fallback": "dorsal service loop at x = 0: cable clipped to the palm back (z +25) and the forearm back (z -30), 70 mm free, bend R >= 15 mm (0.17 % strand strain), spiral wrap; on the dev axis so dev only bends it; flex changes its path by ~15 mm, taken by the loop",
+  "confirmed_by_13": {
+   "status": "confirmed in W13 (report 13, cad/13_wrist_parts.py, out/13/pin_flex_R_hollow.step, pin_dev_B_hollow.step)",
+   "route": [
+    "palm: enters the +x flex pin axially at x 21 (pin pressed in the 7075 palm lug, plain bush in the ring)",
+    "twist along 10 mm of bore, leaves axially at x 11 (ring boss inner face)",
+    "1.6 x 1.6 slot in the boss face -> 2 x 2 groove on the ring top face along the +x bar to the +y end",
+    "\u00d81.6 radial hole in ring + pin at y 19.6 -> +y dev pin (pressed in the ring, bush in the forearm lug), twist along 9.4 mm",
+    "leaves axially at y 29 into the forearm"
+   ],
+   "pin_material": "cold-drawn precision tube 5 x 1.25 E355+C (or lathe-drilled 17-4PH); not a drilled hardened dowel",
+   "stress": "section modulus -5.3 %: SCS 145 MPa, HLS 326 MPa (SF >= 3.5 SCS, ~1.6-2.0 HLS)",
+   "fatigue_38AWG_6_wires": "flex 100 deg over 10 mm: 0.14 %; dev 50 deg over 9.4 mm: 0.04 % (limit 0.20 %)"
+  }
+ },
+ "notes": [
+  "Non-magnetic parts near chips: DIP bar pins A/B in 316 or brass (not hardened ISO 8734), abd dorsal stub brass/316, keeper plugs PETG or brass. Hardened dowels near a chip must be >= 8 mm away (or be measured on the 08 R9 rig).",
+  "Chip variants per finger bus: A1 abd, B1 mcp_flex, C1 pip, D1 dip (fixed factory addresses, no reprogramming at boot).",
+  "Thumb: A1 cmc_rot, B1 cmc_flex, C1 mcp_flex, D1 ip; same joint module at each axis end opposite the wire exit; the thumb designer places them (keep >= 20 mm from the index MCP magnet, or calibrate with the index at its working angles).",
+  "Width: MCP stack ends at x 8.75 inside the 9.0 lug face (0 added); PIP 8.6 vs 8.05 (+0.55, taper region has >= 3 mm); DIP 8.35 vs 7.5 (+0.85). No sensor boss on the -x side of any finger."
+ ],
+ "checks": {
+  "joint_cap_mcp_flex": {
+   "valid": true,
+   "volume_mm3": 26.64,
+   "bbox": [
+    6.45,
+    8.75,
+    -3.35,
+    3.35,
+    -3.35,
+    3.35
+   ]
+  },
+  "joint_module_mcp_flex": {
+   "valid": true,
+   "volume_mm3": 60.24,
+   "bbox": [
+    3.4,
+    8.76,
+    -3.36,
+    3.36,
+    -3.36,
+    3.36
+   ]
+  },
+  "joint_cap_pip": {
+   "valid": true,
+   "volume_mm3": 26.64,
+   "bbox": [
+    6.3,
+    8.6,
+    -3.35,
+    3.35,
+    38.65,
+    45.35
+   ]
+  },
+  "joint_module_pip": {
+   "valid": true,
+   "volume_mm3": 68.25,
+   "bbox": [
+    3.75,
+    8.61,
+    -3.36,
+    3.36,
+    38.64,
+    45.36
+   ]
+  },
+  "joint_cap_dip": {
+   "valid": true,
+   "volume_mm3": 26.64,
+   "bbox": [
+    6.05,
+    8.35,
+    -3.35,
+    3.35,
+    62.65,
+    69.35
+   ]
+  },
+  "joint_module_dip": {
+   "valid": true,
+   "volume_mm3": 68.25,
+   "bbox": [
+    3.5,
+    8.36,
+    -3.36,
+    3.36,
+    62.64,
+    69.36
+   ]
+  },
+  "joint_cap_abd": {
+   "valid": true,
+   "volume_mm3": 54.69,
+   "bbox": [
+    -4.2,
+    4.2,
+    18.2,
+    20.35,
+    -17.2,
+    -8.8
+   ]
+  },
+  "abd_module": {
+   "valid": true,
+   "volume_mm3": 86.4,
+   "bbox": [
+    -4.2,
+    4.2,
+    16.7,
+    20.35,
+    -17.2,
+    -8.8
+   ]
+  },
+  "tip_carrier": {
+   "valid": true,
+   "volume_mm3": 74.57,
+   "bbox": [
+    -4.75,
+    4.75,
+    -1.0,
+    0.2,
+    73.6,
+    85.45
+   ]
+  },
+  "tip_assembly_ref": {
+   "valid": true,
+   "volume_mm3": 156.88,
+   "bbox": [
+    -4.75,
+    4.75,
+    -8.2,
+    0.2,
+    73.6,
+    85.45
+   ]
+  },
+  "pad_cup": {
+   "valid": true,
+   "volume_mm3": 117.87,
+   "bbox": [
+    -4.0,
+    4.0,
+    -3.4,
+    0.6,
+    -5.0,
+    5.0
+   ]
+  },
+  "pad_assembly_ref": {
+   "valid": true,
+   "volume_mm3": 139.07,
+   "bbox": [
+    -4.0,
+    4.0,
+    -3.4,
+    0.6,
+    -5.0,
+    5.0
+   ]
+  },
+  "hub_tray": {
+   "valid": true,
+   "volume_mm3": 1332.39,
+   "bbox": [
+    -18.0,
+    18.0,
+    8.5,
+    13.5,
+    28.0,
+    58.0
+   ]
+  },
+  "hub_assembly_ref": {
+   "valid": true,
+   "volume_mm3": 2587.39,
+   "bbox": [
+    -18.0,
+    18.0,
+    8.5,
+    14.0,
+    28.0,
+    58.0
+   ]
+  },
+  "wrist_pin_hollow": {
+   "valid": true,
+   "volume_mm3": 236.39,
+   "bbox": [
+    -2.5,
+    2.5,
+    -2.5,
+    2.5,
+    -0.0,
+    16.0
+   ]
+  },
+  "ring_cable_clip": {
+   "valid": true,
+   "volume_mm3": 137.64,
+   "bbox": [
+    -0.0,
+    14.0,
+    0.0,
+    14.0,
+    0.0,
+    3.0
+   ]
+  },
+  "dorsal_loop_clip": {
+   "valid": true,
+   "volume_mm3": 101.19,
+   "bbox": [
+    -4.0,
+    4.0,
+    0.0,
+    3.0,
+    0.0,
+    6.0
+   ]
+  }
+ }
+}

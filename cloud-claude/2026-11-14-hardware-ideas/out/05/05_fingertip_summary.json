@@ -1,0 +1,45 @@
+{
+ "tip_valid": true,
+ "tip_volume_mm3": 2715.1,
+ "tip_mass_g_PETG_100pct": 3.45,
+ "skin_volume_mm3": 690.4,
+ "skin_mass_g_silicone_1.07": 0.74,
+ "tip_x_pcb_overlap_mm3": 0.0,
+ "tip_x_chip_overlap_mm3": 0.0,
+ "tip_x_magnet_overlap_mm3": 0.0,
+ "tip_x_shim_overlap_mm3": 0.0,
+ "skin_x_tip_interference_mm3_design_stretch_fit": 0.0,
+ "skin_x_pcb_mm3": 0.0,
+ "skin_x_chip_mm3": 0.0,
+ "magnet_inside_skin_hole_clear_mm3": 1.367,
+ "min_side_wall_at_undercut_mm": 1.88,
+ "wall_at_distal_end_of_cavity_mm": 3.5,
+ "tip_bbox": [
+  -8.28,
+  8.28,
+  -5.8,
+  8.0,
+  7.85,
+  23.0
+ ],
+ "skin_bbox_y": [
+  -8.8,
+  -3.5
+ ],
+ "mould_cup_valid": true,
+ "mould_cover_valid": true,
+ "cup_size_mm": [
+  25.0,
+  25.0,
+  8.0
+ ],
+ "cover_size_mm": [
+  25.0,
+  25.0,
+  5.8
+ ],
+ "chip_top_s": -3.0,
+ "magnet_bottom_s": 0.9,
+ "gap_chip_to_magnet_mm": 3.9,
+ "gap_chip_to_plug_mm": 0.7
+}

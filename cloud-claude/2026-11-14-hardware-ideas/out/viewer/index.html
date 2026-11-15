@@ -1,0 +1,361 @@
+<title>Tendra V2.1 Bench Finger</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one-screen tool. 3D stage on the left, a slim control panel on the right; stacked on phones. */
+:root {
+  --bg: #f5f6f8; --panel: #ffffff; --fg: #1d1d1f; --muted: #5f6672; --line: #e2e5ea;
+  --accent: #0066cc; --accent-soft: #e6f0fa; --stage: #eef0f3;
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111316; --panel: #181b20; --fg: #eceef1; --muted: #9aa2ad; --line: #2a2f37;
+  --accent: #4da3ff; --accent-soft: #15283d; --stage: #14171b; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #111316; --panel: #181b20; --fg: #eceef1; --muted: #9aa2ad; --line: #2a2f37;
+  --accent: #4da3ff; --accent-soft: #15283d; --stage: #14171b; color-scheme: dark }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 14px; }
+.app { height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 320px; }
+.stage { position: relative; min-width: 0; min-height: 0; background: var(--stage); }
+#c { display: block; width: 100%; height: 100%; touch-action: none; }
+.status[hidden] { display: none; }
+.btn:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pick { position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); bottom: 16px; max-width: min(420px, calc(100% - 32px));
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px;
+  box-shadow: 0 2px 10px rgb(0 0 0 / .08); }
+.pick b { display: block; font-weight: 600; }
+.pick span { color: var(--muted); font-size: 13px; }
+.status { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); pointer-events: none; }
+aside { background: var(--panel); border-left: 1px solid var(--line); overflow-y: auto;
+  padding-block: 20px 24px; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 22px; }
+h1 { font-size: 18px; font-weight: 700; margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+.sub { color: var(--muted); margin: 4px 0 0; line-height: 1.45; }
+h2 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 10px; }
+.joint { display: grid; grid-template-columns: 1fr auto; gap: 4px 8px; align-items: center; margin-bottom: 12px; }
+.joint label { font-weight: 500; }
+.joint output { font: 500 13px var(--mono); color: var(--accent); font-variant-numeric: tabular-nums; }
+.joint input { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); }
+.joint small { grid-column: 1 / -1; color: var(--muted); font-size: 12px; }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.btn { font: 500 13px var(--font); color: var(--accent); background: var(--accent-soft); border: 0;
+  padding: 7px 13px; border-radius: 999px; cursor: pointer; }
+.toggles { display: flex; flex-direction: column; gap: 8px; }
+.toggles label { display: flex; gap: 8px; align-items: center; cursor: pointer; }
+.toggles input { accent-color: var(--accent); width: 16px; height: 16px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { text-align: left; padding: 6px 0; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 500; }
+td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+th.n { text-align: right; }
+.legend { display: grid; gap: 6px; font-size: 13px; }
+.legend div { display: flex; gap: 8px; align-items: center; }
+.sw { width: 18px; height: 4px; border-radius: 2px; flex: none; }
+.note { color: var(--muted); font-size: 12.5px; line-height: 1.5; margin: 0; }
+@media (max-width: 760px) {
+  .app { grid-template-columns: 1fr; grid-template-rows: 58vh auto; height: auto; }
+  html, body { height: auto; }
+  aside { border-left: 0; border-top: 1px solid var(--line); }
+}
+</style>
+
+<div class="app">
+  <div class="stage">
+    <canvas id="c" aria-label="3D view of the Tendra V2.1 bench finger with sensors"></canvas>
+    <div class="pick" id="pick"><b>Click a part to see what it is</b><span>Drag to turn, scroll or pinch to zoom, right-drag to move.</span></div>
+    <div class="status" id="status">Loading the 3D model…</div>
+  </div>
+
+  <aside>
+    <div>
+      <h1>Tendra V2.1 bench finger</h1>
+      <p class="sub">One index finger from the 2026-11-14 hardware study, round 2: the review fixes plus an angle sensor in every joint, touch pads and sensor wiring. The bench base stands in for the palm. CAD only: nothing is printed yet.</p>
+    </div>
+
+    <section id="joints">
+      <h2>Joints</h2>
+      <div class="joint"><label for="j-mcp">Knuckle (MCP)</label><output id="o-mcp">0°</output>
+        <input id="j-mcp" type="range" min="-10" max="90" step="10" value="0"></div>
+      <div class="joint"><label for="j-pip">Middle joint (PIP)</label><output id="o-pip">0°</output>
+        <input id="j-pip" type="range" min="-5" max="95" step="10" value="-5">
+        <small>The tip joint (DIP) follows at about 0.75 × PIP through the steel bar: <span id="o-dip">0°</span></small></div>
+      <div class="joint"><label for="j-abd">Sideways (abduction)</label><output id="o-abd">0°</output>
+        <input id="j-abd" type="range" min="-15" max="15" step="5" value="0"></div>
+      <div class="presets">
+        <button class="btn" data-p="0,-10,-5">Open</button>
+        <button class="btn" data-p="0,30,45">Pinch</button>
+        <button class="btn" data-p="0,90,95">Fist</button>
+        <button class="btn" data-p="15,40,25">Spread</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Show</h2>
+      <div class="toggles">
+        <label><input type="checkbox" id="t-tendons" checked> Tendons</label>
+        <label><input type="checkbox" id="t-wire" checked> Sensor wires</label>
+        <label><input type="checkbox" id="t-sensors"> Highlight sensors</label>
+        <label><input type="checkbox" id="t-xray"> X-ray (see-through plastic)</label>
+        <label><input type="checkbox" id="t-base" checked> Bench base</label>
+      </div>
+    </section>
+
+    <section id="tendon-legend">
+      <h2>Tendons</h2>
+      <div class="legend">
+        <div><span class="sw" style="background:#d6336c"></span>Middle joint (PIP), flex / extend</div>
+        <div><span class="sw" style="background:#1c7ed6"></span>Knuckle (MCP), flex / extend</div>
+        <div><span class="sw" style="background:#2f9e44"></span>Sideways (abduction)</div>
+        <div><span class="sw" style="background:#f08c00"></span>Sensor wires (4 × 38 AWG)</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Fingertip pinch (round 2)</h2>
+      <table>
+        <thead><tr><th>Servo</th><th class="n">V2</th><th class="n">Round 1</th><th class="n">Round 2</th></tr></thead>
+        <tbody>
+          <tr><td>SCS0009</td><td class="n">~2.3 N</td><td class="n">5.6 N</td><td class="n">5.9 N</td></tr>
+          <tr><td>HLS3606M</td><td class="n">n/a</td><td class="n">11.7 N</td><td class="n">16.6 N</td></tr>
+        </tbody>
+      </table>
+      <p class="note" style="margin-top:8px">Stall force, counting every lever, the tendon pretension and bush friction. Round 2 moves the PIP flex tendon to the palm side over a roller, so the tendons no longer cross.</p>
+    </section>
+
+    <section>
+      <h2>What is new</h2>
+      <p class="note">Bare tendons over steel pins and bearings instead of PTFE tubes. A fixed steel knuckle axle with the sensor wires inside it. Metal rings in the drum grooves. Fuse-cup anchors that break before the servo. A snap-in silicone fingertip.</p>
+      <p class="note" style="margin-top:8px"><b>Sensors:</b> a magnet in the end of every joint pin with a TMAG5273 angle chip facing it (about 0.5° after calibration), ceramic bearings beside them so steel does not bend the field, a 3-axis magnetic touch sensor in the tip, two pressure pads, and one 4-wire bundle that twists through the joint axes to a plug at the finger root.</p>
+    </section>
+  </aside>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const canvas = $("c"), status = $("status");
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(35, 1, 1, 5000);
+  camera.up.set(0, 0, 1);
+  const controls = new THREE.OrbitControls(camera, canvas);
+  controls.enableDamping = true;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8890a0, 0.75));
+  const key = new THREE.DirectionalLight(0xffffff, 0.75); key.position.set(120, -160, 200); scene.add(key);
+  const fill = new THREE.DirectionalLight(0xffffff, 0.35); fill.position.set(-150, 120, 60); scene.add(fill);
+
+  function themeBg() {
+    const v = getComputedStyle(document.documentElement).getPropertyValue("--stage").trim() || "#eef0f3";
+    scene.background = new THREE.Color(v);
+  }
+  themeBg();
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { themeBg(); requestRender(); });
+  new MutationObserver(() => { themeBg(); requestRender(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  // ---------- part descriptions ----------
+  const INFO = [
+    [/^sensor_\w+_magnet$/, "Joint-angle magnet", "Diametric magnet (Ø2 × 1.5 at the knuckle, Ø3 × 1 at the other joints) in the end of the joint pin. It turns with the joint."],
+    [/^sensor_\w+_chip$/, "Joint-angle chip (TMAG5273)", "3D Hall sensor 0.3 mm from the magnet. Reads the joint angle to about 0.5° after a 2-minute calibration sweep. Four address variants share one I²C bus."],
+    [/^sensor_\w+_board$/, "Sensor board", "Ø6.4 mm round board that holds the angle chip inside the joint's existing recess, so the finger gets no wider."],
+    [/^sensor_\w+_cap$/, "Sensor cap", "Printed plug cap that holds the sensor board and closes the recess."],
+    [/^pad_\w+_silicone$/, "Pressure pad", "Silicone pad over a BMP581 pressure sensor: senses press force and the small vibration of something slipping."],
+    [/^pad_\w+_(chip|board)$/, "Pad pressure sensor (BMP581)", "2 × 2 mm barometric sensor potted in silicone under the pad."],
+    [/^tip_carrier$/, "Fingertip sensor carrier", "Holds the MLX90393 board under the silicone skin."],
+    [/^tip_(chip|pcb)$/, "Fingertip touch sensor (MLX90393)", "Measures how far the magnet in the skin moves: 3-axis fingertip force, about 0–12 N."],
+    [/^tip_magnet$/, "Skin magnet", "Ø3 × 1 N42 magnet moulded into the silicone skin."],
+    [/^knuckle_board$/, "Knuckle board", "Small board in the palm where the finger's sensor wires plug in."],
+    [/^jst_sh_/, "Finger plug (JST SH, 4 pins)", "3.3 V, ground and the two I²C wires. Unplug it to swap a finger in about a minute."],
+    [/_zro2_/, "Ceramic bearing (ZrO2 MR84)", "Non-magnetic bearing beside the angle sensor, so a steel race does not bend the magnet's field (that would add 1.5–3° of error)."],
+    [/^nip_/, "Steel guide pins on the sideways axis", "Pairs of steel pins that hold each tendon exactly on the sideways joint's axis, so sideways motion does not change tendon lengths."],
+    [/^(roller_|dowel_roller)/, "Palm-side roller (MR63)", "Keeps the middle-joint flex tendon on the palm side of the knuckle: no more crossed tendons."],
+    [/^mcp_axle_inner$/, "Inner knuckle tube (Ø3)", "Hollow steel tube inside the Ø4 sleeves. The sensor wires run through it, on the joint axis, so they only twist."],
+    [/^mcp_sleeve/, "Knuckle sleeve", "Steel and brass sleeves around the inner tube that carry the bearings."],
+    [/^base$/, "Bench base", "Stands in for the palm. Bolts to a plate or 2020 extrusion; tendons leave it straight toward the servos."],
+    [/^yoke$/, "Knuckle yoke", "Carries the sideways (abduction) joint and the fixed Ø4 steel knuckle axle."],
+    [/^proximal$/, "Proximal phalanx", "First finger bone. Runs on MR84 bearings on the fixed knuckle axle."],
+    [/^middle$/, "Middle phalanx", "Second finger bone, with the PIP drum."],
+    [/^distal$/, "Distal phalanx", "Fingertip bone with a pocket for the magnetic touch sensor."],
+    [/^tip_skin$/, "Silicone fingertip skin", "Snaps on with an undercut, no glue. Cast in a 3D-printed two-part mould. About €0.60."],
+    [/^tip_(magnet|chip|pcb)$/, "Magnetic touch sensor", "A magnet in the skin over a Hall chip (MLX90393 or TMAG5273) measures press force."],
+    [/^nail_shim$/, "Fingernail", "Thin steel nail for picking up flat things like a card or coin."],
+    [/^mcp_axle$/, "Fixed Ø4 steel knuckle axle", "Held along its length in the yoke: about 69 N sideways at the fingertip, against about 8 N for V2's short stubs."],
+    [/^idler_/, "Knuckle pulley (MR84)", "Carries the middle-joint tendons across the knuckle on rolling bearings instead of a sharp eyelet."],
+    [/_ring|^mcp_sleeve/, "Metal drum ring / sleeve", "Metal in the drum groove so the tendon does not press into the plastic. PETG creeps above about 12 MPa."],
+    [/^cup_/, "Fuse cup (tendon anchor)", "Beads on the tendon sit in this printed cup. It breaks on purpose before the servo gears do and is cheap to replace."],
+    [/^(base_)?dowel_/, "Ø3 steel guide pin", "Polished steel at every bend, so the tendon touches only hard, smooth metal."],
+    [/_brg_/, "Ball bearing", "MR84 (4 × 8 × 3) or MR63 (3 × 6 × 2.5) for smooth, low-friction joints."],
+    [/^abd_stub/, "Abduction pin", "Steel pin for the sideways joint."],
+    [/^hall_/, "Hall joint-angle sensor", "Reads a magnet in the joint to measure the real joint angle. Needed once the drive is strong and stiff."],
+    [/_magnet$/, "Sensor magnet", "Magnet that the Hall joint-angle sensor reads."],
+    [/^dip_bar$/, "DIP bar", "Stainless strip that makes the tip joint follow the middle joint (DIP ≈ 0.75 × PIP)."],
+    [/^pin_[AB]$/, "DIP bar pin", "Ø2 steel pin, set 4 mm deep, that holds the DIP bar."],
+    [/^(dip|pip)_(pin|bush)|_bush/, "Joint pin / brass bush", "Steel pin running in a brass bush."],
+  ];
+  function describe(name) {
+    for (const [re, t, d] of INFO) if (re.test(name)) return [t, d];
+    return [name.replace(/_/g, " "), "Part of the bench finger."];
+  }
+  const PRINTED = /^(base|yoke|proximal|middle|distal|cup_.*|tip_skin)$/;
+
+  // ---------- state ----------
+  let data = null; const fingerRoot = new THREE.Group(), tendonGroup = new THREE.Group(), wireGroup = new THREE.Group();
+  scene.add(fingerRoot); fingerRoot.add(tendonGroup, wireGroup);
+  const parts = []; // {mesh, name, body, m0}
+  const q = { abd: 0, mcp: 0, pip: -5 };
+
+  const deg = Math.PI / 180;
+  function rotAbout(p, d, a) {
+    const t = new THREE.Matrix4().makeTranslation(p[0], p[1], p[2]);
+    const r = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(d[0], d[1], d[2]), a * deg);
+    const ti = new THREE.Matrix4().makeTranslation(-p[0], -p[1], -p[2]);
+    return t.multiply(r).multiply(ti);
+  }
+  function dipOf(pip) {
+    const P = data.dip_table.pip, D = data.dip_table.dip;
+    if (pip <= P[0]) return D[0];
+    for (let i = 1; i < P.length; i++) if (pip <= P[i]) {
+      const t = (pip - P[i - 1]) / (P[i] - P[i - 1]); return D[i - 1] + t * (D[i] - D[i - 1]);
+    }
+    return D[D.length - 1];
+  }
+
+  function pose() {
+    if (!data) return;
+    const ax = data.axes, dip = dipOf(q.pip);
+    const Ra = rotAbout(ax.abd.p, ax.abd.d, q.abd), Rm = rotAbout(ax.mcp.p, ax.mcp.d, q.mcp);
+    const Rp = rotAbout(ax.pip.p, ax.pip.d, q.pip), Rd = rotAbout(ax.dip.p, ax.dip.d, dip);
+    const T = {
+      base: new THREE.Matrix4(), yoke: Ra.clone(),
+      proximal: Ra.clone().multiply(Rm), middle: Ra.clone().multiply(Rm).multiply(Rp),
+      distal: Ra.clone().multiply(Rm).multiply(Rp).multiply(Rd),
+    };
+    // DIP bar: rigid strip between pin A (proximal) and pin B (distal), rotates about x
+    const A0 = new THREE.Vector3(0, data.pinA[0], data.pinA[1]), B0 = new THREE.Vector3(0, data.pinB[0], data.pinB[1]);
+    const A = A0.clone().applyMatrix4(Rm), B = B0.clone().applyMatrix4(Rm.clone().multiply(Rp).multiply(Rd));
+    const a0 = Math.atan2(B0.z - A0.z, B0.y - A0.y), a1 = Math.atan2(B.z - A.z, B.y - A.y);
+    const Tb = Ra.clone().multiply(new THREE.Matrix4().makeTranslation(0, A.y, A.z))
+      .multiply(new THREE.Matrix4().makeRotationX(a1 - a0)).multiply(new THREE.Matrix4().makeTranslation(0, -A0.y, -A0.z));
+    T.bar = Tb;
+    for (const p of parts) p.mesh.matrix.copy(T[p.body] || T.base).multiply(p.m0);
+    $("o-dip").textContent = dip.toFixed(0) + "°";
+    buildTendons();
+    requestRender();
+  }
+
+  const TCOL = { pip: 0xd6336c, mcp: 0x1c7ed6, abd: 0x2f9e44, sensor: 0xf08c00 };
+  function buildTendons() {
+    for (const g of [tendonGroup, wireGroup]) while (g.children.length) { const c = g.children.pop(); c.geometry.dispose(); }
+    const k = `${q.abd},${q.mcp},${q.pip}`;
+    const lines = data.grid.lines[k]; if (!lines) return;
+    lines.forEach((pts, i) => {
+      if (pts.length < 2) return;
+      const nm = data.strand_names[i], col = TCOL[nm.split("_")[0]] || 0x444444;
+      const path = new THREE.CurvePath();
+      for (let j = 1; j < pts.length; j++) path.add(new THREE.LineCurve3(new THREE.Vector3(...pts[j - 1]), new THREE.Vector3(...pts[j])));
+      const isWire = nm === "sensor_wire";
+      const geo = new THREE.TubeGeometry(path, Math.max(8, pts.length * 3), isWire ? 0.45 : 0.3, 6, false);
+      const m = new THREE.Mesh(geo, tendonMat[col] || (tendonMat[col] = new THREE.MeshStandardMaterial({ color: col, roughness: 0.5 })));
+      m.userData.tendon = nm; (isWire ? wireGroup : tendonGroup).add(m);
+    });
+  }
+  const tendonMat = {};
+
+  // ---------- load ----------
+  const loader = new THREE.GLTFLoader();
+  function nameOf(o, known) { while (o) { if (o.name && known(o.name)) return o.name; o = o.parent; } return null; }
+  function loadGLB(url) { return new Promise((res, rej) => loader.load(url, res, undefined, rej)); }
+
+  Promise.all([fetch("finger_data_16.json").then((r) => { if (!r.ok) throw new Error("data " + r.status); return r.json(); }), fetch("bench_finger_16.glb.b64.txt").then((r) => { if (!r.ok) throw new Error("model " + r.status); return r.text(); }).then((t) => { const bin = atob(t.trim()), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new Promise((res, rej) => loader.parse(u.buffer, "", res, rej)); })])
+    .then(([d, gltf]) => {
+      data = d;
+      gltf.scene.updateMatrixWorld(true);
+      const meshes = []; gltf.scene.traverse((o) => { if (o.isMesh) meshes.push(o); });
+      for (const m of meshes) {
+        const raw = nameOf(m, (n) => n in data.body || /^strand_|^sensor_wire/.test(n)) || m.name;
+        if (/^strand_|^sensor_wire/.test(raw)) { m.parent && m.parent.remove(m); continue; }
+        const name = raw;
+        const m0 = m.matrixWorld.clone();
+        m.material = m.material.clone(); m.material.side = THREE.DoubleSide;
+        m.material.metalness = Math.min(m.material.metalness ?? 0, 0.3); m.material.roughness = 0.55;
+        m.userData.part = name; m.userData.printed = PRINTED.test(name);
+        m.matrixAutoUpdate = false; fingerRoot.add(m);
+        parts.push({ mesh: m, name, body: data.body[name] || "base", m0 });
+      }
+      status.hidden = true;
+      frame(fingerRoot, new THREE.Vector3(1.3, -1.6, 0.9));
+      pose();
+    })
+    .catch((e) => { status.textContent = "The 3D model could not load (" + e.message + "). Reload the page to try again."; });
+
+  function frame(obj, dir) {
+    const box = new THREE.Box3().setFromObject(obj), c = box.getCenter(new THREE.Vector3()), s = box.getSize(new THREE.Vector3()).length();
+    controls.target.copy(c); camera.position.copy(c).add(dir.normalize().multiplyScalar(s * 1.55));
+    camera.near = s / 100; camera.far = s * 20; camera.updateProjectionMatrix(); controls.update(); requestRender();
+  }
+
+  // ---------- UI ----------
+  function setJoint(k, v) { q[k] = v; $("j-" + k).value = v; $("o-" + k).textContent = v + "°"; }
+  ["mcp", "pip", "abd"].forEach((k) => $("j-" + k).addEventListener("input", (e) => { setJoint(k, +e.target.value); pose(); }));
+  document.querySelectorAll("[data-p]").forEach((b) => b.addEventListener("click", () => {
+    const [a, m, p] = b.dataset.p.split(",").map(Number); setJoint("abd", a); setJoint("mcp", m); setJoint("pip", p); pose();
+  }));
+  $("t-tendons").addEventListener("change", (e) => { tendonGroup.visible = e.target.checked; requestRender(); });
+  $("t-wire").addEventListener("change", (e) => { wireGroup.visible = e.target.checked; requestRender(); });
+  const SENSOR = /^(sensor_|pad_|tip_(chip|pcb|magnet|carrier)|knuckle_board|jst_)/;
+  function applyLook() {
+    const xray = $("t-xray").checked, hi = $("t-sensors").checked;
+    fingerRoot.traverse((o) => {
+      if (!o.isMesh || o.userData.tendon) return;
+      const sensor = SENSOR.test(o.userData.part || "");
+      const fade = hi ? !sensor : (xray && o.userData.printed);
+      o.material.transparent = fade; o.material.opacity = fade ? (hi ? 0.12 : 0.22) : 1; o.material.depthWrite = !fade;
+      if (o.material.emissive) o.material.emissive.setHex(hi && sensor ? 0x332200 : 0x000000);
+      o.material.needsUpdate = true;
+    });
+    requestRender();
+  }
+  $("t-sensors").addEventListener("change", applyLook);
+  $("t-xray").addEventListener("change", applyLook);
+  $("t-base").addEventListener("change", (e) => { parts.forEach((p) => { if (p.name === "base" || p.name.startsWith("base_")) p.mesh.visible = e.target.checked; }); requestRender(); });
+
+
+  // click to identify
+  const ray = new THREE.Raycaster(), ptr = new THREE.Vector2(); let down = null;
+  canvas.addEventListener("pointerdown", (e) => { down = [e.clientX, e.clientY]; });
+  canvas.addEventListener("pointerup", (e) => {
+    if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) return;
+    const r = canvas.getBoundingClientRect(); ptr.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(ptr, camera);
+    const hit = ray.intersectObject(fingerRoot, true).find((h) => h.object.visible);
+    if (!hit) return;
+    const o = hit.object;
+    let t, d;
+    if (o.userData.tendon === "sensor_wire") { t = "Sensor wire bundle"; d = "4 × 38 AWG PTFE wires (3.3 V, ground, I²C). They pass every joint inside the hollow pin, so they twist instead of bend, and end in a plug at the finger root."; }
+    else if (o.userData.tendon) { const n = o.userData.tendon; t = "Tendon: " + n.replace("_", " "); d = n === "sensor_wire" ? "" : "UHMWPE braid (PE#8, about 0.47 mm). Flex and extend strands of one joint form a loop on one servo spool."; }
+    else [t, d] = describe(o.userData.part || "");
+    $("pick").innerHTML = ""; const b = document.createElement("b"); b.textContent = t; const s = document.createElement("span"); s.textContent = d; $("pick").append(b, s);
+  });
+
+  // ---------- render loop (on demand) ----------
+  let pending = false;
+  function requestRender() { if (!pending) { pending = true; requestAnimationFrame(draw); } }
+  function draw() { pending = false; resize(); if (controls.update()) requestRender(); renderer.render(scene, camera); }
+  controls.addEventListener("change", requestRender);
+  function resize() {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    if (canvas.width !== Math.floor(w * renderer.getPixelRatio()) || canvas.height !== Math.floor(h * renderer.getPixelRatio())) {
+      renderer.setSize(w, h, false); camera.aspect = w / Math.max(h, 1); camera.updateProjectionMatrix();
+    }
+  }
+  window.addEventListener("resize", requestRender);
+  requestRender();
+})();
+</script>

@@ -1,0 +1,106 @@
+
+====================================================================================================
+1. Servo travel budget (strand mm the spool must move over the full joint range, worst case)
+====================================================================================================
+ranges deg {'mcp_abd': (-15.0, 15.0), 'mcp_flex': (-10.0, 90.0), 'pip': (-5.0, 95.0)}; drum line radius 7.235; MCP idler line radius 4.235 (MR84ZZ on the 4 mm axle)
+abd crossing (strands at x = +-6.4 / +-1.0 mm, guide on the abd plane): differential span MCP 3.31 mm, PIP 0.52 mm; wrist span 3.6 mm (hand only, 0 on the bench)
+pip coupling through the idler: 0.585 PIP deg per MCP deg (MR63 on a stepped axle: 0.447)
+SCS0009 usable: 300 - 15 margin = 285 deg = 4.974 rad
+
+option                                                     joint     strand mm r_s min   r_s servo deg G torque
+A  plain PIP, MR84 idler (CHOSEN)                          mcp_abd        7.39    1.49                     4.87
+A  plain PIP, MR84 idler (CHOSEN)                          mcp_flex      19.54    3.93                     1.84
+A  plain PIP, MR84 idler (CHOSEN)                          pip           24.14    4.85                     1.49
+A0 same, bench only (no wrist)                             mcp_abd        3.79    0.76                     9.50
+A0 same, bench only (no wrist)                             mcp_flex      15.94    3.20                     2.26
+A0 same, bench only (no wrist)                             pip           20.54    4.13                     1.75
+B  2:1 reeved PIP, MR84 idler                              mcp_abd        7.39    1.49                     4.87
+B  2:1 reeved PIP, MR84 idler                              mcp_flex      19.54    3.93                     1.84
+B  2:1 reeved PIP, MR84 idler                              pip           36.76    7.39                     1.65
+C  plain PIP, MR63 idler on stepped axle                   mcp_abd        7.39    1.49                     4.87
+C  plain PIP, MR63 idler on stepped axle                   mcp_flex      19.54    3.93                     1.84
+C  plain PIP, MR63 idler on stepped axle                   pip           22.39    4.50                     1.61
+G torque = joint torque per servo torque when the spool is the smallest that fits the travel (eta not included).
+Reeving doubles the PIP strand travel but the torque only by 1 + eta_turn = 1.69: per servo degree it is
+16 % WORSE than a plain drum on a smaller spool. Its only gain is a lower strand load at the same joint torque.
+
+Chosen spools (line-centre radius): SCS0009 MCP 4.0 (metal hub / 683ZZ cartridge variant), abd + PIP 5.0 (02 cartridge);
+HLS3606M: 5.0 on every joint (multi-turn, so travel is free; 5.0 keeps the strand at the 120 N design class).
+servo     joint       r_s servo deg used    of     G T stall N T cont N
+SCS0009   mcp_abd     5.0             85   285  1.45      45.2     14.8  OK
+SCS0009   mcp_flex    4.0            280   285  1.81      56.5     18.5  OK
+SCS0009   pip         5.0            277   285  1.45      45.2     14.8  OK
+HLS3606M  mcp_abd     5.0             85  2520  1.45     118.0     30.0  OK
+HLS3606M  mcp_flex    5.0            224  2520  1.45     118.0     30.0  OK
+HLS3606M  pip         5.0            277  2520  1.45     118.0     30.0  OK
+SCS PIP check: 7.235 x 100 deg + idler 4.235 x 100 deg + abd 0.52 mm + wrist 3.6 mm = 24.1 mm on r 5 = 277 deg <= 285
+
+====================================================================================================
+2. Friction: sliding turn per flex strand (drum and spool: strand anchored, no sliding)
+====================================================================================================
+mcp_flex bench               sliding   20 deg, rollers 0: eta = 0.959
+pip_flex bench               sliding   20 deg, rollers 1: eta = 0.954
+pip_ext bench                sliding  110 deg, rollers 1: eta = 0.790
+mcp_flex hand                sliding   45 deg, rollers 0: eta = 0.910
+pip_flex hand                sliding   45 deg, rollers 1: eta = 0.906
+pip_flex hand, wrist 50      sliding   95 deg, rollers 1: eta = 0.815
+V2 for comparison (01): MCP flex 223 deg in PTFE -> 0.68, pip flex 246 deg -> 0.65.
+
+====================================================================================================
+3. Index tip force (pinch MCP 30 / PIP 45; straight push). Limit = the weaker joint
+====================================================================================================
+bench SCS0009   stall strand MCP   56.5 N PIP   45.2 N | pinch   6.8 N (PIP limits; MCP 9.1 / PIP 6.8) | straight   4.8 N (MCP)
+bench SCS0009   s80   strand MCP   45.2 N PIP   36.2 N | pinch   5.4 N (PIP limits; MCP 7.3 / PIP 5.4) | straight   3.9 N (MCP)
+bench SCS0009   cont  strand MCP   18.5 N PIP   14.8 N | pinch   2.2 N (PIP limits; MCP 3.0 / PIP 2.2) | straight   1.6 N (MCP)
+bench HLS3606M  stall strand MCP  118.0 N PIP  118.0 N | pinch  17.6 N (PIP limits; MCP 19.0 / PIP 17.6) | straight  10.1 N (MCP)
+bench HLS3606M  s80   strand MCP   94.4 N PIP   94.4 N | pinch  14.1 N (PIP limits; MCP 15.2 / PIP 14.1) | straight   8.1 N (MCP)
+bench HLS3606M  cont  strand MCP   30.0 N PIP   30.0 N | pinch   4.5 N (PIP limits; MCP 4.8 / PIP 4.5) | straight   2.6 N (MCP)
+hand  SCS0009   stall strand MCP   56.5 N PIP   45.2 N | pinch   6.4 N (PIP limits; MCP 8.6 / PIP 6.4) | straight   4.6 N (MCP)
+hand  SCS0009   s80   strand MCP   45.2 N PIP   36.2 N | pinch   5.1 N (PIP limits; MCP 6.9 / PIP 5.1) | straight   3.7 N (MCP)
+hand  SCS0009   cont  strand MCP   18.5 N PIP   14.8 N | pinch   2.1 N (PIP limits; MCP 2.8 / PIP 2.1) | straight   1.5 N (MCP)
+hand  HLS3606M  stall strand MCP  118.0 N PIP  118.0 N | pinch  16.7 N (PIP limits; MCP 18.0 / PIP 16.7) | straight   9.6 N (MCP)
+hand  HLS3606M  s80   strand MCP   94.4 N PIP   94.4 N | pinch  13.4 N (PIP limits; MCP 14.4 / PIP 13.4) | straight   7.7 N (MCP)
+hand  HLS3606M  cont  strand MCP   30.0 N PIP   30.0 N | pinch   4.3 N (PIP limits; MCP 4.6 / PIP 4.3) | straight   2.4 N (MCP)
+s80 = SCS0009 80 % of stall: above that it backs off after 2 s, so s80 is the usable peak. cont = rated torque.
+Reeved PIP with HLS r 5 (option B): PIP limit rises to 29.7 N but the MCP stays at 19.0 N: pinch gain +8% for a 2nd groove, a Ø3 180 deg turn (D/d 6.4) and +4 mm of width.
+
+====================================================================================================
+4. DIP bar: pin A moved off the 0.28 mm web (Ø2 pins, >= 1.6 mm wall to the joint bores)
+====================================================================================================
+pin A r 5.10 @ 28.8 deg (web to the Ø5 bush 1.60 mm), pin B r 6.60 @ -89.8 deg (web 3.10), bar 21.55 mm
+max |DIP - 0.75 PIP| = 0.43 deg; axis clearance 3.21; min transmission 36.0 deg (V2: 0.51 deg with pin A in a 0.28 mm web)
+Why the -x PIP side is a brass bush, not the 2nd MR84: with an Ø8 seat pin A must sit at r >= 6.6, and then no linkage inside the finger height reaches 0.75 (best found 3.5 deg error).
+bar arm about the DIP at PIP 45: 6.57 mm -> bar force 68 N at a 30 N tip force
+stainless 0.8 x 3.2 strip, Ø2.05 holes: net section 0.92 mm^2 -> 74 MPa (304 yield ~215, SF 2.9); bearing on the pin 43 MPa (steel on steel)
+Ø2 pin set 4 mm deep in PETG: peak edge pressure 16.3 MPa (PETG creep limit ~12, yield ~45) at 30 N tip; 5.4 MPa at 10 N
+
+====================================================================================================
+5. Stresses at the design class: strand T = 120 N (HLS3606M stall on r 5); SCS values in brackets
+====================================================================================================
+line on the brass ring: T/(R d) = 35 MPa [17] (brass ~150 MPa allowed; D/d = 31); PETG under the 0.5 mm ring: 11.3 MPa [5.3] vs ~12 creep: OK
+ring hoop stress from the wrap (thin ring on a rigid core, worst bound T/t/w): 150 MPa for the 1.6 mm MCP ring (brass yield ~300)
+axle Ø4x0.5 tube, drive, HLS stall: P 188 N per bearing, M = P x 2.95 = 556 N*mm -> 129 MPa (304 tube yield ~215 annealed / ~500 hard drawn; solid Ø4 hardened dowel 89 MPa)
+axle Ø4x0.5 tube, 20 N sideways tip: P 120 N per bearing, M = P x 2.95 = 354 N*mm -> 82 MPa (304 tube yield ~215 annealed / ~500 hard drawn; solid Ø4 hardened dowel 56 MPa)
+tongue cheek bearing pressure through the Ø5 brass sleeve (2.5 mm cheek): 15.1 MPa drive, 9.6 MPa at 20 N sideways (PETG creep ~12, yield ~45)
+MR84ZZ C0 = 139 N (NSK, via 02): MCP lug bearing s0 = 0.74 at HLS stall [1.68 SCS stall], 2.9 at HLS continuous
+MCP idler (pip flex wrap 46 deg at MCP 30): 94 N -> s0 1.49 [SCS 3.96]
+MCP idler (pip flex wrap 106 deg at MCP 90): 192 N -> s0 0.73 [SCS 1.94]
+PIP: MR84 (+x) + Ø5 brass bush (-x). Bush pressure at HLS (120 N strand, ~132 N joint load, half on the bush) 4.4 MPa on PETG
+DIP Ø4 pin in two Ø5 x 3 brass bushes: 30 N tip -> joint load ~98 N -> 3.3 MPa on PETG
+redirect dowel Ø3 (pip EXT only, 90 deg): 170 N at 120 N, but the ext strand only carries extension force + pretension (~10-20 N): 28 N
+line pressure on Ø3 dowels: 170 MPa at 120 N (hardened steel OK; D/d 6.4); bends there are 10 deg except the ext redirect
+fuse cup lip t 0.8 flat (SCS): trips at pi x 1.8 x t x tau = 68 N (line breaks at 445, crimp on doubled braid ~70-90 %)
+fuse cup lip t 1.2 on its side (HLS): trips at pi x 1.8 x t x tau = 170 N (line breaks at 445, crimp on doubled braid ~70-90 %)
+line SF at 120 N: 3.7 (bare), behind the fuse it can never see more than the trip load.
+
+====================================================================================================
+6. Decision
+====================================================================================================
+PIP: PLAIN drum (no reeving). With SCS0009 the travel budget, not the strand, is the limit, and reeving is 16 % worse
+per servo degree; with HLS the MCP (120 N strand class) limits the pinch, so reeving the PIP adds only ~9 %.
+MCP: reverse fork, fixed Ø4 tube axle, ONE MR84ZZ idler for both pip strands (the two strands' contact speeds
+are always equal, so one race is enough). pip FLEX passes on the idler's DORSAL side (wrap grows with flexion, no
+redirect, no sliding); pip EXT on the palm side with a Ø3 redirect dowel that pre-wraps it 106 deg (a strand on the
+palm side of a coaxial idler otherwise bow-strings off it after ~12 deg of MCP: SYNTHESIS item 6 as written
+does not work for the palm-side strand). MR63 needs a stepped axle; MR84 gives 0.585 coupling and still fits.
+Spools: SCS MCP r 4 / PIP r 5 / abd r 5; HLS r 5 everywhere.

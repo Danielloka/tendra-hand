@@ -1,0 +1,590 @@
+{
+ "pin_2mm_col1": {
+  "x": 11.5,
+  "y": 9.5,
+  "dia": 1.9,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "pin_2mm_col2": {
+  "x": 18.5,
+  "y": 9.5,
+  "dia": 1.95,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "pin_2mm_col3": {
+  "x": 25.5,
+  "y": 9.5,
+  "dia": 2.0,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "pin_2mm_col4": {
+  "x": 32.5,
+  "y": 9.5,
+  "dia": 2.05,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "pin_2mm_col5": {
+  "x": 39.5,
+  "y": 9.5,
+  "dia": 2.1,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "pin_2mm_col6": {
+  "x": 46.5,
+  "y": 9.5,
+  "dia": 2.2,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "pin_3mm_col1": {
+  "x": 11.5,
+  "y": 16.5,
+  "dia": 2.9,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "pin_3mm_col2": {
+  "x": 18.5,
+  "y": 16.5,
+  "dia": 2.95,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "pin_3mm_col3": {
+  "x": 25.5,
+  "y": 16.5,
+  "dia": 3.0,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "pin_3mm_col4": {
+  "x": 32.5,
+  "y": 16.5,
+  "dia": 3.05,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "pin_3mm_col5": {
+  "x": 39.5,
+  "y": 16.5,
+  "dia": 3.1,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "pin_3mm_col6": {
+  "x": 46.5,
+  "y": 16.5,
+  "dia": 3.2,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "pin_4mm_col1": {
+  "x": 11.5,
+  "y": 23.5,
+  "dia": 3.9,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "pin_4mm_col2": {
+  "x": 18.5,
+  "y": 23.5,
+  "dia": 3.95,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "pin_4mm_col3": {
+  "x": 25.5,
+  "y": 23.5,
+  "dia": 4.0,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "pin_4mm_col4": {
+  "x": 32.5,
+  "y": 23.5,
+  "dia": 4.05,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "pin_4mm_col5": {
+  "x": 39.5,
+  "y": 23.5,
+  "dia": 4.1,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "pin_4mm_col6": {
+  "x": 46.5,
+  "y": 23.5,
+  "dia": 4.2,
+  "use": "steel dowel: -0.10/-0.05 = press, 0 = snug, +0.05/+0.10 = slide, +0.20 = loose"
+ },
+ "mr84_seat_vertical_1": {
+  "x": 61,
+  "y": 11,
+  "seat_dia": 7.9,
+  "depth": 3.0,
+  "shoulder_bore": 6.75,
+  "use": "press an MR84ZZ in by hand/vice; note force and whether it falls out after 10 min"
+ },
+ "mr84_seat_vertical_2": {
+  "x": 72,
+  "y": 11,
+  "seat_dia": 7.95,
+  "depth": 3.0,
+  "shoulder_bore": 6.75,
+  "use": "press an MR84ZZ in by hand/vice; note force and whether it falls out after 10 min"
+ },
+ "mr84_seat_vertical_3": {
+  "x": 83,
+  "y": 11,
+  "seat_dia": 8.0,
+  "depth": 3.0,
+  "shoulder_bore": 6.75,
+  "use": "press an MR84ZZ in by hand/vice; note force and whether it falls out after 10 min"
+ },
+ "mr84_seat_vertical_4": {
+  "x": 94,
+  "y": 11,
+  "seat_dia": 8.05,
+  "depth": 3.0,
+  "shoulder_bore": 6.75,
+  "use": "press an MR84ZZ in by hand/vice; note force and whether it falls out after 10 min"
+ },
+ "mr84_seat_vertical_5": {
+  "x": 105,
+  "y": 11,
+  "seat_dia": 8.1,
+  "depth": 3.0,
+  "shoulder_bore": 6.75,
+  "use": "press an MR84ZZ in by hand/vice; note force and whether it falls out after 10 min"
+ },
+ "mr63_seat_vertical_1": {
+  "x": 61,
+  "y": 29,
+  "seat_dia": 5.9,
+  "depth": 2.5,
+  "shoulder_bore": 4.9
+ },
+ "mr63_seat_vertical_2": {
+  "x": 71,
+  "y": 29,
+  "seat_dia": 5.95,
+  "depth": 2.5,
+  "shoulder_bore": 4.9
+ },
+ "mr63_seat_vertical_3": {
+  "x": 81,
+  "y": 29,
+  "seat_dia": 6.0,
+  "depth": 2.5,
+  "shoulder_bore": 4.9
+ },
+ "mr63_seat_vertical_4": {
+  "x": 91,
+  "y": 29,
+  "seat_dia": 6.05,
+  "depth": 2.5,
+  "shoulder_bore": 4.9
+ },
+ "mr84_seat_horizontal_1": {
+  "x": 62,
+  "z": 6.0,
+  "seat_dia": 7.95,
+  "profile": "round",
+  "use": "same bearing: compare ovality and press force with the vertical seat"
+ },
+ "mr84_seat_horizontal_2": {
+  "x": 74,
+  "z": 6.0,
+  "seat_dia": 8.05,
+  "profile": "round",
+  "use": "same bearing: compare ovality and press force with the vertical seat"
+ },
+ "mr84_seat_horizontal_3": {
+  "x": 86,
+  "z": 6.0,
+  "seat_dia": 7.95,
+  "profile": "teardrop",
+  "use": "same bearing: compare ovality and press force with the vertical seat"
+ },
+ "mr84_seat_horizontal_4": {
+  "x": 98,
+  "z": 6.0,
+  "seat_dia": 8.05,
+  "profile": "teardrop",
+  "use": "same bearing: compare ovality and press force with the vertical seat"
+ },
+ "row_A_col1": {
+  "x": 13,
+  "y": 40.0,
+  "dia": 3.0,
+  "depth": 4.0,
+  "row": "M2 heat-set insert (OD ~3.2) hole"
+ },
+ "row_A_col2": {
+  "x": 21,
+  "y": 40.0,
+  "dia": 3.1,
+  "depth": 4.0,
+  "row": "M2 heat-set insert (OD ~3.2) hole"
+ },
+ "row_A_col3": {
+  "x": 29,
+  "y": 40.0,
+  "dia": 3.2,
+  "depth": 4.0,
+  "row": "M2 heat-set insert (OD ~3.2) hole"
+ },
+ "row_A_col4": {
+  "x": 37,
+  "y": 40.0,
+  "dia": 3.3,
+  "depth": 4.0,
+  "row": "M2 heat-set insert (OD ~3.2) hole"
+ },
+ "row_B_col1": {
+  "x": 13,
+  "y": 47.5,
+  "dia": 3.4,
+  "depth": 4.5,
+  "row": "M2.5 heat-set insert (OD ~3.6) hole"
+ },
+ "row_B_col2": {
+  "x": 21,
+  "y": 47.5,
+  "dia": 3.5,
+  "depth": 4.5,
+  "row": "M2.5 heat-set insert (OD ~3.6) hole"
+ },
+ "row_B_col3": {
+  "x": 29,
+  "y": 47.5,
+  "dia": 3.6,
+  "depth": 4.5,
+  "row": "M2.5 heat-set insert (OD ~3.6) hole"
+ },
+ "row_B_col4": {
+  "x": 37,
+  "y": 47.5,
+  "dia": 3.7,
+  "depth": 4.5,
+  "row": "M2.5 heat-set insert (OD ~3.6) hole"
+ },
+ "row_C_col1": {
+  "x": 13,
+  "y": 55.0,
+  "dia": 4.0,
+  "depth": 5.0,
+  "row": "M3 heat-set insert (OD ~4.5) hole"
+ },
+ "row_C_col2": {
+  "x": 21,
+  "y": 55.0,
+  "dia": 4.1,
+  "depth": 5.0,
+  "row": "M3 heat-set insert (OD ~4.5) hole"
+ },
+ "row_C_col3": {
+  "x": 29,
+  "y": 55.0,
+  "dia": 4.2,
+  "depth": 5.0,
+  "row": "M3 heat-set insert (OD ~4.5) hole"
+ },
+ "row_C_col4": {
+  "x": 37,
+  "y": 55.0,
+  "dia": 4.3,
+  "depth": 5.0,
+  "row": "M3 heat-set insert (OD ~4.5) hole"
+ },
+ "row_D_col1": {
+  "x": 13,
+  "y": 62.5,
+  "dia": 1.6,
+  "depth": 4.0,
+  "row": "M2: self-tap pilots 1.6/1.7/1.8 then clearance 2.2/2.4"
+ },
+ "row_D_col2": {
+  "x": 21,
+  "y": 62.5,
+  "dia": 1.7,
+  "depth": 4.0,
+  "row": "M2: self-tap pilots 1.6/1.7/1.8 then clearance 2.2/2.4"
+ },
+ "row_D_col3": {
+  "x": 29,
+  "y": 62.5,
+  "dia": 1.8,
+  "depth": 4.0,
+  "row": "M2: self-tap pilots 1.6/1.7/1.8 then clearance 2.2/2.4"
+ },
+ "row_D_col4": {
+  "x": 37,
+  "y": 62.5,
+  "dia": 2.2,
+  "depth": 4.0,
+  "row": "M2: self-tap pilots 1.6/1.7/1.8 then clearance 2.2/2.4"
+ },
+ "row_D_col5": {
+  "x": 45,
+  "y": 62.5,
+  "dia": 2.4,
+  "depth": 4.0,
+  "row": "M2: self-tap pilots 1.6/1.7/1.8 then clearance 2.2/2.4"
+ },
+ "row_E_col1": {
+  "x": 13,
+  "y": 70.0,
+  "dia": 2.1,
+  "depth": 4.0,
+  "row": "M2.5: self-tap pilots 2.1/2.2/2.3 then clearance 2.7/2.9"
+ },
+ "row_E_col2": {
+  "x": 21,
+  "y": 70.0,
+  "dia": 2.2,
+  "depth": 4.0,
+  "row": "M2.5: self-tap pilots 2.1/2.2/2.3 then clearance 2.7/2.9"
+ },
+ "row_E_col3": {
+  "x": 29,
+  "y": 70.0,
+  "dia": 2.3,
+  "depth": 4.0,
+  "row": "M2.5: self-tap pilots 2.1/2.2/2.3 then clearance 2.7/2.9"
+ },
+ "row_E_col4": {
+  "x": 37,
+  "y": 70.0,
+  "dia": 2.7,
+  "depth": 4.0,
+  "row": "M2.5: self-tap pilots 2.1/2.2/2.3 then clearance 2.7/2.9"
+ },
+ "row_E_col5": {
+  "x": 45,
+  "y": 70.0,
+  "dia": 2.9,
+  "depth": 4.0,
+  "row": "M2.5: self-tap pilots 2.1/2.2/2.3 then clearance 2.7/2.9"
+ },
+ "row_F_col1": {
+  "x": 13,
+  "y": 77.5,
+  "dia": 2.5,
+  "depth": 4.0,
+  "row": "M3: self-tap pilots 2.5/2.6/2.7 then clearance 3.2/3.4"
+ },
+ "row_F_col2": {
+  "x": 21,
+  "y": 77.5,
+  "dia": 2.6,
+  "depth": 4.0,
+  "row": "M3: self-tap pilots 2.5/2.6/2.7 then clearance 3.2/3.4"
+ },
+ "row_F_col3": {
+  "x": 29,
+  "y": 77.5,
+  "dia": 2.7,
+  "depth": 4.0,
+  "row": "M3: self-tap pilots 2.5/2.6/2.7 then clearance 3.2/3.4"
+ },
+ "row_F_col4": {
+  "x": 37,
+  "y": 77.5,
+  "dia": 3.2,
+  "depth": 4.0,
+  "row": "M3: self-tap pilots 2.5/2.6/2.7 then clearance 3.2/3.4"
+ },
+ "row_F_col5": {
+  "x": 45,
+  "y": 77.5,
+  "dia": 3.4,
+  "depth": 4.0,
+  "row": "M3: self-tap pilots 2.5/2.6/2.7 then clearance 3.2/3.4"
+ },
+ "row_G_col1": {
+  "x": 13,
+  "y": 85.0,
+  "dia": 1.6,
+  "depth": 6.0,
+  "row": "16G stainless tie-hole liner (OD 1.65): 1.60/1.65/1.70/1.75"
+ },
+ "row_G_col2": {
+  "x": 21,
+  "y": 85.0,
+  "dia": 1.65,
+  "depth": 6.0,
+  "row": "16G stainless tie-hole liner (OD 1.65): 1.60/1.65/1.70/1.75"
+ },
+ "row_G_col3": {
+  "x": 29,
+  "y": 85.0,
+  "dia": 1.7,
+  "depth": 6.0,
+  "row": "16G stainless tie-hole liner (OD 1.65): 1.60/1.65/1.70/1.75"
+ },
+ "row_G_col4": {
+  "x": 37,
+  "y": 85.0,
+  "dia": 1.75,
+  "depth": 6.0,
+  "row": "16G stainless tie-hole liner (OD 1.65): 1.60/1.65/1.70/1.75"
+ },
+ "tunnel_x_1": {
+  "y": 59.5,
+  "dia": 2.2,
+  "profile": "round",
+  "length": 26,
+  "use": "push 2.0 OD PTFE tube (d=2.2) or 0.36 line / 1 mm wire (d=1.2) through; does it pass freely?"
+ },
+ "tunnel_x_2": {
+  "y": 65.0,
+  "dia": 2.2,
+  "profile": "teardrop",
+  "length": 26,
+  "use": "push 2.0 OD PTFE tube (d=2.2) or 0.36 line / 1 mm wire (d=1.2) through; does it pass freely?"
+ },
+ "tunnel_x_3": {
+  "y": 70.5,
+  "dia": 2.2,
+  "profile": "diamond",
+  "length": 26,
+  "use": "push 2.0 OD PTFE tube (d=2.2) or 0.36 line / 1 mm wire (d=1.2) through; does it pass freely?"
+ },
+ "tunnel_x_4": {
+  "y": 76.0,
+  "dia": 1.2,
+  "profile": "teardrop",
+  "length": 26,
+  "use": "push 2.0 OD PTFE tube (d=2.2) or 0.36 line / 1 mm wire (d=1.2) through; does it pass freely?"
+ },
+ "tunnel_x_5": {
+  "y": 81.5,
+  "dia": 1.2,
+  "profile": "round",
+  "length": 26,
+  "use": "push 2.0 OD PTFE tube (d=2.2) or 0.36 line / 1 mm wire (d=1.2) through; does it pass freely?"
+ },
+ "tower_vertical_2.2": {
+  "x": 90,
+  "y": 61.5,
+  "dia": 2.2,
+  "length": 10
+ },
+ "tower_vertical_1.2": {
+  "x": 90,
+  "y": 69.5,
+  "dia": 1.2,
+  "length": 10
+ },
+ "curved_tunnel_R15": {
+  "centre": [
+   97,
+   57
+  ],
+  "R": 15.0,
+  "dia": 2.2,
+  "profile": "teardrop",
+  "angle": 90,
+  "use": "push 2.0 OD PTFE tube through the 90 degree bend; also a 1.0 mm steel wire"
+ },
+ "snap_groove_straight_1": {
+  "y": 89.5,
+  "mouth": 1.6,
+  "circle": 2.05,
+  "length": 28,
+  "use": "press a 2.0 OD PTFE tube in with a thumb: snap or crush/rock out? mouth 1.6 holds, 1.8 may fall out"
+ },
+ "snap_groove_straight_2": {
+  "y": 94.5,
+  "mouth": 1.8,
+  "circle": 2.05,
+  "length": 28,
+  "use": "press a 2.0 OD PTFE tube in with a thumb: snap or crush/rock out? mouth 1.6 holds, 1.8 may fall out"
+ },
+ "snap_groove_curved_R15": {
+  "centre": [
+   114,
+   98
+  ],
+  "R": 15.0,
+  "mouth": 1.7,
+  "circle": 2.05,
+  "use": "press the PTFE tube along the whole curve; does it hold when you turn the plate upside down?"
+ },
+ "drum_groove_1": {
+  "width": 0.8,
+  "depth": 0.5,
+  "z": 1.7,
+  "use": "does a 0.36 braid sit in it? 7 mm drum radius = real drum"
+ },
+ "drum_groove_2": {
+  "width": 1.0,
+  "depth": 0.5,
+  "z": 3.7,
+  "use": "does a 0.36 braid sit in it? 7 mm drum radius = real drum"
+ },
+ "drum_groove_3": {
+  "width": 1.2,
+  "depth": 0.5,
+  "z": 5.7,
+  "use": "does a 0.36 braid sit in it? 7 mm drum radius = real drum"
+ },
+ "drum_radial_tie_hole": {
+  "dia": 1.7,
+  "profile": "teardrop",
+  "use": "does a 16G liner (OD 1.65) push in? does the knot seat?"
+ },
+ "fin_0.4": {
+  "thickness": 0.4,
+  "height": 10,
+  "length": 10,
+  "use": "0.4 = single wall; 1.2 = 3 walls at 0.4; need >= 1.6 for a load-bearing wall"
+ },
+ "fin_0.8": {
+  "thickness": 0.8,
+  "height": 10,
+  "length": 10,
+  "use": "0.4 = single wall; 1.2 = 3 walls at 0.4; need >= 1.6 for a load-bearing wall"
+ },
+ "fin_1.2": {
+  "thickness": 1.2,
+  "height": 10,
+  "length": 10,
+  "use": "0.4 = single wall; 1.2 = 3 walls at 0.4; need >= 1.6 for a load-bearing wall"
+ },
+ "fin_1.6": {
+  "thickness": 1.6,
+  "height": 10,
+  "length": 10,
+  "use": "0.4 = single wall; 1.2 = 3 walls at 0.4; need >= 1.6 for a load-bearing wall"
+ },
+ "fin_2.0": {
+  "thickness": 2.0,
+  "height": 10,
+  "length": 10,
+  "use": "0.4 = single wall; 1.2 = 3 walls at 0.4; need >= 1.6 for a load-bearing wall"
+ },
+ "bars": {
+  "flat_XY": [
+   [
+    118,
+    42
+   ],
+   [
+    118,
+    48
+   ]
+  ],
+  "upright_Z": [
+   [
+    118,
+    56
+   ],
+   [
+    118,
+    66
+   ]
+  ],
+  "use": "clamp the foot/plate, bend the bar until it breaks; the Z bar breaks along a layer line at a fraction of the force of the flat bar. Record the angle at break and whether it split on a layer."
+ },
+ "_meta": {
+  "plate": [
+   140.0,
+   98.0,
+   0.6
+  ],
+  "volume_cm3": 39.8,
+  "print": "PETG 0.2 mm layers, 0.4 nozzle, 3 walls, 15 % infill, no supports"
+ }
+}

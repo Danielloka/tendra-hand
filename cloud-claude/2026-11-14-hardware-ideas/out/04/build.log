@@ -1,0 +1,2 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+coupon volume 39.80 cm3 (~50.5 g solid), bbox 142.0 x 98.0 x 12.6; valid=True

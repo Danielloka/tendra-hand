@@ -1,0 +1,87 @@
+
+====================================================================================================
+1. Joint friction (brass bushes, bar pins) -> eta_joint
+====================================================================================================
+mu 0.15: PIP bush loss 0.023, DIP bushes + bar pins 0.029 -> eta_PIP_joint 0.949
+mu 0.30: PIP bush loss 0.046, DIP bushes + bar pins 0.058 -> eta_PIP_joint 0.899
+used (greased, mu 0.15): eta_PIP_joint 0.949, eta_MCP_joint 0.998
+
+====================================================================================================
+2. Route efficiency (sliding deg on steel, rollers)
+====================================================================================================
+mcp_flex bench           eta_route 1.000
+pip_flex bench           eta_route 0.990
+mcp_flex bench abd15     eta_route 0.969
+pip_flex bench abd15     eta_route 0.959
+mcp_flex hand            eta_route 0.949
+pip_flex hand            eta_route 0.940
+
+====================================================================================================
+3. Fingertip force with every moment arm (pinch MCP 30 / PIP 45; straight push)
+====================================================================================================
+terms: PIP eta*Tp*R - T0*R >= F*Lpd ; MCP eta*(Tm*R + s*Tp*rho) - T0*R - s*T0*rho >= F*Lmcp, s = +1 palm side, -1 dorsal
+bench        SCS0009   stall strand cap   45.2 N | pinch   5.9 N (PIP, MCP margin x1.6) | straight   5.1 N (MCP, MCP margin x1.00)
+bench        SCS0009   s80   strand cap   36.2 N | pinch   4.6 N (PIP, MCP margin x1.6) | straight   3.9 N (MCP, MCP margin x1.00)
+bench        SCS0009   cont  strand cap   14.8 N | pinch   1.4 N (PIP, MCP margin x1.6) | straight   1.2 N (MCP, MCP margin x1.00)
+bench        HLS3606M  stall strand cap  118.0 N | pinch  16.6 N (PIP, MCP margin x1.6) | straight  14.2 N (MCP, MCP margin x1.00)
+bench        HLS3606M  s80   strand cap   94.4 N | pinch  13.1 N (PIP, MCP margin x1.6) | straight  11.2 N (MCP, MCP margin x1.00)
+bench        HLS3606M  cont  strand cap   30.0 N | pinch   3.7 N (PIP, MCP margin x1.6) | straight   3.1 N (MCP, MCP margin x1.00)
+hand         SCS0009   stall strand cap   45.2 N | pinch   5.6 N (PIP, MCP margin x1.6) | straight   4.8 N (MCP, MCP margin x1.00)
+hand         SCS0009   s80   strand cap   36.2 N | pinch   4.3 N (PIP, MCP margin x1.6) | straight   3.7 N (MCP, MCP margin x1.00)
+hand         SCS0009   cont  strand cap   14.8 N | pinch   1.3 N (PIP, MCP margin x1.6) | straight   1.1 N (MCP, MCP margin x1.00)
+hand         HLS3606M  stall strand cap  118.0 N | pinch  15.7 N (PIP, MCP margin x1.6) | straight  13.5 N (MCP, MCP margin x1.00)
+hand         HLS3606M  s80   strand cap   94.4 N | pinch  12.4 N (PIP, MCP margin x1.6) | straight  10.6 N (MCP, MCP margin x1.00)
+hand         HLS3606M  cont  strand cap   30.0 N | pinch   3.4 N (PIP, MCP margin x1.6) | straight   3.0 N (MCP, MCP margin x1.00)
+bench abd15  SCS0009   stall strand cap   45.2 N | pinch   5.7 N (PIP, MCP margin x1.6) | straight   4.9 N (MCP, MCP margin x1.00)
+bench abd15  SCS0009   s80   strand cap   36.2 N | pinch   4.4 N (PIP, MCP margin x1.6) | straight   3.8 N (MCP, MCP margin x1.00)
+bench abd15  SCS0009   cont  strand cap   14.8 N | pinch   1.4 N (PIP, MCP margin x1.6) | straight   1.2 N (MCP, MCP margin x1.00)
+bench abd15  HLS3606M  stall strand cap  118.0 N | pinch  16.1 N (PIP, MCP margin x1.6) | straight  13.8 N (MCP, MCP margin x1.00)
+bench abd15  HLS3606M  s80   strand cap   94.4 N | pinch  12.7 N (PIP, MCP margin x1.6) | straight  10.9 N (MCP, MCP margin x1.00)
+bench abd15  HLS3606M  cont  strand cap   30.0 N | pinch   3.5 N (PIP, MCP margin x1.6) | straight   3.0 N (MCP, MCP margin x1.00)
+
+Reproducing the review (07 geometry: dorsal pip flex, rho 4.235, r_MCP 4, eta_route 0.954/0.959, no joint friction, no T0):
+  07 SCS0009 pinch: 5.6 N (07 claimed 6.8)
+  07 SCS0009 straight: 3.6 N (07 claimed 4.8)
+  07 HLS3606M pinch: 11.7 N (07 claimed 17.6)
+  07 HLS3606M straight: 7.4 N (07 claimed 10.1)
+
+====================================================================================================
+4. Servo travel (joint-equivalent degrees, then servo degrees on r 5, G = 1.447)
+====================================================================================================
+mcp_abd   own  30.0 + couplings   0.0 =   30.0 joint-deg ->   43.4 servo deg; left for wrist on SCS0009 (285):  241.6 deg = 21.08 mm of strand
+mcp_flex  own 100.0 + couplings  24.9 =  124.9 joint-deg ->  180.7 servo deg; left for wrist on SCS0009 (285):  104.3 deg = 9.10 mm of strand
+pip       own 100.0 + couplings  48.4 =  148.4 joint-deg ->  214.8 servo deg; left for wrist on SCS0009 (285):   70.2 deg = 6.13 mm of strand
+07 (dorsal MR84 idler, MCP r 4): pip 235 servo deg before wrist, MCP 280 incl. 3.6 mm wrist (review: infeasible with 09).
+09's eye law (review): wrist travel ~ 9.7|x| + 17.4|y| servo deg on r 5 for an eye at (x, y) mm.
+
+====================================================================================================
+5. Fuse cup sized to a real crimp (2 x 2 mm crimp tube, ID ~1.4, OD 2.0, L 2.0; doubled PE#8 = 0.94 fits)
+====================================================================================================
+bead footprint 2.6 x 1.1 -> shear perimeter 7.4 mm; chamber 2.9 x 2.1 x 2.3 deep
+SCS0009: 80 % strand 36.2 N, need >= 54.2; lip t 0.6 printed flat (tau 15.0) -> trip 67 N = 1.84 x the 80 % cap (1.38 x at -25 % scatter), 1.47 x stall
+HLS3606M: 80 % strand 94.4 N, need >= 141.6; lip t 0.8 printed on its side (tau 25.0) -> trip 148 N = 1.57 x the 80 % cap (1.18 x at -25 % scatter), 1.25 x stall
+crimp on doubled PE#8 holds ~70-90 % of 445 N = 312 N or more >= 2 x the HLS trip: the cup trips first.
+share reaching the cup after the drum wrap (56 deg on brass, mu 0.12): e^-0.12*0.98 = 0.89 -> external push that trips the PIP
+  SCS0009: strand 75 N -> tip push 11.7 N against a holding finger
+  HLS3606M: strand 166 N -> tip push 26.0 N against a holding finger
+
+====================================================================================================
+6. MCP axle: Ø3 x 0.5 inner tube (wires, MR63 idler) + Ø4 x 0.5 sleeves (MR84s, cheeks), slot on the neutral axis
+====================================================================================================
+07 tube Ø4x0.5 unslotted                       Z  4.30 mm^3 ->   129 MPa (HLS stall drive),   82 MPa (20 N sideways tip)
+07 tube with -z slot (review: Z 2.62)          Z  2.62 mm^3 ->   212 MPa (HLS stall drive),  135 MPa (20 N sideways tip)
+12 nested Ø4x0.5 + Ø3x0.5, no slot             Z  5.89 mm^3 ->    94 MPa (HLS stall drive),   60 MPa (20 N sideways tip)
+12 nested, 1.6 mm slot at +y (neutral axis)    Z  5.70 mm^3 ->    98 MPa (HLS stall drive),   62 MPa (20 N sideways tip)
+the slot sits where the bending stress is ~0 (loads are along z: strand pulls and the sideways-tip couple), so no Kt 2 there.
+
+====================================================================================================
+7. Rolling elements at the 120 N class (C0 from NSK via 02: MR63 74 N, MR84 139 N; verify)
+====================================================================================================
+MR63 redirect roller (110 deg)         SCS 80 %:    59 N -> s0 1.25
+MR63 redirect roller (110 deg)         HLS 80 %:   155 N -> s0 0.48
+MR63 idler, pinch (MCP 30: 84 deg)     SCS 80 %:    48 N -> s0 1.53
+MR63 idler, pinch (MCP 30: 84 deg)     HLS 80 %:   126 N -> s0 0.59
+MR84 MCP lug bearing                   SCS 80 %:    63 N -> s0 2.22
+MR84 MCP lug bearing                   HLS 80 %:   150 N -> s0 0.93
+-> SCS: every rolling element s0 >= 1. HLS: MR63s s0 ~0.4: HLS runs need F683ZZ/MR83 (3x8x3, verify C0) or a
+   hardened Ø3 dowel redirect (sliding 110 deg, eta 0.79 -> pinch -21 %). MR84 lugs as in 07 (torque cap).

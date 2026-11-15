@@ -1,0 +1,577 @@
+{
+ "sensors": [
+  {
+   "id": "index_mcp_abd",
+   "kind": "angle",
+   "chip": "TMAG5273A1",
+   "addr": 53,
+   "bus": "index",
+   "rate": 500
+  },
+  {
+   "id": "index_mcp_flex",
+   "kind": "angle",
+   "chip": "TMAG5273B1",
+   "addr": 34,
+   "bus": "index",
+   "rate": 500
+  },
+  {
+   "id": "index_pip",
+   "kind": "angle",
+   "chip": "TMAG5273C1",
+   "addr": 120,
+   "bus": "index",
+   "rate": 500
+  },
+  {
+   "id": "index_dip",
+   "kind": "angle",
+   "chip": "TMAG5273D1",
+   "addr": 68,
+   "bus": "index",
+   "rate": 500
+  },
+  {
+   "id": "index_tip",
+   "kind": "tip3",
+   "chip": "MLX90393-014 (0x18)",
+   "addr": 24,
+   "bus": "index",
+   "rate": 200
+  },
+  {
+   "id": "index_pad_prox",
+   "kind": "pad",
+   "chip": "BMP581 (SDO low)",
+   "addr": 70,
+   "bus": "index",
+   "rate": 200
+  },
+  {
+   "id": "index_pad_mid",
+   "kind": "pad",
+   "chip": "BMP581 (SDO high)",
+   "addr": 71,
+   "bus": "index",
+   "rate": 200
+  },
+  {
+   "id": "middle_mcp_abd",
+   "kind": "angle",
+   "chip": "TMAG5273A1",
+   "addr": 53,
+   "bus": "middle",
+   "rate": 500
+  },
+  {
+   "id": "middle_mcp_flex",
+   "kind": "angle",
+   "chip": "TMAG5273B1",
+   "addr": 34,
+   "bus": "middle",
+   "rate": 500
+  },
+  {
+   "id": "middle_pip",
+   "kind": "angle",
+   "chip": "TMAG5273C1",
+   "addr": 120,
+   "bus": "middle",
+   "rate": 500
+  },
+  {
+   "id": "middle_dip",
+   "kind": "angle",
+   "chip": "TMAG5273D1",
+   "addr": 68,
+   "bus": "middle",
+   "rate": 500
+  },
+  {
+   "id": "middle_tip",
+   "kind": "tip3",
+   "chip": "MLX90393-014 (0x18)",
+   "addr": 24,
+   "bus": "middle",
+   "rate": 200
+  },
+  {
+   "id": "middle_pad_prox",
+   "kind": "pad",
+   "chip": "BMP581 (SDO low)",
+   "addr": 70,
+   "bus": "middle",
+   "rate": 200
+  },
+  {
+   "id": "middle_pad_mid",
+   "kind": "pad",
+   "chip": "BMP581 (SDO high)",
+   "addr": 71,
+   "bus": "middle",
+   "rate": 200
+  },
+  {
+   "id": "ring_mcp_abd",
+   "kind": "angle",
+   "chip": "TMAG5273A1",
+   "addr": 53,
+   "bus": "ring",
+   "rate": 500
+  },
+  {
+   "id": "ring_mcp_flex",
+   "kind": "angle",
+   "chip": "TMAG5273B1",
+   "addr": 34,
+   "bus": "ring",
+   "rate": 500
+  },
+  {
+   "id": "ring_pip",
+   "kind": "angle",
+   "chip": "TMAG5273C1",
+   "addr": 120,
+   "bus": "ring",
+   "rate": 500
+  },
+  {
+   "id": "ring_dip",
+   "kind": "angle",
+   "chip": "TMAG5273D1",
+   "addr": 68,
+   "bus": "ring",
+   "rate": 500
+  },
+  {
+   "id": "ring_tip",
+   "kind": "tip3",
+   "chip": "MLX90393-014 (0x18)",
+   "addr": 24,
+   "bus": "ring",
+   "rate": 200
+  },
+  {
+   "id": "ring_pad_prox",
+   "kind": "pad",
+   "chip": "BMP581 (SDO low)",
+   "addr": 70,
+   "bus": "ring",
+   "rate": 200
+  },
+  {
+   "id": "ring_pad_mid",
+   "kind": "pad",
+   "chip": "BMP581 (SDO high)",
+   "addr": 71,
+   "bus": "ring",
+   "rate": 200
+  },
+  {
+   "id": "little_mcp_abd",
+   "kind": "angle",
+   "chip": "TMAG5273A1",
+   "addr": 53,
+   "bus": "little",
+   "rate": 500
+  },
+  {
+   "id": "little_mcp_flex",
+   "kind": "angle",
+   "chip": "TMAG5273B1",
+   "addr": 34,
+   "bus": "little",
+   "rate": 500
+  },
+  {
+   "id": "little_pip",
+   "kind": "angle",
+   "chip": "TMAG5273C1",
+   "addr": 120,
+   "bus": "little",
+   "rate": 500
+  },
+  {
+   "id": "little_dip",
+   "kind": "angle",
+   "chip": "TMAG5273D1",
+   "addr": 68,
+   "bus": "little",
+   "rate": 500
+  },
+  {
+   "id": "little_tip",
+   "kind": "tip3",
+   "chip": "MLX90393-014 (0x18)",
+   "addr": 24,
+   "bus": "little",
+   "rate": 200
+  },
+  {
+   "id": "little_pad_prox",
+   "kind": "pad",
+   "chip": "BMP581 (SDO low)",
+   "addr": 70,
+   "bus": "little",
+   "rate": 200
+  },
+  {
+   "id": "little_pad_mid",
+   "kind": "pad",
+   "chip": "BMP581 (SDO high)",
+   "addr": 71,
+   "bus": "little",
+   "rate": 200
+  },
+  {
+   "id": "thumb_cmc_rot",
+   "kind": "angle",
+   "chip": "TMAG5273A1",
+   "addr": 53,
+   "bus": "thumb",
+   "rate": 500
+  },
+  {
+   "id": "thumb_cmc_flex",
+   "kind": "angle",
+   "chip": "TMAG5273B1",
+   "addr": 34,
+   "bus": "thumb",
+   "rate": 500
+  },
+  {
+   "id": "thumb_mcp_flex",
+   "kind": "angle",
+   "chip": "TMAG5273C1",
+   "addr": 120,
+   "bus": "thumb",
+   "rate": 500
+  },
+  {
+   "id": "thumb_ip",
+   "kind": "angle",
+   "chip": "TMAG5273D1",
+   "addr": 68,
+   "bus": "thumb",
+   "rate": 500
+  },
+  {
+   "id": "thumb_tip",
+   "kind": "tip3",
+   "chip": "MLX90393-014 (0x18)",
+   "addr": 24,
+   "bus": "thumb",
+   "rate": 200
+  },
+  {
+   "id": "thumb_pad_prox",
+   "kind": "pad",
+   "chip": "BMP581 (SDO low)",
+   "addr": 70,
+   "bus": "thumb",
+   "rate": 200
+  },
+  {
+   "id": "thumb_pad_meta",
+   "kind": "pad",
+   "chip": "BMP581 (SDO high)",
+   "addr": 71,
+   "bus": "thumb",
+   "rate": 200
+  },
+  {
+   "id": "palm_thenar",
+   "kind": "pad",
+   "chip": "BMP581 (SDO low)",
+   "addr": 70,
+   "bus": "palm_a",
+   "rate": 200
+  },
+  {
+   "id": "palm_hypothenar",
+   "kind": "pad",
+   "chip": "BMP581 (SDO high)",
+   "addr": 71,
+   "bus": "palm_a",
+   "rate": 200
+  },
+  {
+   "id": "palm_centre",
+   "kind": "pad",
+   "chip": "BMP581 (SDO low)",
+   "addr": 70,
+   "bus": "palm_b",
+   "rate": 200
+  },
+  {
+   "id": "palm_distal",
+   "kind": "pad",
+   "chip": "BMP581 (SDO high)",
+   "addr": 71,
+   "bus": "palm_b",
+   "rate": 200
+  },
+  {
+   "id": "palm_tof",
+   "kind": "range",
+   "chip": "VL53L1X (0x29)",
+   "addr": 41,
+   "bus": "palm_a",
+   "rate": 50
+  }
+ ],
+ "timing_pct": {
+  "index@400k": 40.8,
+  "middle@400k": 40.8,
+  "ring@400k": 40.8,
+  "little@400k": 40.8,
+  "thumb@400k": 40.8,
+  "palm_a@400k": 7.6,
+  "palm_b@400k": 6.6,
+  "palm_a@1000k": 3.4,
+  "palm_b@1000k": 3.0
+ },
+ "link": {
+  "frame_B": 110,
+  "rate_Hz": 500,
+  "baud": 2000000,
+  "load": 0.275
+ },
+ "fatigue": [
+  {
+   "joint": "finger dip (pin bore -x end to radial x +3.2)",
+   "wire": "38 AWG PTFE (7x0.04), OD 0.30",
+   "range_deg": 76.0,
+   "L_mm": 9.0,
+   "strain_pct": 0.049,
+   "ok": true
+  },
+  {
+   "joint": "finger dip (pin bore -x end to radial x +3.2)",
+   "wire": "36 AWG silicone (7x0.05), OD 0.50",
+   "range_deg": 76.0,
+   "L_mm": 9.0,
+   "strain_pct": 0.136,
+   "ok": true
+  },
+  {
+   "joint": "finger pip (pin bore -x end -5.65 to radial x +3.6)",
+   "wire": "38 AWG PTFE (7x0.04), OD 0.30",
+   "range_deg": 100.0,
+   "L_mm": 9.2,
+   "strain_pct": 0.081,
+   "ok": true
+  },
+  {
+   "joint": "finger pip (pin bore -x end -5.65 to radial x +3.6)",
+   "wire": "36 AWG silicone (7x0.05), OD 0.50",
+   "range_deg": 100.0,
+   "L_mm": 9.2,
+   "strain_pct": 0.225,
+   "ok": false
+  },
+  {
+   "joint": "finger mcp (axle bore radial x +3.0 to -x end -7.4)",
+   "wire": "38 AWG PTFE (7x0.04), OD 0.30",
+   "range_deg": 100.0,
+   "L_mm": 10.4,
+   "strain_pct": 0.063,
+   "ok": true
+  },
+  {
+   "joint": "finger mcp (axle bore radial x +3.0 to -x end -7.4)",
+   "wire": "36 AWG silicone (7x0.05), OD 0.50",
+   "range_deg": 100.0,
+   "L_mm": 10.4,
+   "strain_pct": 0.176,
+   "ok": true
+  },
+  {
+   "joint": "finger abd (palmar stub \u00d83 tube, 6.8 long)",
+   "wire": "38 AWG PTFE (7x0.04), OD 0.30",
+   "range_deg": 30.0,
+   "L_mm": 6.0,
+   "strain_pct": 0.017,
+   "ok": true
+  },
+  {
+   "joint": "finger abd (palmar stub \u00d83 tube, 6.8 long)",
+   "wire": "36 AWG silicone (7x0.05), OD 0.50",
+   "range_deg": 30.0,
+   "L_mm": 6.0,
+   "strain_pct": 0.048,
+   "ok": true
+  },
+  {
+   "joint": "thumb ip / mcp (same module as the pip)",
+   "wire": "38 AWG PTFE (7x0.04), OD 0.30",
+   "range_deg": 100.0,
+   "L_mm": 9.0,
+   "strain_pct": 0.085,
+   "ok": true
+  },
+  {
+   "joint": "thumb ip / mcp (same module as the pip)",
+   "wire": "36 AWG silicone (7x0.05), OD 0.50",
+   "range_deg": 100.0,
+   "L_mm": 9.0,
+   "strain_pct": 0.235,
+   "ok": false
+  },
+  {
+   "joint": "thumb cmc_flex / cmc_rot (\u00d85 hollow pin, 10 mm)",
+   "wire": "38 AWG PTFE (7x0.04), OD 0.30",
+   "range_deg": 141.0,
+   "L_mm": 10.0,
+   "strain_pct": 0.136,
+   "ok": true
+  },
+  {
+   "joint": "thumb cmc_flex / cmc_rot (\u00d85 hollow pin, 10 mm)",
+   "wire": "36 AWG silicone (7x0.05), OD 0.50",
+   "range_deg": 141.0,
+   "L_mm": 10.0,
+   "strain_pct": 0.378,
+   "ok": false
+  },
+  {
+   "joint": "wrist flex (\u00d85 hollow pin, bore 2.4, 6 wires)",
+   "wire": "38 AWG PTFE (7x0.04), OD 0.30",
+   "range_deg": 100.0,
+   "L_mm": 9.0,
+   "strain_pct": 0.169,
+   "ok": true
+  },
+  {
+   "joint": "wrist flex (\u00d85 hollow pin, bore 2.4, 6 wires)",
+   "wire": "36 AWG silicone (7x0.05), OD 0.50",
+   "range_deg": 100.0,
+   "L_mm": 9.0,
+   "strain_pct": 0.469,
+   "ok": false
+  },
+  {
+   "joint": "wrist dev (\u00d85 hollow pin, bore 2.4, 6 wires)",
+   "wire": "38 AWG PTFE (7x0.04), OD 0.30",
+   "range_deg": 50.0,
+   "L_mm": 9.0,
+   "strain_pct": 0.042,
+   "ok": true
+  },
+  {
+   "joint": "wrist dev (\u00d85 hollow pin, bore 2.4, 6 wires)",
+   "wire": "36 AWG silicone (7x0.05), OD 0.50",
+   "range_deg": 50.0,
+   "L_mm": 9.0,
+   "strain_pct": 0.117,
+   "ok": true
+  }
+ ],
+ "power_mA": 112.4,
+ "bom": [
+  {
+   "item": "TMAG5273 A1/B1/C1/D1 bare chip (5 of each variant + spares)",
+   "qty": 20,
+   "eur": 1.6,
+   "src": "M"
+  },
+  {
+   "item": "MLX90393 QFN -014 bare chip",
+   "qty": 5,
+   "eur": 4.5,
+   "src": "M"
+  },
+  {
+   "item": "BMP581 bare chip",
+   "qty": 14,
+   "eur": 2.5,
+   "src": "M"
+  },
+  {
+   "item": "VL53L1X module (palm range)",
+   "qty": 1,
+   "eur": 4.0,
+   "src": "05 [bg]"
+  },
+  {
+   "item": "Diametric magnets \u00d82 x 1.5 + \u00d83 x 1 N45 (packs of 50)",
+   "qty": 1,
+   "eur": 12.0,
+   "src": "M"
+  },
+  {
+   "item": "Open full-ceramic ZrO2 MR84 4x8x2 (8) + MR63 (4), sensor side",
+   "qty": 12,
+   "eur": 4.5,
+   "src": "M"
+  },
+  {
+   "item": "Axial magnet \u00d83 x 1 N42 (tips, pack 20)",
+   "qty": 1,
+   "eur": 4.0,
+   "src": "M"
+  },
+  {
+   "item": "Sensor boards: 21 x 4.6 mm joint, 5 tip, 14 pad (one JLCPCB 0.6 mm panel, 5 copies min)",
+   "qty": 1,
+   "eur": 18.0,
+   "src": "M (10-review: setup ~25-40 incl. assembly)"
+  },
+  {
+   "item": "RP2040-Zero",
+   "qty": 1,
+   "eur": 4.0,
+   "src": "14 V2"
+  },
+  {
+   "item": "Palm hub carrier PCB (or perfboard)",
+   "qty": 1,
+   "eur": 6.0,
+   "src": "M"
+  },
+  {
+   "item": "3.3 V LDO 300 mA (on the hub) + caps",
+   "qty": 1,
+   "eur": 1.0,
+   "src": "M"
+  },
+  {
+   "item": "SN65HVD / MAX3485 RS-485 pair (optional, if the UART is noisy)",
+   "qty": 2,
+   "eur": 1.5,
+   "src": "M"
+  },
+  {
+   "item": "38 AWG PTFE stranded wire, 4 colours x 5 m",
+   "qty": 1,
+   "eur": 12.0,
+   "src": "M"
+  },
+  {
+   "item": "6-core 36 AWG silicone cable 1 m (wrist link)",
+   "qty": 1,
+   "eur": 4.0,
+   "src": "M"
+  },
+  {
+   "item": "JST SH 1.0 4-pin pigtail pairs (fingers) + 6-pin (wrist)",
+   "qty": 7,
+   "eur": 0.6,
+   "src": "14 V2 / M"
+  },
+  {
+   "item": "Silicone (Dragon Skin 20 trial kit, shared with skins)",
+   "qty": 0,
+   "eur": 35.0,
+   "src": "05 (already budgeted)"
+  },
+  {
+   "item": "Brass rod \u00d83 + 316 \u00d82 pins (non-magnetic pins A/B, abd stubs)",
+   "qty": 1,
+   "eur": 5.0,
+   "src": "M"
+  }
+ ],
+ "total_eur": 221
+}

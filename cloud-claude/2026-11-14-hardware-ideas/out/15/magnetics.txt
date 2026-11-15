@@ -1,0 +1,44 @@
+====================================================================================================
+1-2. Own magnet field at the Hall element; MR84ZZ effects (on-axis chip)
+====================================================================================================
+Model: Br 1.32 T (N45), magnet axis = joint axis (x). Hall element 0.45 mm under the chip face (SOT-23: verify).
+MR84ZZ: inner race r 2.0-2.6, outer r 3.4-4.0, 7 balls Ø1.0 on r 3.0, steel shields; chi_e 2.9 (assumed).
+{"name": "A 07 MCP as drawn (magnet inside race, chip face 0.4)", "magnet": "\u00d83.0 x 2.0 diametric N45 (Br 1.32 T)", "x_mag": [5.2, 7.2], "x_sensor": 8.05, "gap_face_to_element": 0.85, "B_inplane_mT": 129.3, "B_axial_mT": 0.0, "err_no_steel_deg": 0.0, "B_inplane_with_MR84_mT": 64.8, "shunt_fraction": 0.499, "err_with_MR84_ball_ripple_deg": 0.531, "non_repeatable_cage_deg": 0.0, "H_at_outer_race_kA_m": 34.3, "hysteresis_bound_deg": 2.503}
+{"name": "B 15 plan at the MCP: \u00d83x1.5 in the axle end, die gap 1.5 (magnet face 1.0 proud of the race end)", "magnet": "\u00d83.0 x 1.5 diametric N45 (Br 1.32 T)", "x_mag": [6.9, 8.4], "x_sensor": 9.9, "gap_face_to_element": 1.5, "B_inplane_mT": 61.8, "B_axial_mT": 0.0, "err_no_steel_deg": 0.0, "B_inplane_with_MR84_mT": 41.6, "shunt_fraction": 0.327, "err_with_MR84_ball_ripple_deg": 0.135, "non_repeatable_cage_deg": 0.0, "H_at_outer_race_kA_m": 19.6, "hysteresis_bound_deg": 2.865}
+{"name": "C magnet face 2.0 proud, \u00d83x1.5, die gap 1.5", "magnet": "\u00d83.0 x 1.5 diametric N45 (Br 1.32 T)", "x_mag": [7.9, 9.4], "x_sensor": 10.9, "gap_face_to_element": 1.5, "B_inplane_mT": 61.8, "B_axial_mT": 0.0, "err_no_steel_deg": 0.0, "B_inplane_with_MR84_mT": 54.7, "shunt_fraction": 0.115, "err_with_MR84_ball_ripple_deg": 0.01, "non_repeatable_cage_deg": 0.0, "H_at_outer_race_kA_m": 13.2, "hysteresis_bound_deg": 1.495}
+{"name": "D no steel (brass bush / ZrO2 MR84), \u00d83x1.5, die gap 1.5", "magnet": "\u00d83.0 x 1.5 diametric N45 (Br 1.32 T)", "x_mag": [5.0, 6.5], "x_sensor": 8.0, "gap_face_to_element": 1.5, "B_inplane_mT": 61.8, "B_axial_mT": 0.0, "err_no_steel_deg": 0.0}
+{"name": "E abd stub end, \u00d83x1, die gap 1.5", "magnet": "\u00d83.0 x 1.0 diametric N45 (Br 1.32 T)", "x_mag": [0.0, 1.0], "x_sensor": 2.5, "gap_face_to_element": 1.5, "B_inplane_mT": 49.6, "B_axial_mT": 0.0, "err_no_steel_deg": 0.0}
+{"name": "F = B with the chip 0.15 mm off axis", "magnet": "\u00d83.0 x 1.5 diametric N45 (Br 1.32 T)", "x_mag": [6.9, 8.4], "x_sensor": 9.9, "gap_face_to_element": 1.5, "B_inplane_mT": 61.4, "B_axial_mT": 8.7, "err_no_steel_deg": 0.123, "B_inplane_with_MR84_mT": 41.4, "shunt_fraction": 0.326, "err_with_MR84_ball_ripple_deg": 0.293, "non_repeatable_cage_deg": 0.0, "H_at_outer_race_kA_m": 19.6, "hysteresis_bound_deg": 2.857}
+
+====================================================================================================
+3. Crosstalk between all magnets of the hand (dipole far field)
+====================================================================================================
+{"chip": "index_mcp_flex", "B_others_mT": 0.254, "worst": "middle_mcp_flex", "angle_err_bound_deg": 0.349}
+{"chip": "index_pip", "B_others_mT": 0.242, "worst": "middle_pip", "angle_err_bound_deg": 0.333}
+{"chip": "index_dip", "B_others_mT": 0.278, "worst": "index_tip", "angle_err_bound_deg": 0.383}
+{"chip": "index_mcp_abd", "B_others_mT": 0.302, "worst": "middle_mcp_abd", "angle_err_bound_deg": 0.349}
+{"chip": "index_tip", "B_others_mT": 0.536, "worst": "middle_dip", "equiv_force_N": 0.024}
+{"chip": "middle_mcp_flex", "B_others_mT": 0.405, "worst": "index_mcp_flex", "angle_err_bound_deg": 0.558}
+{"chip": "middle_pip", "B_others_mT": 0.439, "worst": "index_pip", "angle_err_bound_deg": 0.605}
+{"chip": "middle_dip", "B_others_mT": 0.46, "worst": "index_tip", "angle_err_bound_deg": 0.633}
+{"chip": "middle_mcp_abd", "B_others_mT": 0.445, "worst": "ring_mcp_abd", "angle_err_bound_deg": 0.514}
+{"chip": "middle_tip", "B_others_mT": 0.272, "worst": "middle_dip", "equiv_force_N": 0.012}
+{"chip": "ring_mcp_flex", "B_others_mT": 0.371, "worst": "middle_mcp_flex", "angle_err_bound_deg": 0.51}
+{"chip": "ring_pip", "B_others_mT": 0.466, "worst": "middle_pip", "angle_err_bound_deg": 0.642}
+{"chip": "ring_dip", "B_others_mT": 0.31, "worst": "ring_tip", "angle_err_bound_deg": 0.428}
+{"chip": "ring_mcp_abd", "B_others_mT": 0.4, "worst": "middle_mcp_abd", "angle_err_bound_deg": 0.462}
+{"chip": "ring_tip", "B_others_mT": 0.27, "worst": "ring_dip", "equiv_force_N": 0.012}
+{"chip": "little_mcp_flex", "B_others_mT": 0.168, "worst": "ring_mcp_flex", "angle_err_bound_deg": 0.231}
+{"chip": "little_pip", "B_others_mT": 0.306, "worst": "little_dip", "angle_err_bound_deg": 0.422}
+{"chip": "little_dip", "B_others_mT": 0.414, "worst": "little_tip", "angle_err_bound_deg": 0.571}
+{"chip": "little_mcp_abd", "B_others_mT": 0.076, "worst": "ring_mcp_abd", "angle_err_bound_deg": 0.088}
+{"chip": "little_tip", "B_others_mT": 0.35, "worst": "little_dip", "equiv_force_N": 0.016}
+{"chip": "thumb_cmc_rot", "B_others_mT": 0.456, "worst": "thumb_cmc_flex", "angle_err_bound_deg": 0.629}
+{"chip": "thumb_cmc_flex", "B_others_mT": 0.31, "worst": "thumb_cmc_rot", "angle_err_bound_deg": 0.426}
+{"chip": "thumb_mcp_flex", "B_others_mT": 0.073, "worst": "thumb_ip", "angle_err_bound_deg": 0.101}
+{"chip": "thumb_ip", "B_others_mT": 0.136, "worst": "thumb_tip", "angle_err_bound_deg": 0.187}
+{"chip": "thumb_tip", "B_others_mT": 0.159, "worst": "thumb_ip", "equiv_force_N": 0.007}
+worst joint crosstalk (q = 0, static -> mostly calibrated out): {'chip': 'ring_pip', 'B_others_mT': 0.466, 'worst': 'middle_pip', 'angle_err_bound_deg': 0.642}
+pinch: other tip magnet  8.0 mm from this magnet (coaxial): field at this chip 1.32 mT = 0.059 N false normal force (before model-based subtraction)
+pinch: other tip magnet 10.0 mm from this magnet (coaxial): field at this chip 0.83 mT = 0.037 N false normal force (before model-based subtraction)
+pinch: other tip magnet 15.0 mm from this magnet (coaxial): field at this chip 0.33 mT = 0.015 N false normal force (before model-based subtraction)

@@ -1,0 +1,164 @@
+{
+ "spool_02": {
+  "valid": true,
+  "volume_mm3": 1010.42,
+  "bbox": [
+   -0.0,
+   11.6,
+   -6.5,
+   6.5,
+   -6.5,
+   6.5
+  ]
+ },
+ "driver_02": {
+  "valid": true,
+  "volume_mm3": 256.97,
+  "bbox": [
+   11.9,
+   14.3,
+   -6.2,
+   6.2,
+   -6.2,
+   6.2
+  ]
+ },
+ "keeper_02": {
+  "valid": true,
+  "volume_mm3": 656.17,
+  "bbox": [
+   -0.2,
+   5.8,
+   -8.5,
+   8.5,
+   -11.0,
+   9.1
+  ]
+ },
+ "MR63ZZ_1": {
+  "valid": true,
+  "volume_mm3": 53.01,
+  "bbox": [
+   0.0,
+   2.5,
+   -3.0,
+   3.0,
+   -3.0,
+   3.0
+  ]
+ },
+ "MR63ZZ_2": {
+  "valid": true,
+  "volume_mm3": 53.01,
+  "bbox": [
+   3.0,
+   5.5,
+   -3.0,
+   3.0,
+   -3.0,
+   3.0
+  ]
+ },
+ "axle_3x10_ISO8734": {
+  "valid": true,
+  "volume_mm3": 69.27,
+  "bbox": [
+   -4.5,
+   5.3,
+   -1.5,
+   1.5,
+   -1.5,
+   1.5
+  ]
+ },
+ "M2x10_screw": {
+  "valid": true,
+  "volume_mm3": 49.56,
+  "bbox": [
+   6.7,
+   10.5,
+   -6.66,
+   4.94,
+   1.8,
+   5.6
+  ]
+ },
+ "M2_square_nut": {
+  "valid": true,
+  "volume_mm3": 21.53,
+  "bbox": [
+   6.6,
+   10.6,
+   -3.8,
+   -2.2,
+   1.7,
+   5.7
+  ]
+ },
+ "dog_pin_1": {
+  "valid": true,
+  "volume_mm3": 6.89,
+  "bbox": [
+   10.4,
+   14.3,
+   3.85,
+   5.35,
+   -0.75,
+   0.75
+  ]
+ },
+ "dog_pin_2": {
+  "valid": true,
+  "volume_mm3": 6.89,
+  "bbox": [
+   10.4,
+   14.3,
+   -5.35,
+   -3.85,
+   -0.75,
+   0.75
+  ]
+ },
+ "_checks_overlap_mm3": {
+  "spool_02|keeper_02": 0.0,
+  "spool_02|driver_02": 0.0,
+  "spool_02|M2_square_nut": 0.0,
+  "spool_02|axle_3x10_ISO8734": 0.0,
+  "spool_02|M2x10_screw": 0.0
+ },
+ "_walls_mm": {
+  "bearing seat to land floor (radial)": 1.79,
+  "flange height above line top": 1.26,
+  "keeper radial gap": 0.2,
+  "stopper pocket floor to bearing seat": 0.79,
+  "nut slot outer face to hub rim at chord centre": 0.7,
+  "tensioner travel (mm of line)": 5.5
+ },
+ "_stations_x": {
+  "rail_flange": [
+   0.0,
+   0.8
+  ],
+  "ext_land": [
+   0.8,
+   2.4000000000000004
+  ],
+  "divider": [
+   2.4000000000000004,
+   3.2
+  ],
+  "flex_land": [
+   3.2,
+   4.800000000000001
+  ],
+  "hub_flange": [
+   4.800000000000001,
+   5.6000000000000005
+  ],
+  "hub": [
+   5.6000000000000005,
+   11.600000000000001
+  ],
+  "length": 11.600000000000001
+ }
+}

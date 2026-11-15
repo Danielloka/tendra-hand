@@ -1,0 +1,150 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+strand tension at stall: {'SCS0009': 45.2, 'HLS3606M': 118.0}
+
+====================================================================================================
+1. Line choice (UHMWPE braid by Japanese PE number; Vectran; steel 7x7)
+====================================================================================================
+UHMWPE PE#4 (~50 lb)             d 0.330  Fb  222 N  EA   5.5 kN  k  17.9 N/mm  stretch@SCS 2.52-4.21 mm (20.7-34.4 deg)  @HLS 6.59-10.98 mm  SF(HLS) 1.9  D/d spool 30 pin3 9.1 eyelet 2.6
+UHMWPE PE#6 (~80 lb)             d 0.405  Fb  356 N  EA   8.9 kN  k  28.7 N/mm  stretch@SCS 1.57-2.62 mm (12.9-21.5 deg)  @HLS 4.11-6.85 mm  SF(HLS) 3.0  D/d spool 25 pin3 7.4 eyelet 2.1
+UHMWPE PE#8 (~100 lb)            d 0.470  Fb  445 N  EA  11.1 kN  k  35.9 N/mm  stretch@SCS 1.26-2.10 mm (10.3-17.2 deg)  @HLS 3.29-5.48 mm  SF(HLS) 3.8  D/d spool 21 pin3 6.4 eyelet 1.8
+UHMWPE PE#10 (~130 lb)           d 0.520  Fb  580 N  EA  14.5 kN  k  46.8 N/mm  stretch@SCS 0.97-1.61 mm ( 7.9-13.2 deg)  @HLS 2.52-4.20 mm  SF(HLS) 4.9  D/d spool 19 pin3 5.8 eyelet 1.7
+Vectran braid 0.5 (~100 lb)      d 0.500  Fb  450 N  EA  12.9 kN  k  41.5 N/mm  stretch@SCS 1.09-1.82 mm ( 8.9-14.9 deg)  @HLS 2.85-4.74 mm  SF(HLS) 3.8  D/d spool 20 pin3 6.0 eyelet 1.7
+Steel 7x7 0.45 nylon-coated      d 0.450  Fb  200 N  EA  10.0 kN  k  32.3 N/mm  stretch@SCS 1.40-2.34 mm (11.5-19.1 deg)  @HLS 3.66-6.10 mm  SF(HLS) 1.7  D/d spool 22 pin3 6.7 eyelet 1.9
+Rule of thumb used: synthetic fibre over a sheave D/d >= 8 (static) and >= ~20 for long cyclic life; knot efficiency UHMWPE 50-80 %.
+
+====================================================================================================
+2. Housing (Bowden outer) shortening at stall, per strand
+====================================================================================================
+SCS0009: T  45.2 N | PTFE 1x2, 221 mm:  8.48 mm (  69 deg), 19.2 MPa (PTFE yield ~10-12) | PEEK 1/16x1.0, 221 mm: 2.32 mm ( 19 deg),   38 MPa (yield ~100+) | steel coil 0.3x2.0, 140 mm: Hertz 0.116 mm, + settling allowance 0.33 mm (2.7 deg)
+HLS3606M: T 118.0 N | PTFE 1x2, 221 mm: 22.14 mm ( 181 deg), 50.1 MPa (PTFE yield ~10-12) | PEEK 1/16x1.0, 221 mm: 6.07 mm ( 50 deg),   99 MPa (yield ~100+) | steel coil 0.3x2.0, 140 mm: Hertz 0.274 mm, + settling allowance 0.48 mm (4.0 deg)
+  PEEK 1/16 in bend R 15: outer strain  5.3 %  (PEEK yield strain ~5 %, fatigue << that) | PTFE 2.0:  6.7 % (fine)
+  PEEK 1/16 in bend R 19: outer strain  4.2 %  (PEEK yield strain ~5 %, fatigue << that) | PTFE 2.0:  5.3 % (fine)
+  PEEK 1/16 in bend R 25: outer strain  3.2 %  (PEEK yield strain ~5 %, fatigue << that) | PTFE 2.0:  4.0 % (fine)
+  PEEK 1/16 in bend R 40: outer strain  2.0 %  (PEEK yield strain ~5 %, fatigue << that) | PTFE 2.0:  2.5 % (fine)
+
+====================================================================================================
+3. Joint lag at stall (flexor carries T, extensor goes slack -> one strand path)
+====================================================================================================
+SCS0009   UHMWPE PE#4 (~50 lb)     PTFE 221 : line 2.52 + housing  8.48 = 11.00 mm ->  90.1 deg of joint lag
+SCS0009   UHMWPE PE#4 (~50 lb)     coil 140 : line 2.52 + housing  0.33 =  2.85 mm ->  23.3 deg of joint lag
+SCS0009   UHMWPE PE#8 (~100 lb)    PTFE 221 : line 1.26 + housing  8.48 =  9.74 mm ->  79.7 deg of joint lag
+SCS0009   UHMWPE PE#8 (~100 lb)    coil 140 : line 1.26 + housing  0.33 =  1.59 mm ->  13.0 deg of joint lag
+HLS3606M  UHMWPE PE#4 (~50 lb)     PTFE 221 : line 6.59 + housing 22.14 = 28.73 mm -> 235.1 deg of joint lag
+HLS3606M  UHMWPE PE#4 (~50 lb)     coil 140 : line 6.59 + housing  0.48 =  7.08 mm ->  57.9 deg of joint lag
+HLS3606M  UHMWPE PE#8 (~100 lb)    PTFE 221 : line 3.29 + housing 22.14 = 25.42 mm -> 208.1 deg of joint lag
+HLS3606M  UHMWPE PE#8 (~100 lb)    coil 140 : line 3.29 + housing  0.48 =  3.77 mm ->  30.9 deg of joint lag
+Note: with both strands taut (T < 2*T0) the stiffness doubles. Larger drums help with R^2.
+
+====================================================================================================
+4. Friction budget (capstan e^-mu*theta)
+====================================================================================================
+V2 palm turning, 24 finger strands: min/median/max 20/96/175 deg
+Straight bare line from the palm stop plate (bore aimed) to the yoke entry (unchanged direction): 1/16/40 deg (0 if the yoke entry is also aimed)
+V2 (review: PTFE everywhere)             total turning  327 deg  eta 0.59
+new: bare + coil at wrist + Ø3 pins      total turning  190 deg  eta 0.71
+new + roller at MCP                      total turning  190 deg  eta 0.85
+fingertip force at stall, 60 mm lever (index pip-flexor route, worst case): {'SCS0009_V2': 3.1, 'SCS0009_new': 3.7, 'HLS3606M_V2': 8.2, 'HLS3606M_new': 9.8}
+
+====================================================================================================
+5. Guides at bends (line d 0.47, PE#8)
+====================================================================================================
+-- SCS0009: T 45 N
+   18G eyelet rim (V2)              D/d  1.8  p   224 MPa (guide limit ~400) OK  loss per 90 deg 17.2 %  stainless; line frays
+   Ø1.5 needle roller (fixed)       D/d  3.2  p   128 MPa (guide limit ~1000) OK  loss per 90 deg 17.2 %  hardened
+   Ø2 polished steel pin            D/d  4.3  p    96 MPa (guide limit ~1000) OK  loss per 90 deg 17.2 %  
+   Ø3 ground dowel ISO 8734         D/d  6.4  p    64 MPa (guide limit ~1000) OK  loss per 90 deg 17.2 %  Ra ~0.3 um, cheap
+   Ø4 ground dowel                  D/d  8.5  p    48 MPa (guide limit ~1000) OK  loss per 90 deg 17.2 %  D/d 8.5
+   Ø3/Ø2.1 brass tube sleeve        D/d  6.4  p    64 MPa (guide limit ~150) OK  loss per 90 deg 21.0 %  soft, grooves over time
+   PTFE insert, R 3 printed boss    D/d 12.8  p    32 MPa (guide limit ~6) NO  loss per 90 deg 10.4 %  PTFE creeps > ~5 MPa
+   bare PETG, R 5                   D/d 21.3  p    19 MPa (guide limit ~15) NO  loss per 90 deg 37.6 %  abrades, layer lines
+   MR63ZZ roller (Ø6 race)          D/d 12.8  p    32 MPa (guide limit ~1000) OK  loss per 90 deg  0.8 %  rolling; bearing friction only
+   681ZZ roller (Ø3 race)           D/d  6.4  p    64 MPa (guide limit ~1000) OK  loss per 90 deg  1.2 %  low load rating
+-- HLS3606M: T 118 N
+   18G eyelet rim (V2)              D/d  1.8  p   584 MPa (guide limit ~400) NO  loss per 90 deg 17.2 %  stainless; line frays
+   Ø1.5 needle roller (fixed)       D/d  3.2  p   335 MPa (guide limit ~1000) OK  loss per 90 deg 17.2 %  hardened
+   Ø2 polished steel pin            D/d  4.3  p   251 MPa (guide limit ~1000) OK  loss per 90 deg 17.2 %  
+   Ø3 ground dowel ISO 8734         D/d  6.4  p   167 MPa (guide limit ~1000) OK  loss per 90 deg 17.2 %  Ra ~0.3 um, cheap
+   Ø4 ground dowel                  D/d  8.5  p   126 MPa (guide limit ~1000) OK  loss per 90 deg 17.2 %  D/d 8.5
+   Ø3/Ø2.1 brass tube sleeve        D/d  6.4  p   167 MPa (guide limit ~150) NO  loss per 90 deg 21.0 %  soft, grooves over time
+   PTFE insert, R 3 printed boss    D/d 12.8  p    84 MPa (guide limit ~6) NO  loss per 90 deg 10.4 %  PTFE creeps > ~5 MPa
+   bare PETG, R 5                   D/d 21.3  p    50 MPa (guide limit ~15) NO  loss per 90 deg 37.6 %  abrades, layer lines
+   MR63ZZ roller (Ø6 race)          D/d 12.8  p    84 MPa (guide limit ~1000) OK  loss per 90 deg  0.8 %  rolling; bearing friction only
+   681ZZ roller (Ø3 race)           D/d  6.4  p   167 MPa (guide limit ~1000) OK  loss per 90 deg  1.2 %  low load rating
+
+Free roller in a plain bore rolls only if mu_line*r_roll > mu_journal*r_journal:
+   Ø1.5 needle turning in its own PETG holes   : does NOT roll (line slides); effective mu 0.150
+   Ø4 brass tube on a Ø1.5 steel axle          : rolls; effective mu 0.075
+   MR63 ball bearing (equivalent)              : rolls; effective mu 0.002
+
+====================================================================================================
+6. Anchors: share of the strand tension that reaches the termination (capstan upper bound on relief)
+====================================================================================================
+V2 drum tie hole: 40 deg margin, PETG groove   share  87.0 %  -> SCS  39.3 N, HLS 102.6 N
+V2 thumb rot: 19.5 deg margin                  share  93.4 %  -> SCS  42.2 N, HLS 110.2 N
+drum + 1 extra turn (helical groove), PETG     share  24.8 %  -> SCS  11.2 N, HLS  29.2 N
+spool: 1 turn before anchor, PETG              share  28.5 %  -> SCS  12.9 N, HLS  33.6 N
+spool: 1.5 turns, PETG                         share  15.2 %  -> SCS   6.9 N, HLS  17.9 N
+Ø3 steel capstan post, 3 turns                 share  15.2 %  -> SCS   6.9 N, HLS  17.9 N
+Ø3 steel capstan post, 5 turns                 share   4.3 %  -> SCS   2.0 N, HLS   5.1 N
+Termination strength (PE#8, 445 N): knot 50-80 % -> 220-356 N; doubled-line crimp ~70-90 % (verify on braid);
+  stopper knot in a brass bead: limited by the knot (~50-60 %).
+  SCS0009: crimp sleeve Ø1.3 (OD) against a shoulder Ø0.8 hole -> annulus 0.82 mm²,   47 MPa on PETG  (needs a steel washer / liner)
+  HLS3606M: crimp sleeve Ø1.3 (OD) against a shoulder Ø0.8 hole -> annulus 0.82 mm²,  122 MPa on PETG  (needs a steel washer / liner)
+
+====================================================================================================
+7. Housing end stops
+====================================================================================================
+SCS0009: coil end on printed step   28 MPa (PETG creep limit ~10-15) | on an aluminium stop plate OK | via M1.6 washer onto PETG  4.4 MPa
+HLS3606M: coil end on printed step   74 MPa (PETG creep limit ~10-15) | on an aluminium stop plate OK | via M1.6 washer onto PETG 11.5 MPa
+shared stop plate (2 mm 6061, 32 x Ø1.6 at 2.5 pitch): total load ~632 N (pretension + 4 strands at HLS stall); plate 12 x 22 mm on a printed ledge 2 mm wide: 4.6 MPa on PETG
+
+====================================================================================================
+8. Spool
+====================================================================================================
+SCS0009: spool radial load    50 N | per bearing (2 in the spool)   25 N vs C0 MR63ZZ 74 N (SF 2.9), MR84ZZ 139 N (NSK) | Ø3 hardened dowel axle, 3 mm lever:   57 MPa (ISO 8734 hardened: yield >1000 MPa) | moment into a servo shaft if it carried the spool alone at 8 mm: 0.40 N*m
+HLS3606M: spool radial load   123 N | per bearing (2 in the spool)   61 N vs C0 MR63ZZ 74 N (SF 1.2), MR84ZZ 139 N (NSK) | Ø3 hardened dowel axle, 3 mm lever:  139 MPa (ISO 8734 hardened: yield >1000 MPa) | moment into a servo shaft if it carried the spool alone at 8 mm: 0.98 N*m
+split-spool friction clamp M2 @ 0.2 N*m: clamp  500 N, holds ~0.67 N*m (SF 3.0 vs SCS, 1.1 vs HLS stall)
+split-spool friction clamp M3 @ 0.6 N*m: clamp 1000 N, holds ~1.35 N*m (SF 6.0 vs SCS, 2.3 vs HLS stall)
+tensioner serration 36 teeth          : step 0.873 mm of line -> pretension step 15.66 N
+tensioner serration 60 teeth          : step 0.524 mm of line -> pretension step  9.40 N
+tensioner vernier 12/13 holes         : step 0.201 mm of line -> pretension step  3.61 N
+tensioner chordal M2 screw, 1/8 turn  : step 0.050 mm of line -> pretension step  0.90 N
+tensioner chordal M2 screw, 1 turn    : step 0.400 mm of line -> pretension step  7.18 N
+SCS0009: chordal-screw nut load after 1 spool turn 12.9 N; M2 thread stress area 2.07 mm² ->  6.2 MPa; M2 square nut on PETG slot face 4x1.6 ->  2.0 MPa
+HLS3606M: chordal-screw nut load after 1 spool turn 33.6 N; M2 thread stress area 2.07 mm² -> 16.2 MPa; M2 square nut on PETG slot face 4x1.6 ->  5.2 MPa
+flange: groove floor r 4.76, line top r 5.24; flange r 6.5 -> 1.26 mm = 2.7 d above the line; keeper ring gap 0.20 < d/2 -> a slack line cannot leave
+helical groove for 1.5 turns at pitch 0.61: groove land width 1.22 mm
+helical groove for 2.0 turns at pitch 0.61: groove land width 1.52 mm
+helical groove for 2.5 turns at pitch 0.61: groove land width 1.83 mm
+mcp_flex      : joint 100 deg -> servo   140 deg, line  12.2 mm per strand
+pip           : joint 100 deg -> servo   140 deg, line  12.2 mm per strand
+mcp_abd       : joint  30 deg -> servo    42 deg, line   3.7 mm per strand
+thumb_cmc_rot : joint 141 deg -> servo   197 deg, line  17.2 mm per strand
+creep allowance UHMWPE SK75-class braid, 20 % load, room temp (months): 1.0 % of 310 mm = 3.1 mm
+creep allowance Vectran / DM20: 0.2 % of 310 mm = 0.6 mm
+
+====================================================================================================
+9. Strand crossing a joint between two pins (gap = d), error vs passing exactly through the axis
+====================================================================================================
+pin Ø1.5 on the axis : -10:+0.00, +0:+0.00, +15:+0.00, +30:-0.06, +45:-0.57, +60:-1.07, +90:-2.34 mm
+pin Ø1.5 shifted -3.0: -10:-0.03, +0:+0.00, +15:-0.06, +30:-0.23, +45:-0.51, +60:-0.88, +90:-1.88 mm  -> spread 1.88 mm over -10..90 deg
+pin Ø2.0 on the axis : -10:+0.00, +0:+0.00, +15:+0.00, +30:+0.03, +45:-0.41, +60:-1.04, +90:-2.34 mm
+pin Ø2.0 shifted -2.8: -10:-0.02, +0:+0.00, +15:-0.06, +30:-0.22, +45:-0.48, +60:-0.83, +90:-1.71 mm  -> spread 1.71 mm over -10..90 deg
+pin Ø3.0 on the axis : -10:+0.00, +0:+0.00, +15:+0.01, +30:+0.05, +45:+0.18, +60:-0.58, +90:-2.34 mm
+pin Ø3.0 shifted -2.3: -10:-0.02, +0:+0.00, +15:-0.05, +30:-0.19, +45:-0.40, +60:-0.67, +90:-1.24 mm  -> spread 1.24 mm over -10..90 deg
+abduction crossing (Ø3 pins, +-15 deg): +0.006 / +0.006 mm  -> negligible
+Both strands of a loop that cross the same nip change by the same amount (common mode -> pretension change).
+
+====================================================================================================
+10. Coaxial idler on the MCP axis for the pip strands
+====================================================================================================
+MR63ZZ outer race Ø6  : r 3.0: pip moves 0.43 deg per MCP deg (exactly linear, no common mode); firmware adds 0.60 x q_mcp to the pip servo =  60 deg over the MCP range (pip servo travel 140 -> 200 deg); D/d 12.8; friction ~0.2 % per bend
+682ZZ / MR52 Ø5       : r 2.5: pip moves 0.36 deg per MCP deg (exactly linear, no common mode); firmware adds 0.50 x q_mcp to the pip servo =  50 deg over the MCP range (pip servo travel 140 -> 190 deg); D/d 10.6; friction ~0.2 % per bend
+MR74ZZ Ø7             : r 3.5: pip moves 0.50 deg per MCP deg (exactly linear, no common mode); firmware adds 0.70 x q_mcp to the pip servo =  70 deg over the MCP range (pip servo travel 140 -> 210 deg); D/d 14.9; friction ~0.2 % per bend
+
+====================================================================================================
+11. Bare wrist bundle (no housing): first-order strand length change = offset x wrist angle
+====================================================================================================
+32 strands on a 1.9 mm grid (32 cells, 9.5 mm square): worst |dL| ~ 5.6 mm = 46 joint deg = 65 servo deg of compensation; flex/ext of one loop on point-symmetric cells -> differential (compensable), common mode is 2nd order
+
+wrote /home/user/tendra-hand/cloud-claude/2026-11-14-hardware-ideas/out/02/drivetrain_calc.json

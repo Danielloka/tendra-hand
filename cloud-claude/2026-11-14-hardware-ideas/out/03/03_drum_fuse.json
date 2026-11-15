@@ -1,0 +1,47 @@
+{
+ "drum_body": {
+  "valid": true,
+  "volume_mm3": 1576.13,
+  "bbox": [
+   9.9,
+   16.0,
+   16.0
+  ],
+  "mass_g": 2.002
+ },
+ "ring": {
+  "valid": true,
+  "volume_mm3": 61.55,
+  "bbox": [
+   3.0,
+   13.64,
+   13.64
+  ],
+  "mass_g": 0.523
+ },
+ "fuse_cup": {
+  "valid": true,
+  "volume_mm3": 22.47,
+  "bbox": [
+   5.2,
+   3.74,
+   3.73
+  ],
+  "mass_g": 0.029
+ },
+ "axle": {
+  "valid": true,
+  "volume_mm3": 183.93,
+  "bbox": [
+   15.0,
+   4.0,
+   4.0
+  ],
+  "mass_g": 1.444
+ },
+ "interference_with_body_mm3": {
+  "ring": 0.0,
+  "fuse_cup": 0.0,
+  "axle": 2.406
+ }
+}

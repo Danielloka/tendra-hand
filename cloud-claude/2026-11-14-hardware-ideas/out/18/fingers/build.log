@@ -1,1 +1,25 @@
 warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+printed parts built in 16 s
+index: built (106 s) [] {'{"abd": 15, "mcp": 90, "pip": 95}': [('nail_shim', 'knuckle_module', 0.736)]}
+printed parts built in 16 s
+middle: built (134 s) [] {}
+printed parts built in 15 s
+ring: built (163 s) [] {}
+printed parts built in 15 s
+little: built (191 s) [] {'{"abd": 0, "mcp": 90, "pip": 95}': [('yoke', 'tip_skin', 31.665), ('distal', 'knuckle_module', 107.749), ('tip_skin', 'abd_brg_p_out', 0.759), ('tip_skin', 'knuckle_module', 130.667), ('tip_pcb', 'knuckle_module', 20.773), ('tip_chip', 'knuckle_module', 0.706), ('tip_magnet', 'knuckle_module', 3.576), ('nail_shim', 'knuckle_module', 3.286), ('tip_carrier', 'knuckle_module', 2.31)], '{"abd": 15, "mcp": 90, "pip": 95}': [('yoke', 'tip_skin', 31.665), ('distal', 'knuckle_module', 114.56), ('tip_skin', 'abd_brg_p_out', 0.759), ('tip_skin', 'knuckle_module', 120.477), ('tip_pcb', 'knuckle_module', 19.563), ('tip_chip', 'knuckle_module', 0.706), ('tip_magnet', 'knuckle_module', 3.576), ('nail_shim', 'knuckle_module', 3.979), ('tip_carrier', 'knuckle_module', 10.347)]}
+neighbours abd0_mcp0_pip0 []
+neighbours abd7.5_mcp0_pip0 []
+neighbours abd-10_mcp0_pip0 []
+neighbours abd0_mcp90_pip95 []
+neighbours abd7.5_mcp45_pip50 []
+neighbours abd-10_mcp45_pip50 []
+neighbours abd7.5_mcp90_pip95 []
+neighbours abd-10_mcp90_pip95 []
+neighbours integrator_relaxed []
+neighbours integrator_fist []
+neighbours integrator_tip_pinch []
+neighbours integrator_thumb_to_little []
+neighbours integrator_power_grasp []
+neighbours integrator_spread []
+{"liners": {"pairs_closer_than_2p2": [], "n_close": 0, "entry_bend_deg": {"index_pip_flex": 71.5, "index_pip_ext": 40.3, "index_mcp_flex": 48.0, "index_mcp_ext": 64.4, "index_abd_flex": 63.3, "index_abd_ext": 31.6, "middle_pip_flex": 13.4, "middle_pip_ext": 7.9, "middle_mcp_flex": 44.2, "middle_mcp_ext": 38.2, "middle_abd_flex": 30.0, "middle_abd_ext": 22.5, "ring_pip_flex": 55.6, "ring_pip_ext": 68.6, "ring_mcp_flex": 70.0, "ring_mcp_ext": 88.4, "ring_abd_flex": 90.0, "ring_abd_ext": 58.6, "little_pip_flex": 104.0, "little_pip_ext": 81.3, "little_mcp_flex": 85.9, "little_mcp_ext": 110.4, "little_abd_flex": 111.0, "little_abd_ext": 82.4}, "length_mm": {"index_pip_flex": 42.7, "index_pip_ext": 33.3, "index_mcp_flex": 32.5, "index_mcp_ext": 44.7, "index_abd_flex": 44.3, "index_abd_ext": 31.2, "middle_pip_flex": 23.6, "middle_pip_ext": 26.6, "middle_mcp_flex": 29.9, "middle_mcp_ext": 29.4, "middle_abd_flex": 28.0, "middle_abd_ext": 30.7, "ring_pip_flex": 34.7, "ring_pip_ext": 39.9, "ring_mcp_flex": 49.0, "ring_mcp_ext": 26.1, "ring_abd_flex": 37.3, "ring_abd_ext": 34.9, "little_pip_flex": 50.0, "little_pip_ext": 51.2, "little_mcp_flex": 57.0, "little_mcp_ext": 53.5, "little_abd_flex": 56.5, "little_abd_ext": 56.3}, "bend_median": 63.85, "bend_max": 111.0}, "module_width": {"index": {"toward_minus_x": 9.6, "toward_plus_x": 9.6}, "middle": {"toward_minus_x": 9.6, "toward_plus_x": 9.6}, "ring": {"toward_minus_x": 9.6, "toward_plus_x": 9.6}, "little": {"toward_minus_x": 9.6, "toward_plus_x": 9.6}}}
+BUILD_DONE rc=0

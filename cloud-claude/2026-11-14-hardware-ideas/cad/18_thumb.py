@@ -540,7 +540,8 @@ def _route_eval(cen, LS, verbose=False):
                 continue
             if i == 0:
                 a = a + 3.0 * unit(b - a)
-            SA.append(a), SB.append(b), own.append(k), nN.append(bool(np.allclose(b, NECK_W)))
+            last_rot = STRANDS[n]["joint"] == "cmc_rot" and i == len(pts) - 2  # C -> drum: enters the drum on purpose
+            SA.append(a), SB.append(b), own.append(k), nN.append(bool(np.allclose(b, NECK_W)) or last_rot)
     SA, SB, own, nN = np.array(SA), np.array(SB), np.array(own), np.array(nN)
     Cs = np.array([c for _, c in spheres])
     co = np.array([STRAND_NAMES.index(n) for n, _ in spheres])
@@ -569,7 +570,7 @@ def _route_eval(cen, LS, verbose=False):
         dl[Xf[:, 2] < Z_PLATE_TOP + 6.0] = 99  # the first 6 mm above the plate: holes 2.15 apart, liners end there
         pen += np.sum(np.clip(1.9 - dl, 0, None) ** 2) / 9
     r_, s_ = _axis_rs_v(Xf)
-    skip = (np.repeat(nN, 9)) & (np.linalg.norm(Xf - NECK_W, axis=1) < 10)
+    skip = (np.repeat(nN, 9)) & ((np.linalg.norm(Xf - NECK_W, axis=1) < 14) | (_axis_rs_v(Xf)[1] < 20))
     lim = np.where(s_ <= 8, 19.5, 16.0)
     pen += np.sum(np.where((s_ < -MOUNT_Z[0]) & ~skip, np.clip(lim - r_, 0, None) ** 2, 0))
     D = np.linalg.norm(X[:, None, :, None] - X[None, :, None, :], axis=-1).min(axis=(2, 3))

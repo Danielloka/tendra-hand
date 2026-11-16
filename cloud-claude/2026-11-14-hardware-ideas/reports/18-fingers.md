@@ -2,12 +2,10 @@
 
 Agent 07, 2026-11-16. Study only.
 
-> **Status:** the final regeneration of `out/18/fingers/` was still running when I handed back. That run adds the
-> layered liners, the abduction rule and the integrator-pose neighbour checks. Its log is
-> `out/18/fingers/build.log`; it ends with `BUILD_DONE`. To rerun:
-> `uv run --no-project --with cadquery --with numpy --with trimesh --with scipy --with rtree python cad/18_fingers.py`
-> (~8 min). The liner layout and the rule below were already computed and checked on their own (numbers from those
-> runs).
+> **Status:** the final build finished (`BUILD_DONE rc=0`, 191 s plus checks). `out/18/fingers/` is regenerated with the
+> layered liners and the abduction rule. **The OCC neighbour checks are clear (0 contacts) at all 14 poses:** 8 grid
+> poses at the rule's limits plus the integrator's `relaxed`, `fist`, `tip_pinch`, `thumb_to_little`, `power_grasp` and
+> `spread`. Liners: 0 pairs closer than 2.2 mm (worst 2.45 mm). The renders `fingers_{open,fist,spread}.png` were written.
 
 ## API (top of `cad/18_fingers.py`)
 

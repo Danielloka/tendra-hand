@@ -239,461 +239,80 @@
    }
   }
  },
- "liner_opt_cost": 1083.8401222479777,
+ "liner_layers": 2.446667234332357,
  "neighbours": {
   "abd0_mcp0_pip0": [],
-  "abd15_mcp0_pip0": [
-   [
-    "little_proximal",
-    "ring_yoke",
-    24.92
-   ],
-   [
-    "little_proximal",
-    "ring_proximal",
-    43.23
-   ],
-   [
-    "little_distal",
-    "ring_pin_A",
-    0.16
-   ],
-   [
-    "little_sensor_mcp_cap",
-    "ring_yoke",
-    2.4
-   ]
-  ],
-  "abd-15_mcp0_pip0": [
-   [
-    "middle_yoke",
-    "index_proximal",
-    2.53
-   ]
-  ],
+  "abd7.5_mcp0_pip0": [],
+  "abd-10_mcp0_pip0": [],
   "abd0_mcp90_pip95": [],
-  "abd15_mcp45_pip50": [
-   [
-    "little_proximal",
-    "ring_yoke",
-    27.64
-   ],
-   [
-    "little_proximal",
-    "ring_proximal",
-    14.72
-   ],
-   [
-    "little_sensor_mcp_cap",
-    "ring_yoke",
-    2.75
-   ]
-  ],
-  "abd-15_mcp45_pip50": [
-   [
-    "middle_yoke",
-    "index_proximal",
-    2.53
-   ]
-  ],
-  "abd15_mcp90_pip95": [
-   [
-    "little_proximal",
-    "ring_yoke",
-    27.44
-   ],
-   [
-    "little_proximal",
-    "ring_proximal",
-    12.5
-   ],
-   [
-    "little_proximal",
-    "ring_pin_B",
-    0.2
-   ],
-   [
-    "little_middle",
-    "ring_pin_B",
-    1.09
-   ],
-   [
-    "little_sensor_mcp_cap",
-    "ring_yoke",
-    2.92
-   ]
-  ],
-  "abd-15_mcp90_pip95": [
-   [
-    "middle_yoke",
-    "index_proximal",
-    2.43
-   ]
-  ]
+  "abd7.5_mcp45_pip50": [],
+  "abd-10_mcp45_pip50": [],
+  "abd7.5_mcp90_pip95": [],
+  "abd-10_mcp90_pip95": [],
+  "integrator_relaxed": [],
+  "integrator_fist": [],
+  "integrator_tip_pinch": [],
+  "integrator_thumb_to_little": [],
+  "integrator_power_grasp": [],
+  "integrator_spread": []
  },
  "liners": {
-  "pairs_closer_than_2p2": [
-   [
-    "index_pip_flex",
-    "index_abd_ext",
-    1.93
-   ],
-   [
-    "index_pip_flex",
-    "middle_pip_flex",
-    2.07
-   ],
-   [
-    "index_pip_flex",
-    "middle_mcp_ext",
-    1.61
-   ],
-   [
-    "index_pip_flex",
-    "ring_pip_flex",
-    1.25
-   ],
-   [
-    "index_pip_flex",
-    "ring_mcp_ext",
-    1.9
-   ],
-   [
-    "index_pip_flex",
-    "ring_abd_flex",
-    1.56
-   ],
-   [
-    "index_pip_flex",
-    "little_pip_flex",
-    0.11
-   ],
-   [
-    "index_pip_flex",
-    "little_pip_ext",
-    1.96
-   ],
-   [
-    "index_pip_ext",
-    "ring_mcp_flex",
-    2.1
-   ],
-   [
-    "index_pip_ext",
-    "little_pip_ext",
-    2.15
-   ],
-   [
-    "index_mcp_flex",
-    "index_mcp_ext",
-    2.17
-   ],
-   [
-    "index_mcp_flex",
-    "ring_pip_ext",
-    2.15
-   ],
-   [
-    "index_mcp_flex",
-    "little_mcp_ext",
-    2.15
-   ],
-   [
-    "index_mcp_ext",
-    "index_abd_ext",
-    0.29
-   ],
-   [
-    "index_mcp_ext",
-    "middle_pip_ext",
-    1.94
-   ],
-   [
-    "index_mcp_ext",
-    "ring_pip_flex",
-    2.15
-   ],
-   [
-    "index_mcp_ext",
-    "ring_pip_ext",
-    1.66
-   ],
-   [
-    "index_mcp_ext",
-    "little_pip_ext",
-    1.54
-   ],
-   [
-    "index_mcp_ext",
-    "little_mcp_flex",
-    2.15
-   ],
-   [
-    "index_abd_flex",
-    "middle_pip_flex",
-    2.05
-   ],
-   [
-    "index_abd_flex",
-    "middle_abd_ext",
-    0.17
-   ],
-   [
-    "index_abd_flex",
-    "ring_abd_flex",
-    1.21
-   ],
-   [
-    "index_abd_flex",
-    "little_mcp_ext",
-    0.43
-   ],
-   [
-    "index_abd_ext",
-    "middle_pip_ext",
-    2.03
-   ],
-   [
-    "index_abd_ext",
-    "middle_mcp_flex",
-    0.73
-   ],
-   [
-    "index_abd_ext",
-    "middle_abd_flex",
-    2.11
-   ],
-   [
-    "index_abd_ext",
-    "ring_mcp_flex",
-    2.14
-   ],
-   [
-    "index_abd_ext",
-    "little_abd_flex",
-    1.87
-   ],
-   [
-    "middle_pip_flex",
-    "middle_mcp_ext",
-    2.14
-   ],
-   [
-    "middle_pip_flex",
-    "middle_abd_ext",
-    2.02
-   ],
-   [
-    "middle_pip_flex",
-    "ring_pip_flex",
-    2.14
-   ],
-   [
-    "middle_pip_flex",
-    "ring_abd_flex",
-    1.18
-   ],
-   [
-    "middle_pip_flex",
-    "little_mcp_ext",
-    1.43
-   ],
-   [
-    "middle_pip_ext",
-    "middle_mcp_flex",
-    1.93
-   ],
-   [
-    "middle_pip_ext",
-    "ring_pip_ext",
-    1.62
-   ],
-   [
-    "middle_pip_ext",
-    "little_pip_ext",
-    1.31
-   ],
-   [
-    "middle_mcp_flex",
-    "middle_abd_flex",
-    1.77
-   ],
-   [
-    "middle_mcp_flex",
-    "ring_mcp_flex",
-    0.82
-   ],
-   [
-    "middle_mcp_flex",
-    "little_pip_ext",
-    2.14
-   ],
-   [
-    "middle_mcp_ext",
-    "middle_abd_flex",
-    2.06
-   ],
-   [
-    "middle_mcp_ext",
-    "ring_mcp_ext",
-    2.15
-   ],
-   [
-    "middle_mcp_ext",
-    "ring_abd_flex",
-    0.48
-   ],
-   [
-    "middle_mcp_ext",
-    "little_pip_flex",
-    2.12
-   ],
-   [
-    "middle_mcp_ext",
-    "little_mcp_ext",
-    1.59
-   ],
-   [
-    "middle_abd_flex",
-    "ring_mcp_flex",
-    2.18
-   ],
-   [
-    "middle_abd_flex",
-    "little_mcp_flex",
-    2.15
-   ],
-   [
-    "middle_abd_flex",
-    "little_abd_flex",
-    2.16
-   ],
-   [
-    "middle_abd_ext",
-    "little_mcp_ext",
-    0.36
-   ],
-   [
-    "ring_pip_flex",
-    "ring_pip_ext",
-    1.53
-   ],
-   [
-    "ring_pip_flex",
-    "ring_mcp_ext",
-    2.1
-   ],
-   [
-    "ring_pip_flex",
-    "little_pip_flex",
-    2.15
-   ],
-   [
-    "ring_pip_flex",
-    "little_pip_ext",
-    0.91
-   ],
-   [
-    "ring_pip_ext",
-    "ring_mcp_ext",
-    2.11
-   ],
-   [
-    "ring_pip_ext",
-    "little_pip_ext",
-    0.18
-   ],
-   [
-    "ring_mcp_flex",
-    "little_abd_flex",
-    2.07
-   ],
-   [
-    "ring_mcp_ext",
-    "ring_abd_ext",
-    2.0
-   ],
-   [
-    "ring_mcp_ext",
-    "little_pip_flex",
-    1.43
-   ],
-   [
-    "ring_mcp_ext",
-    "little_abd_ext",
-    2.15
-   ],
-   [
-    "ring_abd_flex",
-    "little_mcp_ext",
-    2.14
-   ],
-   [
-    "ring_abd_ext",
-    "little_pip_ext",
-    1.22
-   ],
-   [
-    "ring_abd_ext",
-    "little_mcp_flex",
-    1.11
-   ]
-  ],
-  "n_close": 61,
+  "pairs_closer_than_2p2": [],
+  "n_close": 0,
   "entry_bend_deg": {
-   "index_pip_flex": 51.8,
-   "index_pip_ext": 45.6,
-   "index_mcp_flex": 69.8,
-   "index_mcp_ext": 53.5,
-   "index_abd_flex": 59.6,
-   "index_abd_ext": 63.1,
-   "middle_pip_flex": 57.2,
-   "middle_pip_ext": 52.1,
-   "middle_mcp_flex": 41.3,
-   "middle_mcp_ext": 56.9,
-   "middle_abd_flex": 77.1,
-   "middle_abd_ext": 27.7,
-   "ring_pip_flex": 94.3,
-   "ring_pip_ext": 59.6,
-   "ring_mcp_flex": 112.4,
-   "ring_mcp_ext": 64.0,
-   "ring_abd_flex": 55.5,
-   "ring_abd_ext": 50.4,
-   "little_pip_flex": 65.7,
-   "little_pip_ext": 65.2,
-   "little_mcp_flex": 58.0,
-   "little_mcp_ext": 61.6,
-   "little_abd_flex": 104.0,
-   "little_abd_ext": 56.5
+   "index_pip_flex": 71.5,
+   "index_pip_ext": 40.3,
+   "index_mcp_flex": 48.0,
+   "index_mcp_ext": 64.4,
+   "index_abd_flex": 63.3,
+   "index_abd_ext": 31.6,
+   "middle_pip_flex": 13.4,
+   "middle_pip_ext": 7.9,
+   "middle_mcp_flex": 44.2,
+   "middle_mcp_ext": 38.2,
+   "middle_abd_flex": 30.0,
+   "middle_abd_ext": 22.5,
+   "ring_pip_flex": 55.6,
+   "ring_pip_ext": 68.6,
+   "ring_mcp_flex": 70.0,
+   "ring_mcp_ext": 88.4,
+   "ring_abd_flex": 90.0,
+   "ring_abd_ext": 58.6,
+   "little_pip_flex": 104.0,
+   "little_pip_ext": 81.3,
+   "little_mcp_flex": 85.9,
+   "little_mcp_ext": 110.4,
+   "little_abd_flex": 111.0,
+   "little_abd_ext": 82.4
   },
   "length_mm": {
-   "index_pip_flex": 47.5,
-   "index_pip_ext": 43.3,
-   "index_mcp_flex": 44.4,
-   "index_mcp_ext": 49.4,
-   "index_abd_flex": 52.3,
-   "index_abd_ext": 43.2,
-   "middle_pip_flex": 44.6,
-   "middle_pip_ext": 44.6,
-   "middle_mcp_flex": 45.6,
-   "middle_mcp_ext": 45.2,
-   "middle_abd_flex": 47.2,
-   "middle_abd_ext": 44.1,
-   "ring_pip_flex": 47.7,
-   "ring_pip_ext": 45.6,
-   "ring_mcp_flex": 57.3,
-   "ring_mcp_ext": 42.2,
-   "ring_abd_flex": 44.1,
-   "ring_abd_ext": 49.8,
-   "little_pip_flex": 51.5,
-   "little_pip_ext": 55.8,
-   "little_mcp_flex": 55.5,
-   "little_mcp_ext": 50.3,
-   "little_abd_flex": 57.3,
-   "little_abd_ext": 53.1
+   "index_pip_flex": 42.7,
+   "index_pip_ext": 33.3,
+   "index_mcp_flex": 32.5,
+   "index_mcp_ext": 44.7,
+   "index_abd_flex": 44.3,
+   "index_abd_ext": 31.2,
+   "middle_pip_flex": 23.6,
+   "middle_pip_ext": 26.6,
+   "middle_mcp_flex": 29.9,
+   "middle_mcp_ext": 29.4,
+   "middle_abd_flex": 28.0,
+   "middle_abd_ext": 30.7,
+   "ring_pip_flex": 34.7,
+   "ring_pip_ext": 39.9,
+   "ring_mcp_flex": 49.0,
+   "ring_mcp_ext": 26.1,
+   "ring_abd_flex": 37.3,
+   "ring_abd_ext": 34.9,
+   "little_pip_flex": 50.0,
+   "little_pip_ext": 51.2,
+   "little_mcp_flex": 57.0,
+   "little_mcp_ext": 53.5,
+   "little_abd_flex": 56.5,
+   "little_abd_ext": 56.3
   },
-  "bend_median": 58.8,
-  "bend_max": 112.4
+  "bend_median": 63.85,
+  "bend_max": 111.0
  },
  "module_width": {
   "index": {
@@ -713,5 +332,5 @@
    "toward_plus_x": 9.6
   }
  },
- "build_s": 481.52247166633606
+ "build_s": 206.19904160499573
 }

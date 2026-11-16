@@ -56,6 +56,30 @@ MCP["ring"][0], MCP["little"][0] = -20.0, -40.0
 LEN = {f: P.FINGERS[f]["lengths"] for f in FINGERS}
 
 
+# ------------------------------------------------------------------------------------------------ firmware abduction rule
+# From the neighbour scan (out/18/fingers/abd_pair_scan.json + fine scan in reports/18-fingers.md), 20 mm pitch:
+#  1. neighbours may only spread: abd(radial finger) - abd(ulnar neighbour) >= 0  (index > middle > ring > little in x)
+#  2. index_mcp_abd >= -10 (index and middle both at -15 touch: the index MCP is 4 mm lower)
+#  3. little_mcp_abd <= +7.5 (ring 15 / little 10 touches: the little MCP is 8 mm lower)
+ABD_RANGE = {"index": (-10.0, 15.0), "middle": (-15.0, 15.0), "ring": (-15.0, 15.0), "little": (-15.0, 7.5)}
+
+
+def abd_limits():
+    return dict(ranges=ABD_RANGE, pair_rule="abd(radial) - abd(ulnar) >= 0 for (index, middle), (middle, ring), (ring, little)")
+
+
+def clamp(q):
+    """returns a copy of q with the finger abductions inside the rule (ulnar fingers are moved, radial kept)."""
+    q = dict(q)
+    for f in FINGERS:
+        k = f"{f}_mcp_abd"
+        lo, hi = ABD_RANGE[f]
+        q[k] = min(hi, max(lo, float(q.get(k, 0.0))))
+    for rad, uln in (("index", "middle"), ("middle", "ring"), ("ring", "little")):
+        q[f"{uln}_mcp_abd"] = min(q[f"{uln}_mcp_abd"], q[f"{rad}_mcp_abd"])
+    return q
+
+
 # ------------------------------------------------------------------------------------------------ DIP bar per finger
 def design_link(L2):
     """07's search with the pin-A-off-the-web rule (Ø2 pins, 1.6 mm walls to the Ø5 bushes)."""
@@ -275,11 +299,21 @@ def _liner_path(f, k, entry_local, mid=None):
     return [e, e2, *mid, h]
 
 
-def optimise_liners(seed_trials=6):
-    """two free midpoints per liner (entry stub -> M1 -> M2 -> palm plate hole): keep every pair of liner centrelines
-    >= 2.4 mm apart (Ø2 PTFE + 0.4 printed wall), stay inside the palm (|y| <= 11.5, z between the plate and the
-    module), and minimise the total bend (PTFE friction ~ e^(-0.1 bend))."""
-    from scipy.optimize import minimize
+def _liner_only(f, k, entry_local):
+    """the PTFE part of the path (without the bare strand from the liner end to the plate hole)."""
+    p = _liner_path(f, k, entry_local)
+    return p[:-1] if len(p) > 3 else p
+
+
+Z_LINER_END = 44.0  # liners stop here; the last 14 mm to the steel plate eye (z 30) is bare (the eye takes the bend)
+Y_LAYER_SPAN = 10.0  # layer depths spread over |y| <= 10 (V2 palm y -14..14)
+
+
+def optimise_liners(steps=12000, seed=0):
+    """layered palm liners. Path per strand: entry stub -> M1 = (x_entry, y_L, z_entry - drop) -> F = (x_hole, y_L, z_end)
+    = liner end -> bare strand to the plate hole (the steel eye takes that bend). Discrete choices per strand: depth layer
+    y_L (8 layers over |y| <= 10.5), drop (3, 6, 9, 12 mm) and liner end z (40, 43, 46, 49). Simulated annealing minimises
+    the summed penetration below 2.4 mm (Ø2 PTFE + 0.4 wall) between every pair of liner centrelines, then bends."""
     E, H, names = [], [], []
     for f in FINGERS:
         ZM, ent = module_geom(f)
@@ -290,48 +324,74 @@ def optimise_liners(seed_trials=6):
             names.append(f"{f}_{k}")
     E, H = np.array(E), np.array(H)
     n = len(names)
-    T = np.linspace(0, 1, 6)
-    iu = np.triu_indices(n, 1)
-    d0 = np.array([0, 0, -1.0])
-    Hup = np.array([0, 0, 1.0])
+    YS = np.linspace(-10.5, 10.5, 8)
+    DR = np.array([3.0, 6.0, 9.0, 12.0])
+    ZE = np.array([40.0, 43.0, 46.0, 49.0])
+    T = np.linspace(0, 1, 13)[:, None]
 
-    def path_pts(M1, M2):
-        segs = [(E, M1), (M1, M2), (M2, H)]
-        P = [a[:, None, :] + (b - a)[:, None, :] * T[None, :, None] for a, b in segs]
-        return np.concatenate([P[0], P[1][:, 1:], P[2][:, 1:]], 1)
+    def path(i, c):
+        m1 = np.array([E[i][0], YS[c[0]], E[i][2] - DR[c[1]]])
+        F_ = np.array([H[i][0], YS[c[0]], ZE[c[2]]])
+        return np.vstack([E[i] + (m1 - E[i]) * T, m1 + (F_ - m1) * T[1:]])
 
-    def ang(u, v):
-        c = np.sum(u * v, -1) / np.linalg.norm(u, axis=-1) / np.linalg.norm(v, axis=-1)
-        return np.degrees(np.arccos(np.clip(c, -1, 1)))
+    def bend(i, c):
+        m1 = np.array([E[i][0], YS[c[0]], E[i][2] - DR[c[1]]])
+        F_ = np.array([H[i][0], YS[c[0]], ZE[c[2]]])
+        u0, u1, u2 = np.array([0, 0, -1.0]), m1 - E[i], F_ - m1
+        a = lambda u, v: math.degrees(math.acos(np.clip(u @ v / np.linalg.norm(u) / np.linalg.norm(v), -1, 1)))  # noqa: E731
+        return a(u0, u1) + a(u1, u2)
 
-    def cost(v, wp):
-        M = v.reshape(2, n, 3)
-        M1, M2 = M[0], M[1]
-        Pp = path_pts(M1, M2)
-        D = np.linalg.norm(Pp[:, None, :, None, :] - Pp[None, :, None, :, :], axis=-1).min(axis=(2, 3))
-        pen = np.clip(2.5 - D[iu], 0, None)
-        bend = ang(np.tile(d0, (n, 1)), M1 - E) + ang(M1 - E, M2 - M1) + ang(M2 - M1, H - M2)
-        box = sum(np.clip(np.abs(Mk[:, 1]) - 11.5, 0, None) ** 2 + np.clip(Mk[:, 2] - (E[:, 2] - 2), 0, None) ** 2
-                  + np.clip(34.0 - Mk[:, 2], 0, None) ** 2 for Mk in (M1, M2))
-        order = np.clip(M2[:, 2] - M1[:, 2] + 2.0, 0, None) ** 2  # M1 above M2
-        return wp * np.sum(pen ** 2) + 0.001 * np.sum(bend ** 2) + 50.0 * np.sum(box) + 50.0 * np.sum(order)
-    del Hup
-    rng = np.random.default_rng(3)
-    best = None
-    for trial in range(seed_trials):
-        M1 = E + (H - E) * 0.35 + (rng.normal(0, 2.5, E.shape) if trial else 0)
-        M2 = E + (H - E) * 0.7 + (rng.normal(0, 2.5, E.shape) if trial else 0)
-        v = np.concatenate([M1.ravel(), M2.ravel()])
-        for wp in (50.0, 500.0, 5000.0):
-            r = minimize(cost, v, args=(wp,), method="L-BFGS-B", options=dict(maxiter=800))
-            v = r.x
-        if best is None or r.fun < best.fun:
-            best = r
-    M = best.x.reshape(2, n, 3)
+    rng = np.random.default_rng(seed)
+    C = [[int(np.argmin(np.abs(YS - 0.5 * (E[i][1] + H[i][1])))), 1, 1] for i in range(n)]
+    Pth = [path(i, C[i]) for i in range(n)]
+
+    def pen_row(i, Pi):
+        tot = 0.0
+        for j in range(n):
+            if j != i:
+                d = np.linalg.norm(Pi[:, None, :] - Pth[j][None, :, :], axis=-1).min()
+                tot += max(0.0, 2.4 - d) ** 2
+        return tot
+
+    def total():
+        return sum(pen_row(i, Pth[i]) for i in range(n)) / 2 + 1e-4 * sum(bend(i, C[i]) ** 2 for i in range(n))
+    cur = total()
+    temp = 1.0
+    for st in range(steps):
+        i = int(rng.integers(n))
+        c_new = list(C[i])
+        k = int(rng.integers(3))
+        c_new[k] = int(rng.integers([8, 4, 4][k]))
+        P_new = path(i, c_new)
+        d_old = pen_row(i, Pth[i]) + 1e-4 * bend(i, C[i]) ** 2
+        d_new = pen_row(i, P_new) + 1e-4 * bend(i, c_new) ** 2
+        if d_new < d_old or rng.random() < math.exp(-(d_new - d_old) / max(temp, 1e-6)):
+            C[i], Pth[i] = c_new, P_new
+            cur += d_new - d_old
+        temp *= 0.9993
+    worst = min(np.linalg.norm(Pth[i][:, None, :] - Pth[j][None, :, :], axis=-1).min() for i in range(n) for j in range(i + 1, n))
     kin = json.loads(kin_file().read_text())
-    kin["liner_mid"] = {nm: [[float(c) for c in M[0][i]], [float(c) for c in M[1][i]]] for i, nm in enumerate(names)}
+    kin["liner_mid"] = {nm: [[float(E[i][0]), float(YS[C[i][0]]), float(E[i][2] - DR[C[i][1]])],
+                             [float(H[i][0]), float(YS[C[i][0]]), float(ZE[C[i][2]])]] for i, nm in enumerate(names)}
+    kin["liner_layers"] = dict(y=[float(v) for v in YS], worst_centre_distance=float(worst),
+                               choice={nm: C[i] for i, nm in enumerate(names)})
     kin_file().write_text(json.dumps(kin, indent=1, default=float))
-    return best.fun
+    return float(worst)
+
+
+def optimise_liners_best(seeds=(0, 1, 2, 3), steps=20000):
+    best = None
+    for sd in seeds:
+        w = optimise_liners(steps=steps, seed=sd)
+        kin = json.loads(kin_file().read_text())
+        if best is None or w > best[0]:
+            best = (w, kin["liner_mid"], kin["liner_layers"])
+        if w >= 2.4:
+            break
+    kin = json.loads(kin_file().read_text())
+    kin["liner_mid"], kin["liner_layers"] = best[1], best[2]
+    kin_file().write_text(json.dumps(kin, indent=1, default=float))
+    return best[0]
 
 
 def module_geom(f):
@@ -400,7 +460,7 @@ def build_liners(f):
     ZM, ent = module_geom(f)
     out = {}
     for k, (x, y) in ent.items():
-        pts = _liner_path(f, k, (x, y, ZM - 4.0))
+        pts = _liner_only(f, k, (x, y, ZM - 4.0))
         pts = [p - MCP[f] for p in pts]  # local
         w = None
         for a, b in zip(pts[:-1], pts[1:]):
@@ -431,7 +491,7 @@ def build(export=True, checks=True):
     allparts, info, rep = {}, {}, {"fingers": {}}
     for f in FINGERS:
         finger_module(f)
-    rep["liner_opt_cost"] = optimise_liners()
+    rep["liner_layers"] = optimise_liners_best()
     for f in FINGERS:
         m = finger_module(f)
         P_ = m.build_all()
@@ -502,10 +562,18 @@ def neighbour_checks(allparts, info):
            "sensor_mcp_cap", "pin_A", "pin_B", "tip_skin")
     order = sorted(FINGERS, key=lambda f: MCP[f][0])
     res = {}
-    for qa, qm, qp in ((0, 0, 0), (15, 0, 0), (-15, 0, 0), (0, 90, 95), (15, 45, 50), (-15, 45, 50), (15, 90, 95), (-15, 90, 95)):
+    cases = []
+    for qa, qm, qp in ((0, 0, 0), (7.5, 0, 0), (-10, 0, 0), (0, 90, 95), (7.5, 45, 50), (-10, 45, 50), (7.5, 90, 95), (-10, 90, 95)):
         q = {}
         for f in FINGERS:
             q.update({f"{f}_mcp_abd": qa, f"{f}_mcp_flex": qm, f"{f}_pip": qp})
+        cases.append((f"abd{qa}_mcp{qm}_pip{qp}", clamp(q)))
+    ip = STUDY / "out" / "18" / "poses.json"
+    if ip.exists():
+        for nm, v in json.loads(ip.read_text())["poses"].items():
+            if nm in ("spread", "thumb_to_little", "fist", "power_grasp", "relaxed", "tip_pinch"):
+                cases.append(("integrator_" + nm, clamp({k: x for k, x in v["q"].items() if k in JOINTS})))
+    for tag, q in cases:
         T = pose(q)
         sh = {}
         for n, i in info.items():
@@ -536,8 +604,8 @@ def neighbour_checks(allparts, info):
                         v = 0.0
                     if v > 0.05:
                         hits.append((na, nb_, round(v, 2)))
-        res[f"abd{qa}_mcp{qm}_pip{qp}"] = hits
-        print("neighbours", qa, qm, qp, hits)
+        res[tag] = hits
+        print("neighbours", tag, hits)
     return res
 
 
@@ -546,7 +614,7 @@ def liner_checks():
     for f in FINGERS:
         ZM, ent = module_geom(f)
         for k, (x, y) in ent.items():
-            L[f"{f}_{k}"] = np.array(_liner_path(f, k, (x, y, ZM - 4.0)))
+            L[f"{f}_{k}"] = np.array(_liner_only(f, k, (x, y, ZM - 4.0)))
     nseg = {n: len(v) - 1 for n, v in L.items()}
 
     def segdist(p1, p2, q1, q2):

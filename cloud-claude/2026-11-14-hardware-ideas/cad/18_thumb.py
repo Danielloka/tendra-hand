@@ -565,8 +565,9 @@ def _route_eval(cen, LS, verbose=False):
     X = SA[:, None] + (SB - SA)[:, None] * t[None, :, None]  # (m, 9, 3)
     Xf = X.reshape(-1, 3)
     if len(LA):
-        dl = _pt_seg_d(Xf, LA, LB).min(1).reshape(len(SA), 9).min(1)
-        pen += np.sum(np.clip(1.9 - dl, 0, None) ** 2)
+        dl = _pt_seg_d(Xf, LA, LB).min(1)
+        dl[Xf[:, 2] < Z_PLATE_TOP + 6.0] = 99  # the first 6 mm above the plate: holes 2.15 apart, liners end there
+        pen += np.sum(np.clip(1.9 - dl, 0, None) ** 2) / 9
     r_, s_ = _axis_rs_v(Xf)
     skip = (np.repeat(nN, 9)) & (np.linalg.norm(Xf - NECK_W, axis=1) < 10)
     lim = np.where(s_ <= 8, 19.5, 16.0)
@@ -1171,6 +1172,48 @@ def build(quick=False):
     return parts
 
 
+def greedy_route(cen, liners, sweeps=3, ncand=160, seed=1):
+    """coordinate search: each roller in turn jumps to the best of ncand candidates that clear the finger liners,
+    judged by the full cost. Robust where the gradient methods stall on the clearance penalties."""
+    rng = np.random.default_rng(seed)
+    LA, LB = liners
+    cen = {k: np.array(v, float) for k, v in cen.items()}
+    best = _route_eval(cen, liners)
+    for sw in range(sweeps):
+        for k in list(cen):
+            if k.startswith("A"):
+                lo, hi = np.array([-6.0, -7.2, 34.5]), np.array([27.0, 7.2, 62.0])
+            elif k.startswith("B"):
+                lo, hi = NECK_W - np.array([12, 6, 12.0]), NECK_W + np.array([4, 12, 0.0])
+            else:
+                lo, hi = cen[k] - 6, cen[k] + 6
+            cand = lo + (hi - lo) * rng.random((4000, 3))
+            if len(LA):
+                dl = _pt_seg_d(cand, LA, LB).min(1)
+                cand = cand[dl > RF + 1.5]
+            if sw:
+                cand = np.vstack([cand, cen[k] + rng.normal(0, 1.5, (ncand // 2, 3))])
+            if not len(cand):
+                continue
+            pick = cand[rng.choice(len(cand), min(ncand, len(cand)), replace=False)]
+            for c in pick:
+                old = cen[k]
+                cen[k] = c
+                try:
+                    with np.errstate(all="ignore"):
+                        v = _route_eval(cen, liners)
+                    v = v if np.isfinite(v) else 1e12
+                except Exception:
+                    v = 1e12
+                if v < best:
+                    best = v
+                else:
+                    cen[k] = old
+        c_, pen, _ = _route_eval(cen, liners, verbose=True)
+        print(f"  greedy sweep {sw}: cost {c_:.1f} penalty {pen:.3f}", flush=True)
+    return cen
+
+
 if __name__ == "__main__" and "--route" in sys.argv:
     t0 = time.time()
     x0 = None
@@ -1179,7 +1222,15 @@ if __name__ == "__main__" and "--route" in sys.argv:
         keys = [f"A_{n}" for n in STRAND_NAMES] + [f"B_{n}" for n in STRAND_NAMES if "cmc_rot" not in n] + \
                [f"C_{n}" for n in STRAND_NAMES if "cmc_rot" in n]
         x0 = np.concatenate([d[k] for k in keys])
-    cen, c, pen, infos = optimise_route(x0)
+    if "--greedy" in sys.argv:
+        liners = _finger_liners()
+        cen0 = {k: np.array(v) for k, v in json.loads(ROUTE_FILE.read_text())["centres"].items()}
+        cen = greedy_route(cen0, liners, sweeps=int(next((a.split("=")[1] for a in sys.argv if a.startswith("--sweeps=")), 3)))
+        c, pen, infos = _route_eval(cen, liners, verbose=True)
+        ROUTE_FILE.write_text(json.dumps({"centres": {k: [float(x) for x in v] for k, v in cen.items()},
+                                          "cost": c, "penalty": pen, "bends": infos}, indent=1))
+    else:
+        cen, c, pen, infos = optimise_route(x0)
     print(f"route: cost {c:.1f}, penalty {pen:.4f}, {time.time() - t0:.0f} s")
     for n, i in infos.items():
         print(" ", n, {k: round(v, 1) for k, v in i.items()})

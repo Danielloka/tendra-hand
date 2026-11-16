@@ -23,6 +23,12 @@ body { background: var(--bg); color: var(--fg); font-family: var(--font); font-s
 #c { display: block; width: 100%; height: 100%; touch-action: none; }
 .status[hidden] { display: none; }
 .btn:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.overlay { position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); top: 16px; display: flex; gap: 8px; }
+.seg { display: inline-flex; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 3px;
+  box-shadow: 0 1px 3px rgb(0 0 0 / .06); }
+.seg button { font: 500 13px var(--font); color: var(--muted); background: none; border: 0; padding: 6px 14px; border-radius: 999px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .pick { position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); bottom: 16px; max-width: min(420px, calc(100% - 32px));
   background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px;
   box-shadow: 0 2px 10px rgb(0 0 0 / .08); }
@@ -64,18 +70,22 @@ th.n { text-align: right; }
 
 <div class="app">
   <div class="stage">
-    <canvas id="c" aria-label="3D view of the Tendra V2.1 bench finger with sensors"></canvas>
+    <canvas id="c" aria-label="3D view of the Tendra V2.1 bench finger with sensors, or the metal wrist"></canvas>
+    <div class="overlay"><div class="seg" role="group" aria-label="Model">
+      <button id="v-finger" aria-pressed="true">Finger with sensors</button>
+      <button id="v-wrist" aria-pressed="false">Metal wrist</button>
+    </div></div>
     <div class="pick" id="pick"><b>Click a part to see what it is</b><span>Drag to turn, scroll or pinch to zoom, right-drag to move.</span></div>
     <div class="status" id="status">Loading the 3D model…</div>
   </div>
 
   <aside>
     <div>
-      <h1>Tendra V2.1 bench finger</h1>
-      <p class="sub">One index finger from the 2026-11-14 hardware study, round 2: the review fixes plus an angle sensor in every joint, touch pads and sensor wiring. The bench base stands in for the palm. CAD only: nothing is printed yet.</p>
+      <h1 id="h-title">Tendra V2.1 bench finger</h1>
+      <p class="sub" id="h-sub">One index finger from the 2026-11-14 hardware study, round 2: the review fixes plus an angle sensor in every joint, touch pads and sensor wiring. The bench base stands in for the palm. CAD only: nothing is printed yet.</p>
     </div>
 
-    <section id="joints">
+    <section id="joints" class="only-finger">
       <h2>Joints</h2>
       <div class="joint"><label for="j-mcp">Knuckle (MCP)</label><output id="o-mcp">0°</output>
         <input id="j-mcp" type="range" min="-10" max="90" step="10" value="0"></div>
@@ -92,18 +102,27 @@ th.n { text-align: right; }
       </div>
     </section>
 
+    <section id="wrist-joints" class="only-wrist" hidden>
+      <h2>Wrist</h2>
+      <div class="joint"><label for="w-flex">Bend (flexion)</label><output id="o-flex">0°</output>
+        <input id="w-flex" type="range" min="-50" max="50" step="10" value="0"></div>
+      <div class="joint"><label for="w-dev">Wave (deviation)</label><output id="o-dev">0°</output>
+        <input id="w-dev" type="range" min="-30" max="20" step="10" value="0"></div>
+      <p class="note">All 32 finger and thumb tendons cross the wrist through the steel eye plate at its centre. Bending the wrist changes each tendon's length in a simple, straight-line way that its servo corrects. The ring, yokes and pins are metal, because the tendons push 0.74 kN (SCS0009) to 1.67 kN (HLS3606M) through the wrist. The two pink pins are hollow and carry the 6 sensor wires.</p>
+    </section>
+
     <section>
       <h2>Show</h2>
       <div class="toggles">
         <label><input type="checkbox" id="t-tendons" checked> Tendons</label>
-        <label><input type="checkbox" id="t-wire" checked> Sensor wires</label>
-        <label><input type="checkbox" id="t-sensors"> Highlight sensors</label>
+        <label class="only-finger"><input type="checkbox" id="t-wire" checked> Sensor wires</label>
+        <label class="only-finger"><input type="checkbox" id="t-sensors"> Highlight sensors</label>
         <label><input type="checkbox" id="t-xray"> X-ray (see-through plastic)</label>
-        <label><input type="checkbox" id="t-base" checked> Bench base</label>
+        <label class="only-finger"><input type="checkbox" id="t-base" checked> Bench base</label>
       </div>
     </section>
 
-    <section id="tendon-legend">
+    <section id="tendon-legend" class="only-finger">
       <h2>Tendons</h2>
       <div class="legend">
         <div><span class="sw" style="background:#d6336c"></span>Middle joint (PIP), flex / extend</div>
@@ -113,7 +132,18 @@ th.n { text-align: right; }
       </div>
     </section>
 
-    <section>
+    <section id="wrist-legend" class="only-wrist" hidden>
+      <h2>Tendons by finger</h2>
+      <div class="legend">
+        <div><span class="sw" style="background:#d6336c"></span>Index</div>
+        <div><span class="sw" style="background:#1c7ed6"></span>Middle</div>
+        <div><span class="sw" style="background:#2f9e44"></span>Ring</div>
+        <div><span class="sw" style="background:#7048e8"></span>Little</div>
+        <div><span class="sw" style="background:#f08c00"></span>Thumb</div>
+      </div>
+    </section>
+
+    <section class="only-finger">
       <h2>Fingertip pinch (round 2)</h2>
       <table>
         <thead><tr><th>Servo</th><th class="n">V2</th><th class="n">Round 1</th><th class="n">Round 2</th></tr></thead>
@@ -307,7 +337,7 @@ th.n { text-align: right; }
   document.querySelectorAll("[data-p]").forEach((b) => b.addEventListener("click", () => {
     const [a, m, p] = b.dataset.p.split(",").map(Number); setJoint("abd", a); setJoint("mcp", m); setJoint("pip", p); pose();
   }));
-  $("t-tendons").addEventListener("change", (e) => { tendonGroup.visible = e.target.checked; requestRender(); });
+  $("t-tendons").addEventListener("change", (e) => { tendonGroup.visible = e.target.checked; wristStrands.visible = e.target.checked; requestRender(); });
   $("t-wire").addEventListener("change", (e) => { wireGroup.visible = e.target.checked; requestRender(); });
   const SENSOR = /^(sensor_|pad_|tip_(chip|pcb|magnet|carrier)|knuckle_board|jst_)/;
   function applyLook() {
@@ -320,12 +350,94 @@ th.n { text-align: right; }
       if (o.material.emissive) o.material.emissive.setHex(hi && sensor ? 0x332200 : 0x000000);
       o.material.needsUpdate = true;
     });
+    wristRoot.traverse((o) => {
+      if (!o.isMesh || o.userData.tendon) return;
+      o.material.transparent = xray; o.material.opacity = xray ? 0.25 : 1; o.material.depthWrite = !xray; o.material.needsUpdate = true;
+    });
     requestRender();
   }
   $("t-sensors").addEventListener("change", applyLook);
   $("t-xray").addEventListener("change", applyLook);
   $("t-base").addEventListener("change", (e) => { parts.forEach((p) => { if (p.name === "base" || p.name.startsWith("base_")) p.mesh.visible = e.target.checked; }); requestRender(); });
 
+
+  // ---------- metal wrist ----------
+  const wristRoot = new THREE.Group(), wristStrands = new THREE.Group(); wristRoot.add(wristStrands);
+  scene.add(wristRoot); wristRoot.visible = false;
+  let wdata = null, wparts = [], wloading = false, view = "finger";
+  const wq = { flex: 0, dev: 0 };
+  const FCOL = { index: 0xd6336c, middle: 0x1c7ed6, ring: 0x2f9e44, little: 0x7048e8, thumb: 0xf08c00 };
+  const wMat = {};
+  function m3(a) { const m = new THREE.Matrix4(); m.set(a[0][0], a[0][1], a[0][2], 0, a[1][0], a[1][1], a[1][2], 0, a[2][0], a[2][1], a[2][2], 0, 0, 0, 0, 1); return m; }
+  function poseWrist() {
+    if (!wdata) return;
+    const P = wdata.poses[`${wq.flex},${wq.dev}`]; if (!P) return;
+    const T = { ring: m3(P.ring), palm: m3(P.palm), fore: new THREE.Matrix4() };
+    for (const p of wparts) p.mesh.matrix.copy(T[p.body] || T.fore).multiply(p.m0);
+    while (wristStrands.children.length) { const c = wristStrands.children.pop(); c.geometry.dispose(); }
+    P.lines.forEach((pts, i) => {
+      if (pts.length < 2) return;
+      const nm = wdata.strand_names[i], col = FCOL[nm.split("_")[0]] || 0x666666;
+      const path = new THREE.CurvePath();
+      for (let j = 1; j < pts.length; j++) path.add(new THREE.LineCurve3(new THREE.Vector3(...pts[j - 1]), new THREE.Vector3(...pts[j])));
+      const m = new THREE.Mesh(new THREE.TubeGeometry(path, Math.max(8, pts.length * 3), 0.25, 5, false),
+        wMat[col] || (wMat[col] = new THREE.MeshStandardMaterial({ color: col, roughness: 0.5 })));
+      m.userData.tendon = nm; wristStrands.add(m);
+    });
+    requestRender();
+  }
+  function loadWrist() {
+    if (wloading) return; wloading = true;
+    status.hidden = false; status.textContent = "Loading the metal wrist…";
+    Promise.all([fetch("wrist_w13_data.json").then((r) => { if (!r.ok) throw new Error("data " + r.status); return r.json(); }),
+      fetch("wrist_w13.glb.b64.txt").then((r) => { if (!r.ok) throw new Error("model " + r.status); return r.text(); })
+        .then((t) => { const bin = atob(t.trim()), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new Promise((res, rej) => loader.parse(u.buffer, "", res, rej)); })])
+      .then(([d, g]) => {
+        wdata = d; g.scene.updateMatrixWorld(true);
+        const ms = []; g.scene.traverse((o) => { if (o.isMesh) ms.push(o); });
+        for (const m of ms) {
+          const name = nameOf(m, (n) => n in wdata.body) || m.name, m0 = m.matrixWorld.clone();
+          m.material = m.material.clone(); m.material.side = THREE.DoubleSide; m.material.roughness = 0.5; m.material.metalness = 0.15;
+          m.userData.part = name; m.userData.printed = true; m.matrixAutoUpdate = false; wristRoot.add(m);
+          wparts.push({ mesh: m, body: wdata.body[name] || "fore", m0 });
+        }
+        status.hidden = true; poseWrist(); applyLook();
+        if (view === "wrist") frame(wristRoot, new THREE.Vector3(1.4, -1.6, 0.7));
+      })
+      .catch((e) => { status.textContent = "The wrist could not load (" + e.message + "). Reload the page to try again."; wloading = false; });
+  }
+  [["flex", "w-flex", "o-flex"], ["dev", "w-dev", "o-dev"]].forEach(([k, id, o]) => $(id).addEventListener("input", (e) => {
+    wq[k] = +e.target.value; $(o).textContent = wq[k] + "°"; poseWrist();
+  }));
+  function setView(v) {
+    view = v;
+    $("h-title").textContent = v === "wrist" ? "Tendra V2.1 metal wrist" : "Tendra V2.1 bench finger";
+    $("h-sub").textContent = v === "wrist"
+      ? "The round-2 wrist (W13): a two-axis joint whose ring, yokes and pins are metal so it can carry the pull of 32 bare tendons. CAD only: nothing is made yet."
+      : "One index finger from the 2026-11-14 hardware study, round 2: the review fixes plus an angle sensor in every joint, touch pads and sensor wiring. The bench base stands in for the palm. CAD only: nothing is printed yet.";
+    $("v-finger").setAttribute("aria-pressed", v === "finger"); $("v-wrist").setAttribute("aria-pressed", v === "wrist");
+    fingerRoot.visible = v === "finger"; wristRoot.visible = v === "wrist";
+    document.querySelectorAll(".only-finger").forEach((el) => { el.hidden = v !== "finger"; });
+    document.querySelectorAll(".only-wrist").forEach((el) => { el.hidden = v !== "wrist"; });
+    $("pick").innerHTML = "<b>Click a part to see what it is</b><span>Drag to turn, scroll or pinch to zoom, right-drag to move.</span>";
+    if (v === "wrist") { if (wdata) frame(wristRoot, new THREE.Vector3(1.4, -1.6, 0.7)); else loadWrist(); }
+    else frame(fingerRoot, new THREE.Vector3(1.3, -1.6, 0.9));
+    requestRender();
+  }
+  $("v-finger").addEventListener("click", () => setView("finger"));
+  $("v-wrist").addEventListener("click", () => setView("wrist"));
+  const WINFO = [
+    [/^eye_plate/, "Wrist eye plate (stainless)", "32 rounded steel eyes at the wrist centre, one per tendon. Tabs rest on ledges in the ring, so the screws only hold it in place."],
+    [/^ring_w13/, "Wrist ring (CNC 7075 aluminium)", "The middle of the two-axis wrist joint. Carries the eye plate and both wrist axes."],
+    [/^palm_yoke/, "Palm yoke (CNC 7075 aluminium)", "Connects the palm to the wrist ring and holds the palm plate."],
+    [/^forearm_yoke/, "Forearm yoke (CNC 7075 aluminium)", "Wrist base on the forearm side."],
+    [/_hollow$/, "Hollow wrist pin (Ø5 / Ø2.4)", "Steel tube on a wrist axis. The 6 sensor wires run through it, so they only twist when the wrist moves."],
+    [/^pin_/, "Wrist pin (Ø5 hardened steel)", "Carries the wrist joint load (up to about 0.74 kN with SCS0009 servos)."],
+    [/^bush_/, "Flanged bush (iglidur G, 5 × 7 × 4.5)", "Plastic plain bearing for the wrist pins. Strong enough for HLS loads; sintered bronze is enough for SCS0009."],
+    [/^palm_plate/, "Palm plate (stainless)", "Drilled like the eye plate, so the tendons cross the wrist in parallel without touching."],
+    [/^forearm_plate_carrier/, "Forearm plate carrier", "Holds the forearm plate on the forearm side."],
+    [/^forearm_plate/, "Forearm plate (stainless)", "Drilled like the eye plate, on the forearm side of the wrist."],
+  ];
 
   // click to identify
   const ray = new THREE.Raycaster(), ptr = new THREE.Vector2(); let down = null;
@@ -334,12 +446,14 @@ th.n { text-align: right; }
     if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) return;
     const r = canvas.getBoundingClientRect(); ptr.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     ray.setFromCamera(ptr, camera);
-    const hit = ray.intersectObject(fingerRoot, true).find((h) => h.object.visible);
+    const hit = ray.intersectObject(view === "wrist" ? wristRoot : fingerRoot, true).find((h) => h.object.visible);
     if (!hit) return;
     const o = hit.object;
     let t, d;
     if (o.userData.tendon === "sensor_wire") { t = "Sensor wire bundle"; d = "4 × 38 AWG PTFE wires (3.3 V, ground, I²C). They pass every joint inside the hollow pin, so they twist instead of bend, and end in a plug at the finger root."; }
     else if (o.userData.tendon) { const n = o.userData.tendon; t = "Tendon: " + n.replace("_", " "); d = n === "sensor_wire" ? "" : "UHMWPE braid (PE#8, about 0.47 mm). Flex and extend strands of one joint form a loop on one servo spool."; }
+    else if (view === "wrist" && o.userData.tendon) { const n = o.userData.tendon; t = "Tendon: " + n.replace(/_/g, " "); d = "One of the 32 tendons. It crosses the wrist through its own eye in the steel plate."; }
+    else if (view === "wrist") { const n = o.userData.part || ""; const hitInfo = WINFO.find(([re]) => re.test(n)); [t, d] = hitInfo ? [hitInfo[1], hitInfo[2]] : [n.replace(/_/g, " "), "Part of the metal wrist."]; }
     else [t, d] = describe(o.userData.part || "");
     $("pick").innerHTML = ""; const b = document.createElement("b"); b.textContent = t; const s = document.createElement("span"); s.textContent = d; $("pick").append(b, s);
   });

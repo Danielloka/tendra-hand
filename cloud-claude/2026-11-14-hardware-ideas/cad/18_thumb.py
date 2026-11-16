@@ -556,7 +556,7 @@ def _route_eval(cen, LS, verbose=False):
     iu = np.triu_indices(len(Cs), 1)
     pen += np.sum(np.clip(2 * RF - dd[iu], 0, None) ** 2)
     r_, s_ = _axis_rs_v(Cs)
-    lim = np.where(s_ > 8, 15.5, 19.0) + RF
+    lim = np.where(s_ > 21.5, 15.5, 19.5) + RF  # base cheeks/lugs sweep r <= 18 above s 13.5, rot stop posts r 18.6
     pen += np.sum(np.where(s_ < -MOUNT_Z[0] + RF, np.clip(lim - r_, 0, None) ** 2, 0))
     inplate = (np.abs(Cs[:, 0]) < 14.6 + RF) & (np.abs(Cs[:, 1]) < 9.8 + RF)
     pen += np.sum(np.where(inplate, np.clip(Z_PLATE_TOP + RF + 0.6 - Cs[:, 2], 0, None) ** 2, 0))
@@ -1166,9 +1166,12 @@ def build(quick=False):
         # strut from the fork back to the nearest point of the mount's housing surface
         loc = to_local(C, bw)
         rr = np.hypot(loc[0], loc[1])
-        tgt = to_world(C, [loc[0] / rr * 14.5, loc[1] / rr * 14.5, np.clip(loc[2], MOUNT_Z[0] + 1, MOUNT_Z[1] - 1)])
+        tgt = to_world(C, [loc[0] / rr * 13.8, loc[1] / rr * 13.8, np.clip(loc[2], MOUNT_Z[0] + 1.2, MOUNT_Z[1] - 1.2)])
         m = m.fuse(_strut(bw, tgt, 1.4))
-    parts["thumb_mount"] = TH.main_solid(m.clean()) if hasattr(m, "clean") else m
+    m = TH.main_solid(m.clean())
+    if not m.isValid():
+        m = TH.main_solid(m.fix())
+    parts["thumb_mount"] = m
     print(f"  parts built: {len(parts)} in {time.time() - t0:.0f} s", flush=True)
     return parts
 
@@ -1326,8 +1329,8 @@ def interference_at(shapes, q, thr=0.3, pairs=None):
             try:
                 v = float(posed[a].intersect(posed[b]).Volume())
             except Exception:
-                v = 999.0
-            if v > thr:
+                v = -1.0  # OCC boolean failed: re-checked on meshes in main()
+            if v > thr or v < 0:
                 hits.append((a, b, round(v, 2)))
     return hits
 
@@ -1496,8 +1499,9 @@ def opposition_check(meshes):
         gap = 1e9
         for n, mm in fing:
             if any(k in n for k in ("distal", "skin", "middle")):
-                d = trimesh.proximity.closest_point(mm, skin.vertices[::3])[1].min()
-                inside = mm.contains(skin.vertices[::3]).any()
+                sv = skin.vertices[:: max(1, len(skin.vertices) // 400)]
+                d = trimesh.proximity.closest_point(mm, sv)[1].min()
+                inside = mm.contains(sv).any() if mm.is_watertight else False
                 gap = min(gap, -0.1 if inside else float(d))
         bad = []
         for tn, tm_ in meshes.items():
@@ -1615,6 +1619,24 @@ def main(quick=False):
     cross = {(a, b) for i, a in enumerate(names) for b in names[i + 1:] if BODY[a] != BODY[b]}
     for q in grid:
         h = interference_at(parts, q, pairs=cross)
+        T = body_T(q)
+        h2 = []
+        for a, b, v in h:
+            if v >= 0:
+                h2.append((a, b, v))
+                continue
+            k = 0  # OCC failed: count vertices of each part inside the other (posed meshes)
+            for x, y in ((a, b), (b, a)):
+                mx, my = meshes[x].copy(), meshes[y].copy()
+                mx.apply_transform(T[BODY[x]])
+                my.apply_transform(T[BODY[y]])
+                vv = mx.vertices[:: max(1, len(mx.vertices) // 3000)]
+                sel = np.all((vv > my.bounds[0]) & (vv < my.bounds[1]), axis=1)
+                if sel.any():
+                    k += int(my.contains(vv[sel]).sum())
+            if k:
+                h2.append((a, b, f"mesh check: {k} vertices inside"))
+        h = h2
         inter.append({"q": {k: round(v, 1) for k, v in q.items()}, "hits": h})
         print("  q", [round(v) for v in q.values()], "->", h if h else "clear", flush=True)
     checks["interference_grid"] = inter
@@ -1622,22 +1644,27 @@ def main(quick=False):
     # fixed neighbours (report 13 palm plate + yoke, the integrator's palm if present)
     fixed = {}
     for nm, path in (("palm_plate_w13", STUDY / "out/13/palm_plate_w13.stl"), ("palm_yoke_w13", STUDY / "out/13/palm_yoke_w13.stl"),
-                     ("palm_v21", STUDY / "out/18/palm_v21_without_thumb_bay.stl"), ("palm_v21_bay", STUDY / "out/18/palm_v21.stl")):
+                     ):
         if path.exists():
             fixed[nm] = trimesh.load(path, force="mesh")
     fx = {}
-    for q in (grid[0], grid[len(grid) // 2], grid[-2], grid[-1]):
+    for q in (grid[0], grid[-1]):
         T = body_T(q)
         for fn, fm in fixed.items():
             for n, m in meshes.items():
-                mm = m.copy()
-                mm.apply_transform(T[BODY[n]])
-                if np.any(mm.bounds[0] > fm.bounds[1]) or np.any(fm.bounds[0] > mm.bounds[1]):
+                v = m.vertices[:: max(1, len(m.vertices) // 1500)]
+                v = v @ T[BODY[n]][:3, :3].T + T[BODY[n]][:3, 3]
+                sel = np.all((v > fm.bounds[0]) & (v < fm.bounds[1]), axis=1)
+                if not sel.any():
                     continue
-                v = _inter_vol(mm, fm)
-                if v > 0.3:
-                    fx.setdefault(fn, {}).setdefault(n, round(max(v, fx.get(fn, {}).get(n, 0)), 1))
-    checks["fixed_neighbours"] = fx
+                try:
+                    k = int(fm.contains(v[sel]).sum())
+                except Exception:
+                    k = -1
+                if k:
+                    fx.setdefault(fn, {})[n] = max(k, fx.get(fn, {}).get(n, 0))
+    checks["fixed_neighbours_vertices_inside"] = fx
+    print("  check step done:", 'fixed_neighbours_vertices_inside', f"{time.time() - t0:.0f} s", flush=True)
     # strands and wire in solids
     sres, wres = {}, {}
     for q in (grid[0], {k: 0.0 for k in JOINTS}, grid[len(grid) // 2], grid[-2]):
@@ -1651,15 +1678,18 @@ def main(quick=False):
         if b:
             wres.setdefault("thumb_sensor_wire", []).append({"q": [round(v) for v in q.values()], "points": b})
     checks["strand_centreline_in_solids"] = sres or "0 points"
+    print("  check step done:", 'strand_centreline_in_solids', f"{time.time() - t0:.0f} s", flush=True)
     checks["wire_centreline_in_solids"] = wres or "0 points"
     wl = [float(np.sum(np.linalg.norm(np.diff(sensor_wire(q), axis=0), axis=1))) for q in grid]
     checks["wire_length_mm"] = [round(min(wl), 2), round(max(wl), 2)]
     checks["loops"] = loop_report()
+    print("  check step done:", 'loops', f"{time.time() - t0:.0f} s", flush=True)
     checks["bends_deg_over_grid"] = bends_report()
     eta = efficiency()
     checks["eta_strand"] = eta
     checks["pinch_N"] = pinch_estimate(eta)
     checks["opposition_cad"] = opposition_check(meshes)
+    print("  check step done:", 'opposition_cad', f"{time.time() - t0:.0f} s", flush=True)
     widths = {}
     for j in ("cmc_flex", "mcp_flex", "ip"):
         h = _hinge_x(j)

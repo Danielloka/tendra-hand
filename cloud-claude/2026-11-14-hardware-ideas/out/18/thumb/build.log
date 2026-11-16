@@ -1,0 +1,37 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+  parts built: 94 in 6 s
+  validity: 93/94 single valid watertight solids; bad: {'thumb_mount': {'valid': True, 'solids': 1, 'watertight': False, 'volume': 8890.41}}
+/root/.cache/uv/archive-v0/eWTv4KCsGw5NnzVO/lib/python3.12/site-packages/cadquery/utils.py:82: FutureWarning: save will be removed in the next release.
+  warn(f"{f.__name__} will be removed in the next release.", FutureWarning)
+  exported (9 s)
+  q [-31, -37, -10, -15] -> clear
+  q [-31, -37, 30, 35] -> clear
+  q [-31, -37, 70, 85] -> clear
+  q [-31, 13, -10, -15] -> clear
+  q [-31, 13, 30, 35] -> clear
+  q [-31, 13, 70, 85] -> clear
+  q [-31, 63, -10, -15] -> clear
+  q [-31, 63, 30, 35] -> clear
+  q [-31, 63, 70, 85] -> clear
+  q [40, -37, -10, -15] -> clear
+  q [40, -37, 30, 35] -> clear
+  q [40, -37, 70, 85] -> clear
+  q [40, 13, -10, -15] -> clear
+  q [40, 13, 30, 35] -> clear
+  q [40, 13, 70, 85] -> clear
+  q [40, 63, -10, -15] -> clear
+  q [40, 63, 30, 35] -> clear
+  q [40, 63, 70, 85] -> clear
+  q [110, -37, -10, -15] -> clear
+  q [110, -37, 30, 35] -> clear
+  q [110, -37, 70, 85] -> clear
+  q [110, 13, -10, -15] -> clear
+  q [110, 13, 30, 35] -> clear
+  q [110, 13, 70, 85] -> clear
+  q [110, 63, -10, -15] -> clear
+  q [110, 63, 30, 35] -> clear
+  q [110, 63, 70, 85] -> clear
+  q [0, 0, 0, 0] -> clear
+  check step done: fixed_neighbours_vertices_inside 298 s
+  check step done: strand_centreline_in_solids 347 s
+  check step done: loops 348 s

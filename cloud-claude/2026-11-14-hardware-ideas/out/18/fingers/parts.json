@@ -1,0 +1,2529 @@
+{
+"index_yoke": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_yoke.stl",
+"color": "#4f86c6",
+"printed": true
+},
+"index_proximal": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_proximal.stl",
+"color": "#e08a3c",
+"printed": true
+},
+"index_middle": {
+"body": "index_middle",
+"finger": "index",
+"stl": "stl/index_middle.stl",
+"color": "#5bab6b",
+"printed": true
+},
+"index_distal": {
+"body": "index_distal",
+"finger": "index",
+"stl": "stl/index_distal.stl",
+"color": "#c9ae43",
+"printed": true
+},
+"index_cup_abd_flex": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_cup_abd_flex.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"index_cup_abd_ext": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_cup_abd_ext.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"index_cup_mcp_flex": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_cup_mcp_flex.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"index_cup_mcp_ext": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_cup_mcp_ext.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"index_cup_pip_flex": {
+"body": "index_middle",
+"finger": "index",
+"stl": "stl/index_cup_pip_flex.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"index_cup_pip_ext": {
+"body": "index_middle",
+"finger": "index",
+"stl": "stl/index_cup_pip_ext.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"index_tip_skin": {
+"body": "index_distal",
+"finger": "index",
+"stl": "stl/index_tip_skin.stl",
+"color": "#d05050",
+"printed": true
+},
+"index_tip_pcb": {
+"body": "index_distal",
+"finger": "index",
+"stl": "stl/index_tip_pcb.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"index_tip_chip": {
+"body": "index_distal",
+"finger": "index",
+"stl": "stl/index_tip_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"index_tip_magnet": {
+"body": "index_distal",
+"finger": "index",
+"stl": "stl/index_tip_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"index_nail_shim": {
+"body": "index_distal",
+"finger": "index",
+"stl": "stl/index_nail_shim.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"index_tip_carrier": {
+"body": "index_distal",
+"finger": "index",
+"stl": "stl/index_tip_carrier.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"index_mcp_axle_inner": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_mcp_axle_inner.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"index_mcp_sleeve4_n": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_mcp_sleeve4_n.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"index_mcp_sleeve5_n": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_mcp_sleeve5_n.stl",
+"color": "#c8a040",
+"printed": false
+},
+"index_mcp_brg_n_in": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_mcp_brg_n_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"index_mcp_brg_n_out": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_mcp_brg_n_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"index_mcp_ring_n": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_mcp_ring_n.stl",
+"color": "#c8a040",
+"printed": false
+},
+"index_mcp_sleeve4_p": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_mcp_sleeve4_p.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"index_mcp_sleeve5_p": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_mcp_sleeve5_p.stl",
+"color": "#c8a040",
+"printed": false
+},
+"index_mcp_zro2_in": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_mcp_zro2_in.stl",
+"color": "#f2f0e6",
+"printed": false
+},
+"index_mcp_zro2_out": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_mcp_zro2_out.stl",
+"color": "#f2f0e6",
+"printed": false
+},
+"index_mcp_ring_p": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_mcp_ring_p.stl",
+"color": "#c8a040",
+"printed": false
+},
+"index_idler_in": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_idler_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"index_idler_out": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_idler_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"index_roller_in": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_roller_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"index_roller_out": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_roller_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"index_dowel_roller": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_dowel_roller.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"index_dowel_ext": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_dowel_ext.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"index_nip_pipflex_0": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_nip_pipflex_0.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"index_nip_pipext_0": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_nip_pipext_0.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"index_nip_mcpflex_0": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_nip_mcpflex_0.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"index_nip_mcpext_0": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_nip_mcpext_0.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"index_nip_pipflex_1": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_nip_pipflex_1.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"index_nip_pipext_1": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_nip_pipext_1.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"index_nip_mcpflex_1": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_nip_mcpflex_1.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"index_nip_mcpext_1": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_nip_mcpext_1.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"index_sensor_mcp_magnet": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_sensor_mcp_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"index_sensor_mcp_chip": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_sensor_mcp_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"index_sensor_mcp_board": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_sensor_mcp_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"index_sensor_mcp_cap": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_sensor_mcp_cap.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"index_sensor_pip_magnet": {
+"body": "index_middle",
+"finger": "index",
+"stl": "stl/index_sensor_pip_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"index_sensor_pip_chip": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_sensor_pip_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"index_sensor_pip_board": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_sensor_pip_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"index_sensor_pip_cap": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_sensor_pip_cap.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"index_sensor_dip_magnet": {
+"body": "index_middle",
+"finger": "index",
+"stl": "stl/index_sensor_dip_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"index_sensor_dip_chip": {
+"body": "index_distal",
+"finger": "index",
+"stl": "stl/index_sensor_dip_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"index_sensor_dip_board": {
+"body": "index_distal",
+"finger": "index",
+"stl": "stl/index_sensor_dip_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"index_sensor_dip_cap": {
+"body": "index_distal",
+"finger": "index",
+"stl": "stl/index_sensor_dip_cap.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"index_abd_stub_palmar": {
+"body": "index_module",
+"finger": "index",
+"stl": "stl/index_abd_stub_palmar.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"index_abd_stub_dorsal": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_abd_stub_dorsal.stl",
+"color": "#c8a040",
+"printed": false
+},
+"index_sensor_abd_magnet": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_sensor_abd_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"index_sensor_abd_board": {
+"body": "index_module",
+"finger": "index",
+"stl": "stl/index_sensor_abd_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"index_sensor_abd_chip": {
+"body": "index_module",
+"finger": "index",
+"stl": "stl/index_sensor_abd_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"index_sensor_abd_cap": {
+"body": "index_module",
+"finger": "index",
+"stl": "stl/index_sensor_abd_cap.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"index_knuckle_board": {
+"body": "index_module",
+"finger": "index",
+"stl": "stl/index_knuckle_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"index_jst_sh_socket": {
+"body": "index_module",
+"finger": "index",
+"stl": "stl/index_jst_sh_socket.stl",
+"color": "#f5f5f5",
+"printed": false
+},
+"index_jst_sh_plug": {
+"body": "index_module",
+"finger": "index",
+"stl": "stl/index_jst_sh_plug.stl",
+"color": "#f5f5f5",
+"printed": false
+},
+"index_abd_brg_p_in": {
+"body": "index_module",
+"finger": "index",
+"stl": "stl/index_abd_brg_p_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"index_abd_brg_p_out": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_abd_brg_p_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"index_abd_brg_d_in": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_abd_brg_d_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"index_abd_ring": {
+"body": "index_yoke",
+"finger": "index",
+"stl": "stl/index_abd_ring.stl",
+"color": "#c8a040",
+"printed": false
+},
+"index_pip_pin": {
+"body": "index_middle",
+"finger": "index",
+"stl": "stl/index_pip_pin.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"index_pip_bush": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_pip_bush.stl",
+"color": "#c8a040",
+"printed": false
+},
+"index_pip_zro2_in": {
+"body": "index_middle",
+"finger": "index",
+"stl": "stl/index_pip_zro2_in.stl",
+"color": "#f2f0e6",
+"printed": false
+},
+"index_pip_zro2_out": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_pip_zro2_out.stl",
+"color": "#f2f0e6",
+"printed": false
+},
+"index_pip_ring": {
+"body": "index_middle",
+"finger": "index",
+"stl": "stl/index_pip_ring.stl",
+"color": "#c8a040",
+"printed": false
+},
+"index_dip_pin": {
+"body": "index_middle",
+"finger": "index",
+"stl": "stl/index_dip_pin.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"index_dip_bush_n": {
+"body": "index_distal",
+"finger": "index",
+"stl": "stl/index_dip_bush_n.stl",
+"color": "#c8a040",
+"printed": false
+},
+"index_dip_bush_p": {
+"body": "index_distal",
+"finger": "index",
+"stl": "stl/index_dip_bush_p.stl",
+"color": "#c8a040",
+"printed": false
+},
+"index_pin_A": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_pin_A.stl",
+"color": "#c8a040",
+"printed": false
+},
+"index_pin_B": {
+"body": "index_distal",
+"finger": "index",
+"stl": "stl/index_pin_B.stl",
+"color": "#c8a040",
+"printed": false
+},
+"index_pad_prox_board": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_pad_prox_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"index_pad_prox_chip": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_pad_prox_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"index_pad_prox_silicone": {
+"body": "index_proximal",
+"finger": "index",
+"stl": "stl/index_pad_prox_silicone.stl",
+"color": "#d05050",
+"printed": false
+},
+"index_pad_mid_board": {
+"body": "index_middle",
+"finger": "index",
+"stl": "stl/index_pad_mid_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"index_pad_mid_chip": {
+"body": "index_middle",
+"finger": "index",
+"stl": "stl/index_pad_mid_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"index_pad_mid_silicone": {
+"body": "index_middle",
+"finger": "index",
+"stl": "stl/index_pad_mid_silicone.stl",
+"color": "#d05050",
+"printed": false
+},
+"index_knuckle_module": {
+"body": "index_module",
+"finger": "index",
+"stl": "stl/index_knuckle_module.stl",
+"color": "#8c8c8c",
+"printed": true
+},
+"index_abd_brg_d_out": {
+"body": "index_module",
+"finger": "index",
+"stl": "stl/index_abd_brg_d_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"index_liner_pip_flex": {
+"body": "index_module",
+"finger": "index",
+"stl": "stl/index_liner_pip_flex.stl",
+"color": "#999999",
+"printed": false
+},
+"index_liner_pip_ext": {
+"body": "index_module",
+"finger": "index",
+"stl": "stl/index_liner_pip_ext.stl",
+"color": "#999999",
+"printed": false
+},
+"index_liner_mcp_flex": {
+"body": "index_module",
+"finger": "index",
+"stl": "stl/index_liner_mcp_flex.stl",
+"color": "#999999",
+"printed": false
+},
+"index_liner_mcp_ext": {
+"body": "index_module",
+"finger": "index",
+"stl": "stl/index_liner_mcp_ext.stl",
+"color": "#999999",
+"printed": false
+},
+"index_liner_abd_flex": {
+"body": "index_module",
+"finger": "index",
+"stl": "stl/index_liner_abd_flex.stl",
+"color": "#999999",
+"printed": false
+},
+"index_liner_abd_ext": {
+"body": "index_module",
+"finger": "index",
+"stl": "stl/index_liner_abd_ext.stl",
+"color": "#999999",
+"printed": false
+},
+"index_dip_bar": {
+"body": "index_bar",
+"finger": "index",
+"stl": "stl/index_dip_bar.stl",
+"color": "#a0a8b8",
+"printed": false
+},
+"middle_yoke": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_yoke.stl",
+"color": "#4f86c6",
+"printed": true
+},
+"middle_proximal": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_proximal.stl",
+"color": "#e08a3c",
+"printed": true
+},
+"middle_middle": {
+"body": "middle_middle",
+"finger": "middle",
+"stl": "stl/middle_middle.stl",
+"color": "#5bab6b",
+"printed": true
+},
+"middle_distal": {
+"body": "middle_distal",
+"finger": "middle",
+"stl": "stl/middle_distal.stl",
+"color": "#c9ae43",
+"printed": true
+},
+"middle_cup_abd_flex": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_cup_abd_flex.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"middle_cup_abd_ext": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_cup_abd_ext.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"middle_cup_mcp_flex": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_cup_mcp_flex.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"middle_cup_mcp_ext": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_cup_mcp_ext.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"middle_cup_pip_flex": {
+"body": "middle_middle",
+"finger": "middle",
+"stl": "stl/middle_cup_pip_flex.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"middle_cup_pip_ext": {
+"body": "middle_middle",
+"finger": "middle",
+"stl": "stl/middle_cup_pip_ext.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"middle_tip_skin": {
+"body": "middle_distal",
+"finger": "middle",
+"stl": "stl/middle_tip_skin.stl",
+"color": "#d05050",
+"printed": true
+},
+"middle_tip_pcb": {
+"body": "middle_distal",
+"finger": "middle",
+"stl": "stl/middle_tip_pcb.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"middle_tip_chip": {
+"body": "middle_distal",
+"finger": "middle",
+"stl": "stl/middle_tip_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"middle_tip_magnet": {
+"body": "middle_distal",
+"finger": "middle",
+"stl": "stl/middle_tip_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"middle_nail_shim": {
+"body": "middle_distal",
+"finger": "middle",
+"stl": "stl/middle_nail_shim.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"middle_tip_carrier": {
+"body": "middle_distal",
+"finger": "middle",
+"stl": "stl/middle_tip_carrier.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"middle_mcp_axle_inner": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_mcp_axle_inner.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"middle_mcp_sleeve4_n": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_mcp_sleeve4_n.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"middle_mcp_sleeve5_n": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_mcp_sleeve5_n.stl",
+"color": "#c8a040",
+"printed": false
+},
+"middle_mcp_brg_n_in": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_mcp_brg_n_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"middle_mcp_brg_n_out": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_mcp_brg_n_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"middle_mcp_ring_n": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_mcp_ring_n.stl",
+"color": "#c8a040",
+"printed": false
+},
+"middle_mcp_sleeve4_p": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_mcp_sleeve4_p.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"middle_mcp_sleeve5_p": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_mcp_sleeve5_p.stl",
+"color": "#c8a040",
+"printed": false
+},
+"middle_mcp_zro2_in": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_mcp_zro2_in.stl",
+"color": "#f2f0e6",
+"printed": false
+},
+"middle_mcp_zro2_out": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_mcp_zro2_out.stl",
+"color": "#f2f0e6",
+"printed": false
+},
+"middle_mcp_ring_p": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_mcp_ring_p.stl",
+"color": "#c8a040",
+"printed": false
+},
+"middle_idler_in": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_idler_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"middle_idler_out": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_idler_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"middle_roller_in": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_roller_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"middle_roller_out": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_roller_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"middle_dowel_roller": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_dowel_roller.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"middle_dowel_ext": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_dowel_ext.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"middle_nip_pipflex_0": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_nip_pipflex_0.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"middle_nip_pipext_0": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_nip_pipext_0.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"middle_nip_mcpflex_0": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_nip_mcpflex_0.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"middle_nip_mcpext_0": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_nip_mcpext_0.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"middle_nip_pipflex_1": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_nip_pipflex_1.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"middle_nip_pipext_1": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_nip_pipext_1.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"middle_nip_mcpflex_1": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_nip_mcpflex_1.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"middle_nip_mcpext_1": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_nip_mcpext_1.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"middle_sensor_mcp_magnet": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_sensor_mcp_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"middle_sensor_mcp_chip": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_sensor_mcp_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"middle_sensor_mcp_board": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_sensor_mcp_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"middle_sensor_mcp_cap": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_sensor_mcp_cap.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"middle_sensor_pip_magnet": {
+"body": "middle_middle",
+"finger": "middle",
+"stl": "stl/middle_sensor_pip_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"middle_sensor_pip_chip": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_sensor_pip_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"middle_sensor_pip_board": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_sensor_pip_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"middle_sensor_pip_cap": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_sensor_pip_cap.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"middle_sensor_dip_magnet": {
+"body": "middle_middle",
+"finger": "middle",
+"stl": "stl/middle_sensor_dip_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"middle_sensor_dip_chip": {
+"body": "middle_distal",
+"finger": "middle",
+"stl": "stl/middle_sensor_dip_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"middle_sensor_dip_board": {
+"body": "middle_distal",
+"finger": "middle",
+"stl": "stl/middle_sensor_dip_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"middle_sensor_dip_cap": {
+"body": "middle_distal",
+"finger": "middle",
+"stl": "stl/middle_sensor_dip_cap.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"middle_abd_stub_palmar": {
+"body": "middle_module",
+"finger": "middle",
+"stl": "stl/middle_abd_stub_palmar.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"middle_abd_stub_dorsal": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_abd_stub_dorsal.stl",
+"color": "#c8a040",
+"printed": false
+},
+"middle_sensor_abd_magnet": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_sensor_abd_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"middle_sensor_abd_board": {
+"body": "middle_module",
+"finger": "middle",
+"stl": "stl/middle_sensor_abd_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"middle_sensor_abd_chip": {
+"body": "middle_module",
+"finger": "middle",
+"stl": "stl/middle_sensor_abd_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"middle_sensor_abd_cap": {
+"body": "middle_module",
+"finger": "middle",
+"stl": "stl/middle_sensor_abd_cap.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"middle_knuckle_board": {
+"body": "middle_module",
+"finger": "middle",
+"stl": "stl/middle_knuckle_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"middle_jst_sh_socket": {
+"body": "middle_module",
+"finger": "middle",
+"stl": "stl/middle_jst_sh_socket.stl",
+"color": "#f5f5f5",
+"printed": false
+},
+"middle_jst_sh_plug": {
+"body": "middle_module",
+"finger": "middle",
+"stl": "stl/middle_jst_sh_plug.stl",
+"color": "#f5f5f5",
+"printed": false
+},
+"middle_abd_brg_p_in": {
+"body": "middle_module",
+"finger": "middle",
+"stl": "stl/middle_abd_brg_p_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"middle_abd_brg_p_out": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_abd_brg_p_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"middle_abd_brg_d_in": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_abd_brg_d_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"middle_abd_ring": {
+"body": "middle_yoke",
+"finger": "middle",
+"stl": "stl/middle_abd_ring.stl",
+"color": "#c8a040",
+"printed": false
+},
+"middle_pip_pin": {
+"body": "middle_middle",
+"finger": "middle",
+"stl": "stl/middle_pip_pin.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"middle_pip_bush": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_pip_bush.stl",
+"color": "#c8a040",
+"printed": false
+},
+"middle_pip_zro2_in": {
+"body": "middle_middle",
+"finger": "middle",
+"stl": "stl/middle_pip_zro2_in.stl",
+"color": "#f2f0e6",
+"printed": false
+},
+"middle_pip_zro2_out": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_pip_zro2_out.stl",
+"color": "#f2f0e6",
+"printed": false
+},
+"middle_pip_ring": {
+"body": "middle_middle",
+"finger": "middle",
+"stl": "stl/middle_pip_ring.stl",
+"color": "#c8a040",
+"printed": false
+},
+"middle_dip_pin": {
+"body": "middle_middle",
+"finger": "middle",
+"stl": "stl/middle_dip_pin.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"middle_dip_bush_n": {
+"body": "middle_distal",
+"finger": "middle",
+"stl": "stl/middle_dip_bush_n.stl",
+"color": "#c8a040",
+"printed": false
+},
+"middle_dip_bush_p": {
+"body": "middle_distal",
+"finger": "middle",
+"stl": "stl/middle_dip_bush_p.stl",
+"color": "#c8a040",
+"printed": false
+},
+"middle_pin_A": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_pin_A.stl",
+"color": "#c8a040",
+"printed": false
+},
+"middle_pin_B": {
+"body": "middle_distal",
+"finger": "middle",
+"stl": "stl/middle_pin_B.stl",
+"color": "#c8a040",
+"printed": false
+},
+"middle_pad_prox_board": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_pad_prox_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"middle_pad_prox_chip": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_pad_prox_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"middle_pad_prox_silicone": {
+"body": "middle_proximal",
+"finger": "middle",
+"stl": "stl/middle_pad_prox_silicone.stl",
+"color": "#d05050",
+"printed": false
+},
+"middle_pad_mid_board": {
+"body": "middle_middle",
+"finger": "middle",
+"stl": "stl/middle_pad_mid_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"middle_pad_mid_chip": {
+"body": "middle_middle",
+"finger": "middle",
+"stl": "stl/middle_pad_mid_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"middle_pad_mid_silicone": {
+"body": "middle_middle",
+"finger": "middle",
+"stl": "stl/middle_pad_mid_silicone.stl",
+"color": "#d05050",
+"printed": false
+},
+"middle_knuckle_module": {
+"body": "middle_module",
+"finger": "middle",
+"stl": "stl/middle_knuckle_module.stl",
+"color": "#8c8c8c",
+"printed": true
+},
+"middle_abd_brg_d_out": {
+"body": "middle_module",
+"finger": "middle",
+"stl": "stl/middle_abd_brg_d_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"middle_liner_pip_flex": {
+"body": "middle_module",
+"finger": "middle",
+"stl": "stl/middle_liner_pip_flex.stl",
+"color": "#999999",
+"printed": false
+},
+"middle_liner_pip_ext": {
+"body": "middle_module",
+"finger": "middle",
+"stl": "stl/middle_liner_pip_ext.stl",
+"color": "#999999",
+"printed": false
+},
+"middle_liner_mcp_flex": {
+"body": "middle_module",
+"finger": "middle",
+"stl": "stl/middle_liner_mcp_flex.stl",
+"color": "#999999",
+"printed": false
+},
+"middle_liner_mcp_ext": {
+"body": "middle_module",
+"finger": "middle",
+"stl": "stl/middle_liner_mcp_ext.stl",
+"color": "#999999",
+"printed": false
+},
+"middle_liner_abd_flex": {
+"body": "middle_module",
+"finger": "middle",
+"stl": "stl/middle_liner_abd_flex.stl",
+"color": "#999999",
+"printed": false
+},
+"middle_liner_abd_ext": {
+"body": "middle_module",
+"finger": "middle",
+"stl": "stl/middle_liner_abd_ext.stl",
+"color": "#999999",
+"printed": false
+},
+"middle_dip_bar": {
+"body": "middle_bar",
+"finger": "middle",
+"stl": "stl/middle_dip_bar.stl",
+"color": "#a0a8b8",
+"printed": false
+},
+"ring_yoke": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_yoke.stl",
+"color": "#4f86c6",
+"printed": true
+},
+"ring_proximal": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_proximal.stl",
+"color": "#e08a3c",
+"printed": true
+},
+"ring_middle": {
+"body": "ring_middle",
+"finger": "ring",
+"stl": "stl/ring_middle.stl",
+"color": "#5bab6b",
+"printed": true
+},
+"ring_distal": {
+"body": "ring_distal",
+"finger": "ring",
+"stl": "stl/ring_distal.stl",
+"color": "#c9ae43",
+"printed": true
+},
+"ring_cup_abd_flex": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_cup_abd_flex.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"ring_cup_abd_ext": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_cup_abd_ext.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"ring_cup_mcp_flex": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_cup_mcp_flex.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"ring_cup_mcp_ext": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_cup_mcp_ext.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"ring_cup_pip_flex": {
+"body": "ring_middle",
+"finger": "ring",
+"stl": "stl/ring_cup_pip_flex.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"ring_cup_pip_ext": {
+"body": "ring_middle",
+"finger": "ring",
+"stl": "stl/ring_cup_pip_ext.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"ring_tip_skin": {
+"body": "ring_distal",
+"finger": "ring",
+"stl": "stl/ring_tip_skin.stl",
+"color": "#d05050",
+"printed": true
+},
+"ring_tip_pcb": {
+"body": "ring_distal",
+"finger": "ring",
+"stl": "stl/ring_tip_pcb.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"ring_tip_chip": {
+"body": "ring_distal",
+"finger": "ring",
+"stl": "stl/ring_tip_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"ring_tip_magnet": {
+"body": "ring_distal",
+"finger": "ring",
+"stl": "stl/ring_tip_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"ring_nail_shim": {
+"body": "ring_distal",
+"finger": "ring",
+"stl": "stl/ring_nail_shim.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"ring_tip_carrier": {
+"body": "ring_distal",
+"finger": "ring",
+"stl": "stl/ring_tip_carrier.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"ring_mcp_axle_inner": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_mcp_axle_inner.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"ring_mcp_sleeve4_n": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_mcp_sleeve4_n.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"ring_mcp_sleeve5_n": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_mcp_sleeve5_n.stl",
+"color": "#c8a040",
+"printed": false
+},
+"ring_mcp_brg_n_in": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_mcp_brg_n_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"ring_mcp_brg_n_out": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_mcp_brg_n_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"ring_mcp_ring_n": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_mcp_ring_n.stl",
+"color": "#c8a040",
+"printed": false
+},
+"ring_mcp_sleeve4_p": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_mcp_sleeve4_p.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"ring_mcp_sleeve5_p": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_mcp_sleeve5_p.stl",
+"color": "#c8a040",
+"printed": false
+},
+"ring_mcp_zro2_in": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_mcp_zro2_in.stl",
+"color": "#f2f0e6",
+"printed": false
+},
+"ring_mcp_zro2_out": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_mcp_zro2_out.stl",
+"color": "#f2f0e6",
+"printed": false
+},
+"ring_mcp_ring_p": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_mcp_ring_p.stl",
+"color": "#c8a040",
+"printed": false
+},
+"ring_idler_in": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_idler_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"ring_idler_out": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_idler_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"ring_roller_in": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_roller_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"ring_roller_out": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_roller_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"ring_dowel_roller": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_dowel_roller.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"ring_dowel_ext": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_dowel_ext.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"ring_nip_pipflex_0": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_nip_pipflex_0.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"ring_nip_pipext_0": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_nip_pipext_0.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"ring_nip_mcpflex_0": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_nip_mcpflex_0.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"ring_nip_mcpext_0": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_nip_mcpext_0.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"ring_nip_pipflex_1": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_nip_pipflex_1.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"ring_nip_pipext_1": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_nip_pipext_1.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"ring_nip_mcpflex_1": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_nip_mcpflex_1.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"ring_nip_mcpext_1": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_nip_mcpext_1.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"ring_sensor_mcp_magnet": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_sensor_mcp_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"ring_sensor_mcp_chip": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_sensor_mcp_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"ring_sensor_mcp_board": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_sensor_mcp_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"ring_sensor_mcp_cap": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_sensor_mcp_cap.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"ring_sensor_pip_magnet": {
+"body": "ring_middle",
+"finger": "ring",
+"stl": "stl/ring_sensor_pip_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"ring_sensor_pip_chip": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_sensor_pip_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"ring_sensor_pip_board": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_sensor_pip_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"ring_sensor_pip_cap": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_sensor_pip_cap.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"ring_sensor_dip_magnet": {
+"body": "ring_middle",
+"finger": "ring",
+"stl": "stl/ring_sensor_dip_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"ring_sensor_dip_chip": {
+"body": "ring_distal",
+"finger": "ring",
+"stl": "stl/ring_sensor_dip_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"ring_sensor_dip_board": {
+"body": "ring_distal",
+"finger": "ring",
+"stl": "stl/ring_sensor_dip_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"ring_sensor_dip_cap": {
+"body": "ring_distal",
+"finger": "ring",
+"stl": "stl/ring_sensor_dip_cap.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"ring_abd_stub_palmar": {
+"body": "ring_module",
+"finger": "ring",
+"stl": "stl/ring_abd_stub_palmar.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"ring_abd_stub_dorsal": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_abd_stub_dorsal.stl",
+"color": "#c8a040",
+"printed": false
+},
+"ring_sensor_abd_magnet": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_sensor_abd_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"ring_sensor_abd_board": {
+"body": "ring_module",
+"finger": "ring",
+"stl": "stl/ring_sensor_abd_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"ring_sensor_abd_chip": {
+"body": "ring_module",
+"finger": "ring",
+"stl": "stl/ring_sensor_abd_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"ring_sensor_abd_cap": {
+"body": "ring_module",
+"finger": "ring",
+"stl": "stl/ring_sensor_abd_cap.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"ring_knuckle_board": {
+"body": "ring_module",
+"finger": "ring",
+"stl": "stl/ring_knuckle_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"ring_jst_sh_socket": {
+"body": "ring_module",
+"finger": "ring",
+"stl": "stl/ring_jst_sh_socket.stl",
+"color": "#f5f5f5",
+"printed": false
+},
+"ring_jst_sh_plug": {
+"body": "ring_module",
+"finger": "ring",
+"stl": "stl/ring_jst_sh_plug.stl",
+"color": "#f5f5f5",
+"printed": false
+},
+"ring_abd_brg_p_in": {
+"body": "ring_module",
+"finger": "ring",
+"stl": "stl/ring_abd_brg_p_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"ring_abd_brg_p_out": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_abd_brg_p_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"ring_abd_brg_d_in": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_abd_brg_d_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"ring_abd_ring": {
+"body": "ring_yoke",
+"finger": "ring",
+"stl": "stl/ring_abd_ring.stl",
+"color": "#c8a040",
+"printed": false
+},
+"ring_pip_pin": {
+"body": "ring_middle",
+"finger": "ring",
+"stl": "stl/ring_pip_pin.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"ring_pip_bush": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_pip_bush.stl",
+"color": "#c8a040",
+"printed": false
+},
+"ring_pip_zro2_in": {
+"body": "ring_middle",
+"finger": "ring",
+"stl": "stl/ring_pip_zro2_in.stl",
+"color": "#f2f0e6",
+"printed": false
+},
+"ring_pip_zro2_out": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_pip_zro2_out.stl",
+"color": "#f2f0e6",
+"printed": false
+},
+"ring_pip_ring": {
+"body": "ring_middle",
+"finger": "ring",
+"stl": "stl/ring_pip_ring.stl",
+"color": "#c8a040",
+"printed": false
+},
+"ring_dip_pin": {
+"body": "ring_middle",
+"finger": "ring",
+"stl": "stl/ring_dip_pin.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"ring_dip_bush_n": {
+"body": "ring_distal",
+"finger": "ring",
+"stl": "stl/ring_dip_bush_n.stl",
+"color": "#c8a040",
+"printed": false
+},
+"ring_dip_bush_p": {
+"body": "ring_distal",
+"finger": "ring",
+"stl": "stl/ring_dip_bush_p.stl",
+"color": "#c8a040",
+"printed": false
+},
+"ring_pin_A": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_pin_A.stl",
+"color": "#c8a040",
+"printed": false
+},
+"ring_pin_B": {
+"body": "ring_distal",
+"finger": "ring",
+"stl": "stl/ring_pin_B.stl",
+"color": "#c8a040",
+"printed": false
+},
+"ring_pad_prox_board": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_pad_prox_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"ring_pad_prox_chip": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_pad_prox_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"ring_pad_prox_silicone": {
+"body": "ring_proximal",
+"finger": "ring",
+"stl": "stl/ring_pad_prox_silicone.stl",
+"color": "#d05050",
+"printed": false
+},
+"ring_pad_mid_board": {
+"body": "ring_middle",
+"finger": "ring",
+"stl": "stl/ring_pad_mid_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"ring_pad_mid_chip": {
+"body": "ring_middle",
+"finger": "ring",
+"stl": "stl/ring_pad_mid_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"ring_pad_mid_silicone": {
+"body": "ring_middle",
+"finger": "ring",
+"stl": "stl/ring_pad_mid_silicone.stl",
+"color": "#d05050",
+"printed": false
+},
+"ring_knuckle_module": {
+"body": "ring_module",
+"finger": "ring",
+"stl": "stl/ring_knuckle_module.stl",
+"color": "#8c8c8c",
+"printed": true
+},
+"ring_abd_brg_d_out": {
+"body": "ring_module",
+"finger": "ring",
+"stl": "stl/ring_abd_brg_d_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"ring_liner_pip_flex": {
+"body": "ring_module",
+"finger": "ring",
+"stl": "stl/ring_liner_pip_flex.stl",
+"color": "#999999",
+"printed": false
+},
+"ring_liner_pip_ext": {
+"body": "ring_module",
+"finger": "ring",
+"stl": "stl/ring_liner_pip_ext.stl",
+"color": "#999999",
+"printed": false
+},
+"ring_liner_mcp_flex": {
+"body": "ring_module",
+"finger": "ring",
+"stl": "stl/ring_liner_mcp_flex.stl",
+"color": "#999999",
+"printed": false
+},
+"ring_liner_mcp_ext": {
+"body": "ring_module",
+"finger": "ring",
+"stl": "stl/ring_liner_mcp_ext.stl",
+"color": "#999999",
+"printed": false
+},
+"ring_liner_abd_flex": {
+"body": "ring_module",
+"finger": "ring",
+"stl": "stl/ring_liner_abd_flex.stl",
+"color": "#999999",
+"printed": false
+},
+"ring_liner_abd_ext": {
+"body": "ring_module",
+"finger": "ring",
+"stl": "stl/ring_liner_abd_ext.stl",
+"color": "#999999",
+"printed": false
+},
+"ring_dip_bar": {
+"body": "ring_bar",
+"finger": "ring",
+"stl": "stl/ring_dip_bar.stl",
+"color": "#a0a8b8",
+"printed": false
+},
+"little_yoke": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_yoke.stl",
+"color": "#4f86c6",
+"printed": true
+},
+"little_proximal": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_proximal.stl",
+"color": "#e08a3c",
+"printed": true
+},
+"little_middle": {
+"body": "little_middle",
+"finger": "little",
+"stl": "stl/little_middle.stl",
+"color": "#5bab6b",
+"printed": true
+},
+"little_distal": {
+"body": "little_distal",
+"finger": "little",
+"stl": "stl/little_distal.stl",
+"color": "#c9ae43",
+"printed": true
+},
+"little_cup_abd_flex": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_cup_abd_flex.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"little_cup_abd_ext": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_cup_abd_ext.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"little_cup_mcp_flex": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_cup_mcp_flex.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"little_cup_mcp_ext": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_cup_mcp_ext.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"little_cup_pip_flex": {
+"body": "little_middle",
+"finger": "little",
+"stl": "stl/little_cup_pip_flex.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"little_cup_pip_ext": {
+"body": "little_middle",
+"finger": "little",
+"stl": "stl/little_cup_pip_ext.stl",
+"color": "#8e6fbf",
+"printed": true
+},
+"little_tip_skin": {
+"body": "little_distal",
+"finger": "little",
+"stl": "stl/little_tip_skin.stl",
+"color": "#d05050",
+"printed": true
+},
+"little_tip_pcb": {
+"body": "little_distal",
+"finger": "little",
+"stl": "stl/little_tip_pcb.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"little_tip_chip": {
+"body": "little_distal",
+"finger": "little",
+"stl": "stl/little_tip_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"little_tip_magnet": {
+"body": "little_distal",
+"finger": "little",
+"stl": "stl/little_tip_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"little_nail_shim": {
+"body": "little_distal",
+"finger": "little",
+"stl": "stl/little_nail_shim.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"little_tip_carrier": {
+"body": "little_distal",
+"finger": "little",
+"stl": "stl/little_tip_carrier.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"little_mcp_axle_inner": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_mcp_axle_inner.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"little_mcp_sleeve4_n": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_mcp_sleeve4_n.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"little_mcp_sleeve5_n": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_mcp_sleeve5_n.stl",
+"color": "#c8a040",
+"printed": false
+},
+"little_mcp_brg_n_in": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_mcp_brg_n_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"little_mcp_brg_n_out": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_mcp_brg_n_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"little_mcp_ring_n": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_mcp_ring_n.stl",
+"color": "#c8a040",
+"printed": false
+},
+"little_mcp_sleeve4_p": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_mcp_sleeve4_p.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"little_mcp_sleeve5_p": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_mcp_sleeve5_p.stl",
+"color": "#c8a040",
+"printed": false
+},
+"little_mcp_zro2_in": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_mcp_zro2_in.stl",
+"color": "#f2f0e6",
+"printed": false
+},
+"little_mcp_zro2_out": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_mcp_zro2_out.stl",
+"color": "#f2f0e6",
+"printed": false
+},
+"little_mcp_ring_p": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_mcp_ring_p.stl",
+"color": "#c8a040",
+"printed": false
+},
+"little_idler_in": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_idler_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"little_idler_out": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_idler_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"little_roller_in": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_roller_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"little_roller_out": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_roller_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"little_dowel_roller": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_dowel_roller.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"little_dowel_ext": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_dowel_ext.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"little_nip_pipflex_0": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_nip_pipflex_0.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"little_nip_pipext_0": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_nip_pipext_0.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"little_nip_mcpflex_0": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_nip_mcpflex_0.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"little_nip_mcpext_0": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_nip_mcpext_0.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"little_nip_pipflex_1": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_nip_pipflex_1.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"little_nip_pipext_1": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_nip_pipext_1.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"little_nip_mcpflex_1": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_nip_mcpflex_1.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"little_nip_mcpext_1": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_nip_mcpext_1.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"little_sensor_mcp_magnet": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_sensor_mcp_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"little_sensor_mcp_chip": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_sensor_mcp_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"little_sensor_mcp_board": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_sensor_mcp_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"little_sensor_mcp_cap": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_sensor_mcp_cap.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"little_sensor_pip_magnet": {
+"body": "little_middle",
+"finger": "little",
+"stl": "stl/little_sensor_pip_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"little_sensor_pip_chip": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_sensor_pip_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"little_sensor_pip_board": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_sensor_pip_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"little_sensor_pip_cap": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_sensor_pip_cap.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"little_sensor_dip_magnet": {
+"body": "little_middle",
+"finger": "little",
+"stl": "stl/little_sensor_dip_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"little_sensor_dip_chip": {
+"body": "little_distal",
+"finger": "little",
+"stl": "stl/little_sensor_dip_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"little_sensor_dip_board": {
+"body": "little_distal",
+"finger": "little",
+"stl": "stl/little_sensor_dip_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"little_sensor_dip_cap": {
+"body": "little_distal",
+"finger": "little",
+"stl": "stl/little_sensor_dip_cap.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"little_abd_stub_palmar": {
+"body": "little_module",
+"finger": "little",
+"stl": "stl/little_abd_stub_palmar.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"little_abd_stub_dorsal": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_abd_stub_dorsal.stl",
+"color": "#c8a040",
+"printed": false
+},
+"little_sensor_abd_magnet": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_sensor_abd_magnet.stl",
+"color": "#555566",
+"printed": false
+},
+"little_sensor_abd_board": {
+"body": "little_module",
+"finger": "little",
+"stl": "stl/little_sensor_abd_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"little_sensor_abd_chip": {
+"body": "little_module",
+"finger": "little",
+"stl": "stl/little_sensor_abd_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"little_sensor_abd_cap": {
+"body": "little_module",
+"finger": "little",
+"stl": "stl/little_sensor_abd_cap.stl",
+"color": "#7a8aa0",
+"printed": false
+},
+"little_knuckle_board": {
+"body": "little_module",
+"finger": "little",
+"stl": "stl/little_knuckle_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"little_jst_sh_socket": {
+"body": "little_module",
+"finger": "little",
+"stl": "stl/little_jst_sh_socket.stl",
+"color": "#f5f5f5",
+"printed": false
+},
+"little_jst_sh_plug": {
+"body": "little_module",
+"finger": "little",
+"stl": "stl/little_jst_sh_plug.stl",
+"color": "#f5f5f5",
+"printed": false
+},
+"little_abd_brg_p_in": {
+"body": "little_module",
+"finger": "little",
+"stl": "stl/little_abd_brg_p_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"little_abd_brg_p_out": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_abd_brg_p_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"little_abd_brg_d_in": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_abd_brg_d_in.stl",
+"color": "#6e7480",
+"printed": false
+},
+"little_abd_ring": {
+"body": "little_yoke",
+"finger": "little",
+"stl": "stl/little_abd_ring.stl",
+"color": "#c8a040",
+"printed": false
+},
+"little_pip_pin": {
+"body": "little_middle",
+"finger": "little",
+"stl": "stl/little_pip_pin.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"little_pip_bush": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_pip_bush.stl",
+"color": "#c8a040",
+"printed": false
+},
+"little_pip_zro2_in": {
+"body": "little_middle",
+"finger": "little",
+"stl": "stl/little_pip_zro2_in.stl",
+"color": "#f2f0e6",
+"printed": false
+},
+"little_pip_zro2_out": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_pip_zro2_out.stl",
+"color": "#f2f0e6",
+"printed": false
+},
+"little_pip_ring": {
+"body": "little_middle",
+"finger": "little",
+"stl": "stl/little_pip_ring.stl",
+"color": "#c8a040",
+"printed": false
+},
+"little_dip_pin": {
+"body": "little_middle",
+"finger": "little",
+"stl": "stl/little_dip_pin.stl",
+"color": "#b8bcc4",
+"printed": false
+},
+"little_dip_bush_n": {
+"body": "little_distal",
+"finger": "little",
+"stl": "stl/little_dip_bush_n.stl",
+"color": "#c8a040",
+"printed": false
+},
+"little_dip_bush_p": {
+"body": "little_distal",
+"finger": "little",
+"stl": "stl/little_dip_bush_p.stl",
+"color": "#c8a040",
+"printed": false
+},
+"little_pin_A": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_pin_A.stl",
+"color": "#c8a040",
+"printed": false
+},
+"little_pin_B": {
+"body": "little_distal",
+"finger": "little",
+"stl": "stl/little_pin_B.stl",
+"color": "#c8a040",
+"printed": false
+},
+"little_pad_prox_board": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_pad_prox_board.stl",
+"color": "#2e7d32",
+"printed": false
+},
+"little_pad_prox_chip": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_pad_prox_chip.stl",
+"color": "#111111",
+"printed": false
+},
+"little_pad_prox_silicone": {
+"body": "little_proximal",
+"finger": "little",
+"stl": "stl/little_pad_prox_silicone.stl",
+"color": "#d05050",
+"printed": false
+},
+"little_knuckle_module": {
+"body": "little_module",
+"finger": "little",
+"stl": "stl/little_knuckle_module.stl",
+"color": "#8c8c8c",
+"printed": true
+},
+"little_abd_brg_d_out": {
+"body": "little_module",
+"finger": "little",
+"stl": "stl/little_abd_brg_d_out.stl",
+"color": "#6e7480",
+"printed": false
+},
+"little_liner_pip_flex": {
+"body": "little_module",
+"finger": "little",
+"stl": "stl/little_liner_pip_flex.stl",
+"color": "#999999",
+"printed": false
+},
+"little_liner_pip_ext": {
+"body": "little_module",
+"finger": "little",
+"stl": "stl/little_liner_pip_ext.stl",
+"color": "#999999",
+"printed": false
+},
+"little_liner_mcp_flex": {
+"body": "little_module",
+"finger": "little",
+"stl": "stl/little_liner_mcp_flex.stl",
+"color": "#999999",
+"printed": false
+},
+"little_liner_mcp_ext": {
+"body": "little_module",
+"finger": "little",
+"stl": "stl/little_liner_mcp_ext.stl",
+"color": "#999999",
+"printed": false
+},
+"little_liner_abd_flex": {
+"body": "little_module",
+"finger": "little",
+"stl": "stl/little_liner_abd_flex.stl",
+"color": "#999999",
+"printed": false
+},
+"little_liner_abd_ext": {
+"body": "little_module",
+"finger": "little",
+"stl": "stl/little_liner_abd_ext.stl",
+"color": "#999999",
+"printed": false
+},
+"little_dip_bar": {
+"body": "little_bar",
+"finger": "little",
+"stl": "stl/little_dip_bar.stl",
+"color": "#a0a8b8",
+"printed": false
+}
+}

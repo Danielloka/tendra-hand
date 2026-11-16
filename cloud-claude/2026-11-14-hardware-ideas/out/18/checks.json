@@ -1,0 +1,1658 @@
+{
+ "fingers": "package A (cad/18_fingers.py)",
+ "thumb": "V2 placeholder",
+ "part_count": 496,
+ "part_count_by_group": {
+  "wrist": 23,
+  "palm": 11,
+  "forearm": 74,
+  "fingers": 361,
+  "thumb": 27
+ },
+ "placeholders": [
+  "T_base_cap",
+  "T_bearing_bottom",
+  "T_bearing_cmc_flex_l",
+  "T_bearing_cmc_flex_r",
+  "T_bearing_ip_l",
+  "T_bearing_ip_r",
+  "T_bearing_mcp_flex_l",
+  "T_bearing_mcp_flex_r",
+  "T_bearing_top",
+  "T_pin_cmc_a",
+  "T_pin_cmc_b",
+  "T_pin_ip_a",
+  "T_pin_ip_axle",
+  "T_pin_ip_b",
+  "T_pin_mcp_a",
+  "T_pin_mcp_b",
+  "T_thenar_pad",
+  "T_thumb_base",
+  "T_thumb_distal",
+  "T_thumb_metacarpal",
+  "T_thumb_mount",
+  "T_thumb_pad",
+  "T_thumb_proximal",
+  "T_tie_liner_cmc_flex",
+  "T_tie_liner_ip",
+  "T_tie_liner_mcp_flex",
+  "T_tie_liner_rot",
+  "palm_hypothenar_pad",
+  "palm_pad"
+ ],
+ "not_watertight": [
+  "ring_w13",
+  "middle_liner_pip_flex",
+  "middle_liner_pip_ext",
+  "middle_liner_mcp_ext",
+  "middle_liner_abd_ext",
+  "ring_liner_mcp_ext",
+  "T_thumb_mount"
+ ],
+ "mass_g_total": 1125.4,
+ "mass_g_by_group": {
+  "wrist": 248.0,
+  "palm": 35.4,
+  "forearm": 599.4,
+  "fingers": 134.5,
+  "thumb": 102.8
+ },
+ "mass_g": {
+  "forearm_yoke_w13": 14.43,
+  "forearm_plate_w13": 3.28,
+  "forearm_plate_carrier_w13": 1.77,
+  "bush_dev_B": 0.12,
+  "bush_dev_F": 0.12,
+  "ring_w13": 33.92,
+  "eye_plate_w13": 3.28,
+  "pin_dev_B_hollow": 1.2,
+  "pin_dev_F": 1.31,
+  "bush_flex_R": 0.12,
+  "bush_flex_L": 0.12,
+  "palm_yoke_w13": 15.5,
+  "palm_plate_w13": 3.28,
+  "pin_flex_R_hollow": 1.18,
+  "pin_flex_L": 1.31,
+  "wrist_servo_R": 55.0,
+  "wrist_servo_L": 55.0,
+  "wrist_gears_R": 14.06,
+  "wrist_gears_L": 14.06,
+  "palm_v21": 21.37,
+  "hub_tray": 0.82,
+  "hub_board": 2.53,
+  "hub_rp2040": 2.81,
+  "palm_dorsal_cover": 1.85,
+  "pad_cup_thenar": 0.31,
+  "pad_cup_hypothenar": 0.31,
+  "pad_cup_centre": 0.31,
+  "pad_cup_distal": 0.31,
+  "palm_pad": 2.62,
+  "palm_hypothenar_pad": 2.18,
+  "forearm_shell_back": 76.87,
+  "forearm_cover_front": 76.87,
+  "forearm_side_cover_R": 7.89,
+  "forearm_side_cover_L": 7.89,
+  "forearm_frame": 46.86,
+  "arm_flange": 22.88,
+  "esp32_s3": 40.9,
+  "fe_urt1": 20.98,
+  "power_board": 18.35,
+  "spool_rail": 30.12,
+  "cart_01_spool": 1.28,
+  "cart_01_driver": 0.33,
+  "cart_01_keeper": 0.83,
+  "servo_01": 13.2,
+  "cart_02_spool": 1.28,
+  "cart_02_driver": 0.33,
+  "cart_02_keeper": 0.83,
+  "servo_02": 13.2,
+  "cart_03_spool": 1.28,
+  "cart_03_driver": 0.33,
+  "cart_03_keeper": 0.83,
+  "servo_03": 13.2,
+  "cart_04_spool": 1.28,
+  "cart_04_driver": 0.33,
+  "cart_04_keeper": 0.83,
+  "servo_04": 13.2,
+  "cart_05_spool": 1.28,
+  "cart_05_driver": 0.33,
+  "cart_05_keeper": 0.83,
+  "servo_05": 13.2,
+  "cart_06_spool": 1.28,
+  "cart_06_driver": 0.33,
+  "cart_06_keeper": 0.83,
+  "servo_06": 13.2,
+  "cart_07_spool": 1.28,
+  "cart_07_driver": 0.33,
+  "cart_07_keeper": 0.83,
+  "servo_07": 13.2,
+  "cart_08_spool": 1.28,
+  "cart_08_driver": 0.33,
+  "cart_08_keeper": 0.83,
+  "servo_08": 13.2,
+  "cart_09_spool": 1.28,
+  "cart_09_driver": 0.33,
+  "cart_09_keeper": 0.83,
+  "servo_09": 13.2,
+  "cart_10_spool": 1.28,
+  "cart_10_driver": 0.33,
+  "cart_10_keeper": 0.83,
+  "servo_10": 13.2,
+  "cart_11_spool": 1.28,
+  "cart_11_driver": 0.33,
+  "cart_11_keeper": 0.83,
+  "servo_11": 13.2,
+  "cart_12_spool": 1.28,
+  "cart_12_driver": 0.33,
+  "cart_12_keeper": 0.83,
+  "servo_12": 13.2,
+  "cart_13_spool": 1.28,
+  "cart_13_driver": 0.33,
+  "cart_13_keeper": 0.83,
+  "servo_13": 13.2,
+  "cart_14_spool": 1.28,
+  "cart_14_driver": 0.33,
+  "cart_14_keeper": 0.83,
+  "servo_14": 13.2,
+  "cart_15_spool": 1.28,
+  "cart_15_driver": 0.33,
+  "cart_15_keeper": 0.83,
+  "servo_15": 13.2,
+  "cart_16_spool": 1.28,
+  "cart_16_driver": 0.33,
+  "cart_16_keeper": 0.83,
+  "servo_16": 13.2,
+  "index_yoke": 3.85,
+  "index_proximal": 10.98,
+  "index_middle": 4.64,
+  "index_distal": 4.19,
+  "index_cup_abd_flex": 0.01,
+  "index_cup_abd_ext": 0.01,
+  "index_cup_mcp_flex": 0.02,
+  "index_cup_mcp_ext": 0.02,
+  "index_cup_pip_flex": 0.01,
+  "index_cup_pip_ext": 0.01,
+  "index_tip_skin": 0.66,
+  "index_tip_pcb": 0.13,
+  "index_tip_chip": 0.02,
+  "index_tip_magnet": 0.01,
+  "index_nail_shim": 0.01,
+  "index_tip_carrier": 0.09,
+  "index_mcp_axle_inner": 0.42,
+  "index_mcp_sleeve4_n": 0.04,
+  "index_mcp_sleeve5_n": 0.02,
+  "index_mcp_brg_n_in": 0.03,
+  "index_mcp_brg_n_out": 0.05,
+  "index_mcp_ring_n": 0.04,
+  "index_mcp_sleeve4_p": 0.03,
+  "index_mcp_sleeve5_p": 0.02,
+  "index_mcp_zro2_in": 0.02,
+  "index_mcp_zro2_out": 0.04,
+  "index_mcp_ring_p": 0.04,
+  "index_idler_in": 0.02,
+  "index_idler_out": 0.03,
+  "index_roller_in": 0.02,
+  "index_roller_out": 0.03,
+  "index_dowel_roller": 0.44,
+  "index_dowel_ext": 0.2,
+  "index_nip_pipflex_0": 0.02,
+  "index_nip_pipext_0": 0.02,
+  "index_nip_mcpflex_0": 0.01,
+  "index_nip_mcpext_0": 0.01,
+  "index_nip_pipflex_1": 0.02,
+  "index_nip_pipext_1": 0.02,
+  "index_nip_mcpflex_1": 0.01,
+  "index_nip_mcpext_1": 0.01,
+  "index_sensor_mcp_magnet": 0.01,
+  "index_sensor_mcp_chip": 0.02,
+  "index_sensor_mcp_board": 0.02,
+  "index_sensor_mcp_cap": 0.03,
+  "index_sensor_pip_magnet": 0.01,
+  "index_sensor_pip_chip": 0.02,
+  "index_sensor_pip_board": 0.02,
+  "index_sensor_pip_cap": 0.03,
+  "index_sensor_dip_magnet": 0.01,
+  "index_sensor_dip_chip": 0.02,
+  "index_sensor_dip_board": 0.02,
+  "index_sensor_dip_cap": 0.03,
+  "index_abd_stub_palmar": 0.03,
+  "index_abd_stub_dorsal": 0.05,
+  "index_sensor_abd_magnet": 0.01,
+  "index_sensor_abd_board": 0.02,
+  "index_sensor_abd_chip": 0.02,
+  "index_sensor_abd_cap": 0.07,
+  "index_knuckle_board": 0.25,
+  "index_jst_sh_socket": 0.14,
+  "index_jst_sh_plug": 0.06,
+  "index_abd_brg_p_in": 0.02,
+  "index_abd_brg_p_out": 0.03,
+  "index_abd_brg_d_in": 0.02,
+  "index_abd_ring": 0.07,
+  "index_pip_pin": 0.51,
+  "index_pip_bush": 0.03,
+  "index_pip_zro2_in": 0.02,
+  "index_pip_zro2_out": 0.04,
+  "index_pip_ring": 0.07,
+  "index_dip_pin": 0.51,
+  "index_dip_bush_n": 0.03,
+  "index_dip_bush_p": 0.01,
+  "index_pin_A": 0.17,
+  "index_pin_B": 0.17,
+  "index_pad_prox_board": 0.02,
+  "index_pad_prox_chip": 0.0,
+  "index_pad_prox_silicone": 0.18,
+  "index_pad_mid_board": 0.02,
+  "index_pad_mid_chip": 0.0,
+  "index_pad_mid_silicone": 0.16,
+  "index_knuckle_module": 4.53,
+  "index_abd_brg_d_out": 0.03,
+  "index_liner_pip_flex": 0.14,
+  "index_liner_pip_ext": 0.12,
+  "index_liner_mcp_flex": 0.13,
+  "index_liner_mcp_ext": 0.15,
+  "index_liner_abd_flex": 0.15,
+  "index_liner_abd_ext": 0.13,
+  "index_dip_bar": 0.44,
+  "middle_yoke": 3.85,
+  "middle_proximal": 11.88,
+  "middle_middle": 5.44,
+  "middle_distal": 4.42,
+  "middle_cup_abd_flex": 0.01,
+  "middle_cup_abd_ext": 0.01,
+  "middle_cup_mcp_flex": 0.02,
+  "middle_cup_mcp_ext": 0.02,
+  "middle_cup_pip_flex": 0.01,
+  "middle_cup_pip_ext": 0.01,
+  "middle_tip_skin": 0.69,
+  "middle_tip_pcb": 0.13,
+  "middle_tip_chip": 0.02,
+  "middle_tip_magnet": 0.01,
+  "middle_nail_shim": 0.01,
+  "middle_tip_carrier": 0.09,
+  "middle_mcp_axle_inner": 0.42,
+  "middle_mcp_sleeve4_n": 0.04,
+  "middle_mcp_sleeve5_n": 0.02,
+  "middle_mcp_brg_n_in": 0.03,
+  "middle_mcp_brg_n_out": 0.05,
+  "middle_mcp_ring_n": 0.04,
+  "middle_mcp_sleeve4_p": 0.03,
+  "middle_mcp_sleeve5_p": 0.02,
+  "middle_mcp_zro2_in": 0.02,
+  "middle_mcp_zro2_out": 0.04,
+  "middle_mcp_ring_p": 0.04,
+  "middle_idler_in": 0.02,
+  "middle_idler_out": 0.03,
+  "middle_roller_in": 0.02,
+  "middle_roller_out": 0.03,
+  "middle_dowel_roller": 0.44,
+  "middle_dowel_ext": 0.2,
+  "middle_nip_pipflex_0": 0.02,
+  "middle_nip_pipext_0": 0.02,
+  "middle_nip_mcpflex_0": 0.01,
+  "middle_nip_mcpext_0": 0.01,
+  "middle_nip_pipflex_1": 0.02,
+  "middle_nip_pipext_1": 0.02,
+  "middle_nip_mcpflex_1": 0.01,
+  "middle_nip_mcpext_1": 0.01,
+  "middle_sensor_mcp_magnet": 0.01,
+  "middle_sensor_mcp_chip": 0.02,
+  "middle_sensor_mcp_board": 0.02,
+  "middle_sensor_mcp_cap": 0.03,
+  "middle_sensor_pip_magnet": 0.01,
+  "middle_sensor_pip_chip": 0.02,
+  "middle_sensor_pip_board": 0.02,
+  "middle_sensor_pip_cap": 0.03,
+  "middle_sensor_dip_magnet": 0.01,
+  "middle_sensor_dip_chip": 0.02,
+  "middle_sensor_dip_board": 0.02,
+  "middle_sensor_dip_cap": 0.03,
+  "middle_abd_stub_palmar": 0.03,
+  "middle_abd_stub_dorsal": 0.05,
+  "middle_sensor_abd_magnet": 0.01,
+  "middle_sensor_abd_board": 0.02,
+  "middle_sensor_abd_chip": 0.02,
+  "middle_sensor_abd_cap": 0.07,
+  "middle_knuckle_board": 0.25,
+  "middle_jst_sh_socket": 0.14,
+  "middle_jst_sh_plug": 0.06,
+  "middle_abd_brg_p_in": 0.02,
+  "middle_abd_brg_p_out": 0.03,
+  "middle_abd_brg_d_in": 0.02,
+  "middle_abd_ring": 0.07,
+  "middle_pip_pin": 0.51,
+  "middle_pip_bush": 0.03,
+  "middle_pip_zro2_in": 0.02,
+  "middle_pip_zro2_out": 0.04,
+  "middle_pip_ring": 0.07,
+  "middle_dip_pin": 0.51,
+  "middle_dip_bush_n": 0.03,
+  "middle_dip_bush_p": 0.01,
+  "middle_pin_A": 0.17,
+  "middle_pin_B": 0.17,
+  "middle_pad_prox_board": 0.02,
+  "middle_pad_prox_chip": 0.0,
+  "middle_pad_prox_silicone": 0.18,
+  "middle_pad_mid_board": 0.02,
+  "middle_pad_mid_chip": 0.0,
+  "middle_pad_mid_silicone": 0.16,
+  "middle_knuckle_module": 4.53,
+  "middle_abd_brg_d_out": 0.03,
+  "middle_liner_pip_flex": 0.15,
+  "middle_liner_pip_ext": 0.14,
+  "middle_liner_mcp_flex": 0.13,
+  "middle_liner_mcp_ext": 0.17,
+  "middle_liner_abd_flex": 0.13,
+  "middle_liner_abd_ext": 0.17,
+  "middle_dip_bar": 0.51,
+  "ring_yoke": 3.85,
+  "ring_proximal": 11.28,
+  "ring_middle": 5.16,
+  "ring_distal": 4.19,
+  "ring_cup_abd_flex": 0.01,
+  "ring_cup_abd_ext": 0.01,
+  "ring_cup_mcp_flex": 0.02,
+  "ring_cup_mcp_ext": 0.02,
+  "ring_cup_pip_flex": 0.01,
+  "ring_cup_pip_ext": 0.01,
+  "ring_tip_skin": 0.66,
+  "ring_tip_pcb": 0.13,
+  "ring_tip_chip": 0.02,
+  "ring_tip_magnet": 0.01,
+  "ring_nail_shim": 0.01,
+  "ring_tip_carrier": 0.09,
+  "ring_mcp_axle_inner": 0.42,
+  "ring_mcp_sleeve4_n": 0.04,
+  "ring_mcp_sleeve5_n": 0.02,
+  "ring_mcp_brg_n_in": 0.03,
+  "ring_mcp_brg_n_out": 0.05,
+  "ring_mcp_ring_n": 0.04,
+  "ring_mcp_sleeve4_p": 0.03,
+  "ring_mcp_sleeve5_p": 0.02,
+  "ring_mcp_zro2_in": 0.02,
+  "ring_mcp_zro2_out": 0.04,
+  "ring_mcp_ring_p": 0.04,
+  "ring_idler_in": 0.02,
+  "ring_idler_out": 0.03,
+  "ring_roller_in": 0.02,
+  "ring_roller_out": 0.03,
+  "ring_dowel_roller": 0.44,
+  "ring_dowel_ext": 0.2,
+  "ring_nip_pipflex_0": 0.02,
+  "ring_nip_pipext_0": 0.02,
+  "ring_nip_mcpflex_0": 0.01,
+  "ring_nip_mcpext_0": 0.01,
+  "ring_nip_pipflex_1": 0.02,
+  "ring_nip_pipext_1": 0.02,
+  "ring_nip_mcpflex_1": 0.01,
+  "ring_nip_mcpext_1": 0.01,
+  "ring_sensor_mcp_magnet": 0.01,
+  "ring_sensor_mcp_chip": 0.02,
+  "ring_sensor_mcp_board": 0.02,
+  "ring_sensor_mcp_cap": 0.03,
+  "ring_sensor_pip_magnet": 0.01,
+  "ring_sensor_pip_chip": 0.02,
+  "ring_sensor_pip_board": 0.02,
+  "ring_sensor_pip_cap": 0.03,
+  "ring_sensor_dip_magnet": 0.01,
+  "ring_sensor_dip_chip": 0.02,
+  "ring_sensor_dip_board": 0.02,
+  "ring_sensor_dip_cap": 0.03,
+  "ring_abd_stub_palmar": 0.03,
+  "ring_abd_stub_dorsal": 0.05,
+  "ring_sensor_abd_magnet": 0.01,
+  "ring_sensor_abd_board": 0.02,
+  "ring_sensor_abd_chip": 0.02,
+  "ring_sensor_abd_cap": 0.07,
+  "ring_knuckle_board": 0.25,
+  "ring_jst_sh_socket": 0.14,
+  "ring_jst_sh_plug": 0.06,
+  "ring_abd_brg_p_in": 0.02,
+  "ring_abd_brg_p_out": 0.03,
+  "ring_abd_brg_d_in": 0.02,
+  "ring_abd_ring": 0.07,
+  "ring_pip_pin": 0.51,
+  "ring_pip_bush": 0.03,
+  "ring_pip_zro2_in": 0.02,
+  "ring_pip_zro2_out": 0.04,
+  "ring_pip_ring": 0.07,
+  "ring_dip_pin": 0.51,
+  "ring_dip_bush_n": 0.03,
+  "ring_dip_bush_p": 0.01,
+  "ring_pin_A": 0.17,
+  "ring_pin_B": 0.17,
+  "ring_pad_prox_board": 0.02,
+  "ring_pad_prox_chip": 0.0,
+  "ring_pad_prox_silicone": 0.18,
+  "ring_pad_mid_board": 0.02,
+  "ring_pad_mid_chip": 0.0,
+  "ring_pad_mid_silicone": 0.16,
+  "ring_knuckle_module": 4.44,
+  "ring_abd_brg_d_out": 0.03,
+  "ring_liner_pip_flex": 0.13,
+  "ring_liner_pip_ext": 0.13,
+  "ring_liner_mcp_flex": 0.16,
+  "ring_liner_mcp_ext": 0.15,
+  "ring_liner_abd_flex": 0.13,
+  "ring_liner_abd_ext": 0.14,
+  "ring_dip_bar": 0.48,
+  "little_yoke": 3.85,
+  "little_proximal": 8.57,
+  "little_middle": 3.81,
+  "little_distal": 3.74,
+  "little_cup_abd_flex": 0.01,
+  "little_cup_abd_ext": 0.01,
+  "little_cup_mcp_flex": 0.02,
+  "little_cup_mcp_ext": 0.02,
+  "little_cup_pip_flex": 0.01,
+  "little_cup_pip_ext": 0.01,
+  "little_tip_skin": 0.58,
+  "little_tip_pcb": 0.13,
+  "little_tip_chip": 0.02,
+  "little_tip_magnet": 0.01,
+  "little_nail_shim": 0.01,
+  "little_tip_carrier": 0.09,
+  "little_mcp_axle_inner": 0.42,
+  "little_mcp_sleeve4_n": 0.04,
+  "little_mcp_sleeve5_n": 0.02,
+  "little_mcp_brg_n_in": 0.03,
+  "little_mcp_brg_n_out": 0.05,
+  "little_mcp_ring_n": 0.04,
+  "little_mcp_sleeve4_p": 0.03,
+  "little_mcp_sleeve5_p": 0.02,
+  "little_mcp_zro2_in": 0.02,
+  "little_mcp_zro2_out": 0.04,
+  "little_mcp_ring_p": 0.04,
+  "little_idler_in": 0.02,
+  "little_idler_out": 0.03,
+  "little_roller_in": 0.02,
+  "little_roller_out": 0.03,
+  "little_dowel_roller": 0.44,
+  "little_dowel_ext": 0.2,
+  "little_nip_pipflex_0": 0.02,
+  "little_nip_pipext_0": 0.02,
+  "little_nip_mcpflex_0": 0.01,
+  "little_nip_mcpext_0": 0.01,
+  "little_nip_pipflex_1": 0.02,
+  "little_nip_pipext_1": 0.02,
+  "little_nip_mcpflex_1": 0.01,
+  "little_nip_mcpext_1": 0.01,
+  "little_sensor_mcp_magnet": 0.01,
+  "little_sensor_mcp_chip": 0.02,
+  "little_sensor_mcp_board": 0.02,
+  "little_sensor_mcp_cap": 0.03,
+  "little_sensor_pip_magnet": 0.01,
+  "little_sensor_pip_chip": 0.02,
+  "little_sensor_pip_board": 0.02,
+  "little_sensor_pip_cap": 0.03,
+  "little_sensor_dip_magnet": 0.01,
+  "little_sensor_dip_chip": 0.02,
+  "little_sensor_dip_board": 0.02,
+  "little_sensor_dip_cap": 0.03,
+  "little_abd_stub_palmar": 0.03,
+  "little_abd_stub_dorsal": 0.05,
+  "little_sensor_abd_magnet": 0.01,
+  "little_sensor_abd_board": 0.02,
+  "little_sensor_abd_chip": 0.02,
+  "little_sensor_abd_cap": 0.07,
+  "little_knuckle_board": 0.25,
+  "little_jst_sh_socket": 0.14,
+  "little_jst_sh_plug": 0.06,
+  "little_abd_brg_p_in": 0.02,
+  "little_abd_brg_p_out": 0.03,
+  "little_abd_brg_d_in": 0.02,
+  "little_abd_ring": 0.07,
+  "little_pip_pin": 0.51,
+  "little_pip_bush": 0.03,
+  "little_pip_zro2_in": 0.02,
+  "little_pip_zro2_out": 0.04,
+  "little_pip_ring": 0.07,
+  "little_dip_pin": 0.51,
+  "little_dip_bush_n": 0.03,
+  "little_dip_bush_p": 0.01,
+  "little_pin_A": 0.17,
+  "little_pin_B": 0.17,
+  "little_pad_prox_board": 0.02,
+  "little_pad_prox_chip": 0.0,
+  "little_pad_prox_silicone": 0.18,
+  "little_knuckle_module": 4.44,
+  "little_abd_brg_d_out": 0.03,
+  "little_liner_pip_flex": 0.14,
+  "little_liner_pip_ext": 0.16,
+  "little_liner_mcp_flex": 0.16,
+  "little_liner_mcp_ext": 0.14,
+  "little_liner_abd_flex": 0.15,
+  "little_liner_abd_ext": 0.15,
+  "little_dip_bar": 0.35,
+  "T_thumb_base": 6.67,
+  "T_pin_cmc_b": 0.88,
+  "T_thumb_pad": 0.86,
+  "T_bearing_bottom": 8.07,
+  "T_pin_ip_axle": 1.97,
+  "T_tie_liner_ip": 0.01,
+  "T_pin_mcp_a": 0.79,
+  "T_bearing_ip_r": 0.85,
+  "T_bearing_mcp_flex_r": 0.85,
+  "T_bearing_cmc_flex_r": 0.85,
+  "T_tie_liner_cmc_flex": 0.01,
+  "T_bearing_top": 8.07,
+  "T_tie_liner_rot": 0.01,
+  "T_tie_liner_mcp_flex": 0.01,
+  "T_thumb_distal": 7.07,
+  "T_pin_mcp_b": 0.79,
+  "T_base_cap": 0.53,
+  "T_thumb_proximal": 10.54,
+  "T_bearing_mcp_flex_l": 0.85,
+  "T_bearing_cmc_flex_l": 0.85,
+  "T_thumb_metacarpal": 16.82,
+  "T_pin_ip_a": 0.14,
+  "T_thenar_pad": 1.0,
+  "T_thumb_mount": 32.73,
+  "T_pin_ip_b": 0.14,
+  "T_bearing_ip_l": 0.85,
+  "T_pin_cmc_a": 0.88,
+  "wrist_crank_R": 3.98,
+  "wrist_crank_L": 3.98,
+  "wrist_rod_R": 10.65,
+  "wrist_rod_L": 10.25
+ },
+ "interference": {
+  "open": [
+   [
+    "middle_liner_mcp_flex",
+    "ring_liner_mcp_flex",
+    6.6
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_pip_ext",
+    6.3
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_abd_flex",
+    5.1
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_pip_ext",
+    4.5
+   ],
+   [
+    "index_liner_abd_ext",
+    "middle_liner_mcp_flex",
+    4.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "ring_liner_pip_flex",
+    3.4
+   ],
+   [
+    "ring_liner_mcp_flex",
+    "little_liner_abd_flex",
+    3.4
+   ],
+   [
+    "index_liner_abd_flex",
+    "ring_liner_abd_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "ring_liner_mcp_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "little_liner_abd_flex",
+    3.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_flex",
+    2.9
+   ],
+   [
+    "index_liner_abd_flex",
+    "little_liner_mcp_ext",
+    2.8
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_abd_flex",
+    2.7
+   ],
+   [
+    "middle_liner_mcp_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "middle_liner_abd_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_mcp_flex",
+    2.0
+   ],
+   [
+    "middle_liner_abd_flex",
+    "ring_liner_mcp_flex",
+    1.8
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_abd_flex",
+    1.6
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_abd_flex",
+    1.3
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.2
+   ],
+   [
+    "index_liner_mcp_ext",
+    "ring_liner_pip_ext",
+    1.2
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.1
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_pip_ext",
+    1.0
+   ]
+  ],
+  "relaxed": [
+   [
+    "middle_liner_mcp_flex",
+    "ring_liner_mcp_flex",
+    6.6
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_pip_ext",
+    6.3
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_abd_flex",
+    5.1
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_pip_ext",
+    4.5
+   ],
+   [
+    "index_liner_abd_ext",
+    "middle_liner_mcp_flex",
+    4.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "ring_liner_pip_flex",
+    3.4
+   ],
+   [
+    "ring_liner_mcp_flex",
+    "little_liner_abd_flex",
+    3.4
+   ],
+   [
+    "index_liner_abd_flex",
+    "ring_liner_abd_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "ring_liner_mcp_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "little_liner_abd_flex",
+    3.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_flex",
+    2.9
+   ],
+   [
+    "index_liner_abd_flex",
+    "little_liner_mcp_ext",
+    2.8
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_abd_flex",
+    2.7
+   ],
+   [
+    "middle_liner_mcp_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "middle_liner_abd_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_mcp_flex",
+    2.0
+   ],
+   [
+    "middle_liner_abd_flex",
+    "ring_liner_mcp_flex",
+    1.8
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_abd_flex",
+    1.6
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_abd_flex",
+    1.3
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.2
+   ],
+   [
+    "index_liner_mcp_ext",
+    "ring_liner_pip_ext",
+    1.2
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.1
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_pip_ext",
+    1.0
+   ]
+  ],
+  "fist": [
+   [
+    "middle_liner_mcp_flex",
+    "ring_liner_mcp_flex",
+    6.6
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_pip_ext",
+    6.3
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_abd_flex",
+    5.1
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_pip_ext",
+    4.5
+   ],
+   [
+    "index_liner_abd_ext",
+    "middle_liner_mcp_flex",
+    4.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "ring_liner_pip_flex",
+    3.4
+   ],
+   [
+    "ring_liner_mcp_flex",
+    "little_liner_abd_flex",
+    3.4
+   ],
+   [
+    "index_liner_abd_flex",
+    "ring_liner_abd_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "ring_liner_mcp_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "little_liner_abd_flex",
+    3.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_flex",
+    2.9
+   ],
+   [
+    "index_liner_abd_flex",
+    "little_liner_mcp_ext",
+    2.8
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_abd_flex",
+    2.7
+   ],
+   [
+    "middle_liner_mcp_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "middle_liner_abd_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_mcp_flex",
+    2.0
+   ],
+   [
+    "middle_liner_abd_flex",
+    "ring_liner_mcp_flex",
+    1.8
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_abd_flex",
+    1.6
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_abd_flex",
+    1.3
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.2
+   ],
+   [
+    "index_liner_mcp_ext",
+    "ring_liner_pip_ext",
+    1.2
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.1
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_pip_ext",
+    1.0
+   ]
+  ],
+  "tip_pinch": [
+   [
+    "middle_liner_mcp_flex",
+    "ring_liner_mcp_flex",
+    6.6
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_pip_ext",
+    6.3
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_abd_flex",
+    5.1
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_pip_ext",
+    4.5
+   ],
+   [
+    "index_liner_abd_ext",
+    "middle_liner_mcp_flex",
+    4.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "ring_liner_pip_flex",
+    3.4
+   ],
+   [
+    "ring_liner_mcp_flex",
+    "little_liner_abd_flex",
+    3.4
+   ],
+   [
+    "index_liner_abd_flex",
+    "ring_liner_abd_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "ring_liner_mcp_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "little_liner_abd_flex",
+    3.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_flex",
+    2.9
+   ],
+   [
+    "index_liner_abd_flex",
+    "little_liner_mcp_ext",
+    2.8
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_abd_flex",
+    2.7
+   ],
+   [
+    "middle_liner_mcp_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "middle_liner_abd_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_mcp_flex",
+    2.0
+   ],
+   [
+    "middle_liner_abd_flex",
+    "ring_liner_mcp_flex",
+    1.8
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_abd_flex",
+    1.6
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_abd_flex",
+    1.3
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.2
+   ],
+   [
+    "index_liner_mcp_ext",
+    "ring_liner_pip_ext",
+    1.2
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.1
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_pip_ext",
+    1.0
+   ]
+  ],
+  "thumb_to_little": [
+   [
+    "ring_yoke",
+    "little_proximal",
+    32.8
+   ],
+   [
+    "ring_proximal",
+    "little_proximal",
+    21.2
+   ],
+   [
+    "middle_liner_mcp_flex",
+    "ring_liner_mcp_flex",
+    6.6
+   ],
+   [
+    "little_tip_skin",
+    "T_thumb_pad",
+    6.6
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_pip_ext",
+    6.3
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_abd_flex",
+    5.1
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_pip_ext",
+    4.5
+   ],
+   [
+    "index_liner_abd_ext",
+    "middle_liner_mcp_flex",
+    4.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "ring_liner_pip_flex",
+    3.4
+   ],
+   [
+    "ring_liner_mcp_flex",
+    "little_liner_abd_flex",
+    3.4
+   ],
+   [
+    "index_liner_abd_flex",
+    "ring_liner_abd_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "ring_liner_mcp_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "little_liner_abd_flex",
+    3.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_flex",
+    2.9
+   ],
+   [
+    "palm_v21",
+    "little_yoke",
+    2.8
+   ],
+   [
+    "index_liner_abd_flex",
+    "little_liner_mcp_ext",
+    2.8
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_abd_flex",
+    2.7
+   ],
+   [
+    "middle_liner_mcp_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "middle_liner_abd_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "ring_yoke",
+    "little_sensor_mcp_cap",
+    2.1
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_mcp_flex",
+    2.0
+   ],
+   [
+    "ring_yoke",
+    "little_sensor_mcp_board",
+    1.9
+   ],
+   [
+    "middle_liner_abd_flex",
+    "ring_liner_mcp_flex",
+    1.8
+   ],
+   [
+    "palm_v21",
+    "T_thenar_pad",
+    1.6
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_abd_flex",
+    1.6
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_abd_flex",
+    1.3
+   ],
+   [
+    "ring_knuckle_module",
+    "little_yoke",
+    1.3
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.2
+   ],
+   [
+    "index_liner_mcp_ext",
+    "ring_liner_pip_ext",
+    1.2
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.1
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_pip_ext",
+    1.0
+   ]
+  ],
+  "power_grasp": [
+   [
+    "middle_liner_mcp_flex",
+    "ring_liner_mcp_flex",
+    6.6
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_pip_ext",
+    6.3
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_abd_flex",
+    5.1
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_pip_ext",
+    4.5
+   ],
+   [
+    "index_liner_abd_ext",
+    "middle_liner_mcp_flex",
+    4.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "ring_liner_pip_flex",
+    3.4
+   ],
+   [
+    "ring_liner_mcp_flex",
+    "little_liner_abd_flex",
+    3.4
+   ],
+   [
+    "index_liner_abd_flex",
+    "ring_liner_abd_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "ring_liner_mcp_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "little_liner_abd_flex",
+    3.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_flex",
+    2.9
+   ],
+   [
+    "index_liner_abd_flex",
+    "little_liner_mcp_ext",
+    2.8
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_abd_flex",
+    2.7
+   ],
+   [
+    "middle_liner_mcp_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "middle_liner_abd_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_mcp_flex",
+    2.0
+   ],
+   [
+    "middle_liner_abd_flex",
+    "ring_liner_mcp_flex",
+    1.8
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_abd_flex",
+    1.6
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_abd_flex",
+    1.3
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.2
+   ],
+   [
+    "index_liner_mcp_ext",
+    "ring_liner_pip_ext",
+    1.2
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.1
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_pip_ext",
+    1.0
+   ]
+  ],
+  "spread": [
+   [
+    "middle_liner_mcp_flex",
+    "ring_liner_mcp_flex",
+    6.6
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_pip_ext",
+    6.3
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_abd_flex",
+    5.1
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_pip_ext",
+    4.5
+   ],
+   [
+    "index_liner_abd_ext",
+    "middle_liner_mcp_flex",
+    4.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "ring_liner_pip_flex",
+    3.4
+   ],
+   [
+    "ring_liner_mcp_flex",
+    "little_liner_abd_flex",
+    3.4
+   ],
+   [
+    "index_liner_abd_flex",
+    "ring_liner_abd_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "ring_liner_mcp_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "little_liner_abd_flex",
+    3.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_flex",
+    2.9
+   ],
+   [
+    "index_liner_abd_flex",
+    "little_liner_mcp_ext",
+    2.8
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_abd_flex",
+    2.7
+   ],
+   [
+    "middle_liner_mcp_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "middle_liner_abd_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_mcp_flex",
+    2.0
+   ],
+   [
+    "middle_liner_abd_flex",
+    "ring_liner_mcp_flex",
+    1.8
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_abd_flex",
+    1.6
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_abd_flex",
+    1.3
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.2
+   ],
+   [
+    "index_liner_mcp_ext",
+    "ring_liner_pip_ext",
+    1.2
+   ],
+   [
+    "ring_knuckle_module",
+    "little_yoke",
+    1.2
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.1
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_pip_ext",
+    1.0
+   ]
+  ],
+  "wrist_flex_+40": [
+   [
+    "middle_liner_mcp_flex",
+    "ring_liner_mcp_flex",
+    6.6
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_pip_ext",
+    6.3
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_abd_flex",
+    5.1
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_pip_ext",
+    4.5
+   ],
+   [
+    "index_liner_abd_ext",
+    "middle_liner_mcp_flex",
+    4.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "ring_liner_pip_flex",
+    3.4
+   ],
+   [
+    "ring_liner_mcp_flex",
+    "little_liner_abd_flex",
+    3.4
+   ],
+   [
+    "index_liner_abd_flex",
+    "ring_liner_abd_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "ring_liner_mcp_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "little_liner_abd_flex",
+    3.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_flex",
+    2.9
+   ],
+   [
+    "index_liner_abd_flex",
+    "little_liner_mcp_ext",
+    2.8
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_abd_flex",
+    2.7
+   ],
+   [
+    "middle_liner_mcp_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "middle_liner_abd_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_mcp_flex",
+    2.0
+   ],
+   [
+    "middle_liner_abd_flex",
+    "ring_liner_mcp_flex",
+    1.8
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_abd_flex",
+    1.6
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_abd_flex",
+    1.3
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.2
+   ],
+   [
+    "index_liner_mcp_ext",
+    "ring_liner_pip_ext",
+    1.2
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.1
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_pip_ext",
+    1.0
+   ]
+  ],
+  "wrist_dev_-20": [
+   [
+    "middle_liner_mcp_flex",
+    "ring_liner_mcp_flex",
+    6.6
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_pip_ext",
+    6.3
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_abd_flex",
+    5.1
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_pip_ext",
+    4.5
+   ],
+   [
+    "index_liner_abd_ext",
+    "middle_liner_mcp_flex",
+    4.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "ring_liner_pip_flex",
+    3.4
+   ],
+   [
+    "ring_liner_mcp_flex",
+    "little_liner_abd_flex",
+    3.4
+   ],
+   [
+    "index_liner_abd_flex",
+    "ring_liner_abd_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "ring_liner_mcp_flex",
+    3.3
+   ],
+   [
+    "index_liner_abd_ext",
+    "little_liner_abd_flex",
+    3.2
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_flex",
+    2.9
+   ],
+   [
+    "index_liner_abd_flex",
+    "little_liner_mcp_ext",
+    2.8
+   ],
+   [
+    "ring_liner_pip_ext",
+    "little_liner_abd_flex",
+    2.7
+   ],
+   [
+    "middle_liner_mcp_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "middle_liner_abd_flex",
+    "little_liner_abd_flex",
+    2.3
+   ],
+   [
+    "ring_liner_abd_ext",
+    "little_liner_mcp_flex",
+    2.0
+   ],
+   [
+    "middle_liner_abd_flex",
+    "ring_liner_mcp_flex",
+    1.8
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_abd_flex",
+    1.6
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_abd_flex",
+    1.3
+   ],
+   [
+    "index_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.2
+   ],
+   [
+    "index_liner_mcp_ext",
+    "ring_liner_pip_ext",
+    1.2
+   ],
+   [
+    "ring_liner_pip_flex",
+    "little_liner_pip_ext",
+    1.1
+   ],
+   [
+    "index_liner_mcp_ext",
+    "little_liner_pip_ext",
+    1.0
+   ]
+  ]
+ }
+}

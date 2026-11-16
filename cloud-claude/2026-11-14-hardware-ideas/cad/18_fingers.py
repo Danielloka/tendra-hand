@@ -576,6 +576,34 @@ def liner_checks():
                 bend_median=float(np.median(list(bends.values()))), bend_max=max(bends.values()))
 
 
+def render_poses(poses=None):
+    """renders from the exported STLs, posed with pose(q), with lines(q) (tendons black, sensor wires red)."""
+    import trimesh
+    sys.path.insert(0, str(V2CAD))
+    from tools.render import render
+    info = parts()
+    meshes = {n: trimesh.load(str(OUT / i["stl"])) for n, i in info.items()}
+    poses = poses or {
+        "open": {},
+        "fist": {f"{f}_{j}": v for f in FINGERS for j, v in (("mcp_flex", 80), ("pip", 90))},
+        "spread": {"index_mcp_abd": 12, "middle_mcp_abd": 0, "ring_mcp_abd": -8, "little_mcp_abd": -15},
+    }
+    for tag, q in poses.items():
+        T = pose(q)
+        d, c = {}, {}
+        for n, mm in meshes.items():
+            d[n] = mm.copy().apply_transform(T[n])
+            c[n] = info[n]["color"]
+        for k, Pl in lines(q).items():
+            segs = [trimesh.creation.cylinder(radius=0.3 if "sensor" in k else 0.22, segment=[a, b], sections=6)
+                    for a, b in zip(Pl[:-1], Pl[1:]) if np.linalg.norm(b - a) > 1e-3]
+            d["line_" + k] = trimesh.util.concatenate(segs)
+            c["line_" + k] = "#d62728" if "sensor" in k else "#202020"
+        render(d, str(OUT / f"fingers_{tag}.png"), views=("iso", "front", "side", "top"), colors=c, size=(1800, 1400),
+               title=f"18 fingers + knuckle modules + palm liners: {tag}", edges=False)
+
+
 if __name__ == "__main__":
     r = build()
+    render_poses()
     print(json.dumps({k: v for k, v in r.items() if k in ("liners", "module_width")}, default=float)[:3000])

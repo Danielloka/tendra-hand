@@ -1,0 +1,566 @@
+{
+ "thumb_mount": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/thumb_mount.stl",
+  "color": "#d9dde3"
+ },
+ "bearing_rot_top_6704zz": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/bearing_rot_top_6704zz.stl",
+  "color": "#b5b9bd"
+ },
+ "bearing_rot_bottom_6704_zro2": {
+  "body": "mount",
+  "material": "ceramic",
+  "stl": "out/18/thumb/stl/bearing_rot_bottom_6704_zro2.stl",
+  "color": "#f2f0e6"
+ },
+ "neck_eyelet": {
+  "body": "mount",
+  "material": "stainless",
+  "stl": "out/18/thumb/stl/neck_eyelet.stl",
+  "color": "#c8ccd2"
+ },
+ "rot_sensor_chip": {
+  "body": "mount",
+  "material": "PCB",
+  "stl": "out/18/thumb/stl/rot_sensor_chip.stl",
+  "color": "#1e7d3a"
+ },
+ "rot_sensor_board": {
+  "body": "mount",
+  "material": "PCB",
+  "stl": "out/18/thumb/stl/rot_sensor_board.stl",
+  "color": "#1e7d3a"
+ },
+ "plug_board": {
+  "body": "mount",
+  "material": "PCB",
+  "stl": "out/18/thumb/stl/plug_board.stl",
+  "color": "#1e7d3a"
+ },
+ "plug_jst_sh4": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/plug_jst_sh4.stl",
+  "color": "#d9dde3"
+ },
+ "thumb_base": {
+  "body": "base",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/thumb_base.stl",
+  "color": "#d9dde3"
+ },
+ "base_cap": {
+  "body": "base",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/base_cap.stl",
+  "color": "#d9dde3"
+ },
+ "rot_magnet_ring": {
+  "body": "base",
+  "material": "magnet",
+  "stl": "out/18/thumb/stl/rot_magnet_ring.stl",
+  "color": "#9a3b3b"
+ },
+ "ring_rot": {
+  "body": "base",
+  "material": "brass",
+  "stl": "out/18/thumb/stl/ring_rot.stl",
+  "color": "#c9a646"
+ },
+ "cup_rot_flex": {
+  "body": "base",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/cup_rot_flex.stl",
+  "color": "#d9dde3"
+ },
+ "cup_rot_ext": {
+  "body": "base",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/cup_rot_ext.stl",
+  "color": "#d9dde3"
+ },
+ "thumb_metacarpal": {
+  "body": "metacarpal",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/thumb_metacarpal.stl",
+  "color": "#d9dde3"
+ },
+ "ring_cmc": {
+  "body": "metacarpal",
+  "material": "brass",
+  "stl": "out/18/thumb/stl/ring_cmc.stl",
+  "color": "#c9a646"
+ },
+ "cup_cmc_flex": {
+  "body": "metacarpal",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/cup_cmc_flex.stl",
+  "color": "#d9dde3"
+ },
+ "cup_cmc_ext": {
+  "body": "metacarpal",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/cup_cmc_ext.stl",
+  "color": "#d9dde3"
+ },
+ "nip_cmc_a": {
+  "body": "metacarpal",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/nip_cmc_a.stl",
+  "color": "#b5b9bd"
+ },
+ "nip_cmc_b": {
+  "body": "metacarpal",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/nip_cmc_b.stl",
+  "color": "#b5b9bd"
+ },
+ "thenar_pad": {
+  "body": "metacarpal",
+  "material": "TPU",
+  "stl": "out/18/thumb/stl/thenar_pad.stl",
+  "color": "#e2a07a"
+ },
+ "thumb_proximal": {
+  "body": "proximal",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/thumb_proximal.stl",
+  "color": "#d9dde3"
+ },
+ "ring_mcp": {
+  "body": "proximal",
+  "material": "brass",
+  "stl": "out/18/thumb/stl/ring_mcp.stl",
+  "color": "#c9a646"
+ },
+ "cup_mcp_flex": {
+  "body": "proximal",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/cup_mcp_flex.stl",
+  "color": "#d9dde3"
+ },
+ "cup_mcp_ext": {
+  "body": "proximal",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/cup_mcp_ext.stl",
+  "color": "#d9dde3"
+ },
+ "nip_mcp_a": {
+  "body": "proximal",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/nip_mcp_a.stl",
+  "color": "#b5b9bd"
+ },
+ "nip_mcp_b": {
+  "body": "proximal",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/nip_mcp_b.stl",
+  "color": "#b5b9bd"
+ },
+ "thumb_distal": {
+  "body": "distal",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/thumb_distal.stl",
+  "color": "#d9dde3"
+ },
+ "ring_ip": {
+  "body": "distal",
+  "material": "brass",
+  "stl": "out/18/thumb/stl/ring_ip.stl",
+  "color": "#c9a646"
+ },
+ "cup_ip_flex": {
+  "body": "distal",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/cup_ip_flex.stl",
+  "color": "#d9dde3"
+ },
+ "cup_ip_ext": {
+  "body": "distal",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/cup_ip_ext.stl",
+  "color": "#d9dde3"
+ },
+ "tip_board": {
+  "body": "distal",
+  "material": "PCB",
+  "stl": "out/18/thumb/stl/tip_board.stl",
+  "color": "#1e7d3a"
+ },
+ "tip_chip_mlx90393": {
+  "body": "distal",
+  "material": "PCB",
+  "stl": "out/18/thumb/stl/tip_chip_mlx90393.stl",
+  "color": "#1e7d3a"
+ },
+ "tip_skin": {
+  "body": "distal",
+  "material": "silicone",
+  "stl": "out/18/thumb/stl/tip_skin.stl",
+  "color": "#e9b8a0"
+ },
+ "tip_magnet": {
+  "body": "distal",
+  "material": "magnet",
+  "stl": "out/18/thumb/stl/tip_magnet.stl",
+  "color": "#9a3b3b"
+ },
+ "bearing_cmc_sensor_zro2": {
+  "body": "base",
+  "material": "ceramic",
+  "stl": "out/18/thumb/stl/bearing_cmc_sensor_zro2.stl",
+  "color": "#f2f0e6"
+ },
+ "bearing_cmc_wire_mr84zz": {
+  "body": "base",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/bearing_cmc_wire_mr84zz.stl",
+  "color": "#b5b9bd"
+ },
+ "axle_cmc_sensor_tube": {
+  "body": "metacarpal",
+  "material": "stainless",
+  "stl": "out/18/thumb/stl/axle_cmc_sensor_tube.stl",
+  "color": "#c8ccd2"
+ },
+ "axle_cmc_wire_tube": {
+  "body": "metacarpal",
+  "material": "stainless",
+  "stl": "out/18/thumb/stl/axle_cmc_wire_tube.stl",
+  "color": "#c8ccd2"
+ },
+ "magnet_cmc": {
+  "body": "metacarpal",
+  "material": "magnet",
+  "stl": "out/18/thumb/stl/magnet_cmc.stl",
+  "color": "#9a3b3b"
+ },
+ "sensor_plug_cmc": {
+  "body": "base",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/sensor_plug_cmc.stl",
+  "color": "#d9dde3"
+ },
+ "sensor_chip_cmc": {
+  "body": "base",
+  "material": "PCB",
+  "stl": "out/18/thumb/stl/sensor_chip_cmc.stl",
+  "color": "#1e7d3a"
+ },
+ "sensor_board_cmc": {
+  "body": "base",
+  "material": "PCB",
+  "stl": "out/18/thumb/stl/sensor_board_cmc.stl",
+  "color": "#1e7d3a"
+ },
+ "wire_keeper_cmc": {
+  "body": "base",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/wire_keeper_cmc.stl",
+  "color": "#d9dde3"
+ },
+ "bearing_mcp_sensor_zro2": {
+  "body": "metacarpal",
+  "material": "ceramic",
+  "stl": "out/18/thumb/stl/bearing_mcp_sensor_zro2.stl",
+  "color": "#f2f0e6"
+ },
+ "bearing_mcp_wire_mr84zz": {
+  "body": "metacarpal",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/bearing_mcp_wire_mr84zz.stl",
+  "color": "#b5b9bd"
+ },
+ "axle_mcp_sensor_tube": {
+  "body": "proximal",
+  "material": "stainless",
+  "stl": "out/18/thumb/stl/axle_mcp_sensor_tube.stl",
+  "color": "#c8ccd2"
+ },
+ "axle_mcp_wire_tube": {
+  "body": "proximal",
+  "material": "stainless",
+  "stl": "out/18/thumb/stl/axle_mcp_wire_tube.stl",
+  "color": "#c8ccd2"
+ },
+ "magnet_mcp": {
+  "body": "proximal",
+  "material": "magnet",
+  "stl": "out/18/thumb/stl/magnet_mcp.stl",
+  "color": "#9a3b3b"
+ },
+ "sensor_plug_mcp": {
+  "body": "metacarpal",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/sensor_plug_mcp.stl",
+  "color": "#d9dde3"
+ },
+ "sensor_chip_mcp": {
+  "body": "metacarpal",
+  "material": "PCB",
+  "stl": "out/18/thumb/stl/sensor_chip_mcp.stl",
+  "color": "#1e7d3a"
+ },
+ "sensor_board_mcp": {
+  "body": "metacarpal",
+  "material": "PCB",
+  "stl": "out/18/thumb/stl/sensor_board_mcp.stl",
+  "color": "#1e7d3a"
+ },
+ "wire_keeper_mcp": {
+  "body": "metacarpal",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/wire_keeper_mcp.stl",
+  "color": "#d9dde3"
+ },
+ "bearing_ip_sensor_zro2": {
+  "body": "proximal",
+  "material": "ceramic",
+  "stl": "out/18/thumb/stl/bearing_ip_sensor_zro2.stl",
+  "color": "#f2f0e6"
+ },
+ "bearing_ip_wire_mr84zz": {
+  "body": "proximal",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/bearing_ip_wire_mr84zz.stl",
+  "color": "#b5b9bd"
+ },
+ "axle_ip_tube": {
+  "body": "distal",
+  "material": "stainless",
+  "stl": "out/18/thumb/stl/axle_ip_tube.stl",
+  "color": "#c8ccd2"
+ },
+ "magnet_ip": {
+  "body": "distal",
+  "material": "magnet",
+  "stl": "out/18/thumb/stl/magnet_ip.stl",
+  "color": "#9a3b3b"
+ },
+ "sensor_plug_ip": {
+  "body": "proximal",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/sensor_plug_ip.stl",
+  "color": "#d9dde3"
+ },
+ "sensor_chip_ip": {
+  "body": "proximal",
+  "material": "PCB",
+  "stl": "out/18/thumb/stl/sensor_chip_ip.stl",
+  "color": "#1e7d3a"
+ },
+ "sensor_board_ip": {
+  "body": "proximal",
+  "material": "PCB",
+  "stl": "out/18/thumb/stl/sensor_board_ip.stl",
+  "color": "#1e7d3a"
+ },
+ "wire_keeper_ip": {
+  "body": "proximal",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/wire_keeper_ip.stl",
+  "color": "#d9dde3"
+ },
+ "roller_A_cmc_rot_flex": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_A_cmc_rot_flex.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_pin_A_cmc_rot_flex": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_pin_A_cmc_rot_flex.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_C_cmc_rot_flex": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_C_cmc_rot_flex.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_pin_C_cmc_rot_flex": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_pin_C_cmc_rot_flex.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_A_cmc_rot_ext": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_A_cmc_rot_ext.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_pin_A_cmc_rot_ext": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_pin_A_cmc_rot_ext.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_C_cmc_rot_ext": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_C_cmc_rot_ext.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_pin_C_cmc_rot_ext": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_pin_C_cmc_rot_ext.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_A_cmc_flex_flex": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_A_cmc_flex_flex.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_pin_A_cmc_flex_flex": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_pin_A_cmc_flex_flex.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_B_cmc_flex_flex": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_B_cmc_flex_flex.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_pin_B_cmc_flex_flex": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_pin_B_cmc_flex_flex.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_A_cmc_flex_ext": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_A_cmc_flex_ext.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_pin_A_cmc_flex_ext": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_pin_A_cmc_flex_ext.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_B_cmc_flex_ext": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_B_cmc_flex_ext.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_pin_B_cmc_flex_ext": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_pin_B_cmc_flex_ext.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_A_mcp_flex_flex": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_A_mcp_flex_flex.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_pin_A_mcp_flex_flex": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_pin_A_mcp_flex_flex.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_B_mcp_flex_flex": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_B_mcp_flex_flex.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_pin_B_mcp_flex_flex": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_pin_B_mcp_flex_flex.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_A_mcp_flex_ext": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_A_mcp_flex_ext.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_pin_A_mcp_flex_ext": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_pin_A_mcp_flex_ext.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_B_mcp_flex_ext": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_B_mcp_flex_ext.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_pin_B_mcp_flex_ext": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_pin_B_mcp_flex_ext.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_A_ip_flex": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_A_ip_flex.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_pin_A_ip_flex": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_pin_A_ip_flex.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_B_ip_flex": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_B_ip_flex.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_pin_B_ip_flex": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_pin_B_ip_flex.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_A_ip_ext": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_A_ip_ext.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_pin_A_ip_ext": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_pin_A_ip_ext.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_B_ip_ext": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_B_ip_ext.stl",
+  "color": "#b5b9bd"
+ },
+ "roller_pin_B_ip_ext": {
+  "body": "mount",
+  "material": "steel",
+  "stl": "out/18/thumb/stl/roller_pin_B_ip_ext.stl",
+  "color": "#b5b9bd"
+ },
+ "turning_block_A": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/turning_block_A.stl",
+  "color": "#d9dde3"
+ }
+}

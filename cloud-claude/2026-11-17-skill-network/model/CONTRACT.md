@@ -67,8 +67,16 @@ body's pivot, no rotation), so `body pos = pivot - parent pivot` and every body 
   - 4 coupled `<f>_dip` and 4 passive `<f>_bar` (driven by joint equalities from `couplings`);
   - `wrist_dev` (forearm → wrist_ring), `wrist_flex` (wrist_ring → palm).
 - Actuators: one `position` actuator per servo joint, **named like the joint, in the order above**, then
-  `wrist_flex`, `wrist_dev`. `ctrl` = joint angle (rad). Gains, force limits, damping, armature from
+  `wrist_flex`, `wrist_dev`. `ctrl` = **servo setpoint in joint-angle units** (rad): equal to the joint target
+  when unloaded, but it may go beyond the joint range by up to `τ_cap / kp` (≈ 0.6 rad) on each side, limited
+  by the servo's real travel, because the tendon stretches and grip force comes from the setpoint error
+  (review M1, 2026-11-17). `ctrlrange` says exactly this. Gains, force limits, damping, armature from
   `model/actuators.json`.
+- Sensors, **in actuator order**: `jointpos` (`<joint>_pos`, the V2.1 joint-angle sensors) and `actuatorfrc`
+  (`<joint>_frc`, a stand-in for the servo current) for the 16 servo joints and the 2 wrist joints. Plus a helper
+  in `build_hand.py` (`actuator_qpos_index(model)`) that maps actuator order to qpos addresses, since the
+  kinematic tree order differs.
+- **No gravity compensation on any hand, wrist or forearm body** (the real servos carry that load).
 - Sites: `wrist_centre` (forearm, origin), `forearm_flange` (forearm: centre of the arm-flange mounting face,
   site z axis along the forearm toward the hand), `palm_centre` (palm, centre of the palm surface, z axis out
   of the palm = −Y), `<f>_tip` and `thumb_tip` (centre of each fingertip pad), `wrist_cam_mount` (forearm,
@@ -87,7 +95,14 @@ body's pivot, no rotation), so `body pos = pivot - parent pivot` and every body 
   long axis, + = pronation. The hand model is attached at that flange with prefix `right_`.
 - 7 arm joints (`shoulder_pitch, shoulder_roll, shoulder_yaw, elbow, forearm_twist, wrist_flex, wrist_dev`) +
   16 hand servos, all position actuators; names prefixed `right_`.
+- Contacts: object geoms never override the hand's pad settings (no `priority` on objects, or objects with
+  explicit pad-compatible condim/friction/solref); a scene test checks a real pad–object contact.
+- **Self-contained files**: every mesh the XMLs use lives under `model/assets/` (OpenArm's used meshes vendored
+  into `model/assets/openarm/` with its Apache-2.0 LICENSE + NOTICE), all paths relative to the study, so the
+  XMLs load from any working directory, any venv location and inside Docker.
 - Cameras: `right_wrist_cam` (plain RGB, on the forearm, sees the fingers and the grasp space in front of the
   palm) and `head_cam` (RGB-D, on the pole above and behind the shoulders, sees the table).
-- Keyframes: `rest`, `ready`, `table` (hand above the table, palm down, fingers open).
+- Keyframes: `rest`, `ready`, `table` (hand above the table, palm down, fingers open, **thumb in the CAD `open`
+  pose**). The wrist camera housing has a collision geom and never sits below the hand's lowest collision
+  point when palm-down.
 - Timestep 2 ms. World: OpenArm's (+x forward, +z up).

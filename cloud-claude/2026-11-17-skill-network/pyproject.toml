@@ -12,7 +12,7 @@ dependencies = [
 
 [dependency-groups]
 # Only for model/extract_v21.py (reads the V2.1 CadQuery study); everything else runs without it.
-cad = ["cadquery>=2.4", "scipy>=1.13", "trimesh>=4.4", "manifold3d", "rtree", "coacd"]
+cad = ["cadquery>=2.4", "scipy>=1.13", "trimesh>=4.4", "manifold3d", "rtree", "coacd", "fast-simplification>=0.1.7"]
 # GPU-path compatibility checks (run on CPU here; on GPU on RunPod later).
 warp = ["mujoco-warp==3.14.0", "warp-lang==1.17.0"]
 dev = ["pytest>=8", "ruff>=0.6", "trimesh>=4.4", "pillow"]

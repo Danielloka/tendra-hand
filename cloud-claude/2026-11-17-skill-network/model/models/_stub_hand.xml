@@ -1,0 +1,133 @@
+<mujoco model="v21_stub_hand">
+  <compiler angle="radian"/>
+
+  <worldbody>
+    <body name="forearm">
+      <geom name="forearm_shell" size="0.0525 0.036 0.1" pos="0 0 -0.13" type="box" rgba="0.82 0.83 0.86 1" mass="0.4"/>
+      <site name="wrist_centre" size="0.003"/>
+      <site name="forearm_flange" size="0.003" pos="0 0 -0.23"/>
+      <body name="wrist_ring">
+        <joint name="wrist_dev" range="-0.523599 0.349066" armature="0.002" damping="0.02" axis="0 1 0" limited="true"/>
+        <geom name="wrist_ring_g" size="0.045 0.03 0.015" pos="0 0 -0.015" type="box" contype="0" conaffinity="0" rgba="0.82 0.83 0.86 1" mass="0.05"/>
+        <body name="palm">
+          <joint name="wrist_flex" range="-1.0472 1.22173" armature="0.002" damping="0.02" axis="1 0 0" limited="true"/>
+          <geom name="palm_g" size="0.04 0.014 0.045" pos="0 0 0.045" type="box" friction="1 0.01 0.001" rgba="0.82 0.83 0.86 1" mass="0.15"/>
+          <site name="palm_centre" size="0.003" pos="0 -0.014 0.045" quat="0.707107 0.707107 0 0"/>
+          <body name="index_yoke" pos="0.03 0 0.09">
+            <inertial pos="0 0 0" mass="0.004" diaginertia="2e-07 2e-07 2e-07"/>
+            <joint name="index_mcp_abd" range="-0.35 0.35" armature="0.0002" damping="0.01" axis="0 1 0" limited="true"/>
+            <body name="index_proximal">
+              <joint name="index_mcp_flex" range="-0.2 1.6" armature="0.0002" damping="0.01" axis="1 0 0" limited="true"/>
+              <geom name="index_proximal_g" size="0.0085 0.0225" pos="0 0 0.0225" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012"/>
+              <body name="index_middle" pos="0 0 0.045">
+                <joint name="index_pip" range="0 1.9" armature="0.0002" damping="0.01" axis="1 0 0" limited="true"/>
+                <geom name="index_middle_g" size="0.0085 0.0135" pos="0 0 0.0135" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012"/>
+                <body name="index_distal" pos="0 0 0.027">
+                  <joint name="index_dip" range="0 1.4" armature="0.0002" damping="0.01" axis="1 0 0" limited="true"/>
+                  <geom name="index_distal_g" size="0.0085 0.011" pos="0 0 0.011" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.008"/>
+                  <site name="index_tip" size="0.003" pos="0 -0.005 0.022"/>
+                </body>
+              </body>
+            </body>
+          </body>
+          <body name="middle_yoke" pos="0.01 0 0.09">
+            <inertial pos="0 0 0" mass="0.004" diaginertia="2e-07 2e-07 2e-07"/>
+            <joint name="middle_mcp_abd" range="-0.35 0.35" armature="0.0002" damping="0.01" axis="0 1 0" limited="true"/>
+            <body name="middle_proximal">
+              <joint name="middle_mcp_flex" range="-0.2 1.6" armature="0.0002" damping="0.01" axis="1 0 0" limited="true"/>
+              <geom name="middle_proximal_g" size="0.0085 0.025" pos="0 0 0.025" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012"/>
+              <body name="middle_middle" pos="0 0 0.05">
+                <joint name="middle_pip" range="0 1.9" armature="0.0002" damping="0.01" axis="1 0 0" limited="true"/>
+                <geom name="middle_middle_g" size="0.0085 0.015" pos="0 0 0.015" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012"/>
+                <body name="middle_distal" pos="0 0 0.03">
+                  <joint name="middle_dip" range="0 1.4" armature="0.0002" damping="0.01" axis="1 0 0" limited="true"/>
+                  <geom name="middle_distal_g" size="0.0085 0.011" pos="0 0 0.011" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.008"/>
+                  <site name="middle_tip" size="0.003" pos="0 -0.005 0.022"/>
+                </body>
+              </body>
+            </body>
+          </body>
+          <body name="ring_yoke" pos="-0.01 0 0.09">
+            <inertial pos="0 0 0" mass="0.004" diaginertia="2e-07 2e-07 2e-07"/>
+            <joint name="ring_mcp_abd" range="-0.35 0.35" armature="0.0002" damping="0.01" axis="0 1 0" limited="true"/>
+            <body name="ring_proximal">
+              <joint name="ring_mcp_flex" range="-0.2 1.6" armature="0.0002" damping="0.01" axis="1 0 0" limited="true"/>
+              <geom name="ring_proximal_g" size="0.0085 0.023" pos="0 0 0.023" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012"/>
+              <body name="ring_middle" pos="0 0 0.046">
+                <joint name="ring_pip" range="0 1.9" armature="0.0002" damping="0.01" axis="1 0 0" limited="true"/>
+                <geom name="ring_middle_g" size="0.0085 0.014" pos="0 0 0.014" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012"/>
+                <body name="ring_distal" pos="0 0 0.028">
+                  <joint name="ring_dip" range="0 1.4" armature="0.0002" damping="0.01" axis="1 0 0" limited="true"/>
+                  <geom name="ring_distal_g" size="0.0085 0.011" pos="0 0 0.011" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.008"/>
+                  <site name="ring_tip" size="0.003" pos="0 -0.005 0.022"/>
+                </body>
+              </body>
+            </body>
+          </body>
+          <body name="little_yoke" pos="-0.029 0 0.09">
+            <inertial pos="0 0 0" mass="0.004" diaginertia="2e-07 2e-07 2e-07"/>
+            <joint name="little_mcp_abd" range="-0.35 0.35" armature="0.0002" damping="0.01" axis="0 1 0" limited="true"/>
+            <body name="little_proximal">
+              <joint name="little_mcp_flex" range="-0.2 1.6" armature="0.0002" damping="0.01" axis="1 0 0" limited="true"/>
+              <geom name="little_proximal_g" size="0.0085 0.019" pos="0 0 0.019" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012"/>
+              <body name="little_middle" pos="0 0 0.038">
+                <joint name="little_pip" range="0 1.9" armature="0.0002" damping="0.01" axis="1 0 0" limited="true"/>
+                <geom name="little_middle_g" size="0.0085 0.011" pos="0 0 0.011" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012"/>
+                <body name="little_distal" pos="0 0 0.022">
+                  <joint name="little_dip" range="0 1.4" armature="0.0002" damping="0.01" axis="1 0 0" limited="true"/>
+                  <geom name="little_distal_g" size="0.0085 0.01" pos="0 0 0.01" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.008"/>
+                  <site name="little_tip" size="0.003" pos="0 -0.005 0.02"/>
+                </body>
+              </body>
+            </body>
+          </body>
+          <body name="thumb_base" pos="0.046 -0.01 0.02" quat="0.953717 0.300706 0 0">
+            <inertial pos="0 0 0" mass="0.006" diaginertia="5e-07 5e-07 5e-07"/>
+            <joint name="thumb_cmc_rot" range="-0.6 1.3" armature="0.0002" damping="0.01" axis="0 -1 0" limited="true"/>
+            <body name="thumb_metacarpal">
+              <joint name="thumb_cmc_flex" range="-0.3 1.2" armature="0.0002" damping="0.01" axis="1 0 0" limited="true"/>
+              <geom name="thumb_metacarpal_g" size="0.0085 0.0175" pos="0 0 0.0175" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.015"/>
+              <body name="thumb_proximal" pos="0 0 0.035">
+                <joint name="thumb_mcp_flex" range="-0.2 1.4" armature="0.0002" damping="0.01" axis="1 0 0" limited="true"/>
+                <geom name="thumb_proximal_g" size="0.0085 0.016" pos="0 0 0.016" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012"/>
+                <body name="thumb_distal" pos="0 0 0.032">
+                  <joint name="thumb_ip" range="-0.2 1.4" armature="0.0002" damping="0.01" axis="1 0 0" limited="true"/>
+                  <geom name="thumb_distal_g" size="0.0085 0.013" pos="0 0 0.013" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.008"/>
+                  <site name="thumb_tip" size="0.003" pos="0 -0.005 0.026"/>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <equality>
+    <joint name="index_dip_couple" joint1="index_dip" joint2="index_pip" polycoef="0 0.75 0 0 0"/>
+    <joint name="middle_dip_couple" joint1="middle_dip" joint2="middle_pip" polycoef="0 0.75 0 0 0"/>
+    <joint name="ring_dip_couple" joint1="ring_dip" joint2="ring_pip" polycoef="0 0.75 0 0 0"/>
+    <joint name="little_dip_couple" joint1="little_dip" joint2="little_pip" polycoef="0 0.75 0 0 0"/>
+  </equality>
+
+  <actuator>
+    <general name="index_pip" joint="index_pip" ctrlrange="0 1.9" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04"/>
+    <general name="index_mcp_flex" joint="index_mcp_flex" ctrlrange="-0.2 1.6" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04"/>
+    <general name="index_mcp_abd" joint="index_mcp_abd" ctrlrange="-0.35 0.35" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04"/>
+    <general name="thumb_ip" joint="thumb_ip" ctrlrange="-0.2 1.4" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04"/>
+    <general name="thumb_mcp_flex" joint="thumb_mcp_flex" ctrlrange="-0.2 1.4" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04"/>
+    <general name="thumb_cmc_flex" joint="thumb_cmc_flex" ctrlrange="-0.3 1.2" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04"/>
+    <general name="thumb_cmc_rot" joint="thumb_cmc_rot" ctrlrange="-0.6 1.3" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04"/>
+    <general name="middle_pip" joint="middle_pip" ctrlrange="0 1.9" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04"/>
+    <general name="middle_mcp_flex" joint="middle_mcp_flex" ctrlrange="-0.2 1.6" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04"/>
+    <general name="middle_mcp_abd" joint="middle_mcp_abd" ctrlrange="-0.35 0.35" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04"/>
+    <general name="ring_pip" joint="ring_pip" ctrlrange="0 1.9" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04"/>
+    <general name="ring_mcp_flex" joint="ring_mcp_flex" ctrlrange="-0.2 1.6" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04"/>
+    <general name="ring_mcp_abd" joint="ring_mcp_abd" ctrlrange="-0.35 0.35" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04"/>
+    <general name="little_pip" joint="little_pip" ctrlrange="0 1.9" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04"/>
+    <general name="little_mcp_flex" joint="little_mcp_flex" ctrlrange="-0.2 1.6" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04"/>
+    <general name="little_mcp_abd" joint="little_mcp_abd" ctrlrange="-0.35 0.35" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04"/>
+    <general name="wrist_flex" joint="wrist_flex" ctrlrange="-1.0472 1.22173" ctrllimited="true" forcelimited="true" forcerange="-4 4" biastype="affine" gainprm="12" biasprm="0 -12 -0.3"/>
+    <general name="wrist_dev" joint="wrist_dev" ctrlrange="-0.523599 0.349066" ctrllimited="true" forcelimited="true" forcerange="-4 4" biastype="affine" gainprm="12" biasprm="0 -12 -0.3"/>
+  </actuator>
+</mujoco>

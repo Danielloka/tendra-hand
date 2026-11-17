@@ -1,0 +1,280 @@
+<mujoco model="v21_robot">
+  <compiler angle="radian" meshdir="../../.venv/share/openarm_mujoco/v2/assets" />
+  <option impratio="10" integrator="implicitfast" cone="elliptic" iterations="50" ls_iterations="30" />
+  <size nkey="3" />
+  <visual>
+    <global offwidth="1280" offheight="720" />
+  </visual>
+  <default>
+    <default class="pedestal_visual">
+      <geom contype="0" conaffinity="0" group="2" />
+    </default>
+    <default class="pedestal_collision">
+      <geom group="3" priority="1" friction="1 0.01 0.01" solref="0.005" />
+    </default>
+    <default class="robot">
+      <default class="motor_DM8009">
+        <joint armature="0.0081" damping="1" frictionloss="0.2" limited="true" />
+        <general ctrllimited="true" forcelimited="true" forcerange="-40 40" biastype="affine" gainprm="200" biasprm="0 -200 -150" />
+      </default>
+      <default class="motor_DM4340">
+        <joint armature="0.16" damping="0.9" frictionloss="0.1" limited="true" />
+        <general ctrllimited="true" forcelimited="true" forcerange="-27 27" biastype="affine" gainprm="100" biasprm="0 -100 -30" />
+      </default>
+      <default class="motor_DM4310">
+        <joint armature="0.01" damping="0.9" frictionloss="0.04" limited="true" />
+        <general ctrllimited="true" forcelimited="true" forcerange="-7 7" biastype="affine" gainprm="200" biasprm="0 -200 -5" />
+        <default class="motor_finger">
+          <joint damping="2" frictionloss="0" />
+        </default>
+      </default>
+      <default class="collision">
+        <geom group="3" priority="1" friction="1 0.01 0.01" solref="0.005" material="collision_material" />
+        <default class="fingertip">
+          <geom condim="4" />
+        </default>
+      </default>
+      <default class="visual">
+        <geom contype="0" conaffinity="0" group="2" />
+      </default>
+    </default>
+    <default class="right_main" />
+  </default>
+  <asset>
+    <material name="openarm_body_link0_material" reflectance="0.05" rgba="0.247 0.247 0.247 1" />
+    <material name="collision_material" rgba="0.8 0.2 0.2 0.5" />
+    <material name="pale_silver" specular="1" shininess="0.9" reflectance="0.8" rgba="0.752941 0.752941 0.752941 1" />
+    <material name="metal_silver" specular="1" shininess="0.9" reflectance="0.8" rgba="0.65 0.65 0.65 1" />
+    <material name="matte_black" reflectance="0.05" rgba="0.247 0.247 0.247 1" />
+    <material name="floor_mat" reflectance="0.1" rgba="0.62 0.64 0.67 1" />
+    <material name="table_mat" rgba="0.78 0.66 0.52 1" />
+    <material name="leg_mat" rgba="0.25 0.25 0.27 1" />
+    <mesh name="body_link0" content_type="model/stl" file="visual/body/body_link0.stl" scale="0.001 0.001 0.001" />
+    <mesh name="body_link0_symp" content_type="model/stl" file="collision/body_link0_symp.stl" scale="0.001 0.001 0.001" />
+    <mesh name="base_link_right_00" content_type="model/obj" file="visual/arm/base_link_00.obj" />
+    <mesh name="base_link_right_01" content_type="model/obj" file="visual/arm/base_link_01.obj" />
+    <mesh name="base_link_right_collision_00" content_type="model/stl" file="collision/base_link.stl" />
+    <mesh name="link1_right_00" content_type="model/obj" file="visual/arm/link1_00.obj" />
+    <mesh name="link1_right_01" content_type="model/obj" file="visual/arm/link1_01.obj" />
+    <mesh name="link1_right_02" content_type="model/obj" file="visual/arm/link1_02.obj" />
+    <mesh name="link1_right_collision_00" content_type="model/stl" file="collision/link1.stl" />
+    <mesh name="link2_right_00" content_type="model/obj" file="visual/arm/link2_00.obj" />
+    <mesh name="link2_right_01" content_type="model/obj" file="visual/arm/link2_01.obj" />
+    <mesh name="link2_right_02" content_type="model/obj" file="visual/arm/link2_02.obj" />
+    <mesh name="link2_right_collision_00" content_type="model/stl" file="collision/link2.stl" />
+    <mesh name="link3_right_00" content_type="model/obj" file="visual/arm/link3_00.obj" />
+    <mesh name="link3_right_01" content_type="model/obj" file="visual/arm/link3_01.obj" />
+    <mesh name="link3_right_02" content_type="model/obj" file="visual/arm/link3_02.obj" />
+    <mesh name="link3_right_collision_00" content_type="model/stl" file="collision/link3.stl" />
+    <mesh name="link4_right_00" content_type="model/obj" file="visual/arm/link4_00.obj" />
+    <mesh name="link4_right_01" content_type="model/obj" file="visual/arm/link4_01.obj" />
+    <mesh name="link4_right_02" content_type="model/obj" file="visual/arm/link4_02.obj" />
+    <mesh name="link4_right_collision_00" content_type="model/stl" file="collision/link4.stl" />
+  </asset>
+  <worldbody>
+    <geom name="openarm_body_link0_visual" class="pedestal_visual" pos="0 0 0" quat="1 0 0 0" type="mesh" material="openarm_body_link0_material" mesh="body_link0" />
+    <geom name="openarm_body_link0_collision" class="pedestal_collision" pos="0 0 0" quat="1 0 0 0" type="mesh" mesh="body_link0_symp" />
+    <geom name="floor" size="3 3 0.1" type="plane" friction="0.8 0.01" material="floor_mat" />
+    <geom name="table" size="0.4 0.55 0.02" pos="0.5 -0.1 0.38" type="box" friction="0.8 0.01" material="table_mat" />
+    <geom name="table_leg0" size="0.025 0.025 0.18" pos="0.86 0.41 0.18" type="box" contype="0" conaffinity="0" material="leg_mat" />
+    <geom name="table_leg1" size="0.025 0.025 0.18" pos="0.86 -0.61 0.18" type="box" contype="0" conaffinity="0" material="leg_mat" />
+    <geom name="table_leg2" size="0.025 0.025 0.18" pos="0.14 0.41 0.18" type="box" contype="0" conaffinity="0" material="leg_mat" />
+    <geom name="table_leg3" size="0.025 0.025 0.18" pos="0.14 -0.61 0.18" type="box" contype="0" conaffinity="0" material="leg_mat" />
+    <light name="key" pos="0.6 -0.6 2.2" dir="-0.188144 0.282216 -0.940721" diffuse="0.65 0.65 0.65" specular="0.2 0.2 0.2" />
+    <light name="fill" castshadow="false" pos="-0.8 0.8 1.8" dir="0.348155 -0.348155 -0.870388" diffuse="0.3 0.3 0.3" />
+    <frame pos="0 0 0.698">
+      <site name="arm_origin" size="0.02" group="4" rgba="1 0.8 0 1" />
+      <body name="openarm_right_base_link" pos="0 -0.031 0" gravcomp="1">
+        <inertial pos="-0.00253124 -0.0258186 -2.70658e-05" quat="2.14576e-05 0.706816 0.707398 -1.46857e-06" mass="1.14323" diaginertia="0.00159935 0.00113608 0.000750542" />
+        <geom name="base_link_right_00" class="visual" quat="0 0 1 0" type="mesh" material="matte_black" mesh="base_link_right_00" />
+        <geom name="base_link_right_01" class="visual" quat="0 0 1 0" type="mesh" material="pale_silver" mesh="base_link_right_01" />
+        <geom name="base_link_right_collision_00" class="collision" quat="0 0 1 0" type="mesh" mesh="base_link_right_collision_00" />
+        <body name="openarm_right_link1" pos="0 -0.0625 0" gravcomp="1">
+          <inertial pos="0.00090035 -0.044466 2.88441e-05" quat="0.999901 0.000371041 -5.04627e-05 0.0140338" mass="1.14167" diaginertia="0.00109459 0.000758935 0.000670659" />
+          <joint name="right_shoulder_pitch" class="motor_DM8009" range="-1.3963 3.4907" actuatorfrcrange="-40 40" axis="0 -1 0" />
+          <geom name="link1_right_00" class="visual" quat="1 0 0 0" type="mesh" material="matte_black" mesh="link1_right_00" />
+          <geom name="link1_right_01" class="visual" quat="1 0 0 0" type="mesh" material="pale_silver" mesh="link1_right_01" />
+          <geom name="link1_right_02" class="visual" quat="1 0 0 0" type="mesh" material="metal_silver" mesh="link1_right_02" />
+          <geom name="link1_right_collision_00" class="collision" quat="1 0 0 0" type="mesh" mesh="link1_right_collision_00" />
+          <body name="openarm_right_link2" pos="0 -0.06 0" gravcomp="1">
+            <inertial pos="-0.0247185 7.60578e-08 -0.0312643" quat="0.999342 6.47495e-06 -0.0362804 -3.02331e-06" mass="0.277509" diaginertia="0.000153968 0.000113062 8.19211e-05" />
+            <joint name="right_shoulder_roll" class="motor_DM8009" range="-0.17453 3.3161" actuatorfrcrange="-40 40" axis="-1 0 0" />
+            <geom name="link2_right_00" class="visual" type="mesh" material="matte_black" mesh="link2_right_00" />
+            <geom name="link2_right_01" class="visual" type="mesh" material="metal_silver" mesh="link2_right_01" />
+            <geom name="link2_right_02" class="visual" pos="0 0 0" quat="1 0 0 0" type="mesh" material="pale_silver" mesh="link2_right_02" />
+            <geom name="link2_right_collision_00" class="collision" type="mesh" mesh="link2_right_collision_00" />
+            <body name="openarm_right_link3" pos="0 0 -0.06625" gravcomp="1">
+              <inertial pos="-0.00300862 -0.000514813 -0.109368" quat="0.998906 -0.00891348 0.0458105 0.00280505" mass="1.07386" diaginertia="0.00129561 0.00114038 0.000553361" />
+              <joint name="right_shoulder_yaw" class="motor_DM4340" range="-1.5708 1.5708" actuatorfrcrange="-27 27" axis="0 0 -1" />
+              <geom name="link3_right_00" class="visual" pos="0 0 0" quat="1 0 0 0" type="mesh" material="matte_black" mesh="link3_right_00" />
+              <geom name="link3_right_01" class="visual" quat="1 0 0 0" type="mesh" material="metal_silver" mesh="link3_right_01" />
+              <geom name="link3_right_02" class="visual" pos="0 0 0" quat="1 0 0 0" type="mesh" material="pale_silver" mesh="link3_right_02" />
+              <geom name="link3_right_collision_00" class="collision" quat="1 0 0 0" type="mesh" mesh="link3_right_collision_00" />
+              <body name="openarm_right_link4" pos="0 0 -0.15375" gravcomp="1">
+                <inertial pos="-0.00310326 -0.00136539 -0.0574601" quat="0.996952 0.00947325 0.00348083 0.0773554" mass="0.634853" diaginertia="0.000469894 0.000433114 0.000245134" />
+                <joint name="right_elbow" class="motor_DM4340" range="0 2.4435" actuatorfrcrange="-27 27" axis="0 -1 0" />
+                <geom name="link4_right_00" class="visual" pos="0 0 0" quat="1 0 0 0" type="mesh" material="matte_black" mesh="link4_right_00" />
+                <geom name="link4_right_01" class="visual" quat="1 0 0 0" type="mesh" material="pale_silver" mesh="link4_right_01" />
+                <geom name="link4_right_02" class="visual" type="mesh" material="metal_silver" mesh="link4_right_02" />
+                <geom name="link4_right_collision_00" class="collision" quat="1 0 0 0" type="mesh" mesh="link4_right_collision_00" />
+                <body name="right_forearm_twist_link" pos="0 0 -0.0955" gravcomp="1">
+                  <inertial pos="0 0 -0.01" mass="0.15" diaginertia="0.0002 0.0002 0.0001" />
+                  <joint name="right_forearm_twist" range="-1.5708 1.5708" armature="0.01" damping="0.01" frictionloss="0.04" limited="true" />
+                  <frame pos="0 0 -0.23" quat="0 1 0 0">
+                    <body name="right_forearm" gravcomp="1">
+                      <geom name="right_forearm_shell" size="0.0525 0.036 0.1" pos="0 0 -0.13" type="box" rgba="0.82 0.83 0.86 1" mass="0.4" />
+                      <geom name="right_wrist_cam_board" size="0.012 0.0035 0.012" pos="0 -0.0495 -0.085" type="box" contype="0" conaffinity="0" group="2" rgba="0.1 0.25 0.1 1" />
+                      <site name="right_wrist_centre" size="0.003" />
+                      <site name="right_forearm_flange" size="0.003" pos="0 0 -0.23" />
+                      <site name="right_wrist_cam_mount" size="0.004" pos="0 -0.046 -0.085" quat="0 0 0.994522 0.104528" group="4" rgba="0.1 0.8 0.2 1" />
+                      <camera name="right_wrist_cam" quat="0 0 0.994522 0.104528" resolution="640 480" pos="0 -0.046 -0.085" fovy="93" />
+                      <body name="right_wrist_ring" gravcomp="1">
+                        <joint name="right_wrist_dev" range="-0.523599 0.349066" armature="0.002" damping="0.02" axis="0 1 0" limited="true" />
+                        <geom name="right_wrist_ring_g" size="0.045 0.03 0.015" pos="0 0 -0.015" type="box" contype="0" conaffinity="0" rgba="0.82 0.83 0.86 1" mass="0.05" />
+                        <body name="right_palm" gravcomp="1">
+                          <joint name="right_wrist_flex" range="-1.0472 1.22173" armature="0.002" damping="0.02" axis="1 0 0" limited="true" />
+                          <geom name="right_palm_g" size="0.04 0.014 0.045" pos="0 0 0.045" type="box" friction="1 0.01 0.001" rgba="0.82 0.83 0.86 1" mass="0.15" />
+                          <site name="right_palm_centre" size="0.003" pos="0 -0.014 0.045" quat="0.707107 0.707107 0 0" />
+                          <body name="right_index_yoke" pos="0.03 0 0.09" gravcomp="1">
+                            <inertial pos="0 0 0" mass="0.004" diaginertia="2e-07 2e-07 2e-07" />
+                            <joint name="right_index_mcp_abd" range="-0.35 0.35" armature="0.0002" damping="0.01" axis="0 1 0" limited="true" />
+                            <body name="right_index_proximal" gravcomp="1">
+                              <joint name="right_index_mcp_flex" range="-0.2 1.6" armature="0.0002" damping="0.01" axis="1 0 0" limited="true" />
+                              <geom name="right_index_proximal_g" size="0.0085 0.0225" pos="0 0 0.0225" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012" />
+                              <body name="right_index_middle" pos="0 0 0.045" gravcomp="1">
+                                <joint name="right_index_pip" range="0 1.9" armature="0.0002" damping="0.01" axis="1 0 0" limited="true" />
+                                <geom name="right_index_middle_g" size="0.0085 0.0135" pos="0 0 0.0135" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012" />
+                                <body name="right_index_distal" pos="0 0 0.027" gravcomp="1">
+                                  <joint name="right_index_dip" range="0 1.4" armature="0.0002" damping="0.01" axis="1 0 0" limited="true" />
+                                  <geom name="right_index_distal_g" size="0.0085 0.011" pos="0 0 0.011" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.008" />
+                                  <site name="right_index_tip" size="0.003" pos="0 -0.005 0.022" />
+                                </body>
+                              </body>
+                            </body>
+                          </body>
+                          <body name="right_middle_yoke" pos="0.01 0 0.09" gravcomp="1">
+                            <inertial pos="0 0 0" mass="0.004" diaginertia="2e-07 2e-07 2e-07" />
+                            <joint name="right_middle_mcp_abd" range="-0.35 0.35" armature="0.0002" damping="0.01" axis="0 1 0" limited="true" />
+                            <body name="right_middle_proximal" gravcomp="1">
+                              <joint name="right_middle_mcp_flex" range="-0.2 1.6" armature="0.0002" damping="0.01" axis="1 0 0" limited="true" />
+                              <geom name="right_middle_proximal_g" size="0.0085 0.025" pos="0 0 0.025" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012" />
+                              <body name="right_middle_middle" pos="0 0 0.05" gravcomp="1">
+                                <joint name="right_middle_pip" range="0 1.9" armature="0.0002" damping="0.01" axis="1 0 0" limited="true" />
+                                <geom name="right_middle_middle_g" size="0.0085 0.015" pos="0 0 0.015" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012" />
+                                <body name="right_middle_distal" pos="0 0 0.03" gravcomp="1">
+                                  <joint name="right_middle_dip" range="0 1.4" armature="0.0002" damping="0.01" axis="1 0 0" limited="true" />
+                                  <geom name="right_middle_distal_g" size="0.0085 0.011" pos="0 0 0.011" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.008" />
+                                  <site name="right_middle_tip" size="0.003" pos="0 -0.005 0.022" />
+                                </body>
+                              </body>
+                            </body>
+                          </body>
+                          <body name="right_ring_yoke" pos="-0.01 0 0.09" gravcomp="1">
+                            <inertial pos="0 0 0" mass="0.004" diaginertia="2e-07 2e-07 2e-07" />
+                            <joint name="right_ring_mcp_abd" range="-0.35 0.35" armature="0.0002" damping="0.01" axis="0 1 0" limited="true" />
+                            <body name="right_ring_proximal" gravcomp="1">
+                              <joint name="right_ring_mcp_flex" range="-0.2 1.6" armature="0.0002" damping="0.01" axis="1 0 0" limited="true" />
+                              <geom name="right_ring_proximal_g" size="0.0085 0.023" pos="0 0 0.023" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012" />
+                              <body name="right_ring_middle" pos="0 0 0.046" gravcomp="1">
+                                <joint name="right_ring_pip" range="0 1.9" armature="0.0002" damping="0.01" axis="1 0 0" limited="true" />
+                                <geom name="right_ring_middle_g" size="0.0085 0.014" pos="0 0 0.014" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012" />
+                                <body name="right_ring_distal" pos="0 0 0.028" gravcomp="1">
+                                  <joint name="right_ring_dip" range="0 1.4" armature="0.0002" damping="0.01" axis="1 0 0" limited="true" />
+                                  <geom name="right_ring_distal_g" size="0.0085 0.011" pos="0 0 0.011" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.008" />
+                                  <site name="right_ring_tip" size="0.003" pos="0 -0.005 0.022" />
+                                </body>
+                              </body>
+                            </body>
+                          </body>
+                          <body name="right_little_yoke" pos="-0.029 0 0.09" gravcomp="1">
+                            <inertial pos="0 0 0" mass="0.004" diaginertia="2e-07 2e-07 2e-07" />
+                            <joint name="right_little_mcp_abd" range="-0.35 0.35" armature="0.0002" damping="0.01" axis="0 1 0" limited="true" />
+                            <body name="right_little_proximal" gravcomp="1">
+                              <joint name="right_little_mcp_flex" range="-0.2 1.6" armature="0.0002" damping="0.01" axis="1 0 0" limited="true" />
+                              <geom name="right_little_proximal_g" size="0.0085 0.019" pos="0 0 0.019" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012" />
+                              <body name="right_little_middle" pos="0 0 0.038" gravcomp="1">
+                                <joint name="right_little_pip" range="0 1.9" armature="0.0002" damping="0.01" axis="1 0 0" limited="true" />
+                                <geom name="right_little_middle_g" size="0.0085 0.011" pos="0 0 0.011" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012" />
+                                <body name="right_little_distal" pos="0 0 0.022" gravcomp="1">
+                                  <joint name="right_little_dip" range="0 1.4" armature="0.0002" damping="0.01" axis="1 0 0" limited="true" />
+                                  <geom name="right_little_distal_g" size="0.0085 0.01" pos="0 0 0.01" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.008" />
+                                  <site name="right_little_tip" size="0.003" pos="0 -0.005 0.02" />
+                                </body>
+                              </body>
+                            </body>
+                          </body>
+                          <body name="right_thumb_base" pos="0.046 -0.01 0.02" quat="0.953717 0.300706 0 0" gravcomp="1">
+                            <inertial pos="0 0 0" mass="0.006" diaginertia="5e-07 5e-07 5e-07" />
+                            <joint name="right_thumb_cmc_rot" range="-0.6 1.3" armature="0.0002" damping="0.01" axis="0 -1 0" limited="true" />
+                            <body name="right_thumb_metacarpal" gravcomp="1">
+                              <joint name="right_thumb_cmc_flex" range="-0.3 1.2" armature="0.0002" damping="0.01" axis="1 0 0" limited="true" />
+                              <geom name="right_thumb_metacarpal_g" size="0.0085 0.0175" pos="0 0 0.0175" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.015" />
+                              <body name="right_thumb_proximal" pos="0 0 0.035" gravcomp="1">
+                                <joint name="right_thumb_mcp_flex" range="-0.2 1.4" armature="0.0002" damping="0.01" axis="1 0 0" limited="true" />
+                                <geom name="right_thumb_proximal_g" size="0.0085 0.016" pos="0 0 0.016" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.012" />
+                                <body name="right_thumb_distal" pos="0 0 0.032" gravcomp="1">
+                                  <joint name="right_thumb_ip" range="-0.2 1.4" armature="0.0002" damping="0.01" axis="1 0 0" limited="true" />
+                                  <geom name="right_thumb_distal_g" size="0.0085 0.013" pos="0 0 0.013" quat="0 1 0 0" type="capsule" friction="1 0.01 0.001" rgba="0.95 0.78 0.6 1" mass="0.008" />
+                                  <site name="right_thumb_tip" size="0.003" pos="0 -0.005 0.026" />
+                                </body>
+                              </body>
+                            </body>
+                          </body>
+                        </body>
+                      </body>
+                    </body>
+                  </frame>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </frame>
+    <body name="head_pole" pos="-0.22 0 0">
+      <geom name="head_pole_post" size="0.018 0.69" pos="0 0 0.69" quat="0 1 0 0" type="cylinder" contype="0" conaffinity="0" group="2" rgba="0.2 0.2 0.22 1" />
+      <geom name="head_pole_foot" size="0.11 0.006" pos="0 0 0.006" quat="0 1 0 0" type="cylinder" contype="0" conaffinity="0" group="2" rgba="0.2 0.2 0.22 1" />
+      <geom name="head_cam_body" size="0.012 0.045 0.012" pos="0 0 1.4" type="box" contype="0" conaffinity="0" group="2" rgba="0.05 0.05 0.05 1" />
+      <camera name="head_cam" quat="0.623521 0.206005 -0.236594 -0.716106" resolution="1280 720" pos="0 0 1.38" fovy="42.2726" />
+    </body>
+  </worldbody>
+  <contact>
+    <exclude name="right_link4_forearm" body1="openarm_right_link4" body2="right_forearm" />
+  </contact>
+  <equality>
+    <joint name="right_index_dip_couple" joint1="right_index_dip" joint2="right_index_pip" polycoef="0 0.75 0 0 0" />
+    <joint name="right_middle_dip_couple" joint1="right_middle_dip" joint2="right_middle_pip" polycoef="0 0.75 0 0 0" />
+    <joint name="right_ring_dip_couple" joint1="right_ring_dip" joint2="right_ring_pip" polycoef="0 0.75 0 0 0" />
+    <joint name="right_little_dip_couple" joint1="right_little_dip" joint2="right_little_pip" polycoef="0 0.75 0 0 0" />
+  </equality>
+  <actuator>
+    <general name="right_shoulder_pitch" class="motor_DM8009" joint="right_shoulder_pitch" ctrlrange="-1.39626 3.49066" gainprm="230" biasprm="0 -230 -15.768" />
+    <general name="right_shoulder_roll" class="motor_DM8009" joint="right_shoulder_roll" ctrlrange="-0.174533 3.31613" gainprm="230" biasprm="0 -230 -15.419" />
+    <general name="right_shoulder_yaw" class="motor_DM4340" joint="right_shoulder_yaw" ctrlrange="-1.5708 1.5708" gainprm="190" biasprm="0 -190 -12.722" />
+    <general name="right_elbow" class="motor_DM4340" joint="right_elbow" ctrlrange="0 2.44346" gainprm="190" biasprm="0 -190 -12.715" />
+    <general name="right_forearm_twist" joint="right_forearm_twist" ctrlrange="-1.5708 1.5708" ctrllimited="true" forcelimited="true" forcerange="-7 7" biastype="affine" gainprm="30" biasprm="0 -30 -1.5" />
+    <general name="right_wrist_flex" joint="right_wrist_flex" ctrlrange="-1.0472 1.22173" ctrllimited="true" forcelimited="true" forcerange="-4 4" biastype="affine" gainprm="12" biasprm="0 -12 -0.487" />
+    <general name="right_wrist_dev" joint="right_wrist_dev" ctrlrange="-0.523599 0.349066" ctrllimited="true" forcelimited="true" forcerange="-4 4" biastype="affine" gainprm="12" biasprm="0 -12 -0.498" />
+    <general name="right_index_pip" joint="right_index_pip" ctrlrange="0 1.9" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
+    <general name="right_index_mcp_flex" joint="right_index_mcp_flex" ctrlrange="-0.2 1.6" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
+    <general name="right_index_mcp_abd" joint="right_index_mcp_abd" ctrlrange="-0.35 0.35" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
+    <general name="right_thumb_ip" joint="right_thumb_ip" ctrlrange="-0.2 1.4" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
+    <general name="right_thumb_mcp_flex" joint="right_thumb_mcp_flex" ctrlrange="-0.2 1.4" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
+    <general name="right_thumb_cmc_flex" joint="right_thumb_cmc_flex" ctrlrange="-0.3 1.2" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
+    <general name="right_thumb_cmc_rot" joint="right_thumb_cmc_rot" ctrlrange="-0.6 1.3" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
+    <general name="right_middle_pip" joint="right_middle_pip" ctrlrange="0 1.9" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
+    <general name="right_middle_mcp_flex" joint="right_middle_mcp_flex" ctrlrange="-0.2 1.6" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
+    <general name="right_middle_mcp_abd" joint="right_middle_mcp_abd" ctrlrange="-0.35 0.35" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
+    <general name="right_ring_pip" joint="right_ring_pip" ctrlrange="0 1.9" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
+    <general name="right_ring_mcp_flex" joint="right_ring_mcp_flex" ctrlrange="-0.2 1.6" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
+    <general name="right_ring_mcp_abd" joint="right_ring_mcp_abd" ctrlrange="-0.35 0.35" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
+    <general name="right_little_pip" joint="right_little_pip" ctrlrange="0 1.9" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
+    <general name="right_little_mcp_flex" joint="right_little_mcp_flex" ctrlrange="-0.2 1.6" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
+    <general name="right_little_mcp_abd" joint="right_little_mcp_abd" ctrlrange="-0.35 0.35" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
+  </actuator>
+  <keyframe>
+    <key name="rest" qpos="0 0.17 0 0.5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" ctrl="0 0.17 0 0.5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" />
+    <key name="ready" qpos="0 0 0 1.5708 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" ctrl="0 0 0 1.5708 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" />
+    <key name="table" qpos="0.6634 0.0338 -0.2699 0.8971 1.3734 -0.1883 -0.0336 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" ctrl="0.6634 0.0338 -0.2699 0.8971 1.3734 -0.0336 -0.1883 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" />
+  </keyframe>
+</mujoco>

@@ -154,9 +154,16 @@ def thumb_bay(clear=1.0, step=1.5):
     a /= np.linalg.norm(a)
     Pc = np.array(P.THUMB_P, float)
     names = ["T_thumb_base", "T_bearing_top", "T_bearing_bottom", "T_thumb_mount", "T_base_cap"]
-    if (OUT / "thumb" / "parts.json").exists():
-        names = []  # package B: its own bay is cut by its parts check (kept simple here)
-    ms = [trimesh.load(str(V2STL / f"{n}.stl"), force="mesh") for n in names if (V2STL / f"{n}.stl").exists()]
+    paths = [V2STL / f"{n}.stl" for n in names]
+    pj = OUT / "thumb" / "parts.json"
+    if pj.exists():  # package B: sweep its rotating base parts instead of V2's
+        bp = json.load(open(pj))
+        keep = ("thumb_base", "base_cap", "thumb_mount", "bearing_rot_top_6704zz", "bearing_rot_bottom_6704_zro2")
+        paths = [HERE.parent / bp[n]["stl"].split("out/", 1)[0] / "out" / bp[n]["stl"].split("out/", 1)[1]
+                 if "out/" in bp[n]["stl"] else HERE.parent / bp[n]["stl"] for n in keep if n in bp]
+    ms = [trimesh.load(str(f), force="mesh") for f in paths if Path(f).exists()]
+    if not ms:
+        raise RuntimeError(f"thumb_bay: no thumb base meshes found in {paths}")
     V = np.vstack([np.vstack([m.vertices, m.sample(30000)]) for m in ms])  # surface samples: a bearing has vertices only at its faces
     d = V - Pc
     sax = d @ a

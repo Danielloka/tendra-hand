@@ -1,61 +1,29 @@
 {
  "fingers": "package A (cad/18_fingers.py)",
- "thumb": "V2 placeholder",
- "part_count": 496,
+ "thumb": "package B (cad/18_thumb.py)",
+ "part_count": 578,
  "part_count_by_group": {
   "wrist": 23,
   "palm": 11,
   "forearm": 74,
   "fingers": 361,
-  "thumb": 27
+  "thumb": 109
  },
  "placeholders": [
-  "T_base_cap",
-  "T_bearing_bottom",
-  "T_bearing_cmc_flex_l",
-  "T_bearing_cmc_flex_r",
-  "T_bearing_ip_l",
-  "T_bearing_ip_r",
-  "T_bearing_mcp_flex_l",
-  "T_bearing_mcp_flex_r",
-  "T_bearing_top",
-  "T_pin_cmc_a",
-  "T_pin_cmc_b",
-  "T_pin_ip_a",
-  "T_pin_ip_axle",
-  "T_pin_ip_b",
-  "T_pin_mcp_a",
-  "T_pin_mcp_b",
-  "T_thenar_pad",
-  "T_thumb_base",
-  "T_thumb_distal",
-  "T_thumb_metacarpal",
-  "T_thumb_mount",
-  "T_thumb_pad",
-  "T_thumb_proximal",
-  "T_tie_liner_cmc_flex",
-  "T_tie_liner_ip",
-  "T_tie_liner_mcp_flex",
-  "T_tie_liner_rot",
   "palm_hypothenar_pad",
   "palm_pad"
  ],
  "not_watertight": [
   "ring_w13",
-  "middle_liner_pip_flex",
-  "middle_liner_pip_ext",
-  "middle_liner_mcp_ext",
-  "middle_liner_abd_ext",
-  "ring_liner_mcp_ext",
-  "T_thumb_mount"
+  "little_liner_abd_ext"
  ],
- "mass_g_total": 1125.4,
+ "mass_g_total": 1112.9,
  "mass_g_by_group": {
   "wrist": 248.0,
-  "palm": 35.4,
+  "palm": 36.4,
   "forearm": 599.4,
-  "fingers": 134.5,
-  "thumb": 102.8
+  "fingers": 134.8,
+  "thumb": 87.9
  },
  "mass_g": {
   "forearm_yoke_w13": 14.43,
@@ -77,7 +45,7 @@
   "wrist_servo_L": 55.0,
   "wrist_gears_R": 14.06,
   "wrist_gears_L": 14.06,
-  "palm_v21": 21.37,
+  "palm_v21": 22.48,
   "hub_tray": 0.82,
   "hub_board": 2.53,
   "hub_rp2040": 2.81,
@@ -246,12 +214,12 @@
   "index_pad_mid_silicone": 0.16,
   "index_knuckle_module": 4.53,
   "index_abd_brg_d_out": 0.03,
-  "index_liner_pip_flex": 0.14,
-  "index_liner_pip_ext": 0.12,
-  "index_liner_mcp_flex": 0.13,
-  "index_liner_mcp_ext": 0.15,
-  "index_liner_abd_flex": 0.15,
-  "index_liner_abd_ext": 0.13,
+  "index_liner_pip_flex": 0.13,
+  "index_liner_pip_ext": 0.1,
+  "index_liner_mcp_flex": 0.1,
+  "index_liner_mcp_ext": 0.13,
+  "index_liner_abd_flex": 0.13,
+  "index_liner_abd_ext": 0.09,
   "index_dip_bar": 0.44,
   "middle_yoke": 3.85,
   "middle_proximal": 11.88,
@@ -337,12 +305,12 @@
   "middle_pad_mid_silicone": 0.16,
   "middle_knuckle_module": 4.53,
   "middle_abd_brg_d_out": 0.03,
-  "middle_liner_pip_flex": 0.15,
-  "middle_liner_pip_ext": 0.14,
-  "middle_liner_mcp_flex": 0.13,
-  "middle_liner_mcp_ext": 0.17,
-  "middle_liner_abd_flex": 0.13,
-  "middle_liner_abd_ext": 0.17,
+  "middle_liner_pip_flex": 0.07,
+  "middle_liner_pip_ext": 0.08,
+  "middle_liner_mcp_flex": 0.09,
+  "middle_liner_mcp_ext": 0.09,
+  "middle_liner_abd_flex": 0.08,
+  "middle_liner_abd_ext": 0.09,
   "middle_dip_bar": 0.51,
   "ring_yoke": 3.85,
   "ring_proximal": 11.28,
@@ -426,14 +394,14 @@
   "ring_pad_mid_board": 0.02,
   "ring_pad_mid_chip": 0.0,
   "ring_pad_mid_silicone": 0.16,
-  "ring_knuckle_module": 4.44,
+  "ring_knuckle_module": 4.53,
   "ring_abd_brg_d_out": 0.03,
-  "ring_liner_pip_flex": 0.13,
-  "ring_liner_pip_ext": 0.13,
-  "ring_liner_mcp_flex": 0.16,
-  "ring_liner_mcp_ext": 0.15,
-  "ring_liner_abd_flex": 0.13,
-  "ring_liner_abd_ext": 0.14,
+  "ring_liner_pip_flex": 0.1,
+  "ring_liner_pip_ext": 0.12,
+  "ring_liner_mcp_flex": 0.15,
+  "ring_liner_mcp_ext": 0.08,
+  "ring_liner_abd_flex": 0.11,
+  "ring_liner_abd_ext": 0.1,
   "ring_dip_bar": 0.48,
   "little_yoke": 3.85,
   "little_proximal": 8.57,
@@ -514,42 +482,124 @@
   "little_pad_prox_board": 0.02,
   "little_pad_prox_chip": 0.0,
   "little_pad_prox_silicone": 0.18,
-  "little_knuckle_module": 4.44,
+  "little_knuckle_module": 4.53,
   "little_abd_brg_d_out": 0.03,
-  "little_liner_pip_flex": 0.14,
-  "little_liner_pip_ext": 0.16,
-  "little_liner_mcp_flex": 0.16,
-  "little_liner_mcp_ext": 0.14,
-  "little_liner_abd_flex": 0.15,
-  "little_liner_abd_ext": 0.15,
+  "little_liner_pip_flex": 0.15,
+  "little_liner_pip_ext": 0.15,
+  "little_liner_mcp_flex": 0.17,
+  "little_liner_mcp_ext": 0.16,
+  "little_liner_abd_flex": 0.17,
+  "little_liner_abd_ext": 0.77,
   "little_dip_bar": 0.35,
-  "T_thumb_base": 6.67,
-  "T_pin_cmc_b": 0.88,
-  "T_thumb_pad": 0.86,
-  "T_bearing_bottom": 8.07,
-  "T_pin_ip_axle": 1.97,
-  "T_tie_liner_ip": 0.01,
-  "T_pin_mcp_a": 0.79,
-  "T_bearing_ip_r": 0.85,
-  "T_bearing_mcp_flex_r": 0.85,
-  "T_bearing_cmc_flex_r": 0.85,
-  "T_tie_liner_cmc_flex": 0.01,
-  "T_bearing_top": 8.07,
-  "T_tie_liner_rot": 0.01,
-  "T_tie_liner_mcp_flex": 0.01,
-  "T_thumb_distal": 7.07,
-  "T_pin_mcp_b": 0.79,
-  "T_base_cap": 0.53,
-  "T_thumb_proximal": 10.54,
-  "T_bearing_mcp_flex_l": 0.85,
-  "T_bearing_cmc_flex_l": 0.85,
-  "T_thumb_metacarpal": 16.82,
-  "T_pin_ip_a": 0.14,
-  "T_thenar_pad": 1.0,
-  "T_thumb_mount": 32.73,
-  "T_pin_ip_b": 0.14,
-  "T_bearing_ip_l": 0.85,
-  "T_pin_cmc_a": 0.88,
+  "thumb_mount": 9.23,
+  "bearing_rot_top_6704zz": 8.1,
+  "bearing_rot_bottom_6704_zro2": 1.24,
+  "neck_eyelet": 0.35,
+  "rot_sensor_chip": 0.02,
+  "rot_sensor_board": 0.02,
+  "plug_board": 0.04,
+  "plug_jst_sh4": 0.07,
+  "thumb_base": 6.92,
+  "base_cap": 0.88,
+  "rot_magnet_ring": 0.12,
+  "ring_rot": 0.54,
+  "cup_rot_flex": 0.02,
+  "cup_rot_ext": 0.02,
+  "thumb_metacarpal": 17.6,
+  "ring_cmc": 0.54,
+  "cup_cmc_flex": 0.02,
+  "cup_cmc_ext": 0.02,
+  "nip_cmc_a": 0.04,
+  "nip_cmc_b": 0.04,
+  "thenar_pad": 1.12,
+  "thumb_proximal": 11.13,
+  "ring_mcp": 0.54,
+  "cup_mcp_flex": 0.02,
+  "cup_mcp_ext": 0.02,
+  "nip_mcp_a": 0.03,
+  "nip_mcp_b": 0.03,
+  "thumb_distal": 6.29,
+  "ring_ip": 0.54,
+  "cup_ip_flex": 0.02,
+  "cup_ip_ext": 0.02,
+  "tip_board": 0.13,
+  "tip_chip_mlx90393": 0.02,
+  "tip_skin": 1.2,
+  "tip_magnet": 0.01,
+  "bearing_cmc_sensor_zro2": 0.09,
+  "bearing_cmc_wire_mr84zz": 0.89,
+  "axle_cmc_sensor_tube": 0.35,
+  "axle_cmc_wire_tube": 0.39,
+  "magnet_cmc": 0.01,
+  "sensor_plug_cmc": 0.05,
+  "sensor_chip_cmc": 0.02,
+  "sensor_board_cmc": 0.02,
+  "wire_keeper_cmc": 0.06,
+  "bearing_mcp_sensor_zro2": 0.09,
+  "bearing_mcp_wire_mr84zz": 0.89,
+  "axle_mcp_sensor_tube": 0.31,
+  "axle_mcp_wire_tube": 0.35,
+  "magnet_mcp": 0.01,
+  "sensor_plug_mcp": 0.05,
+  "sensor_chip_mcp": 0.02,
+  "sensor_board_mcp": 0.02,
+  "wire_keeper_mcp": 0.06,
+  "bearing_ip_sensor_zro2": 0.09,
+  "bearing_ip_wire_mr84zz": 0.89,
+  "axle_ip_tube": 0.83,
+  "magnet_ip": 0.01,
+  "sensor_plug_ip": 0.05,
+  "sensor_chip_ip": 0.02,
+  "sensor_board_ip": 0.02,
+  "wire_keeper_ip": 0.06,
+  "roller_A_cmc_rot_flex": 0.42,
+  "roller_pin_A_cmc_rot_flex": 0.43,
+  "roller_C_cmc_rot_flex": 0.42,
+  "roller_pin_C_cmc_rot_flex": 0.43,
+  "roller_A_cmc_rot_ext": 0.42,
+  "roller_pin_A_cmc_rot_ext": 0.43,
+  "roller_C_cmc_rot_ext": 0.42,
+  "roller_pin_C_cmc_rot_ext": 0.43,
+  "roller_A_cmc_flex_flex": 0.42,
+  "roller_pin_A_cmc_flex_flex": 0.43,
+  "roller_B_cmc_flex_flex": 0.42,
+  "roller_pin_B_cmc_flex_flex": 0.43,
+  "roller_A_cmc_flex_ext": 0.42,
+  "roller_pin_A_cmc_flex_ext": 0.43,
+  "roller_B_cmc_flex_ext": 0.42,
+  "roller_pin_B_cmc_flex_ext": 0.43,
+  "roller_A_mcp_flex_flex": 0.42,
+  "roller_pin_A_mcp_flex_flex": 0.43,
+  "roller_B_mcp_flex_flex": 0.42,
+  "roller_pin_B_mcp_flex_flex": 0.43,
+  "roller_A_mcp_flex_ext": 0.42,
+  "roller_pin_A_mcp_flex_ext": 0.43,
+  "roller_B_mcp_flex_ext": 0.42,
+  "roller_pin_B_mcp_flex_ext": 0.43,
+  "roller_A_ip_flex": 0.42,
+  "roller_pin_A_ip_flex": 0.43,
+  "roller_B_ip_flex": 0.42,
+  "roller_pin_B_ip_flex": 0.43,
+  "roller_A_ip_ext": 0.42,
+  "roller_pin_A_ip_ext": 0.43,
+  "roller_B_ip_ext": 0.42,
+  "roller_pin_B_ip_ext": 0.43,
+  "fork_A_cmc_rot_flex": 0.2,
+  "fork_A_cmc_rot_ext": 0.2,
+  "fork_A_cmc_flex_flex": 0.2,
+  "fork_A_cmc_flex_ext": 0.2,
+  "fork_A_mcp_flex_flex": 0.2,
+  "fork_A_mcp_flex_ext": 0.2,
+  "fork_A_ip_flex": 0.2,
+  "fork_A_ip_ext": 0.2,
+  "fork_C_cmc_rot_flex": 0.2,
+  "fork_C_cmc_rot_ext": 0.2,
+  "fork_B_cmc_flex_flex": 0.2,
+  "fork_B_cmc_flex_ext": 0.2,
+  "fork_B_mcp_flex_flex": 0.2,
+  "fork_B_mcp_flex_ext": 0.2,
+  "fork_B_ip_flex": 0.2,
+  "fork_B_ip_ext": 0.2,
   "wrist_crank_R": 3.98,
   "wrist_crank_L": 3.98,
   "wrist_rod_R": 10.65,
@@ -558,1100 +608,2065 @@
  "interference": {
   "open": [
    [
-    "middle_liner_mcp_flex",
-    "ring_liner_mcp_flex",
-    6.6
+    "palm_v21",
+    "fork_B_cmc_flex_ext",
+    66.7
    ],
    [
-    "ring_liner_pip_ext",
-    "little_liner_pip_ext",
-    6.3
+    "pad_cup_thenar",
+    "thumb_mount",
+    54.7
    ],
    [
+    "pad_cup_thenar",
+    "fork_C_cmc_rot_flex",
+    52.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_flex",
+    38.2
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_ext",
+    35.7
+   ],
+   [
+    "hub_board",
+    "fork_A_cmc_flex_flex",
+    31.2
+   ],
+   [
+    "palm_v21",
+    "fork_A_cmc_rot_ext",
+    31.0
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_pin_C_cmc_rot_flex",
+    28.5
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_C_cmc_rot_flex",
+    26.9
+   ],
+   [
+    "hub_board",
+    "index_liner_abd_ext",
+    25.1
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_flex",
+    23.7
+   ],
+   [
+    "palm_v21",
+    "fork_A_mcp_flex_flex",
+    23.5
+   ],
+   [
+    "hub_tray",
+    "fork_A_mcp_flex_ext",
+    21.8
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_ext",
+    21.7
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_flex",
+    21.5
+   ],
+   [
+    "palm_v21",
+    "little_liner_mcp_flex",
+    21.4
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_ext",
+    21.3
+   ],
+   [
+    "hub_board",
     "ring_liner_abd_ext",
-    "little_liner_abd_flex",
-    5.1
+    20.3
    ],
    [
+    "hub_board",
+    "middle_liner_abd_ext",
+    19.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_mcp_flex_ext",
+    16.6
+   ],
+   [
+    "hub_board",
+    "little_liner_pip_flex",
+    16.4
+   ],
+   [
+    "hub_board",
+    "fork_A_mcp_flex_ext",
+    13.7
+   ],
+   [
+    "hub_rp2040",
+    "index_liner_abd_ext",
+    13.3
+   ],
+   [
+    "hub_tray",
+    "fork_A_cmc_flex_flex",
+    13.1
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_cmc_flex_ext",
+    13.0
+   ],
+   [
+    "pad_cup_centre",
+    "little_liner_mcp_flex",
+    12.8
+   ],
+   [
+    "palm_v21",
+    "roller_B_cmc_flex_ext",
+    11.8
+   ],
+   [
+    "hub_rp2040",
+    "fork_A_cmc_flex_flex",
+    9.5
+   ],
+   [
+    "hub_rp2040",
+    "middle_liner_abd_ext",
+    9.3
+   ],
+   [
+    "hub_rp2040",
     "ring_liner_abd_ext",
-    "little_liner_pip_ext",
+    8.9
+   ],
+   [
+    "hub_rp2040",
+    "little_liner_pip_flex",
+    7.4
+   ],
+   [
+    "hub_board",
+    "roller_pin_A_mcp_flex_ext",
+    6.0
+   ],
+   [
+    "palm_v21",
+    "roller_A_mcp_flex_flex",
+    5.8
+   ],
+   [
+    "palm_v21",
+    "index_liner_abd_flex",
     4.5
    ],
    [
-    "index_liner_abd_ext",
-    "middle_liner_mcp_flex",
-    4.2
+    "hub_tray",
+    "roller_pin_A_mcp_flex_ext",
+    4.3
    ],
    [
-    "index_liner_pip_flex",
-    "ring_liner_pip_flex",
-    3.4
-   ],
-   [
+    "pad_cup_centre",
     "ring_liner_mcp_flex",
-    "little_liner_abd_flex",
-    3.4
+    3.6
    ],
    [
-    "index_liner_abd_flex",
-    "ring_liner_abd_flex",
-    3.3
+    "index_liner_pip_ext",
+    "fork_C_cmc_rot_ext",
+    3.6
    ],
    [
-    "index_liner_abd_ext",
-    "ring_liner_mcp_flex",
-    3.3
+    "hub_tray",
+    "roller_pin_A_cmc_flex_flex",
+    3.5
    ],
    [
-    "index_liner_abd_ext",
-    "little_liner_abd_flex",
-    3.2
+    "index_knuckle_module",
+    "fork_A_mcp_flex_flex",
+    3.0
    ],
    [
-    "index_liner_pip_flex",
-    "little_liner_pip_flex",
-    2.9
+    "palm_v21",
+    "roller_pin_A_cmc_rot_ext",
+    2.5
    ],
    [
-    "index_liner_abd_flex",
-    "little_liner_mcp_ext",
-    2.8
-   ],
-   [
-    "ring_liner_pip_ext",
-    "little_liner_abd_flex",
-    2.7
-   ],
-   [
-    "middle_liner_mcp_flex",
-    "little_liner_abd_flex",
+    "palm_v21",
+    "roller_pin_B_mcp_flex_ext",
     2.3
    ],
    [
-    "middle_liner_abd_flex",
-    "little_liner_abd_flex",
-    2.3
+    "hub_tray",
+    "thumb_mount",
+    2.1
    ],
    [
-    "ring_liner_abd_ext",
-    "little_liner_mcp_flex",
-    2.0
+    "hub_tray",
+    "roller_A_cmc_flex_flex",
+    1.5
    ],
    [
-    "middle_liner_abd_flex",
-    "ring_liner_mcp_flex",
-    1.8
+    "hub_board",
+    "roller_pin_A_cmc_flex_flex",
+    1.5
    ],
    [
-    "ring_liner_pip_flex",
-    "little_liner_abd_flex",
-    1.6
-   ],
-   [
-    "index_liner_mcp_ext",
-    "little_liner_abd_flex",
-    1.3
-   ],
-   [
-    "index_liner_pip_flex",
-    "little_liner_pip_ext",
-    1.2
-   ],
-   [
-    "index_liner_mcp_ext",
-    "ring_liner_pip_ext",
-    1.2
-   ],
-   [
-    "ring_liner_pip_flex",
-    "little_liner_pip_ext",
+    "palm_v21",
+    "roller_pin_A_mcp_flex_flex",
     1.1
-   ],
-   [
-    "index_liner_mcp_ext",
-    "little_liner_pip_ext",
-    1.0
    ]
   ],
   "relaxed": [
    [
-    "middle_liner_mcp_flex",
-    "ring_liner_mcp_flex",
-    6.6
+    "palm_v21",
+    "fork_B_cmc_flex_ext",
+    66.7
    ],
    [
-    "ring_liner_pip_ext",
-    "little_liner_pip_ext",
-    6.3
+    "pad_cup_thenar",
+    "thumb_mount",
+    54.7
    ],
    [
+    "pad_cup_thenar",
+    "fork_C_cmc_rot_flex",
+    52.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_flex",
+    38.2
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_ext",
+    35.7
+   ],
+   [
+    "hub_board",
+    "fork_A_cmc_flex_flex",
+    31.2
+   ],
+   [
+    "palm_v21",
+    "fork_A_cmc_rot_ext",
+    31.0
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_pin_C_cmc_rot_flex",
+    28.5
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_C_cmc_rot_flex",
+    26.9
+   ],
+   [
+    "hub_board",
+    "index_liner_abd_ext",
+    25.1
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_flex",
+    23.7
+   ],
+   [
+    "palm_v21",
+    "fork_A_mcp_flex_flex",
+    23.5
+   ],
+   [
+    "hub_tray",
+    "fork_A_mcp_flex_ext",
+    21.8
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_ext",
+    21.7
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_flex",
+    21.5
+   ],
+   [
+    "palm_v21",
+    "little_liner_mcp_flex",
+    21.4
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_ext",
+    21.3
+   ],
+   [
+    "hub_board",
     "ring_liner_abd_ext",
-    "little_liner_abd_flex",
-    5.1
+    20.3
    ],
    [
+    "hub_board",
+    "middle_liner_abd_ext",
+    19.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_mcp_flex_ext",
+    16.6
+   ],
+   [
+    "hub_board",
+    "little_liner_pip_flex",
+    16.4
+   ],
+   [
+    "hub_board",
+    "fork_A_mcp_flex_ext",
+    13.7
+   ],
+   [
+    "hub_rp2040",
+    "index_liner_abd_ext",
+    13.3
+   ],
+   [
+    "hub_tray",
+    "fork_A_cmc_flex_flex",
+    13.1
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_cmc_flex_ext",
+    13.0
+   ],
+   [
+    "pad_cup_centre",
+    "little_liner_mcp_flex",
+    12.8
+   ],
+   [
+    "palm_v21",
+    "roller_B_cmc_flex_ext",
+    11.8
+   ],
+   [
+    "hub_rp2040",
+    "fork_A_cmc_flex_flex",
+    9.5
+   ],
+   [
+    "hub_rp2040",
+    "middle_liner_abd_ext",
+    9.3
+   ],
+   [
+    "hub_rp2040",
     "ring_liner_abd_ext",
-    "little_liner_pip_ext",
+    8.9
+   ],
+   [
+    "hub_rp2040",
+    "little_liner_pip_flex",
+    7.4
+   ],
+   [
+    "hub_board",
+    "roller_pin_A_mcp_flex_ext",
+    6.0
+   ],
+   [
+    "palm_v21",
+    "roller_A_mcp_flex_flex",
+    5.8
+   ],
+   [
+    "palm_v21",
+    "index_liner_abd_flex",
     4.5
    ],
    [
-    "index_liner_abd_ext",
-    "middle_liner_mcp_flex",
-    4.2
+    "hub_tray",
+    "roller_pin_A_mcp_flex_ext",
+    4.3
    ],
    [
-    "index_liner_pip_flex",
-    "ring_liner_pip_flex",
-    3.4
-   ],
-   [
+    "pad_cup_centre",
     "ring_liner_mcp_flex",
-    "little_liner_abd_flex",
-    3.4
+    3.6
    ],
    [
-    "index_liner_abd_flex",
-    "ring_liner_abd_flex",
-    3.3
+    "index_liner_pip_ext",
+    "fork_C_cmc_rot_ext",
+    3.6
    ],
    [
-    "index_liner_abd_ext",
-    "ring_liner_mcp_flex",
-    3.3
+    "hub_tray",
+    "roller_pin_A_cmc_flex_flex",
+    3.5
    ],
    [
-    "index_liner_abd_ext",
-    "little_liner_abd_flex",
-    3.2
+    "index_knuckle_module",
+    "fork_A_mcp_flex_flex",
+    3.0
    ],
    [
-    "index_liner_pip_flex",
-    "little_liner_pip_flex",
-    2.9
+    "palm_v21",
+    "roller_pin_A_cmc_rot_ext",
+    2.5
    ],
    [
-    "index_liner_abd_flex",
-    "little_liner_mcp_ext",
-    2.8
-   ],
-   [
-    "ring_liner_pip_ext",
-    "little_liner_abd_flex",
-    2.7
-   ],
-   [
-    "middle_liner_mcp_flex",
-    "little_liner_abd_flex",
+    "palm_v21",
+    "roller_pin_B_mcp_flex_ext",
     2.3
    ],
    [
-    "middle_liner_abd_flex",
-    "little_liner_abd_flex",
-    2.3
+    "hub_tray",
+    "thumb_mount",
+    2.1
    ],
    [
-    "ring_liner_abd_ext",
-    "little_liner_mcp_flex",
-    2.0
+    "hub_tray",
+    "roller_A_cmc_flex_flex",
+    1.5
    ],
    [
-    "middle_liner_abd_flex",
-    "ring_liner_mcp_flex",
-    1.8
+    "hub_board",
+    "roller_pin_A_cmc_flex_flex",
+    1.5
    ],
    [
-    "ring_liner_pip_flex",
-    "little_liner_abd_flex",
-    1.6
-   ],
-   [
-    "index_liner_mcp_ext",
-    "little_liner_abd_flex",
-    1.3
-   ],
-   [
-    "index_liner_pip_flex",
-    "little_liner_pip_ext",
-    1.2
-   ],
-   [
-    "index_liner_mcp_ext",
-    "ring_liner_pip_ext",
-    1.2
-   ],
-   [
-    "ring_liner_pip_flex",
-    "little_liner_pip_ext",
+    "palm_v21",
+    "roller_pin_A_mcp_flex_flex",
     1.1
-   ],
-   [
-    "index_liner_mcp_ext",
-    "little_liner_pip_ext",
-    1.0
    ]
   ],
   "fist": [
    [
-    "middle_liner_mcp_flex",
-    "ring_liner_mcp_flex",
-    6.6
+    "palm_v21",
+    "fork_B_cmc_flex_ext",
+    66.7
    ],
    [
-    "ring_liner_pip_ext",
-    "little_liner_pip_ext",
-    6.3
+    "pad_cup_thenar",
+    "thumb_mount",
+    54.7
    ],
    [
+    "pad_cup_thenar",
+    "fork_C_cmc_rot_flex",
+    52.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_flex",
+    38.2
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_ext",
+    35.7
+   ],
+   [
+    "hub_board",
+    "fork_A_cmc_flex_flex",
+    31.2
+   ],
+   [
+    "palm_v21",
+    "fork_A_cmc_rot_ext",
+    31.0
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_pin_C_cmc_rot_flex",
+    28.5
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_C_cmc_rot_flex",
+    26.9
+   ],
+   [
+    "hub_board",
+    "index_liner_abd_ext",
+    25.1
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_flex",
+    23.7
+   ],
+   [
+    "palm_v21",
+    "fork_A_mcp_flex_flex",
+    23.5
+   ],
+   [
+    "hub_tray",
+    "fork_A_mcp_flex_ext",
+    21.8
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_ext",
+    21.7
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_flex",
+    21.5
+   ],
+   [
+    "palm_v21",
+    "little_liner_mcp_flex",
+    21.4
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_ext",
+    21.3
+   ],
+   [
+    "hub_board",
     "ring_liner_abd_ext",
-    "little_liner_abd_flex",
-    5.1
+    20.3
    ],
    [
+    "hub_board",
+    "middle_liner_abd_ext",
+    19.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_mcp_flex_ext",
+    16.6
+   ],
+   [
+    "hub_board",
+    "little_liner_pip_flex",
+    16.4
+   ],
+   [
+    "hub_board",
+    "fork_A_mcp_flex_ext",
+    13.7
+   ],
+   [
+    "hub_rp2040",
+    "index_liner_abd_ext",
+    13.3
+   ],
+   [
+    "hub_tray",
+    "fork_A_cmc_flex_flex",
+    13.1
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_cmc_flex_ext",
+    13.0
+   ],
+   [
+    "pad_cup_centre",
+    "little_liner_mcp_flex",
+    12.8
+   ],
+   [
+    "palm_v21",
+    "roller_B_cmc_flex_ext",
+    11.8
+   ],
+   [
+    "hub_rp2040",
+    "fork_A_cmc_flex_flex",
+    9.5
+   ],
+   [
+    "hub_rp2040",
+    "middle_liner_abd_ext",
+    9.3
+   ],
+   [
+    "hub_rp2040",
     "ring_liner_abd_ext",
-    "little_liner_pip_ext",
+    8.9
+   ],
+   [
+    "hub_rp2040",
+    "little_liner_pip_flex",
+    7.4
+   ],
+   [
+    "hub_board",
+    "roller_pin_A_mcp_flex_ext",
+    6.0
+   ],
+   [
+    "palm_v21",
+    "roller_A_mcp_flex_flex",
+    5.8
+   ],
+   [
+    "palm_v21",
+    "index_liner_abd_flex",
     4.5
    ],
    [
-    "index_liner_abd_ext",
-    "middle_liner_mcp_flex",
-    4.2
+    "hub_tray",
+    "roller_pin_A_mcp_flex_ext",
+    4.3
    ],
    [
-    "index_liner_pip_flex",
-    "ring_liner_pip_flex",
-    3.4
-   ],
-   [
+    "pad_cup_centre",
     "ring_liner_mcp_flex",
-    "little_liner_abd_flex",
-    3.4
+    3.6
    ],
    [
-    "index_liner_abd_flex",
-    "ring_liner_abd_flex",
-    3.3
+    "index_liner_pip_ext",
+    "fork_C_cmc_rot_ext",
+    3.6
    ],
    [
-    "index_liner_abd_ext",
-    "ring_liner_mcp_flex",
-    3.3
+    "hub_tray",
+    "roller_pin_A_cmc_flex_flex",
+    3.5
    ],
    [
-    "index_liner_abd_ext",
-    "little_liner_abd_flex",
-    3.2
+    "index_knuckle_module",
+    "fork_A_mcp_flex_flex",
+    3.0
    ],
    [
-    "index_liner_pip_flex",
-    "little_liner_pip_flex",
-    2.9
+    "palm_v21",
+    "roller_pin_A_cmc_rot_ext",
+    2.5
    ],
    [
-    "index_liner_abd_flex",
-    "little_liner_mcp_ext",
-    2.8
-   ],
-   [
-    "ring_liner_pip_ext",
-    "little_liner_abd_flex",
-    2.7
-   ],
-   [
-    "middle_liner_mcp_flex",
-    "little_liner_abd_flex",
+    "palm_v21",
+    "roller_pin_B_mcp_flex_ext",
     2.3
    ],
    [
-    "middle_liner_abd_flex",
-    "little_liner_abd_flex",
-    2.3
+    "hub_tray",
+    "thumb_mount",
+    2.1
    ],
    [
-    "ring_liner_abd_ext",
-    "little_liner_mcp_flex",
-    2.0
+    "hub_tray",
+    "roller_A_cmc_flex_flex",
+    1.5
    ],
    [
-    "middle_liner_abd_flex",
-    "ring_liner_mcp_flex",
-    1.8
+    "hub_board",
+    "roller_pin_A_cmc_flex_flex",
+    1.5
    ],
    [
-    "ring_liner_pip_flex",
-    "little_liner_abd_flex",
-    1.6
-   ],
-   [
-    "index_liner_mcp_ext",
-    "little_liner_abd_flex",
-    1.3
-   ],
-   [
-    "index_liner_pip_flex",
-    "little_liner_pip_ext",
-    1.2
-   ],
-   [
-    "index_liner_mcp_ext",
-    "ring_liner_pip_ext",
-    1.2
-   ],
-   [
-    "ring_liner_pip_flex",
-    "little_liner_pip_ext",
+    "palm_v21",
+    "roller_pin_A_mcp_flex_flex",
     1.1
-   ],
-   [
-    "index_liner_mcp_ext",
-    "little_liner_pip_ext",
-    1.0
    ]
   ],
   "tip_pinch": [
    [
-    "middle_liner_mcp_flex",
-    "ring_liner_mcp_flex",
-    6.6
+    "palm_v21",
+    "fork_B_cmc_flex_ext",
+    66.7
    ],
    [
-    "ring_liner_pip_ext",
-    "little_liner_pip_ext",
-    6.3
+    "pad_cup_thenar",
+    "thumb_mount",
+    54.7
    ],
    [
+    "pad_cup_thenar",
+    "fork_C_cmc_rot_flex",
+    52.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_flex",
+    38.2
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_ext",
+    35.7
+   ],
+   [
+    "hub_board",
+    "fork_A_cmc_flex_flex",
+    31.2
+   ],
+   [
+    "palm_v21",
+    "fork_A_cmc_rot_ext",
+    31.0
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_pin_C_cmc_rot_flex",
+    28.5
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_C_cmc_rot_flex",
+    26.9
+   ],
+   [
+    "hub_board",
+    "index_liner_abd_ext",
+    25.1
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_flex",
+    23.7
+   ],
+   [
+    "palm_v21",
+    "fork_A_mcp_flex_flex",
+    23.5
+   ],
+   [
+    "hub_tray",
+    "fork_A_mcp_flex_ext",
+    21.8
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_ext",
+    21.7
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_flex",
+    21.5
+   ],
+   [
+    "palm_v21",
+    "little_liner_mcp_flex",
+    21.4
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_ext",
+    21.3
+   ],
+   [
+    "hub_board",
     "ring_liner_abd_ext",
-    "little_liner_abd_flex",
-    5.1
+    20.3
    ],
    [
+    "hub_board",
+    "middle_liner_abd_ext",
+    19.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_mcp_flex_ext",
+    16.6
+   ],
+   [
+    "hub_board",
+    "little_liner_pip_flex",
+    16.4
+   ],
+   [
+    "hub_board",
+    "fork_A_mcp_flex_ext",
+    13.7
+   ],
+   [
+    "hub_rp2040",
+    "index_liner_abd_ext",
+    13.3
+   ],
+   [
+    "hub_tray",
+    "fork_A_cmc_flex_flex",
+    13.1
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_cmc_flex_ext",
+    13.0
+   ],
+   [
+    "pad_cup_centre",
+    "little_liner_mcp_flex",
+    12.8
+   ],
+   [
+    "palm_v21",
+    "roller_B_cmc_flex_ext",
+    11.8
+   ],
+   [
+    "hub_rp2040",
+    "fork_A_cmc_flex_flex",
+    9.5
+   ],
+   [
+    "hub_rp2040",
+    "middle_liner_abd_ext",
+    9.3
+   ],
+   [
+    "hub_rp2040",
     "ring_liner_abd_ext",
-    "little_liner_pip_ext",
+    8.9
+   ],
+   [
+    "hub_rp2040",
+    "little_liner_pip_flex",
+    7.4
+   ],
+   [
+    "hub_board",
+    "roller_pin_A_mcp_flex_ext",
+    6.0
+   ],
+   [
+    "palm_v21",
+    "roller_A_mcp_flex_flex",
+    5.8
+   ],
+   [
+    "palm_v21",
+    "index_liner_abd_flex",
     4.5
    ],
    [
-    "index_liner_abd_ext",
-    "middle_liner_mcp_flex",
-    4.2
+    "hub_tray",
+    "roller_pin_A_mcp_flex_ext",
+    4.3
    ],
    [
-    "index_liner_pip_flex",
-    "ring_liner_pip_flex",
-    3.4
-   ],
-   [
+    "pad_cup_centre",
     "ring_liner_mcp_flex",
-    "little_liner_abd_flex",
-    3.4
+    3.6
    ],
    [
-    "index_liner_abd_flex",
-    "ring_liner_abd_flex",
-    3.3
+    "index_liner_pip_ext",
+    "fork_C_cmc_rot_ext",
+    3.6
    ],
    [
-    "index_liner_abd_ext",
-    "ring_liner_mcp_flex",
-    3.3
+    "hub_tray",
+    "roller_pin_A_cmc_flex_flex",
+    3.5
    ],
    [
-    "index_liner_abd_ext",
-    "little_liner_abd_flex",
-    3.2
+    "index_tip_skin",
+    "tip_skin",
+    3.0
    ],
    [
-    "index_liner_pip_flex",
-    "little_liner_pip_flex",
-    2.9
+    "index_knuckle_module",
+    "fork_A_mcp_flex_flex",
+    3.0
    ],
    [
-    "index_liner_abd_flex",
-    "little_liner_mcp_ext",
-    2.8
+    "palm_v21",
+    "roller_pin_A_cmc_rot_ext",
+    2.5
    ],
    [
-    "ring_liner_pip_ext",
-    "little_liner_abd_flex",
-    2.7
-   ],
-   [
-    "middle_liner_mcp_flex",
-    "little_liner_abd_flex",
+    "palm_v21",
+    "roller_pin_B_mcp_flex_ext",
     2.3
    ],
    [
-    "middle_liner_abd_flex",
-    "little_liner_abd_flex",
-    2.3
+    "hub_tray",
+    "thumb_mount",
+    2.1
    ],
    [
-    "ring_liner_abd_ext",
-    "little_liner_mcp_flex",
-    2.0
+    "hub_tray",
+    "roller_A_cmc_flex_flex",
+    1.5
    ],
    [
-    "middle_liner_abd_flex",
-    "ring_liner_mcp_flex",
-    1.8
+    "hub_board",
+    "roller_pin_A_cmc_flex_flex",
+    1.5
    ],
    [
-    "ring_liner_pip_flex",
-    "little_liner_abd_flex",
-    1.6
+    "index_nail_shim",
+    "tip_skin",
+    1.4
    ],
    [
-    "index_liner_mcp_ext",
-    "little_liner_abd_flex",
-    1.3
-   ],
-   [
-    "index_liner_pip_flex",
-    "little_liner_pip_ext",
-    1.2
-   ],
-   [
-    "index_liner_mcp_ext",
-    "ring_liner_pip_ext",
-    1.2
-   ],
-   [
-    "ring_liner_pip_flex",
-    "little_liner_pip_ext",
+    "palm_v21",
+    "roller_pin_A_mcp_flex_flex",
     1.1
-   ],
-   [
-    "index_liner_mcp_ext",
-    "little_liner_pip_ext",
-    1.0
    ]
   ],
   "thumb_to_little": [
    [
-    "ring_yoke",
-    "little_proximal",
-    32.8
+    "palm_v21",
+    "fork_B_cmc_flex_ext",
+    66.7
    ],
    [
-    "ring_proximal",
-    "little_proximal",
-    21.2
+    "pad_cup_thenar",
+    "thumb_mount",
+    54.7
    ],
    [
-    "middle_liner_mcp_flex",
-    "ring_liner_mcp_flex",
-    6.6
+    "pad_cup_thenar",
+    "fork_C_cmc_rot_flex",
+    52.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_flex",
+    38.2
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_ext",
+    35.7
+   ],
+   [
+    "hub_board",
+    "fork_A_cmc_flex_flex",
+    31.2
+   ],
+   [
+    "palm_v21",
+    "fork_A_cmc_rot_ext",
+    31.0
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_pin_C_cmc_rot_flex",
+    28.5
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_C_cmc_rot_flex",
+    26.9
+   ],
+   [
+    "hub_board",
+    "index_liner_abd_ext",
+    25.1
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_flex",
+    23.7
+   ],
+   [
+    "palm_v21",
+    "fork_A_mcp_flex_flex",
+    23.5
+   ],
+   [
+    "hub_tray",
+    "fork_A_mcp_flex_ext",
+    21.8
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_ext",
+    21.7
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_flex",
+    21.5
+   ],
+   [
+    "palm_v21",
+    "little_liner_mcp_flex",
+    21.4
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_ext",
+    21.3
+   ],
+   [
+    "hub_board",
+    "ring_liner_abd_ext",
+    20.3
+   ],
+   [
+    "hub_board",
+    "middle_liner_abd_ext",
+    19.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_mcp_flex_ext",
+    16.6
+   ],
+   [
+    "hub_board",
+    "little_liner_pip_flex",
+    16.4
+   ],
+   [
+    "hub_board",
+    "fork_A_mcp_flex_ext",
+    13.7
+   ],
+   [
+    "hub_rp2040",
+    "index_liner_abd_ext",
+    13.3
+   ],
+   [
+    "hub_tray",
+    "fork_A_cmc_flex_flex",
+    13.1
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_cmc_flex_ext",
+    13.0
+   ],
+   [
+    "pad_cup_centre",
+    "little_liner_mcp_flex",
+    12.8
+   ],
+   [
+    "palm_v21",
+    "roller_B_cmc_flex_ext",
+    11.8
+   ],
+   [
+    "hub_rp2040",
+    "fork_A_cmc_flex_flex",
+    9.5
+   ],
+   [
+    "hub_rp2040",
+    "middle_liner_abd_ext",
+    9.3
+   ],
+   [
+    "hub_rp2040",
+    "ring_liner_abd_ext",
+    8.9
+   ],
+   [
+    "hub_rp2040",
+    "little_liner_pip_flex",
+    7.4
    ],
    [
     "little_tip_skin",
-    "T_thumb_pad",
-    6.6
+    "tip_skin",
+    7.1
    ],
    [
-    "ring_liner_pip_ext",
-    "little_liner_pip_ext",
-    6.3
+    "hub_board",
+    "roller_pin_A_mcp_flex_ext",
+    6.0
    ],
    [
-    "ring_liner_abd_ext",
-    "little_liner_abd_flex",
+    "palm_v21",
+    "roller_A_mcp_flex_flex",
+    5.8
+   ],
+   [
+    "index_knuckle_module",
+    "thumb_metacarpal",
     5.1
    ],
    [
-    "ring_liner_abd_ext",
-    "little_liner_pip_ext",
+    "palm_v21",
+    "index_liner_abd_flex",
     4.5
    ],
    [
-    "index_liner_abd_ext",
-    "middle_liner_mcp_flex",
-    4.2
+    "hub_tray",
+    "roller_pin_A_mcp_flex_ext",
+    4.3
    ],
    [
-    "index_liner_pip_flex",
-    "ring_liner_pip_flex",
-    3.4
-   ],
-   [
+    "pad_cup_centre",
     "ring_liner_mcp_flex",
-    "little_liner_abd_flex",
-    3.4
+    3.6
    ],
    [
-    "index_liner_abd_flex",
-    "ring_liner_abd_flex",
-    3.3
+    "index_liner_pip_ext",
+    "fork_C_cmc_rot_ext",
+    3.6
    ],
    [
-    "index_liner_abd_ext",
-    "ring_liner_mcp_flex",
-    3.3
+    "hub_tray",
+    "roller_pin_A_cmc_flex_flex",
+    3.5
    ],
    [
-    "index_liner_abd_ext",
-    "little_liner_abd_flex",
-    3.2
-   ],
-   [
-    "index_liner_pip_flex",
-    "little_liner_pip_flex",
-    2.9
+    "index_knuckle_module",
+    "fork_A_mcp_flex_flex",
+    3.0
    ],
    [
     "palm_v21",
-    "little_yoke",
-    2.8
+    "roller_pin_A_cmc_rot_ext",
+    2.5
    ],
    [
-    "index_liner_abd_flex",
-    "little_liner_mcp_ext",
-    2.8
-   ],
-   [
-    "ring_liner_pip_ext",
-    "little_liner_abd_flex",
-    2.7
-   ],
-   [
-    "middle_liner_mcp_flex",
-    "little_liner_abd_flex",
+    "palm_v21",
+    "roller_pin_B_mcp_flex_ext",
     2.3
    ],
    [
-    "middle_liner_abd_flex",
-    "little_liner_abd_flex",
-    2.3
-   ],
-   [
-    "ring_yoke",
-    "little_sensor_mcp_cap",
+    "hub_tray",
+    "thumb_mount",
     2.1
    ],
    [
-    "ring_liner_abd_ext",
-    "little_liner_mcp_flex",
-    2.0
+    "hub_tray",
+    "roller_A_cmc_flex_flex",
+    1.5
    ],
    [
-    "ring_yoke",
-    "little_sensor_mcp_board",
-    1.9
-   ],
-   [
-    "middle_liner_abd_flex",
-    "ring_liner_mcp_flex",
-    1.8
+    "hub_board",
+    "roller_pin_A_cmc_flex_flex",
+    1.5
    ],
    [
     "palm_v21",
-    "T_thenar_pad",
-    1.6
-   ],
-   [
-    "ring_liner_pip_flex",
-    "little_liner_abd_flex",
-    1.6
-   ],
-   [
-    "index_liner_mcp_ext",
-    "little_liner_abd_flex",
-    1.3
-   ],
-   [
-    "ring_knuckle_module",
-    "little_yoke",
-    1.3
-   ],
-   [
-    "index_liner_pip_flex",
-    "little_liner_pip_ext",
-    1.2
-   ],
-   [
-    "index_liner_mcp_ext",
-    "ring_liner_pip_ext",
-    1.2
-   ],
-   [
-    "ring_liner_pip_flex",
-    "little_liner_pip_ext",
+    "roller_pin_A_mcp_flex_flex",
     1.1
-   ],
-   [
-    "index_liner_mcp_ext",
-    "little_liner_pip_ext",
-    1.0
    ]
   ],
   "power_grasp": [
    [
-    "middle_liner_mcp_flex",
-    "ring_liner_mcp_flex",
-    6.6
+    "palm_v21",
+    "fork_B_cmc_flex_ext",
+    66.7
    ],
    [
-    "ring_liner_pip_ext",
-    "little_liner_pip_ext",
-    6.3
+    "pad_cup_thenar",
+    "thumb_mount",
+    54.7
    ],
    [
+    "pad_cup_thenar",
+    "fork_C_cmc_rot_flex",
+    52.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_flex",
+    38.2
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_ext",
+    35.7
+   ],
+   [
+    "hub_board",
+    "fork_A_cmc_flex_flex",
+    31.2
+   ],
+   [
+    "palm_v21",
+    "fork_A_cmc_rot_ext",
+    31.0
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_pin_C_cmc_rot_flex",
+    28.5
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_C_cmc_rot_flex",
+    26.9
+   ],
+   [
+    "hub_board",
+    "index_liner_abd_ext",
+    25.1
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_flex",
+    23.7
+   ],
+   [
+    "palm_v21",
+    "fork_A_mcp_flex_flex",
+    23.5
+   ],
+   [
+    "hub_tray",
+    "fork_A_mcp_flex_ext",
+    21.8
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_ext",
+    21.7
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_flex",
+    21.5
+   ],
+   [
+    "palm_v21",
+    "little_liner_mcp_flex",
+    21.4
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_ext",
+    21.3
+   ],
+   [
+    "hub_board",
     "ring_liner_abd_ext",
-    "little_liner_abd_flex",
-    5.1
+    20.3
    ],
    [
+    "hub_board",
+    "middle_liner_abd_ext",
+    19.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_mcp_flex_ext",
+    16.6
+   ],
+   [
+    "hub_board",
+    "little_liner_pip_flex",
+    16.4
+   ],
+   [
+    "hub_board",
+    "fork_A_mcp_flex_ext",
+    13.7
+   ],
+   [
+    "hub_rp2040",
+    "index_liner_abd_ext",
+    13.3
+   ],
+   [
+    "hub_tray",
+    "fork_A_cmc_flex_flex",
+    13.1
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_cmc_flex_ext",
+    13.0
+   ],
+   [
+    "pad_cup_centre",
+    "little_liner_mcp_flex",
+    12.8
+   ],
+   [
+    "palm_v21",
+    "roller_B_cmc_flex_ext",
+    11.8
+   ],
+   [
+    "hub_rp2040",
+    "fork_A_cmc_flex_flex",
+    9.5
+   ],
+   [
+    "hub_rp2040",
+    "middle_liner_abd_ext",
+    9.3
+   ],
+   [
+    "hub_rp2040",
     "ring_liner_abd_ext",
-    "little_liner_pip_ext",
+    8.9
+   ],
+   [
+    "hub_rp2040",
+    "little_liner_pip_flex",
+    7.4
+   ],
+   [
+    "hub_board",
+    "roller_pin_A_mcp_flex_ext",
+    6.0
+   ],
+   [
+    "palm_v21",
+    "roller_A_mcp_flex_flex",
+    5.8
+   ],
+   [
+    "palm_v21",
+    "index_liner_abd_flex",
     4.5
    ],
    [
-    "index_liner_abd_ext",
-    "middle_liner_mcp_flex",
-    4.2
+    "hub_tray",
+    "roller_pin_A_mcp_flex_ext",
+    4.3
    ],
    [
-    "index_liner_pip_flex",
-    "ring_liner_pip_flex",
-    3.4
-   ],
-   [
+    "pad_cup_centre",
     "ring_liner_mcp_flex",
-    "little_liner_abd_flex",
-    3.4
+    3.6
    ],
    [
-    "index_liner_abd_flex",
-    "ring_liner_abd_flex",
-    3.3
+    "index_liner_pip_ext",
+    "fork_C_cmc_rot_ext",
+    3.6
    ],
    [
-    "index_liner_abd_ext",
-    "ring_liner_mcp_flex",
-    3.3
+    "hub_tray",
+    "roller_pin_A_cmc_flex_flex",
+    3.5
    ],
    [
-    "index_liner_abd_ext",
-    "little_liner_abd_flex",
-    3.2
+    "index_knuckle_module",
+    "fork_A_mcp_flex_flex",
+    3.0
    ],
    [
-    "index_liner_pip_flex",
-    "little_liner_pip_flex",
-    2.9
+    "palm_v21",
+    "roller_pin_A_cmc_rot_ext",
+    2.5
    ],
    [
-    "index_liner_abd_flex",
-    "little_liner_mcp_ext",
-    2.8
-   ],
-   [
-    "ring_liner_pip_ext",
-    "little_liner_abd_flex",
-    2.7
-   ],
-   [
-    "middle_liner_mcp_flex",
-    "little_liner_abd_flex",
+    "palm_v21",
+    "roller_pin_B_mcp_flex_ext",
     2.3
    ],
    [
-    "middle_liner_abd_flex",
-    "little_liner_abd_flex",
-    2.3
+    "hub_tray",
+    "thumb_mount",
+    2.1
    ],
    [
-    "ring_liner_abd_ext",
-    "little_liner_mcp_flex",
-    2.0
+    "hub_tray",
+    "roller_A_cmc_flex_flex",
+    1.5
    ],
    [
-    "middle_liner_abd_flex",
-    "ring_liner_mcp_flex",
-    1.8
+    "hub_board",
+    "roller_pin_A_cmc_flex_flex",
+    1.5
    ],
    [
-    "ring_liner_pip_flex",
-    "little_liner_abd_flex",
-    1.6
-   ],
-   [
-    "index_liner_mcp_ext",
-    "little_liner_abd_flex",
-    1.3
-   ],
-   [
-    "index_liner_pip_flex",
-    "little_liner_pip_ext",
-    1.2
-   ],
-   [
-    "index_liner_mcp_ext",
-    "ring_liner_pip_ext",
-    1.2
-   ],
-   [
-    "ring_liner_pip_flex",
-    "little_liner_pip_ext",
+    "palm_v21",
+    "roller_pin_A_mcp_flex_flex",
     1.1
-   ],
-   [
-    "index_liner_mcp_ext",
-    "little_liner_pip_ext",
-    1.0
    ]
   ],
   "spread": [
    [
-    "middle_liner_mcp_flex",
-    "ring_liner_mcp_flex",
-    6.6
+    "palm_v21",
+    "fork_B_cmc_flex_ext",
+    66.7
    ],
    [
-    "ring_liner_pip_ext",
-    "little_liner_pip_ext",
-    6.3
+    "pad_cup_thenar",
+    "thumb_mount",
+    54.7
    ],
    [
+    "pad_cup_thenar",
+    "fork_C_cmc_rot_flex",
+    52.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_flex",
+    38.2
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_ext",
+    35.7
+   ],
+   [
+    "hub_board",
+    "fork_A_cmc_flex_flex",
+    31.2
+   ],
+   [
+    "palm_v21",
+    "fork_A_cmc_rot_ext",
+    31.0
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_pin_C_cmc_rot_flex",
+    28.5
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_C_cmc_rot_flex",
+    26.9
+   ],
+   [
+    "hub_board",
+    "index_liner_abd_ext",
+    25.1
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_flex",
+    23.7
+   ],
+   [
+    "palm_v21",
+    "fork_A_mcp_flex_flex",
+    23.5
+   ],
+   [
+    "hub_tray",
+    "fork_A_mcp_flex_ext",
+    21.8
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_ext",
+    21.7
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_flex",
+    21.5
+   ],
+   [
+    "palm_v21",
+    "little_liner_mcp_flex",
+    21.4
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_ext",
+    21.3
+   ],
+   [
+    "hub_board",
     "ring_liner_abd_ext",
-    "little_liner_abd_flex",
-    5.1
+    20.3
    ],
    [
+    "hub_board",
+    "middle_liner_abd_ext",
+    19.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_mcp_flex_ext",
+    16.6
+   ],
+   [
+    "hub_board",
+    "little_liner_pip_flex",
+    16.4
+   ],
+   [
+    "hub_board",
+    "fork_A_mcp_flex_ext",
+    13.7
+   ],
+   [
+    "hub_rp2040",
+    "index_liner_abd_ext",
+    13.3
+   ],
+   [
+    "hub_tray",
+    "fork_A_cmc_flex_flex",
+    13.1
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_cmc_flex_ext",
+    13.0
+   ],
+   [
+    "pad_cup_centre",
+    "little_liner_mcp_flex",
+    12.8
+   ],
+   [
+    "palm_v21",
+    "roller_B_cmc_flex_ext",
+    11.8
+   ],
+   [
+    "hub_rp2040",
+    "fork_A_cmc_flex_flex",
+    9.5
+   ],
+   [
+    "hub_rp2040",
+    "middle_liner_abd_ext",
+    9.3
+   ],
+   [
+    "hub_rp2040",
     "ring_liner_abd_ext",
-    "little_liner_pip_ext",
+    8.9
+   ],
+   [
+    "hub_rp2040",
+    "little_liner_pip_flex",
+    7.4
+   ],
+   [
+    "hub_board",
+    "roller_pin_A_mcp_flex_ext",
+    6.0
+   ],
+   [
+    "palm_v21",
+    "roller_A_mcp_flex_flex",
+    5.8
+   ],
+   [
+    "palm_v21",
+    "index_liner_abd_flex",
     4.5
    ],
    [
-    "index_liner_abd_ext",
-    "middle_liner_mcp_flex",
-    4.2
+    "hub_tray",
+    "roller_pin_A_mcp_flex_ext",
+    4.3
    ],
    [
-    "index_liner_pip_flex",
-    "ring_liner_pip_flex",
-    3.4
-   ],
-   [
+    "pad_cup_centre",
     "ring_liner_mcp_flex",
-    "little_liner_abd_flex",
-    3.4
+    3.6
    ],
    [
-    "index_liner_abd_flex",
-    "ring_liner_abd_flex",
-    3.3
+    "index_liner_pip_ext",
+    "fork_C_cmc_rot_ext",
+    3.6
    ],
    [
-    "index_liner_abd_ext",
-    "ring_liner_mcp_flex",
-    3.3
+    "hub_tray",
+    "roller_pin_A_cmc_flex_flex",
+    3.5
    ],
    [
-    "index_liner_abd_ext",
-    "little_liner_abd_flex",
-    3.2
+    "index_knuckle_module",
+    "fork_A_mcp_flex_flex",
+    3.0
    ],
    [
-    "index_liner_pip_flex",
-    "little_liner_pip_flex",
-    2.9
+    "palm_v21",
+    "roller_pin_A_cmc_rot_ext",
+    2.5
    ],
    [
-    "index_liner_abd_flex",
-    "little_liner_mcp_ext",
-    2.8
-   ],
-   [
-    "ring_liner_pip_ext",
-    "little_liner_abd_flex",
-    2.7
-   ],
-   [
-    "middle_liner_mcp_flex",
-    "little_liner_abd_flex",
+    "palm_v21",
+    "roller_pin_B_mcp_flex_ext",
     2.3
    ],
    [
-    "middle_liner_abd_flex",
-    "little_liner_abd_flex",
-    2.3
+    "hub_tray",
+    "thumb_mount",
+    2.1
    ],
    [
-    "ring_liner_abd_ext",
-    "little_liner_mcp_flex",
-    2.0
+    "hub_tray",
+    "roller_A_cmc_flex_flex",
+    1.5
    ],
    [
-    "middle_liner_abd_flex",
-    "ring_liner_mcp_flex",
-    1.8
+    "hub_board",
+    "roller_pin_A_cmc_flex_flex",
+    1.5
    ],
    [
-    "ring_liner_pip_flex",
-    "little_liner_abd_flex",
-    1.6
-   ],
-   [
-    "index_liner_mcp_ext",
-    "little_liner_abd_flex",
-    1.3
-   ],
-   [
-    "index_liner_pip_flex",
-    "little_liner_pip_ext",
-    1.2
-   ],
-   [
-    "index_liner_mcp_ext",
-    "ring_liner_pip_ext",
-    1.2
-   ],
-   [
-    "ring_knuckle_module",
-    "little_yoke",
-    1.2
-   ],
-   [
-    "ring_liner_pip_flex",
-    "little_liner_pip_ext",
+    "palm_v21",
+    "roller_pin_A_mcp_flex_flex",
     1.1
-   ],
-   [
-    "index_liner_mcp_ext",
-    "little_liner_pip_ext",
-    1.0
    ]
   ],
   "wrist_flex_+40": [
    [
-    "middle_liner_mcp_flex",
-    "ring_liner_mcp_flex",
-    6.6
+    "palm_v21",
+    "fork_B_cmc_flex_ext",
+    66.7
    ],
    [
-    "ring_liner_pip_ext",
-    "little_liner_pip_ext",
-    6.3
+    "pad_cup_thenar",
+    "thumb_mount",
+    54.7
    ],
    [
+    "pad_cup_thenar",
+    "fork_C_cmc_rot_flex",
+    52.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_flex",
+    38.2
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_ext",
+    35.7
+   ],
+   [
+    "hub_board",
+    "fork_A_cmc_flex_flex",
+    31.2
+   ],
+   [
+    "palm_v21",
+    "fork_A_cmc_rot_ext",
+    31.0
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_pin_C_cmc_rot_flex",
+    28.5
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_C_cmc_rot_flex",
+    26.9
+   ],
+   [
+    "hub_board",
+    "index_liner_abd_ext",
+    25.1
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_flex",
+    23.7
+   ],
+   [
+    "palm_v21",
+    "fork_A_mcp_flex_flex",
+    23.5
+   ],
+   [
+    "hub_tray",
+    "fork_A_mcp_flex_ext",
+    21.8
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_ext",
+    21.7
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_flex",
+    21.5
+   ],
+   [
+    "palm_v21",
+    "little_liner_mcp_flex",
+    21.4
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_ext",
+    21.3
+   ],
+   [
+    "hub_board",
     "ring_liner_abd_ext",
-    "little_liner_abd_flex",
-    5.1
+    20.3
    ],
    [
+    "hub_board",
+    "middle_liner_abd_ext",
+    19.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_mcp_flex_ext",
+    16.6
+   ],
+   [
+    "hub_board",
+    "little_liner_pip_flex",
+    16.4
+   ],
+   [
+    "hub_board",
+    "fork_A_mcp_flex_ext",
+    13.7
+   ],
+   [
+    "hub_rp2040",
+    "index_liner_abd_ext",
+    13.3
+   ],
+   [
+    "hub_tray",
+    "fork_A_cmc_flex_flex",
+    13.1
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_cmc_flex_ext",
+    13.0
+   ],
+   [
+    "pad_cup_centre",
+    "little_liner_mcp_flex",
+    12.8
+   ],
+   [
+    "palm_v21",
+    "roller_B_cmc_flex_ext",
+    11.8
+   ],
+   [
+    "hub_rp2040",
+    "fork_A_cmc_flex_flex",
+    9.5
+   ],
+   [
+    "hub_rp2040",
+    "middle_liner_abd_ext",
+    9.3
+   ],
+   [
+    "hub_rp2040",
     "ring_liner_abd_ext",
-    "little_liner_pip_ext",
+    8.9
+   ],
+   [
+    "hub_rp2040",
+    "little_liner_pip_flex",
+    7.4
+   ],
+   [
+    "hub_board",
+    "roller_pin_A_mcp_flex_ext",
+    6.0
+   ],
+   [
+    "palm_v21",
+    "roller_A_mcp_flex_flex",
+    5.8
+   ],
+   [
+    "palm_v21",
+    "index_liner_abd_flex",
     4.5
    ],
    [
-    "index_liner_abd_ext",
-    "middle_liner_mcp_flex",
-    4.2
+    "hub_tray",
+    "roller_pin_A_mcp_flex_ext",
+    4.3
    ],
    [
-    "index_liner_pip_flex",
-    "ring_liner_pip_flex",
-    3.4
-   ],
-   [
+    "pad_cup_centre",
     "ring_liner_mcp_flex",
-    "little_liner_abd_flex",
-    3.4
+    3.6
    ],
    [
-    "index_liner_abd_flex",
-    "ring_liner_abd_flex",
-    3.3
+    "index_liner_pip_ext",
+    "fork_C_cmc_rot_ext",
+    3.6
    ],
    [
-    "index_liner_abd_ext",
-    "ring_liner_mcp_flex",
-    3.3
+    "hub_tray",
+    "roller_pin_A_cmc_flex_flex",
+    3.5
    ],
    [
-    "index_liner_abd_ext",
-    "little_liner_abd_flex",
-    3.2
+    "index_knuckle_module",
+    "fork_A_mcp_flex_flex",
+    3.0
    ],
    [
-    "index_liner_pip_flex",
-    "little_liner_pip_flex",
-    2.9
+    "palm_v21",
+    "roller_pin_A_cmc_rot_ext",
+    2.5
    ],
    [
-    "index_liner_abd_flex",
-    "little_liner_mcp_ext",
-    2.8
-   ],
-   [
-    "ring_liner_pip_ext",
-    "little_liner_abd_flex",
-    2.7
-   ],
-   [
-    "middle_liner_mcp_flex",
-    "little_liner_abd_flex",
+    "palm_v21",
+    "roller_pin_B_mcp_flex_ext",
     2.3
    ],
    [
-    "middle_liner_abd_flex",
-    "little_liner_abd_flex",
-    2.3
+    "hub_tray",
+    "thumb_mount",
+    2.1
    ],
    [
-    "ring_liner_abd_ext",
-    "little_liner_mcp_flex",
-    2.0
+    "hub_tray",
+    "roller_A_cmc_flex_flex",
+    1.5
    ],
    [
-    "middle_liner_abd_flex",
-    "ring_liner_mcp_flex",
-    1.8
+    "hub_board",
+    "roller_pin_A_cmc_flex_flex",
+    1.5
    ],
    [
-    "ring_liner_pip_flex",
-    "little_liner_abd_flex",
-    1.6
-   ],
-   [
-    "index_liner_mcp_ext",
-    "little_liner_abd_flex",
-    1.3
-   ],
-   [
-    "index_liner_pip_flex",
-    "little_liner_pip_ext",
-    1.2
-   ],
-   [
-    "index_liner_mcp_ext",
-    "ring_liner_pip_ext",
-    1.2
-   ],
-   [
-    "ring_liner_pip_flex",
-    "little_liner_pip_ext",
+    "palm_v21",
+    "roller_pin_A_mcp_flex_flex",
     1.1
-   ],
-   [
-    "index_liner_mcp_ext",
-    "little_liner_pip_ext",
-    1.0
    ]
   ],
   "wrist_dev_-20": [
    [
-    "middle_liner_mcp_flex",
-    "ring_liner_mcp_flex",
-    6.6
+    "palm_v21",
+    "fork_B_cmc_flex_ext",
+    66.7
    ],
    [
-    "ring_liner_pip_ext",
-    "little_liner_pip_ext",
-    6.3
+    "pad_cup_thenar",
+    "thumb_mount",
+    54.7
    ],
    [
+    "pad_cup_thenar",
+    "fork_C_cmc_rot_flex",
+    52.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_flex",
+    38.2
+   ],
+   [
+    "palm_v21",
+    "fork_B_ip_ext",
+    35.7
+   ],
+   [
+    "hub_board",
+    "fork_A_cmc_flex_flex",
+    31.2
+   ],
+   [
+    "palm_v21",
+    "fork_A_cmc_rot_ext",
+    31.0
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_pin_C_cmc_rot_flex",
+    28.5
+   ],
+   [
+    "pad_cup_thenar",
+    "roller_C_cmc_rot_flex",
+    26.9
+   ],
+   [
+    "hub_board",
+    "index_liner_abd_ext",
+    25.1
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_flex",
+    23.7
+   ],
+   [
+    "palm_v21",
+    "fork_A_mcp_flex_flex",
+    23.5
+   ],
+   [
+    "hub_tray",
+    "fork_A_mcp_flex_ext",
+    21.8
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_ext",
+    21.7
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_ip_flex",
+    21.5
+   ],
+   [
+    "palm_v21",
+    "little_liner_mcp_flex",
+    21.4
+   ],
+   [
+    "palm_v21",
+    "roller_B_ip_ext",
+    21.3
+   ],
+   [
+    "hub_board",
     "ring_liner_abd_ext",
-    "little_liner_abd_flex",
-    5.1
+    20.3
    ],
    [
+    "hub_board",
+    "middle_liner_abd_ext",
+    19.0
+   ],
+   [
+    "palm_v21",
+    "fork_B_mcp_flex_ext",
+    16.6
+   ],
+   [
+    "hub_board",
+    "little_liner_pip_flex",
+    16.4
+   ],
+   [
+    "hub_board",
+    "fork_A_mcp_flex_ext",
+    13.7
+   ],
+   [
+    "hub_rp2040",
+    "index_liner_abd_ext",
+    13.3
+   ],
+   [
+    "hub_tray",
+    "fork_A_cmc_flex_flex",
+    13.1
+   ],
+   [
+    "palm_v21",
+    "roller_pin_B_cmc_flex_ext",
+    13.0
+   ],
+   [
+    "pad_cup_centre",
+    "little_liner_mcp_flex",
+    12.8
+   ],
+   [
+    "palm_v21",
+    "roller_B_cmc_flex_ext",
+    11.8
+   ],
+   [
+    "hub_rp2040",
+    "fork_A_cmc_flex_flex",
+    9.5
+   ],
+   [
+    "hub_rp2040",
+    "middle_liner_abd_ext",
+    9.3
+   ],
+   [
+    "hub_rp2040",
     "ring_liner_abd_ext",
-    "little_liner_pip_ext",
+    8.9
+   ],
+   [
+    "hub_rp2040",
+    "little_liner_pip_flex",
+    7.4
+   ],
+   [
+    "hub_board",
+    "roller_pin_A_mcp_flex_ext",
+    6.0
+   ],
+   [
+    "palm_v21",
+    "roller_A_mcp_flex_flex",
+    5.8
+   ],
+   [
+    "palm_v21",
+    "index_liner_abd_flex",
     4.5
    ],
    [
-    "index_liner_abd_ext",
-    "middle_liner_mcp_flex",
-    4.2
+    "hub_tray",
+    "roller_pin_A_mcp_flex_ext",
+    4.3
    ],
    [
-    "index_liner_pip_flex",
-    "ring_liner_pip_flex",
-    3.4
-   ],
-   [
+    "pad_cup_centre",
     "ring_liner_mcp_flex",
-    "little_liner_abd_flex",
-    3.4
+    3.6
    ],
    [
-    "index_liner_abd_flex",
-    "ring_liner_abd_flex",
-    3.3
+    "index_liner_pip_ext",
+    "fork_C_cmc_rot_ext",
+    3.6
    ],
    [
-    "index_liner_abd_ext",
-    "ring_liner_mcp_flex",
-    3.3
+    "hub_tray",
+    "roller_pin_A_cmc_flex_flex",
+    3.5
    ],
    [
-    "index_liner_abd_ext",
-    "little_liner_abd_flex",
-    3.2
+    "index_knuckle_module",
+    "fork_A_mcp_flex_flex",
+    3.0
    ],
    [
-    "index_liner_pip_flex",
-    "little_liner_pip_flex",
-    2.9
+    "palm_v21",
+    "roller_pin_A_cmc_rot_ext",
+    2.5
    ],
    [
-    "index_liner_abd_flex",
-    "little_liner_mcp_ext",
-    2.8
-   ],
-   [
-    "ring_liner_pip_ext",
-    "little_liner_abd_flex",
-    2.7
-   ],
-   [
-    "middle_liner_mcp_flex",
-    "little_liner_abd_flex",
+    "palm_v21",
+    "roller_pin_B_mcp_flex_ext",
     2.3
    ],
    [
-    "middle_liner_abd_flex",
-    "little_liner_abd_flex",
-    2.3
+    "hub_tray",
+    "thumb_mount",
+    2.1
    ],
    [
-    "ring_liner_abd_ext",
-    "little_liner_mcp_flex",
-    2.0
+    "hub_tray",
+    "roller_A_cmc_flex_flex",
+    1.5
    ],
    [
-    "middle_liner_abd_flex",
-    "ring_liner_mcp_flex",
-    1.8
+    "hub_board",
+    "roller_pin_A_cmc_flex_flex",
+    1.5
    ],
    [
-    "ring_liner_pip_flex",
-    "little_liner_abd_flex",
-    1.6
-   ],
-   [
-    "index_liner_mcp_ext",
-    "little_liner_abd_flex",
-    1.3
-   ],
-   [
-    "index_liner_pip_flex",
-    "little_liner_pip_ext",
-    1.2
-   ],
-   [
-    "index_liner_mcp_ext",
-    "ring_liner_pip_ext",
-    1.2
-   ],
-   [
-    "ring_liner_pip_flex",
-    "little_liner_pip_ext",
+    "palm_v21",
+    "roller_pin_A_mcp_flex_flex",
     1.1
-   ],
-   [
-    "index_liner_mcp_ext",
-    "little_liner_pip_ext",
-    1.0
    ]
   ]
  }

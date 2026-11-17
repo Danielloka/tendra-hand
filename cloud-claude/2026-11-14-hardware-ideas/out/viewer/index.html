@@ -143,9 +143,9 @@ th.n { text-align: right; }
 
     <section class="only-hand">
       <h2>The whole V2.1 hand</h2>
-      <p class="note">Four fingers with an angle sensor in every joint, touch pads and fingertip sensors; the thumb; a hollow palm with the sensor hub board; the metal wrist; and the forearm with 16 SCS0009 servos and their spool cartridges. About 1.1 kg and 500 parts.</p>
+      <p class="note">Four fingers with an angle sensor in every joint, touch pads and fingertip sensors; the thumb; a hollow palm with the sensor hub board; the metal wrist; and the forearm with 16 SCS0009 servos and their spool cartridges. About 1.1 kg and 578 parts.</p>
       <p class="note" style="margin-top:8px" id="hand-thumb-note"></p>
-      <p class="note" style="margin-top:8px">Known clashes still to fix: the ring and little knuckles touch in "thumb to little" and "spread", and some palm tendon liners overlap.</p>
+      <p class="note" style="margin-top:8px">Moving parts are clear of each other: the fingers now sit 20 mm apart and only spread apart. Still to fix inside the palm: the thumb's tendon rollers overlap the palm shell, the sensor hub tray and the thenar pad cup, and some finger tendon liners pass through the hub board. The palm interior needs one more layout pass.</p>
     </section>
 
     <section id="wrist-legend" class="only-wrist" hidden>
@@ -533,7 +533,7 @@ th.n { text-align: right; }
           const b = document.createElement("button"); b.className = "btn"; b.dataset.pose = k; b.textContent = POSE_LABEL[k] || k.replace(/_/g, " ");
           b.addEventListener("click", () => setHandPose(k, true)); box.append(b);
         }
-        const thumbV21 = Object.keys(hdata.parts).some((n) => /^thumb_sensor|^thumb_.*_magnet/.test(n));
+        const thumbV21 = Object.entries(hdata.parts).some(([n, b]) => /^thumb/.test(b) && /sensor/.test(n));
         $("hand-thumb-note").textContent = thumbV21 ? "The thumb is the upgraded V2.1 thumb with angle sensors on its 4 joints."
           : "The thumb is still the older V2 thumb (placeholder): its V2.1 upgrade is being built and will replace it.";
         status.hidden = true; setHandPose("open", false); applyLook(); applyForearm();

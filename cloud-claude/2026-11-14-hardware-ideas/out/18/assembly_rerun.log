@@ -1,1 +1,16 @@
 warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+palm + wrist in 1 s
+forearm in 4 s
+fingers: package A (cad/18_fingers.py) (361 parts); thumb: package B (cad/18_thumb.py) (109 parts); total 574
+/root/.cache/uv/archive-v0/eWTv4KCsGw5NnzVO/lib/python3.12/site-packages/trimesh/triangles.py:302: RuntimeWarning: invalid value encountered in divide
+  center_mass = integrated[1:4] / volume
+  pose open            : 45 contacts > 1 mm3 (15 s)
+  pose relaxed         : 45 contacts > 1 mm3 (19 s)
+  pose fist            : 45 contacts > 1 mm3 (22 s)
+  pose tip_pinch       : 47 contacts > 1 mm3 (26 s)
+  pose thumb_to_little : 47 contacts > 1 mm3 (30 s)
+  pose power_grasp     : 45 contacts > 1 mm3 (33 s)
+  pose spread          : 45 contacts > 1 mm3 (37 s)
+  pose wrist_flex_+40  : 45 contacts > 1 mm3 (44 s)
+  pose wrist_dev_-20   : 45 contacts > 1 mm3 (50 s)
+done in 92 s; parts 578, mass 1113 g

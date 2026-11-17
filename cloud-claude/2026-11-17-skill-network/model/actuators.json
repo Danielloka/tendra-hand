@@ -1,0 +1,421 @@
+{
+ "servos": {
+  "index_pip": {
+   "kp": 0.763,
+   "forcerange": [
+    -0.2762,
+    0.2762
+   ],
+   "damping": 0.0473,
+   "armature": 0.00072,
+   "frictionloss": 0.0083,
+   "velocity_limit_rad_s": 4.34,
+   "ratio": 1.447,
+   "efficiency": 0.845,
+   "stall_torque_servo_Nm": 0.226,
+   "continuous_torque_Nm": 0.0904,
+   "load_inertia_kgm2": 9.21e-06,
+   "tendon_stiffness_Nm_rad": 1.145,
+   "servo_side_stiffness_Nm_rad": 2.29
+  },
+  "index_mcp_flex": {
+   "kp": 0.81,
+   "forcerange": [
+    -0.2905,
+    0.2905
+   ],
+   "damping": 0.0505,
+   "armature": 0.00072,
+   "frictionloss": 0.0087,
+   "velocity_limit_rad_s": 4.34,
+   "ratio": 1.447,
+   "efficiency": 0.888,
+   "stall_torque_servo_Nm": 0.226,
+   "continuous_torque_Nm": 0.0951,
+   "load_inertia_kgm2": 6.3e-05,
+   "tendon_stiffness_Nm_rad": 1.221,
+   "servo_side_stiffness_Nm_rad": 2.408
+  },
+  "index_mcp_abd": {
+   "kp": 0.848,
+   "forcerange": [
+    -0.2905,
+    0.2905
+   ],
+   "damping": 0.0517,
+   "armature": 0.00072,
+   "frictionloss": 0.0087,
+   "velocity_limit_rad_s": 4.34,
+   "ratio": 1.447,
+   "efficiency": 0.888,
+   "stall_torque_servo_Nm": 0.226,
+   "continuous_torque_Nm": 0.0951,
+   "load_inertia_kgm2": 6.3e-05,
+   "tendon_stiffness_Nm_rad": 1.309,
+   "servo_side_stiffness_Nm_rad": 2.408
+  },
+  "thumb_ip": {
+   "kp": 0.588,
+   "forcerange": [
+    -0.1982,
+    0.1982
+   ],
+   "damping": 0.0413,
+   "armature": 0.00072,
+   "frictionloss": 0.0059,
+   "velocity_limit_rad_s": 4.34,
+   "ratio": 1.447,
+   "efficiency": 0.606,
+   "stall_torque_servo_Nm": 0.226,
+   "continuous_torque_Nm": 0.0649,
+   "load_inertia_kgm2": 1.5e-06,
+   "tendon_stiffness_Nm_rad": 0.916,
+   "servo_side_stiffness_Nm_rad": 1.643
+  },
+  "thumb_mcp_flex": {
+   "kp": 0.669,
+   "forcerange": [
+    -0.2351,
+    0.2351
+   ],
+   "damping": 0.0445,
+   "armature": 0.00072,
+   "frictionloss": 0.0071,
+   "velocity_limit_rad_s": 4.34,
+   "ratio": 1.447,
+   "efficiency": 0.719,
+   "stall_torque_servo_Nm": 0.226,
+   "continuous_torque_Nm": 0.077,
+   "load_inertia_kgm2": 1.64e-05,
+   "tendon_stiffness_Nm_rad": 1.018,
+   "servo_side_stiffness_Nm_rad": 1.949
+  },
+  "thumb_cmc_flex": {
+   "kp": 0.658,
+   "forcerange": [
+    -0.1949,
+    0.1949
+   ],
+   "damping": 0.0462,
+   "armature": 0.00072,
+   "frictionloss": 0.0058,
+   "velocity_limit_rad_s": 4.34,
+   "ratio": 1.447,
+   "efficiency": 0.596,
+   "stall_torque_servo_Nm": 0.226,
+   "continuous_torque_Nm": 0.0638,
+   "load_inertia_kgm2": 8.62e-05,
+   "tendon_stiffness_Nm_rad": 1.11,
+   "servo_side_stiffness_Nm_rad": 1.616
+  },
+  "thumb_cmc_rot": {
+   "kp": 0.778,
+   "forcerange": [
+    -0.2583,
+    0.2583
+   ],
+   "damping": 0.0508,
+   "armature": 0.00072,
+   "frictionloss": 0.0078,
+   "velocity_limit_rad_s": 4.34,
+   "ratio": 1.447,
+   "efficiency": 0.79,
+   "stall_torque_servo_Nm": 0.226,
+   "continuous_torque_Nm": 0.0846,
+   "load_inertia_kgm2": 0.000103,
+   "tendon_stiffness_Nm_rad": 1.221,
+   "servo_side_stiffness_Nm_rad": 2.142
+  },
+  "middle_pip": {
+   "kp": 0.763,
+   "forcerange": [
+    -0.2762,
+    0.2762
+   ],
+   "damping": 0.0474,
+   "armature": 0.00072,
+   "frictionloss": 0.0083,
+   "velocity_limit_rad_s": 4.34,
+   "ratio": 1.447,
+   "efficiency": 0.845,
+   "stall_torque_servo_Nm": 0.226,
+   "continuous_torque_Nm": 0.0904,
+   "load_inertia_kgm2": 1.15e-05,
+   "tendon_stiffness_Nm_rad": 1.145,
+   "servo_side_stiffness_Nm_rad": 2.29
+  },
+  "middle_mcp_flex": {
+   "kp": 0.81,
+   "forcerange": [
+    -0.2905,
+    0.2905
+   ],
+   "damping": 0.0511,
+   "armature": 0.00072,
+   "frictionloss": 0.0087,
+   "velocity_limit_rad_s": 4.34,
+   "ratio": 1.447,
+   "efficiency": 0.888,
+   "stall_torque_servo_Nm": 0.226,
+   "continuous_torque_Nm": 0.0951,
+   "load_inertia_kgm2": 8.19e-05,
+   "tendon_stiffness_Nm_rad": 1.221,
+   "servo_side_stiffness_Nm_rad": 2.408
+  },
+  "middle_mcp_abd": {
+   "kp": 0.848,
+   "forcerange": [
+    -0.2905,
+    0.2905
+   ],
+   "damping": 0.0523,
+   "armature": 0.00072,
+   "frictionloss": 0.0087,
+   "velocity_limit_rad_s": 4.34,
+   "ratio": 1.447,
+   "efficiency": 0.888,
+   "stall_torque_servo_Nm": 0.226,
+   "continuous_torque_Nm": 0.0951,
+   "load_inertia_kgm2": 8.19e-05,
+   "tendon_stiffness_Nm_rad": 1.309,
+   "servo_side_stiffness_Nm_rad": 2.408
+  },
+  "ring_pip": {
+   "kp": 0.763,
+   "forcerange": [
+    -0.2762,
+    0.2762
+   ],
+   "damping": 0.0474,
+   "armature": 0.00072,
+   "frictionloss": 0.0083,
+   "velocity_limit_rad_s": 4.34,
+   "ratio": 1.447,
+   "efficiency": 0.845,
+   "stall_torque_servo_Nm": 0.226,
+   "continuous_torque_Nm": 0.0904,
+   "load_inertia_kgm2": 1.01e-05,
+   "tendon_stiffness_Nm_rad": 1.145,
+   "servo_side_stiffness_Nm_rad": 2.29
+  },
+  "ring_mcp_flex": {
+   "kp": 0.81,
+   "forcerange": [
+    -0.2905,
+    0.2905
+   ],
+   "damping": 0.0508,
+   "armature": 0.00072,
+   "frictionloss": 0.0087,
+   "velocity_limit_rad_s": 4.34,
+   "ratio": 1.447,
+   "efficiency": 0.888,
+   "stall_torque_servo_Nm": 0.226,
+   "continuous_torque_Nm": 0.0951,
+   "load_inertia_kgm2": 7.25e-05,
+   "tendon_stiffness_Nm_rad": 1.221,
+   "servo_side_stiffness_Nm_rad": 2.408
+  },
+  "ring_mcp_abd": {
+   "kp": 0.848,
+   "forcerange": [
+    -0.2905,
+    0.2905
+   ],
+   "damping": 0.052,
+   "armature": 0.00072,
+   "frictionloss": 0.0087,
+   "velocity_limit_rad_s": 4.34,
+   "ratio": 1.447,
+   "efficiency": 0.888,
+   "stall_torque_servo_Nm": 0.226,
+   "continuous_torque_Nm": 0.0951,
+   "load_inertia_kgm2": 7.25e-05,
+   "tendon_stiffness_Nm_rad": 1.309,
+   "servo_side_stiffness_Nm_rad": 2.408
+  },
+  "little_pip": {
+   "kp": 0.763,
+   "forcerange": [
+    -0.2762,
+    0.2762
+   ],
+   "damping": 0.0472,
+   "armature": 0.00072,
+   "frictionloss": 0.0083,
+   "velocity_limit_rad_s": 4.34,
+   "ratio": 1.447,
+   "efficiency": 0.845,
+   "stall_torque_servo_Nm": 0.226,
+   "continuous_torque_Nm": 0.0904,
+   "load_inertia_kgm2": 5.53e-06,
+   "tendon_stiffness_Nm_rad": 1.145,
+   "servo_side_stiffness_Nm_rad": 2.29
+  },
+  "little_mcp_flex": {
+   "kp": 0.81,
+   "forcerange": [
+    -0.2905,
+    0.2905
+   ],
+   "damping": 0.0496,
+   "armature": 0.00072,
+   "frictionloss": 0.0087,
+   "velocity_limit_rad_s": 4.34,
+   "ratio": 1.447,
+   "efficiency": 0.888,
+   "stall_torque_servo_Nm": 0.226,
+   "continuous_torque_Nm": 0.0951,
+   "load_inertia_kgm2": 3.47e-05,
+   "tendon_stiffness_Nm_rad": 1.221,
+   "servo_side_stiffness_Nm_rad": 2.408
+  },
+  "little_mcp_abd": {
+   "kp": 0.848,
+   "forcerange": [
+    -0.2905,
+    0.2905
+   ],
+   "damping": 0.0507,
+   "armature": 0.00072,
+   "frictionloss": 0.0087,
+   "velocity_limit_rad_s": 4.34,
+   "ratio": 1.447,
+   "efficiency": 0.888,
+   "stall_torque_servo_Nm": 0.226,
+   "continuous_torque_Nm": 0.0951,
+   "load_inertia_kgm2": 3.47e-05,
+   "tendon_stiffness_Nm_rad": 1.309,
+   "servo_side_stiffness_Nm_rad": 2.408
+  }
+ },
+ "wrist": {
+  "wrist_flex": {
+   "kp": 21.43,
+   "forcerange": [
+    -4.318,
+    4.318
+   ],
+   "damping": 0.72,
+   "armature": 0.00178,
+   "frictionloss": 0.13,
+   "velocity_limit_rad_s": 2.18,
+   "ratio": 1.73,
+   "efficiency": 0.85,
+   "stall_torque_servo_Nm": 2.94,
+   "continuous_torque_Nm": 1.326,
+   "load_inertia_kgm2": 0.0018,
+   "min_stall_capacity_Nm": 3.63
+  },
+  "wrist_dev": {
+   "kp": 216.56,
+   "forcerange": [
+    -15.215,
+    15.215
+   ],
+   "damping": 5.391,
+   "armature": 0.018,
+   "frictionloss": 0.456,
+   "velocity_limit_rad_s": 0.69,
+   "ratio": 5.5,
+   "efficiency": 0.85,
+   "stall_torque_servo_Nm": 2.94,
+   "continuous_torque_Nm": 4.165,
+   "load_inertia_kgm2": 0.0018499999999999999,
+   "min_stall_capacity_Nm": 16.1
+  }
+ },
+ "randomization": {
+  "torque_scale": {
+   "dist": "uniform",
+   "range": [
+    0.7,
+    1.1
+   ],
+   "applies": "forcerange (servos and wrist)",
+   "why": "supply 5 V vs 6 V (x0.8), 80%/2 s back-off, efficiency spread +-8 %, sag under 16 servo load"
+  },
+  "kp_scale": {
+   "dist": "log-uniform",
+   "range": [
+    0.5,
+    1.6
+   ],
+   "why": "tendon stiffness (EA 5.5-11 kN, creep, pretension) and servo P gain unknown"
+  },
+  "damping_scale": {
+   "dist": "log-uniform",
+   "range": [
+    0.5,
+    2.0
+   ],
+   "why": "gearbox friction/back-EMF unknown"
+  },
+  "armature_scale": {
+   "dist": "log-uniform",
+   "range": [
+    0.4,
+    2.5
+   ],
+   "why": "rotor inertia only estimated (factor 2.5 either way)"
+  },
+  "frictionloss_scale": {
+   "dist": "log-uniform",
+   "range": [
+    0.4,
+    3.0
+   ],
+   "why": "tendon friction mu 0.1-0.3 on steel/PTFE; thumb routes much worse"
+  },
+  "efficiency_scale_thumb_extra": {
+   "dist": "uniform",
+   "range": [
+    0.8,
+    1.1
+   ],
+   "why": "thumb routes have 8 turns of 60-170 deg"
+  },
+  "velocity_limit_scale": {
+   "dist": "uniform",
+   "range": [
+    0.6,
+    1.0
+   ],
+   "why": "loaded speed, 5 V supply, firmware speed setting"
+  },
+  "link_inertia_scale": {
+   "dist": "uniform",
+   "range": [
+    0.7,
+    1.4
+   ],
+   "why": "phalanx masses +-20 %, sensors/skins"
+  },
+  "deadband_deg": {
+   "dist": "uniform",
+   "range": [
+    0.0,
+    1.5
+   ],
+   "why": "servo dead zone + backlash (SCS0009 10-bit: 0.29 deg/tick, dead zone 1-3 ticks)"
+  },
+  "latency_ms": {
+   "dist": "uniform",
+   "range": [
+    10,
+    50
+   ],
+   "why": "1 Mbps half-duplex bus, 16 servos + feedback reads"
+  },
+  "backlash_deg_joint": {
+   "dist": "uniform",
+   "range": [
+    0.0,
+    2.0
+   ],
+   "why": "gearbox backlash / G; wrist gears larger"
+  },
+  "notes": "Sample once per episode per joint (not per step); wrist and finger scales independent."
+ },
+ "notes": "Joint-level values (at the joint, + = closing). tau = stall x ratio x efficiency; kp = servo P-stiffness in series with tendon stiffness; damping = critical (zeta 1, wrist 1.3); velocity limit = 0.6 x no-load/ratio (fingers). Details and sources: model/ACTUATORS.md. Servo supply 6 V (SCS0009), 12 V (STS3215)."
+}

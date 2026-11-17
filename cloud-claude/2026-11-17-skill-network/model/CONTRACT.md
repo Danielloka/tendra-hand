@@ -84,6 +84,18 @@ body's pivot, no rotation), so `body pos = pivot - parent pivot` and every body 
 - Collision: convex pieces only (every collision mesh convex, ≤ 64 vertices), contype/conaffinity so the hand
   touches objects and the table but not itself across adjacent bodies; the `<f>_bar` bodies never collide.
   Fingertip and palm pads get their own geom class (`v21_pad`, rubber-like friction).
+  **Collision bits** (`build_hand.collision_bits`, review M4): bit 0 (`1`) = the world: table, objects, arm,
+  pedestal, camera housings — give those `contype=1 conaffinity=1` (or at least `conaffinity` bit 0). Every hand
+  collision geom has `contype` bit 0 and **never** `conaffinity` bit 0, so hand↔world is always on and hand↔hand
+  is decided only by bits 1–7: 1 = thumb metacarpal/proximal/distal (`2`), 2 = palm (`4`), 3–6 = index, middle,
+  ring, little middle+distal (`8, 16, 32, 64`), 7 = all finger proximals (`128`). Allowed self pairs: thumb ↔
+  every finger's proximal/middle/distal; thumb proximal/distal ↔ palm; neighbouring fingers' middle/distal ↔ each
+  other; finger distal ↔ palm. Forearm, wrist ring, yokes, thumb base and the thumb-mount hull: world only. Other
+  models must not use bits 1–7 on their own geoms (hand self pairs: 236 broadphase pairs in Warp, was 767).
+- `ctrlrange` of the hand servos = joint range ± `max|forcerange|/kp`, clipped to ± `servo_travel_deg/2/ratio`
+  (`servo_travel_deg` from actuators.json; **360° assumed** while it is missing). Wrist ctrlrange = joint range.
+- Physics options: one place, `build_hand.PHYSICS` (2 ms, implicitfast, elliptic cone, impratio 10, Newton);
+  the robot builder applies the same values, and hand-only tests use `build_hand.apply_physics(model)`.
 - Must load in **MuJoCo 3.14** and in **MuJoCo Warp 3.14** (`mujoco_warp.put_model`), no unsupported features.
 
 ## Robot (build_robot.py)

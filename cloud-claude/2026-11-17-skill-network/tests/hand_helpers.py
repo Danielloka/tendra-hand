@@ -47,8 +47,24 @@ def fk_reference() -> dict:
     return json.loads((ASSETS / "fk_reference.json").read_text())
 
 
+def build_hand_module():
+    """model/build_hand.py as a module (PHYSICS, actuator_qpos_index, collision bits, actuator loader)."""
+    import importlib.util
+    import sys
+
+    if "build_hand" not in sys.modules:
+        spec = importlib.util.spec_from_file_location("build_hand", ROOT / "model" / "build_hand.py")
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules["build_hand"] = mod
+        spec.loader.exec_module(mod)
+    return sys.modules["build_hand"]
+
+
 def load_model() -> mujoco.MjModel:
-    return mujoco.MjModel.from_xml_path(str(XML))
+    """The hand model with the scene's physics options (build_hand.PHYSICS), as it is simulated in the robot."""
+    m = mujoco.MjModel.from_xml_path(str(XML))
+    build_hand_module().apply_physics(m)
+    return m
 
 
 def poly(c: list[float], x: float) -> float:

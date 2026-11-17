@@ -39,6 +39,10 @@
     "geom",
     "geom"
    ],
+   "collision_self": [
+    true,
+    true
+   ],
    "fit_residual": null
   },
   "wrist_ring": {
@@ -84,6 +88,12 @@
     "geom",
     "geom",
     "geom"
+   ],
+   "collision_self": [
+    true,
+    true,
+    true,
+    true
    ],
    "fit_residual": {
     "rot_deg": 0.0,
@@ -142,6 +152,16 @@
     "pad",
     "pad"
    ],
+   "collision_self": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    true,
+    true
+   ],
    "fit_residual": {
     "rot_deg": 0.0,
     "pos_mm": 0.0
@@ -184,6 +204,9 @@
    ],
    "collision_class": [
     "geom"
+   ],
+   "collision_self": [
+    true
    ],
    "fit_residual": {
     "rot_deg": 0.0,
@@ -230,6 +253,10 @@
     "geom",
     "pad"
    ],
+   "collision_self": [
+    true,
+    true
+   ],
    "fit_residual": {
     "rot_deg": 0.0,
     "pos_mm": 0.0
@@ -274,6 +301,10 @@
    "collision_class": [
     "geom",
     "pad"
+   ],
+   "collision_self": [
+    true,
+    true
    ],
    "fit_residual": {
     "rot_deg": 0.0,
@@ -320,6 +351,10 @@
     "geom",
     "pad"
    ],
+   "collision_self": [
+    true,
+    true
+   ],
    "fit_residual": {
     "rot_deg": 1.20741827e-06,
     "pos_mm": 0.0
@@ -359,6 +394,7 @@
    "visual_mesh": "meshes/index_bar.stl",
    "collision_meshes": [],
    "collision_class": [],
+   "collision_self": [],
    "fit_residual": {
     "rot_deg": 0.0,
     "pos_mm": 0.0
@@ -401,6 +437,9 @@
    ],
    "collision_class": [
     "geom"
+   ],
+   "collision_self": [
+    true
    ],
    "fit_residual": {
     "rot_deg": 1.20741827e-06,
@@ -447,6 +486,10 @@
     "geom",
     "pad"
    ],
+   "collision_self": [
+    true,
+    true
+   ],
    "fit_residual": {
     "rot_deg": 1.20741827e-06,
     "pos_mm": 0.0
@@ -489,6 +532,9 @@
    ],
    "collision_class": [
     "geom"
+   ],
+   "collision_self": [
+    true
    ],
    "fit_residual": {
     "rot_deg": 1.20741827e-06,
@@ -535,6 +581,10 @@
     "geom",
     "pad"
    ],
+   "collision_self": [
+    true,
+    true
+   ],
    "fit_residual": {
     "rot_deg": 1.20741827e-06,
     "pos_mm": 0.0
@@ -577,6 +627,9 @@
    ],
    "collision_class": [
     "geom"
+   ],
+   "collision_self": [
+    true
    ],
    "fit_residual": {
     "rot_deg": 0.0,
@@ -623,6 +676,10 @@
     "geom",
     "pad"
    ],
+   "collision_self": [
+    true,
+    true
+   ],
    "fit_residual": {
     "rot_deg": 0.0,
     "pos_mm": 0.0
@@ -667,6 +724,10 @@
    "collision_class": [
     "geom",
     "pad"
+   ],
+   "collision_self": [
+    true,
+    true
    ],
    "fit_residual": {
     "rot_deg": 0.0,
@@ -713,6 +774,10 @@
     "geom",
     "pad"
    ],
+   "collision_self": [
+    true,
+    true
+   ],
    "fit_residual": {
     "rot_deg": 1.20741827e-06,
     "pos_mm": 1.271057486e-13
@@ -752,6 +817,7 @@
    "visual_mesh": "meshes/middle_bar.stl",
    "collision_meshes": [],
    "collision_class": [],
+   "collision_self": [],
    "fit_residual": {
     "rot_deg": 0.0,
     "pos_mm": 0.0
@@ -794,6 +860,9 @@
    ],
    "collision_class": [
     "geom"
+   ],
+   "collision_self": [
+    true
    ],
    "fit_residual": {
     "rot_deg": 0.0,
@@ -840,6 +909,10 @@
     "geom",
     "pad"
    ],
+   "collision_self": [
+    true,
+    true
+   ],
    "fit_residual": {
     "rot_deg": 0.0,
     "pos_mm": 0.0
@@ -884,6 +957,10 @@
    "collision_class": [
     "geom",
     "pad"
+   ],
+   "collision_self": [
+    true,
+    true
    ],
    "fit_residual": {
     "rot_deg": 0.0,
@@ -930,6 +1007,10 @@
     "geom",
     "pad"
    ],
+   "collision_self": [
+    true,
+    true
+   ],
    "fit_residual": {
     "rot_deg": 1.20741827e-06,
     "pos_mm": 1.271057486e-13
@@ -969,6 +1050,7 @@
    "visual_mesh": "meshes/ring_bar.stl",
    "collision_meshes": [],
    "collision_class": [],
+   "collision_self": [],
    "fit_residual": {
     "rot_deg": 0.0,
     "pos_mm": 1.421085472e-13
@@ -1011,6 +1093,9 @@
    ],
    "collision_class": [
     "geom"
+   ],
+   "collision_self": [
+    true
    ],
    "fit_residual": {
     "rot_deg": 0.0,
@@ -1057,6 +1142,10 @@
     "geom",
     "pad"
    ],
+   "collision_self": [
+    true,
+    true
+   ],
    "fit_residual": {
     "rot_deg": 0.0,
     "pos_mm": 0.0
@@ -1099,6 +1188,9 @@
    ],
    "collision_class": [
     "geom"
+   ],
+   "collision_self": [
+    true
    ],
    "fit_residual": {
     "rot_deg": 0.0,
@@ -1145,6 +1237,10 @@
     "geom",
     "pad"
    ],
+   "collision_self": [
+    true,
+    true
+   ],
    "fit_residual": {
     "rot_deg": 1.20741827e-06,
     "pos_mm": 0.0
@@ -1184,6 +1280,7 @@
    "visual_mesh": "meshes/little_bar.stl",
    "collision_meshes": [],
    "collision_class": [],
+   "collision_self": [],
    "fit_residual": {
     "rot_deg": 0.0,
     "pos_mm": 0.0

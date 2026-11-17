@@ -21,6 +21,7 @@ from hand_helpers import (
     ROOT,
     SERVO_JOINTS,
     WRIST_JOINTS,
+    build_hand_module,
     fk_reference,
     kin,
     load_model,
@@ -43,10 +44,7 @@ def model() -> mujoco.MjModel:
 
 
 def _act():
-    sys.path.insert(0, str(ROOT / "model"))
-    import build_hand
-
-    return build_hand.load_actuators()[0]
+    return build_hand_module().load_actuators()[0]
 
 
 # ------------------------------------------------------------------------------------------- contract structure
@@ -67,7 +65,13 @@ def test_names_order_limits(model):
     for i, a in enumerate(acts):
         jid = model.actuator_trnid[i, 0]
         assert model.joint(jid).name == a
-        np.testing.assert_allclose(model.actuator_ctrlrange[i], model.jnt_range[jid])
+        if a in SERVO_JOINTS:  # servo setpoint range = joint range +- tau_cap/kp, clipped to the shaft travel
+            exp, _ = build_hand_module().servo_ctrlrange(act[a], list(model.jnt_range[jid]))
+            np.testing.assert_allclose(model.actuator_ctrlrange[i], exp, atol=1e-8)
+            assert model.actuator_ctrlrange[i, 0] < model.jnt_range[jid, 0] - 0.25
+            assert model.actuator_ctrlrange[i, 1] > model.jnt_range[jid, 1] + 0.25
+        else:
+            np.testing.assert_allclose(model.actuator_ctrlrange[i], model.jnt_range[jid])
         np.testing.assert_allclose(model.actuator_gainprm[i, 0], act[a]["kp"], rtol=1e-6)
         np.testing.assert_allclose(model.actuator_forcerange[i], act[a]["forcerange"], rtol=1e-6)
         np.testing.assert_allclose(model.dof_damping[model.jnt_dofadr[jid]], act[a]["damping"], rtol=1e-6)
@@ -212,7 +216,7 @@ def test_mass(model):
 
 def test_collision_meshes_convex():
     trimesh = pytest.importorskip("trimesh")
-    from scipy.spatial import ConvexHull
+    ConvexHull = pytest.importorskip("scipy.spatial").ConvexHull
 
     n = 0
     for b, d in kin()["bodies"].items():
@@ -235,6 +239,67 @@ def test_geoms_and_bar(model):
             assert model.geom_contype[g] == 0 and model.geom_conaffinity[g] == 0
     pads = [model.geom(g).name for g in range(model.ngeom) if model.geom_condim[g] == 4]
     assert {"index_distal", "thumb_distal", "palm"} <= {p.rsplit("_c", 1)[0] for p in pads}
+
+
+def test_sensors_and_qpos_index(model):
+    """jointpos + actuatorfrc sensors in actuator order; actuator_qpos_index maps actuators to qpos."""
+    names = [model.actuator(i).name for i in range(model.nu)]
+    assert [model.sensor(i).name for i in range(model.nsensor)] == [f"{n}_pos" for n in names] + [
+        f"{n}_frc" for n in names
+    ]
+    idx = build_hand_module().actuator_qpos_index(model)
+    d = mujoco.MjData(model)
+    rng = np.random.default_rng(1)
+    d.qpos[:] = rng.uniform(-0.5, 0.5, model.nq)
+    d.ctrl[:] = rng.uniform(-0.3, 0.3, model.nu)
+    mujoco.mj_forward(model, d)
+    np.testing.assert_allclose(d.sensordata[: model.nu], d.qpos[idx])
+    np.testing.assert_allclose(d.sensordata[model.nu :], d.actuator_force)
+    for i, a in enumerate(idx):
+        assert model.jnt_qposadr[model.actuator_trnid[i, 0]] == a
+
+
+def test_no_gravcomp(model):
+    assert np.all(model.body_gravcomp == 0)
+
+
+def test_collision_bits(model):
+    """Only meaningful hand self-contacts are possible; every collision geom touches the world (bit 0)."""
+
+    def can(b1, b2):
+        g1 = [
+            g
+            for g in range(model.ngeom)
+            if model.geom_bodyid[g] == model.body(b1).id and model.geom_group[g] == 3
+        ]
+        g2 = [
+            g
+            for g in range(model.ngeom)
+            if model.geom_bodyid[g] == model.body(b2).id and model.geom_group[g] == 3
+        ]
+        return any(
+            (model.geom_contype[a] & model.geom_conaffinity[b])
+            or (model.geom_contype[b] & model.geom_conaffinity[a])
+            for a in g1
+            for b in g2
+        )
+
+    for g in range(model.ngeom):
+        if model.geom_group[g] == 3:
+            assert model.geom_contype[g] & 1 and not model.geom_conaffinity[g] & 1
+    for f in FINGERS:
+        for seg in ("proximal", "middle", "distal"):
+            assert can("thumb_distal", f"{f}_{seg}") and can("thumb_proximal", f"{f}_{seg}")
+        assert (
+            can(f"{f}_distal", "palm") and not can(f"{f}_proximal", "palm") and not can(f"{f}_yoke", "palm")
+        )
+    for a, b in (("index", "middle"), ("middle", "ring"), ("ring", "little")):
+        assert can(f"{a}_distal", f"{b}_distal") and can(f"{a}_middle", f"{b}_middle")
+    assert not can("index_distal", "ring_distal") and not can("index_distal", "little_middle")
+    assert (
+        not can("palm", "thumb_metacarpal") and not can("forearm", "palm") and not can("palm", "thumb_base")
+    )
+    assert can("thumb_distal", "palm")
 
 
 # ------------------------------------------------------------------------------------------- self contact
@@ -285,7 +350,6 @@ def test_self_contact_cad_poses(model):
 # ------------------------------------------------------------------------------------------- physics
 def _sim(model, ctrl: dict[str, float], t: float, record=None):
     d = mujoco.MjData(model)
-    model.opt.timestep = 0.002
     for i in range(model.nu):
         d.ctrl[i] = ctrl.get(model.actuator(i).name, 0.0)
     rec = []
@@ -330,6 +394,71 @@ def test_step_mid_range(model):
     assert worst_dip < 1.0
 
 
+def test_coupling_under_tip_load(model):
+    """DIP and bar follow the PIP within 1.5 deg with 10-15 N pushing the fingertip pad open (review M3)."""
+    c = kin()["couplings"]
+    idx = build_hand_module().actuator_qpos_index(model)
+    worst = 0.0
+    for f in FINGERS:
+        for force in (10.0, 15.0):
+            d = mujoco.MjData(model)
+            set_cad_q(model, d, {f"{f}_mcp_flex": 30, f"{f}_pip": 30})
+            d.ctrl[:] = d.qpos[idx]
+            mujoco.mj_forward(model, d)
+            b, s = model.body(f"{f}_distal").id, model.site(f"{f}_tip").id
+            for k in range(500):
+                n = d.site_xmat[s].reshape(3, 3)[:, 2]  # pad normal: push the pad back (opening)
+                fv = -n * force * min(1.0, k / 200)
+                d.xfrc_applied[b, :3] = fv
+                d.xfrc_applied[b, 3:] = np.cross(d.site_xpos[s] - d.xipos[b], fv)
+                mujoco.mj_step(model, d)
+            pip = d.qpos[model.joint(f"{f}_pip").qposadr[0]]
+            for j in (f"{f}_dip", f"{f}_bar"):
+                err = math.degrees(abs(d.qpos[model.joint(j).qposadr[0]] - poly(c[j]["poly"], pip)))
+                worst = max(worst, err)
+    print(f"\ncoupling error under 10-15 N tip load: {worst:.3f} deg")
+    assert worst <= 1.5
+
+
+def test_blocked_finger_reaches_torque_cap():
+    """An object blocks the index fingertip at PIP ~80-85 deg: the setpoint can still go far enough beyond the
+    joint to reach the servo's force cap (review M1: ctrlrange = joint range + tau_cap/kp).
+
+    Not tested at the PIP limit itself: there the assumed 360 deg servo travel clips the setpoint to 2.17 rad, so the
+    torque is limited to kp x (2.17 - 1.66) = 0.49 N m (85 % of the cap); see report.
+    """
+    from hand_helpers import XML
+
+    m0 = mujoco.MjModel.from_xml_path(str(XML))
+    d0 = mujoco.MjData(m0)
+    set_cad_q(m0, d0, {"index_pip": 80})  # where the object stops the fingertip (PIP limit 95)
+    mujoco.mj_kinematics(m0, d0)
+    j = m0.joint("index_pip").id
+    v = np.cross(d0.xaxis[j], d0.site("index_tip").xpos - d0.xanchor[j])
+    n = v / np.linalg.norm(v)  # where the tip moves when the PIP closes
+    spec = mujoco.MjSpec.from_file(str(XML))
+    spec.worldbody.add_geom(
+        type=mujoco.mjtGeom.mjGEOM_SPHERE,
+        size=[0.006, 0, 0],
+        pos=d0.site("index_tip").xpos + n * 0.0065,
+        contype=1,
+        conaffinity=1,
+    )
+    m = spec.compile()
+    build_hand_module().apply_physics(m)
+    m.opt.gravity[:] = 0
+    d = mujoco.MjData(m)
+    set_cad_q(m, d, {"index_pip": 72})
+    a = m.actuator("index_pip").id
+    d.ctrl[a] = m.actuator_ctrlrange[a, 1]
+    for _ in range(500):
+        mujoco.mj_step(m, d)
+    pip = math.degrees(d.qpos[m.joint("index_pip").qposadr[0]])
+    cap = m.actuator_forcerange[a, 1]
+    print(f"\nblocked index: pip {pip:.1f} deg, actuator force {d.actuator_force[a]:.3f} / cap {cap:.3f} N m")
+    assert pip < 88.0 and d.actuator_force[a] >= 0.999 * cap
+
+
 def test_bar_never_collides(model):
     """Fist motion: no contact involves a bar body."""
     targets = {j: model.actuator_ctrlrange[i, 1] * 0.9 for i, j in enumerate(SERVO_JOINTS)}
@@ -348,25 +477,37 @@ def test_bar_never_collides(model):
 # ------------------------------------------------------------------------------------------- warp, builders
 @pytest.mark.warp
 def test_warp_put_model_and_step(model):
-    """MuJoCo Warp (CPU): put_model, then step from the tip_pinch pose (self contacts active) and compare the
-    contact count and the state after 10 steps with MuJoCo C."""
+    """MuJoCo Warp (CPU) vs MuJoCo C, same physics options: 250 steps from the tip_pinch pose (thumb-index contact
+    active, squeezed), and the hand-self broadphase pair count (review M4)."""
     wp = pytest.importorskip("warp")
     mjw = pytest.importorskip("mujoco_warp")
+    idx = build_hand_module().actuator_qpos_index(model)
     d = mujoco.MjData(model)
     set_cad_q(model, d, fk_reference()["poses"]["tip_pinch"]["q"])
-    d.ctrl[:] = [d.qpos[model.jnt_qposadr[model.actuator_trnid[i, 0]]] for i in range(model.nu)]
+    d.ctrl[:] = d.qpos[idx]
+    for j in ("index_pip", "thumb_ip"):  # squeeze the pinch: thumb-index contact stays active every step
+        d.ctrl[model.actuator(j).id] += 0.15
     mujoco.mj_forward(model, d)
-    assert d.ncon > 0
+    q0 = d.qpos.copy()
     with wp.ScopedDevice("cpu"):
         mw = mjw.put_model(model)
+        npairs = mw.nxn_geom_pair_filtered.shape[0]
         dw = mjw.put_data(model, d, nconmax=256, njmax=1024)
-        for _ in range(10):
+        for _ in range(250):
             mjw.step(mw, dw)
         q = dw.qpos.numpy()[0]
-    for _ in range(10):
+    ncon = []
+    for _ in range(250):
         mujoco.mj_step(model, d)
-    assert np.all(np.isfinite(q))
-    assert np.abs(q - d.qpos).max() < 1e-3, np.abs(q - d.qpos).max()
+        ncon.append(d.ncon)
+    err = np.abs(q - d.qpos).max()
+    print(
+        f"\nwarp vs C after 250 steps: max |dq| {err:.2e} rad (motion {np.abs(d.qpos - q0).max():.3f} rad, "
+        f"C contacts {min(ncon)}..{max(ncon)}); hand-self broadphase pairs {npairs}"
+    )
+    assert np.all(np.isfinite(q)) and min(ncon) > 0
+    assert err < 2e-3
+    assert npairs <= 240
 
 
 def test_attach_with_prefix(model, tmp_path):

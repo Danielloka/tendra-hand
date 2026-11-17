@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -63,7 +64,25 @@ PLACEHOLDER_WRIST = {
 # Passive coupled joints (DIP, bar): no servo. A tiny armature keeps the stiff joint equality well conditioned on
 # the light distal phalanx / 0.4 g bar; small next to the servo armature reflected at the PIP.
 PASSIVE = {"damping": 0.002, "armature": 1e-5, "frictionloss": 0.0}
-EQ_SOLREF = "0.01 1"  # couplings: 10 ms time constant (>= 2 x the 2 ms robot timestep)
+# Couplings: the DIP and bar are rigid links in the real hand, so the equality must stay tight under grip load
+# (review M3). 4 ms = 2 x the 2 ms timestep, the stiffest MuJoCo recommends; measured in tests/test_hand.py.
+EQ_SOLREF = "0.004 1"
+# impedance 0.95..0.99 (default 0.9..0.95): measured DIP coupling error at 5/10/15 N tip load 0.02/0.14/0.22 deg
+# (default solimp: 0.04/0.71/1.09 deg; solref 0.01 + default: 0.21/4.45/5.62 deg)
+EQ_SOLIMP = "0.95 0.99 0.001"
+DEFAULT_SERVO_TRAVEL_DEG = (
+    360.0  # ASSUMED when actuators.json has no servo_travel_deg (shaft travel, centred at q = 0)
+)
+
+# Physics options shared by every model that contains the hand (hand-only tests and the robot scene), so the hand is
+# always tested the way it is simulated. The hand XML itself carries no <option> (it must stay attachable).
+PHYSICS = {
+    "timestep": 0.002,
+    "integrator": "implicitfast",
+    "cone": "elliptic",
+    "impratio": 10.0,
+    "solver": "Newton",
+}
 
 FRICTION = "0.8 0.01 0.001"  # PETG / PAHT-CF on typical objects
 PAD_FRICTION = "1.2 0.02 0.002"  # silicone skin
@@ -85,11 +104,84 @@ def load_actuators(path: Path = ACT) -> tuple[dict[str, dict], str]:
             j
         ) in SERVO_JOINTS:  # lead decision: hand servos capped at 80 % stall in firmware (constant current)
             out[j]["forcerange"] = d["servos"][j].get("forcerange_cap80", d["servos"][j]["forcerange"])
+            out[j]["ratio"] = float(d["servos"][j].get("ratio", 1.0))
+            out[j]["servo_travel_deg"] = d["servos"][j].get("servo_travel_deg", d.get("servo_travel_deg"))
         out.update({j: {k: d["wrist"][j][k] for k in keys} for j in WRIST_JOINTS})
         return out, f"model/actuators.json ({d.get('servo_model', 'servo model not stated')})"
-    out = {j: dict(PLACEHOLDER_SERVO) for j in SERVO_JOINTS}
+    out = {j: dict(PLACEHOLDER_SERVO, ratio=1.447, servo_travel_deg=None) for j in SERVO_JOINTS}
     out.update({j: dict(PLACEHOLDER_WRIST) for j in WRIST_JOINTS})
     return out, "PLACEHOLDER values (model/actuators.json missing)"
+
+
+def apply_physics(model) -> None:
+    """Set ``PHYSICS`` on a compiled MjModel (for tests that load the hand file on its own)."""
+    import mujoco
+
+    model.opt.timestep = PHYSICS["timestep"]
+    model.opt.integrator = getattr(mujoco.mjtIntegrator, f"mjINT_{PHYSICS['integrator'].upper()}")
+    model.opt.cone = getattr(mujoco.mjtCone, f"mjCONE_{PHYSICS['cone'].upper()}")
+    model.opt.impratio = PHYSICS["impratio"]
+    model.opt.solver = getattr(mujoco.mjtSolver, f"mjSOL_{PHYSICS['solver'].upper()}")
+
+
+def actuator_qpos_index(model, prefix: str = "") -> list[int]:
+    """qpos address of each actuator's joint, in actuator order (the tree order of qpos differs)."""
+    names = [*SERVO_JOINTS, *WRIST_JOINTS]
+    return [int(model.jnt_qposadr[model.joint(prefix + j).id]) for j in names]
+
+
+def servo_ctrlrange(p: dict, joint_range: list[float]) -> tuple[list[float], dict]:
+    """Servo setpoint range in joint-angle units (rad), review M1.
+
+    The joint torque is kp x (setpoint - q), so to reach the force cap with the joint blocked at a range limit the
+    setpoint must go tau_cap / kp beyond that limit (tendon stretch). It is clipped to the servo's shaft travel,
+    mapped to the joint through the ratio (shaft = ratio x joint), centred on the q = 0 setpoint.
+    """
+    margin = max(abs(x) for x in p["forcerange"]) / p["kp"]
+    travel = p.get("servo_travel_deg") or DEFAULT_SERVO_TRAVEL_DEG
+    half = math.radians(travel) / 2.0 / p["ratio"]
+    lo, hi = max(joint_range[0] - margin, -half), min(joint_range[1] + margin, half)
+    return [lo, hi], {
+        "margin_rad": margin,
+        "travel_half_rad": half,
+        "travel_assumed": p.get("servo_travel_deg") is None,
+    }
+
+
+# Collision bits (documented in model/CONTRACT.md). Bit 0 = the world: table, objects, the arm. Every hand geom has
+# contype bit 0 (touches the world) but never conaffinity bit 0, so hand-hand pairs are decided by the group bits
+# alone and only physically meaningful self-contacts are generated (review M4: GPU narrow-phase cost).
+BIT_WORLD, BIT_THUMB, BIT_PALM, BIT_PROX = 1, 2, 4, 128
+BIT_FINGER = {"index": 8, "middle": 16, "ring": 32, "little": 64}
+NEIGHBOURS = {
+    "index": ("middle",),
+    "middle": ("index", "ring"),
+    "ring": ("middle", "little"),
+    "little": ("ring",),
+}
+
+
+def collision_bits(body: str) -> tuple[int, int]:
+    """(contype, conaffinity) of a hand body's collision geoms.
+
+    - thumb metacarpal/proximal/distal <-> every finger's proximal/middle/distal (pinch, opposition);
+    - thumb proximal/distal <-> palm (thumb folded across the palm);
+    - finger middle/distal <-> the neighbouring fingers' middle/distal; fingertips (distal) <-> palm (fist);
+    - everything else of the hand (yokes, thumb base, wrist ring, forearm, palm-proximal, ...) only touches the world.
+    """
+    fingers_all = sum(BIT_FINGER.values()) | BIT_PROX
+    if body in ("thumb_metacarpal", "thumb_proximal", "thumb_distal"):
+        return BIT_WORLD | BIT_THUMB, fingers_all | (BIT_PALM if body != "thumb_metacarpal" else 0)
+    if body == "palm":
+        return BIT_WORLD | BIT_PALM, 0
+    f, _, seg = body.partition("_")
+    if f in BIT_FINGER and seg in ("middle", "distal"):
+        return BIT_WORLD | BIT_FINGER[f], (BIT_PALM if seg == "distal" else 0) | sum(
+            BIT_FINGER[n] for n in NEIGHBOURS[f]
+        )
+    if f in BIT_FINGER and seg == "proximal":
+        return BIT_WORLD | BIT_PROX, 0
+    return BIT_WORLD, 0
 
 
 def f(x: float) -> str:
@@ -121,8 +213,15 @@ def adjacent_excludes(kin: dict) -> list[tuple[str, str]]:
     return pairs
 
 
-# Non-adjacent pairs whose convex hulls touch in designed CAD poses although the CAD parts do not (found by
-# tests/test_hand.py::test_no_self_contact_in_cad_poses and listed here with the reason).
+# Grandparent excludes checked against the CAD meshes (review m4; 3000 random in-range configurations, the worst
+# hull overlap re-measured on the CAD part meshes):
+# - palm-index/ring/middle proximal: hull overlap up to 3.6 mm, CAD 0.0 mm -> hull artefact, exclude kept.
+# - forearm-palm: hull 5.1 mm; CAD 2.6 mm only from wrist_rod_L, which the CAD poses as static (it moves with the
+#   wrist in reality); without the rods 0.77 mm (palm_v21 vs forearm shell at dev -30 with flex +-50, the range
+#   corners) -> exclude kept, small CAD interference reported.
+# - palm-thumb_metacarpal: hull 10.1 mm; CAD up to 5.1 mm (metacarpal into the index knuckle module) for
+#   cmc_rot < about -5 deg with cmc_flex > 35 deg -> REAL CAD interference inside the joint ranges, reported; the
+#   exclude is kept (the hull overlaps twice as much and would also stop the thumb in valid poses).
 EXTRA_EXCLUDES: list[tuple[str, str, str]] = []
 
 
@@ -205,10 +304,13 @@ def build(kin: dict, act: dict[str, dict], act_src: str) -> str:
             )
         ET.SubElement(el, "geom", {"class": "v21_visual", "name": f"{b}_vis", "mesh": f"v21_{b}_vis"})
         for k, cls in enumerate(d["collision_class"]):
+            ct, ca = collision_bits(b) if d.get("collision_self", [True] * 99)[k] else (BIT_WORLD, 0)
             g = {
                 "class": "v21_pad" if cls == "pad" else "v21_col",
                 "name": f"{b}_c{k}",
                 "mesh": f"v21_{b}_c{k}",
+                "contype": str(ct),
+                "conaffinity": str(ca),
             }
             ET.SubElement(el, "geom", g)
         for n, s in sites_by_body.get(b, []):
@@ -230,6 +332,7 @@ def build(kin: dict, act: dict[str, dict], act_src: str) -> str:
             joint2=c["leader"],
             polycoef=vec(c["poly"]),
             solref=EQ_SOLREF,
+            solimp=EQ_SOLIMP,
         )
 
     acts = ET.SubElement(root, "actuator")
@@ -244,10 +347,17 @@ def build(kin: dict, act: dict[str, dict], act_src: str) -> str:
                 "joint": j,
                 "class": "v21",
                 "kp": f(p["kp"]),
-                "ctrlrange": vec(joint_range[j]),
+                "ctrlrange": vec(
+                    servo_ctrlrange(p, joint_range[j])[0] if j in SERVO_JOINTS else joint_range[j]
+                ),
                 "forcerange": vec(p["forcerange"]),
             },
         )
+    sens = ET.SubElement(root, "sensor")
+    for j in (*SERVO_JOINTS, *WRIST_JOINTS):
+        ET.SubElement(sens, "jointpos", name=f"{j}_pos", joint=j)
+    for j in (*SERVO_JOINTS, *WRIST_JOINTS):
+        ET.SubElement(sens, "actuatorfrc", name=f"{j}_frc", actuator=j)
     ET.indent(root, space="  ")
     return '<?xml version="1.0" encoding="utf-8"?>\n' + ET.tostring(root, encoding="unicode") + "\n"
 

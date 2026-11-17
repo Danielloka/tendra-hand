@@ -608,7 +608,8 @@ def collision_plan(body: str, parts: list[str]) -> list[dict]:
             {"kind": "coacd", "parts": ["palm_v21"], "n": 3, "cls": "geom"},
             {"kind": "hull", "parts": mods3, "cls": "geom"},
             {"kind": "hull", "parts": ["little_knuckle_module"], "cls": "geom"},
-            {"kind": "hull", "parts": ["thumb_mount"], "cls": "geom"},
+            # the thumb mount sits behind the thumb base: world contact only, no hand self-contact (review M4)
+            {"kind": "hull", "parts": ["thumb_mount"], "cls": "geom", "self": False},
         ] + [{"kind": "hull", "parts": [p], "cls": "pad"} for p in pads]
     if body.endswith("_bar"):
         return []
@@ -793,7 +794,7 @@ def extract(out: Path) -> None:
             source_faces=sum(len(meshes[n][1].faces) for n in names), visual_faces=len(f2), **vis_rep
         )
         # collision
-        coll, coll_cls, devs = [], [], []
+        coll, coll_cls, coll_self, devs = [], [], [], []
         for plan in collision_plan(b, names):
             for hv, dev in make_collision(plan, meshes, pivot[b]):
                 k = len(coll)
@@ -801,6 +802,7 @@ def extract(out: Path) -> None:
                 write_stl(meshdir / fname, (hv - pivot[b]) / 1000.0, hull_faces(hv - pivot[b]), fname)
                 coll.append(f"meshes/{fname}")
                 coll_cls.append(plan["cls"])
+                coll_self.append(plan.get("self", True))
                 devs.append(
                     {
                         "file": fname,
@@ -833,6 +835,7 @@ def extract(out: Path) -> None:
             "visual_mesh": f"meshes/{b}.stl",
             "collision_meshes": coll,
             "collision_class": coll_cls,
+            "collision_self": coll_self,
             "fit_residual": {"rot_deg": jd["res"]["rot_deg"], "pos_mm": jd["res"]["pos_mm"]} if jd else None,
         }
 

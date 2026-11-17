@@ -1,0 +1,30 @@
+NOTICE
+
+The meshes in this folder are derived from the OpenArm v2 MuJoCo description (PyPI package `openarm-mujoco`
+2.3.0, https://github.com/enactic/openarm_mujoco), Copyright Enactic, Inc., licensed under the Apache License 2.0
+(see LICENSE in this folder).
+
+What was copied: the visual meshes of the pedestal (`body_link0`) and of the right arm's base_link, link1, link2,
+link3 and link4 (the parts the Tendra robot model keeps). OpenArm's collision meshes, link5 and below, the
+gripper and the left arm are NOT included.
+
+What was changed: every mesh was quadric-decimated to about 5 % of its triangles (at least 600 where it
+had more) with `fast-simplification`, converted to binary STL and renamed after its MJCF mesh name, by
+`model/vendor_openarm.py`. Units and frames are those of the source. No other change.
+
+Triangles (source -> here): 211368 -> 34739
+  body_link0                          159099 ->  26342 triangles  (from visual/body/body_link0.stl)
+  base_link_right_00                    7550 ->    600 triangles  (from visual/arm/base_link_00.obj)
+  base_link_right_01                     628 ->    599 triangles  (from visual/arm/base_link_01.obj)
+  link1_right_00                        9169 ->    600 triangles  (from visual/arm/link1_00.obj)
+  link1_right_01                         744 ->    600 triangles  (from visual/arm/link1_01.obj)
+  link1_right_02                         756 ->    599 triangles  (from visual/arm/link1_02.obj)
+  link2_right_00                        3915 ->    600 triangles  (from visual/arm/link2_00.obj)
+  link2_right_01                        1370 ->    600 triangles  (from visual/arm/link2_01.obj)
+  link2_right_02                         800 ->    600 triangles  (from visual/arm/link2_02.obj)
+  link3_right_00                       11015 ->    600 triangles  (from visual/arm/link3_00.obj)
+  link3_right_01                        2272 ->    600 triangles  (from visual/arm/link3_01.obj)
+  link3_right_02                        1076 ->    599 triangles  (from visual/arm/link3_02.obj)
+  link4_right_00                       10200 ->    600 triangles  (from visual/arm/link4_00.obj)
+  link4_right_01                        1022 ->    600 triangles  (from visual/arm/link4_01.obj)
+  link4_right_02                        1752 ->    600 triangles  (from visual/arm/link4_02.obj)

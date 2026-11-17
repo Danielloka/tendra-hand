@@ -98,54 +98,54 @@
     <body name="forearm" pos="0 0 0" childclass="v21">
       <inertial pos="0.000200944088 -0.000430908729 -0.135133933" mass="0.78655" fullinertia="0.00312369495 0.00358462277 0.0010468103 1.82250376e-06 8.93778722e-06 1.57269892e-05" />
       <geom class="v21_visual" name="forearm_vis" mesh="v21_forearm_vis" />
-      <geom class="v21_col" name="forearm_c0" mesh="v21_forearm_c0" />
-      <geom class="v21_col" name="forearm_c1" mesh="v21_forearm_c1" />
+      <geom class="v21_col" name="forearm_c0" mesh="v21_forearm_c0" contype="1" conaffinity="0" />
+      <geom class="v21_col" name="forearm_c1" mesh="v21_forearm_c1" contype="1" conaffinity="0" />
       <site name="wrist_centre" pos="0 0 0" quat="1 0 0 0" />
       <site name="forearm_flange" pos="0 0 -0.23" quat="1 0 0 0" />
       <body name="wrist_ring" pos="0 0 0">
         <inertial pos="-0.000196905449 -0.000261949458 -6.88756015e-05" mass="0.03995" fullinertia="7.90891e-06 4.7522607e-06 1.20538371e-05 7.7946657e-08 2.27596472e-08 2.62063397e-08" />
         <joint name="wrist_dev" axis="0 1 0" range="-0.523598776 0.34906585" damping="5.391" armature="0.018" frictionloss="0.456" />
         <geom class="v21_visual" name="wrist_ring_vis" mesh="v21_wrist_ring_vis" />
-        <geom class="v21_col" name="wrist_ring_c0" mesh="v21_wrist_ring_c0" />
-        <geom class="v21_col" name="wrist_ring_c1" mesh="v21_wrist_ring_c1" />
-        <geom class="v21_col" name="wrist_ring_c2" mesh="v21_wrist_ring_c2" />
-        <geom class="v21_col" name="wrist_ring_c3" mesh="v21_wrist_ring_c3" />
+        <geom class="v21_col" name="wrist_ring_c0" mesh="v21_wrist_ring_c0" contype="1" conaffinity="0" />
+        <geom class="v21_col" name="wrist_ring_c1" mesh="v21_wrist_ring_c1" contype="1" conaffinity="0" />
+        <geom class="v21_col" name="wrist_ring_c2" mesh="v21_wrist_ring_c2" contype="1" conaffinity="0" />
+        <geom class="v21_col" name="wrist_ring_c3" mesh="v21_wrist_ring_c3" contype="1" conaffinity="0" />
         <body name="palm" pos="0 0 0">
           <inertial pos="0.000986087835 -6.97020475e-05 0.0422592946" mass="0.11776" fullinertia="6.57464676e-05 0.00012216059 8.10411655e-05 9.94043909e-07 1.06069641e-05 -3.39621652e-06" />
           <joint name="wrist_flex" axis="1 0 0" range="-0.872664626 0.872664626" damping="0.72" armature="0.00178" frictionloss="0.13" />
           <geom class="v21_visual" name="palm_vis" mesh="v21_palm_vis" />
-          <geom class="v21_col" name="palm_c0" mesh="v21_palm_c0" />
-          <geom class="v21_col" name="palm_c1" mesh="v21_palm_c1" />
-          <geom class="v21_col" name="palm_c2" mesh="v21_palm_c2" />
-          <geom class="v21_col" name="palm_c3" mesh="v21_palm_c3" />
-          <geom class="v21_col" name="palm_c4" mesh="v21_palm_c4" />
-          <geom class="v21_col" name="palm_c5" mesh="v21_palm_c5" />
-          <geom class="v21_pad" name="palm_c6" mesh="v21_palm_c6" />
-          <geom class="v21_pad" name="palm_c7" mesh="v21_palm_c7" />
+          <geom class="v21_col" name="palm_c0" mesh="v21_palm_c0" contype="5" conaffinity="0" />
+          <geom class="v21_col" name="palm_c1" mesh="v21_palm_c1" contype="5" conaffinity="0" />
+          <geom class="v21_col" name="palm_c2" mesh="v21_palm_c2" contype="5" conaffinity="0" />
+          <geom class="v21_col" name="palm_c3" mesh="v21_palm_c3" contype="5" conaffinity="0" />
+          <geom class="v21_col" name="palm_c4" mesh="v21_palm_c4" contype="5" conaffinity="0" />
+          <geom class="v21_col" name="palm_c5" mesh="v21_palm_c5" contype="1" conaffinity="0" />
+          <geom class="v21_pad" name="palm_c6" mesh="v21_palm_c6" contype="5" conaffinity="0" />
+          <geom class="v21_pad" name="palm_c7" mesh="v21_palm_c7" contype="5" conaffinity="0" />
           <site name="palm_centre" pos="-0.0085 -0.0160000247 0.0436999968" quat="0.707106781 0.707106781 0 0" />
           <body name="index_yoke" pos="0.02 -0.002 0.079">
             <inertial pos="1.14352776e-05 0.00173068701 0.00430310608" mass="0.0055" fullinertia="4.32627275e-07 2.64112626e-07 3.12274537e-07 -1.12227561e-08 2.98094982e-09 1.98092895e-08" />
             <joint name="index_mcp_abd" axis="0 1 0" range="-0.174532925 0.261799388" damping="0.0677" armature="0.00026" frictionloss="0.0227" />
             <geom class="v21_visual" name="index_yoke_vis" mesh="v21_index_yoke_vis" />
-            <geom class="v21_col" name="index_yoke_c0" mesh="v21_index_yoke_c0" />
+            <geom class="v21_col" name="index_yoke_c0" mesh="v21_index_yoke_c0" contype="1" conaffinity="0" />
             <body name="index_proximal" pos="0 0 0.013">
               <inertial pos="-8.48429596e-05 0.000110056472 0.0212202066" mass="0.01177" fullinertia="2.36682505e-06 2.47431906e-06 5.49386988e-07 2.0599091e-08 2.87264578e-08 -2.38618004e-09" />
               <joint name="index_mcp_flex" axis="1 0 0" range="-0.174532925 1.57079633" damping="0.0658" armature="0.00026" frictionloss="0.0227" />
               <geom class="v21_visual" name="index_proximal_vis" mesh="v21_index_proximal_vis" />
-              <geom class="v21_col" name="index_proximal_c0" mesh="v21_index_proximal_c0" />
-              <geom class="v21_pad" name="index_proximal_c1" mesh="v21_index_proximal_c1" />
+              <geom class="v21_col" name="index_proximal_c0" mesh="v21_index_proximal_c0" contype="129" conaffinity="0" />
+              <geom class="v21_pad" name="index_proximal_c1" mesh="v21_index_proximal_c1" contype="129" conaffinity="0" />
               <body name="index_middle" pos="0 0 0.042">
                 <inertial pos="0.000674172215 0.000264943341 0.0122588249" mass="0.00597" fullinertia="6.23047596e-07 6.06786006e-07 1.54890269e-07 3.12299811e-09 2.56972374e-09 2.65907098e-09" />
                 <joint name="index_pip" axis="1 0 0" range="-0.0872664626 1.65806279" damping="0.0583" armature="0.00026" frictionloss="0.0216" />
                 <geom class="v21_visual" name="index_middle_vis" mesh="v21_index_middle_vis" />
-                <geom class="v21_col" name="index_middle_c0" mesh="v21_index_middle_c0" />
-                <geom class="v21_pad" name="index_middle_c1" mesh="v21_index_middle_c1" />
+                <geom class="v21_col" name="index_middle_c0" mesh="v21_index_middle_c0" contype="9" conaffinity="16" />
+                <geom class="v21_pad" name="index_middle_c1" mesh="v21_index_middle_c1" contype="9" conaffinity="16" />
                 <body name="index_distal" pos="0 0 0.024">
                   <inertial pos="-0.000160910641 -0.000249468157 0.0105184746" mass="0.00539" fullinertia="4.34279605e-07 4.41900421e-07 2.12258056e-07 -8.74850862e-09 -1.55139799e-08 -7.81955986e-09" />
                   <joint name="index_dip" axis="1 0 0" range="-0.0753992503 1.26363165" damping="0.002" armature="1e-05" frictionloss="0" />
                   <geom class="v21_visual" name="index_distal_vis" mesh="v21_index_distal_vis" />
-                  <geom class="v21_col" name="index_distal_c0" mesh="v21_index_distal_c0" />
-                  <geom class="v21_pad" name="index_distal_c1" mesh="v21_index_distal_c1" />
+                  <geom class="v21_col" name="index_distal_c0" mesh="v21_index_distal_c0" contype="9" conaffinity="20" />
+                  <geom class="v21_pad" name="index_distal_c1" mesh="v21_index_distal_c1" contype="9" conaffinity="20" />
                   <site name="index_tip" pos="3.82647087e-10 -0.00880009911 0.0144442164" quat="0.557870597 0.829927947 0 0" />
                 </body>
               </body>
@@ -160,24 +160,24 @@
             <inertial pos="-0.00514156129 0.00673439683 -0.00976280564" mass="0.00963" fullinertia="1.43553732e-06 1.00352066e-06 1.12570468e-06 2.34632142e-07 -1.32540996e-07 4.41122295e-08" />
             <joint name="thumb_cmc_rot" axis="0.409790221 -0.564989709 0.716141469" range="-0.541052068 1.91986218" damping="0.0691" armature="0.00026" frictionloss="0.0202" />
             <geom class="v21_visual" name="thumb_base_vis" mesh="v21_thumb_base_vis" />
-            <geom class="v21_col" name="thumb_base_c0" mesh="v21_thumb_base_c0" />
+            <geom class="v21_col" name="thumb_base_c0" mesh="v21_thumb_base_c0" contype="1" conaffinity="0" />
             <body name="thumb_metacarpal" pos="0 0 0">
               <inertial pos="0.00464409369 -0.0122458109 0.0149403497" mass="0.02126" fullinertia="6.01319124e-06 4.56711999e-06 3.38910043e-06 7.93249364e-07 -7.49130039e-07 2.31609913e-06" />
               <joint name="thumb_cmc_flex" axis="0.13188664 -0.740140802 -0.659391771" range="-0.645771823 1.09955743" damping="0.0631" armature="0.00026" frictionloss="0.0152" />
               <geom class="v21_visual" name="thumb_metacarpal_vis" mesh="v21_thumb_metacarpal_vis" />
-              <geom class="v21_col" name="thumb_metacarpal_c0" mesh="v21_thumb_metacarpal_c0" />
-              <geom class="v21_pad" name="thumb_metacarpal_c1" mesh="v21_thumb_metacarpal_c1" />
+              <geom class="v21_col" name="thumb_metacarpal_c0" mesh="v21_thumb_metacarpal_c0" contype="3" conaffinity="248" />
+              <geom class="v21_pad" name="thumb_metacarpal_c1" mesh="v21_thumb_metacarpal_c1" contype="3" conaffinity="248" />
               <body name="thumb_proximal" pos="0.0124989817 -0.0286421611 0.0346496298">
                 <inertial pos="0.00462397208 -0.0100468881 0.0115611127" mass="0.01357" fullinertia="2.49980365e-06 2.03312811e-06 1.74691957e-06 4.62035135e-07 -3.87894186e-07 9.64376502e-07" />
                 <joint name="thumb_mcp_flex" axis="-0.829195776 0.24558524 0.50211777" range="-0.174532925 1.22173048" damping="0.0555" armature="0.00026" frictionloss="0.0184" />
                 <geom class="v21_visual" name="thumb_proximal_vis" mesh="v21_thumb_proximal_vis" />
-                <geom class="v21_col" name="thumb_proximal_c0" mesh="v21_thumb_proximal_c0" />
+                <geom class="v21_col" name="thumb_proximal_c0" mesh="v21_thumb_proximal_c0" contype="3" conaffinity="252" />
                 <body name="thumb_distal" pos="0.00964548377 -0.0221032006 0.0267391737">
                   <inertial pos="0.00301189951 -0.00592343612 0.00799923269" mass="0.00907" fullinertia="1.132104e-06 8.87303899e-07 6.66272495e-07 1.49059501e-07 -2.02659681e-07 4.06622393e-07" />
                   <joint name="thumb_ip" axis="-0.880981026 0.155957632 0.446709804" range="-0.261799388 1.48352986" damping="0.0509" armature="0.00026" frictionloss="0.0155" />
                   <geom class="v21_visual" name="thumb_distal_vis" mesh="v21_thumb_distal_vis" />
-                  <geom class="v21_col" name="thumb_distal_c0" mesh="v21_thumb_distal_c0" />
-                  <geom class="v21_pad" name="thumb_distal_c1" mesh="v21_thumb_distal_c1" />
+                  <geom class="v21_col" name="thumb_distal_c0" mesh="v21_thumb_distal_c0" contype="3" conaffinity="252" />
+                  <geom class="v21_pad" name="thumb_distal_c1" mesh="v21_thumb_distal_c1" contype="3" conaffinity="252" />
                   <site name="thumb_tip" pos="0.00786659244 -0.00385175129 0.0168587869" quat="0.776675991 -0.605237051 0.174535145 0" />
                 </body>
               </body>
@@ -187,25 +187,25 @@
             <inertial pos="1.14362109e-05 0.00173034756 0.00430434593" mass="0.0055" fullinertia="4.3262253e-07 2.64119106e-07 3.12241765e-07 -1.12206048e-08 2.98103335e-09 1.9812806e-08" />
             <joint name="middle_mcp_abd" axis="0 1 0" range="-0.261799388 0.261799388" damping="0.0697" armature="0.00026" frictionloss="0.0227" />
             <geom class="v21_visual" name="middle_yoke_vis" mesh="v21_middle_yoke_vis" />
-            <geom class="v21_col" name="middle_yoke_c0" mesh="v21_middle_yoke_c0" />
+            <geom class="v21_col" name="middle_yoke_c0" mesh="v21_middle_yoke_c0" contype="1" conaffinity="0" />
             <body name="middle_proximal" pos="0 0 0.013">
               <inertial pos="-9.79883855e-05 0.000105907469 0.0226699117" mass="0.01267" fullinertia="2.8060932e-06 2.9180957e-06 5.88406353e-07 2.14472306e-08 3.22204322e-08 -2.77004479e-09" />
               <joint name="middle_mcp_flex" axis="1 0 0" range="-0.174532925 1.57079633" damping="0.0677" armature="0.00026" frictionloss="0.0227" />
               <geom class="v21_visual" name="middle_proximal_vis" mesh="v21_middle_proximal_vis" />
-              <geom class="v21_col" name="middle_proximal_c0" mesh="v21_middle_proximal_c0" />
-              <geom class="v21_pad" name="middle_proximal_c1" mesh="v21_middle_proximal_c1" />
+              <geom class="v21_col" name="middle_proximal_c0" mesh="v21_middle_proximal_c0" contype="129" conaffinity="0" />
+              <geom class="v21_pad" name="middle_proximal_c1" mesh="v21_middle_proximal_c1" contype="129" conaffinity="0" />
               <body name="middle_middle" pos="0 0 0.045">
                 <inertial pos="0.000637101548 0.000231689682 0.0138294298" mass="0.00677" fullinertia="7.92544308e-07 7.76995504e-07 1.83404988e-07 3.07016547e-09 2.96942606e-09 4.41081945e-09" />
                 <joint name="middle_pip" axis="1 0 0" range="-0.0872664626 1.65806279" damping="0.0586" armature="0.00026" frictionloss="0.0216" />
                 <geom class="v21_visual" name="middle_middle_vis" mesh="v21_middle_middle_vis" />
-                <geom class="v21_col" name="middle_middle_c0" mesh="v21_middle_middle_c0" />
-                <geom class="v21_pad" name="middle_middle_c1" mesh="v21_middle_middle_c1" />
+                <geom class="v21_col" name="middle_middle_c0" mesh="v21_middle_middle_c0" contype="17" conaffinity="40" />
+                <geom class="v21_pad" name="middle_middle_c1" mesh="v21_middle_middle_c1" contype="17" conaffinity="40" />
                 <body name="middle_distal" pos="0 0 0.027">
                   <inertial pos="-0.000146127237 -0.000246112174 0.0111173259" mass="0.00565" fullinertia="4.75069749e-07 4.82436766e-07 2.21086661e-07 -8.63935728e-09 -1.54443956e-08 -6.42980906e-09" />
                   <joint name="middle_dip" axis="1 0 0" range="-0.0737628818 1.26349897" damping="0.002" armature="1e-05" frictionloss="0" />
                   <geom class="v21_visual" name="middle_distal_vis" mesh="v21_middle_distal_vis" />
-                  <geom class="v21_col" name="middle_distal_c0" mesh="v21_middle_distal_c0" />
-                  <geom class="v21_pad" name="middle_distal_c1" mesh="v21_middle_distal_c1" />
+                  <geom class="v21_col" name="middle_distal_c0" mesh="v21_middle_distal_c0" contype="17" conaffinity="44" />
+                  <geom class="v21_pad" name="middle_distal_c1" mesh="v21_middle_distal_c1" contype="17" conaffinity="44" />
                   <site name="middle_tip" pos="2.61389214e-10 -0.008800109 0.0148617114" quat="0.560504656 0.828151273 0 0" />
                 </body>
               </body>
@@ -220,25 +220,25 @@
             <inertial pos="1.14353629e-05 0.00173056799 0.00430353934" mass="0.0055" fullinertia="4.32625611e-07 2.64114863e-07 3.12263105e-07 -1.12220057e-08 2.98098635e-09 1.98105095e-08" />
             <joint name="ring_mcp_abd" axis="0 1 0" range="-0.261799388 0.261799388" damping="0.0687" armature="0.00026" frictionloss="0.0227" />
             <geom class="v21_visual" name="ring_yoke_vis" mesh="v21_ring_yoke_vis" />
-            <geom class="v21_col" name="ring_yoke_c0" mesh="v21_ring_yoke_c0" />
+            <geom class="v21_col" name="ring_yoke_c0" mesh="v21_ring_yoke_c0" contype="1" conaffinity="0" />
             <body name="ring_proximal" pos="0 0 0.013">
               <inertial pos="-8.90318389e-05 0.000113548251 0.0217001688" mass="0.01207" fullinertia="2.50582794e-06 2.61453987e-06 5.62641474e-07 2.1270042e-08 2.96083983e-08 -3.89255538e-09" />
               <joint name="ring_mcp_flex" axis="1 0 0" range="-0.174532925 1.57079633" damping="0.0668" armature="0.00026" frictionloss="0.0227" />
               <geom class="v21_visual" name="ring_proximal_vis" mesh="v21_ring_proximal_vis" />
-              <geom class="v21_col" name="ring_proximal_c0" mesh="v21_ring_proximal_c0" />
-              <geom class="v21_pad" name="ring_proximal_c1" mesh="v21_ring_proximal_c1" />
+              <geom class="v21_col" name="ring_proximal_c0" mesh="v21_ring_proximal_c0" contype="129" conaffinity="0" />
+              <geom class="v21_pad" name="ring_proximal_c1" mesh="v21_ring_proximal_c1" contype="129" conaffinity="0" />
               <body name="ring_middle" pos="0 0 0.043">
                 <inertial pos="0.000658079486 0.000244680128 0.0132999054" mass="0.00649" fullinertia="7.32378489e-07 7.16335506e-07 1.73423768e-07 3.17949255e-09 2.53671513e-09 3.73983332e-09" />
                 <joint name="ring_pip" axis="1 0 0" range="-0.0872664626 1.65806279" damping="0.0584" armature="0.00026" frictionloss="0.0216" />
                 <geom class="v21_visual" name="ring_middle_vis" mesh="v21_ring_middle_vis" />
-                <geom class="v21_col" name="ring_middle_c0" mesh="v21_ring_middle_c0" />
-                <geom class="v21_pad" name="ring_middle_c1" mesh="v21_ring_middle_c1" />
+                <geom class="v21_col" name="ring_middle_c0" mesh="v21_ring_middle_c0" contype="33" conaffinity="80" />
+                <geom class="v21_pad" name="ring_middle_c1" mesh="v21_ring_middle_c1" contype="33" conaffinity="80" />
                 <body name="ring_distal" pos="0 0 0.026">
                   <inertial pos="-0.000161970051 -0.000252605458 0.0105131547" mass="0.00539" fullinertia="4.34866277e-07 4.42341569e-07 2.12410891e-07 -8.83643659e-09 -1.56734521e-08 -8.101842e-09" />
                   <joint name="ring_dip" axis="1 0 0" range="-0.0770645143 1.2629729" damping="0.002" armature="1e-05" frictionloss="0" />
                   <geom class="v21_visual" name="ring_distal_vis" mesh="v21_ring_distal_vis" />
-                  <geom class="v21_col" name="ring_distal_c0" mesh="v21_ring_distal_c0" />
-                  <geom class="v21_pad" name="ring_distal_c1" mesh="v21_ring_distal_c1" />
+                  <geom class="v21_col" name="ring_distal_c0" mesh="v21_ring_distal_c0" contype="33" conaffinity="84" />
+                  <geom class="v21_pad" name="ring_distal_c1" mesh="v21_ring_distal_c1" contype="33" conaffinity="84" />
                   <site name="ring_tip" pos="9.61762865e-11 -0.00880010364 0.0144442152" quat="0.557870552 0.829927977 0 0" />
                 </body>
               </body>
@@ -253,24 +253,24 @@
             <inertial pos="1.14309252e-05 0.00173188537 0.00429891951" mass="0.0055" fullinertia="4.32655749e-07 2.64103535e-07 3.12388373e-07 -1.12302546e-08 2.98068421e-09 1.97988547e-08" />
             <joint name="little_mcp_abd" axis="0 1 0" range="-0.261799388 0.130899694" damping="0.0647" armature="0.00026" frictionloss="0.0227" />
             <geom class="v21_visual" name="little_yoke_vis" mesh="v21_little_yoke_vis" />
-            <geom class="v21_col" name="little_yoke_c0" mesh="v21_little_yoke_c0" />
+            <geom class="v21_col" name="little_yoke_c0" mesh="v21_little_yoke_c0" contype="1" conaffinity="0" />
             <body name="little_proximal" pos="0 0 0.013">
               <inertial pos="-3.93301179e-05 0.000116013907 0.0173658613" mass="0.00936" fullinertia="1.44335983e-06 1.53890882e-06 4.44914262e-07 1.78070414e-08 2.11870896e-08 -4.06379595e-10" />
               <joint name="little_mcp_flex" axis="1 0 0" range="-0.174532925 1.57079633" damping="0.0629" armature="0.00026" frictionloss="0.0227" />
               <geom class="v21_visual" name="little_proximal_vis" mesh="v21_little_proximal_vis" />
-              <geom class="v21_col" name="little_proximal_c0" mesh="v21_little_proximal_c0" />
-              <geom class="v21_pad" name="little_proximal_c1" mesh="v21_little_proximal_c1" />
+              <geom class="v21_col" name="little_proximal_c0" mesh="v21_little_proximal_c0" contype="129" conaffinity="0" />
+              <geom class="v21_pad" name="little_proximal_c1" mesh="v21_little_proximal_c1" contype="129" conaffinity="0" />
               <body name="little_middle" pos="0 0 0.034">
                 <inertial pos="0.000732272555 0.000258637823 0.0101628412" mass="0.00496" fullinertia="4.39079967e-07 4.20878329e-07 1.1834354e-07 2.9387884e-09 2.51825644e-09 1.16914703e-09" />
                 <joint name="little_pip" axis="1 0 0" range="-0.0872664626 1.65806279" damping="0.0579" armature="0.00026" frictionloss="0.0216" />
                 <geom class="v21_visual" name="little_middle_vis" mesh="v21_little_middle_vis" />
-                <geom class="v21_col" name="little_middle_c0" mesh="v21_little_middle_c0" />
+                <geom class="v21_col" name="little_middle_c0" mesh="v21_little_middle_c0" contype="65" conaffinity="32" />
                 <body name="little_distal" pos="0 0 0.02">
                   <inertial pos="-0.000194177134 -0.000219113971 0.00929155648" mass="0.00486" fullinertia="3.56510339e-07 3.65744612e-07 1.9348379e-07 -8.76212231e-09 -1.48759067e-08 -1.01543185e-08" />
                   <joint name="little_dip" axis="1 0 0" range="-0.0755553265 1.26849907" damping="0.002" armature="1e-05" frictionloss="0" />
                   <geom class="v21_visual" name="little_distal_vis" mesh="v21_little_distal_vis" />
-                  <geom class="v21_col" name="little_distal_c0" mesh="v21_little_distal_c0" />
-                  <geom class="v21_pad" name="little_distal_c1" mesh="v21_little_distal_c1" />
+                  <geom class="v21_col" name="little_distal_c0" mesh="v21_little_distal_c0" contype="65" conaffinity="36" />
+                  <geom class="v21_pad" name="little_distal_c1" mesh="v21_little_distal_c1" contype="65" conaffinity="36" />
                   <site name="little_tip" pos="9.88701956e-11 -0.00880008806 0.0136431094" quat="0.552927659 0.833229263 0 0" />
                 </body>
               </body>
@@ -339,33 +339,71 @@
     <exclude body1="little_yoke" body2="little_bar" />
   </contact>
   <equality>
-    <joint name="index_dip_coupling" joint1="index_dip" joint2="index_pip" polycoef="0 0.686031412 0.231677947 -0.229501354 0.0684834733" solref="0.01 1" />
-    <joint name="index_bar_coupling" joint1="index_bar" joint2="index_pip" polycoef="0 1.23352244 -0.163658674 -0.0399252026 0.0148238885" solref="0.01 1" />
-    <joint name="middle_dip_coupling" joint1="middle_dip" joint2="middle_pip" polycoef="0 0.671491457 0.244766814 -0.21529623 0.0584058033" solref="0.01 1" />
-    <joint name="middle_bar_coupling" joint1="middle_bar" joint2="middle_pip" polycoef="0 1.21342444 -0.124584003 -0.0510496544 0.0176003306" solref="0.01 1" />
-    <joint name="ring_dip_coupling" joint1="ring_dip" joint2="ring_pip" polycoef="0 0.698772342 0.199060662 -0.208234419 0.0646254291" solref="0.01 1" />
-    <joint name="ring_bar_coupling" joint1="ring_bar" joint2="ring_pip" polycoef="0 1.19807769 -0.162423071 -0.0247901737 0.0105359482" solref="0.01 1" />
-    <joint name="little_dip_coupling" joint1="little_dip" joint2="little_pip" polycoef="0 0.682670488 0.272903979 -0.297623903 0.0958891057" solref="0.01 1" />
-    <joint name="little_bar_coupling" joint1="little_bar" joint2="little_pip" polycoef="0 1.29332438 -0.223670019 -0.0295679408 0.011159838" solref="0.01 1" />
+    <joint name="index_dip_coupling" joint1="index_dip" joint2="index_pip" polycoef="0 0.686031412 0.231677947 -0.229501354 0.0684834733" solref="0.004 1" solimp="0.95 0.99 0.001" />
+    <joint name="index_bar_coupling" joint1="index_bar" joint2="index_pip" polycoef="0 1.23352244 -0.163658674 -0.0399252026 0.0148238885" solref="0.004 1" solimp="0.95 0.99 0.001" />
+    <joint name="middle_dip_coupling" joint1="middle_dip" joint2="middle_pip" polycoef="0 0.671491457 0.244766814 -0.21529623 0.0584058033" solref="0.004 1" solimp="0.95 0.99 0.001" />
+    <joint name="middle_bar_coupling" joint1="middle_bar" joint2="middle_pip" polycoef="0 1.21342444 -0.124584003 -0.0510496544 0.0176003306" solref="0.004 1" solimp="0.95 0.99 0.001" />
+    <joint name="ring_dip_coupling" joint1="ring_dip" joint2="ring_pip" polycoef="0 0.698772342 0.199060662 -0.208234419 0.0646254291" solref="0.004 1" solimp="0.95 0.99 0.001" />
+    <joint name="ring_bar_coupling" joint1="ring_bar" joint2="ring_pip" polycoef="0 1.19807769 -0.162423071 -0.0247901737 0.0105359482" solref="0.004 1" solimp="0.95 0.99 0.001" />
+    <joint name="little_dip_coupling" joint1="little_dip" joint2="little_pip" polycoef="0 0.682670488 0.272903979 -0.297623903 0.0958891057" solref="0.004 1" solimp="0.95 0.99 0.001" />
+    <joint name="little_bar_coupling" joint1="little_bar" joint2="little_pip" polycoef="0 1.29332438 -0.223670019 -0.0295679408 0.011159838" solref="0.004 1" solimp="0.95 0.99 0.001" />
   </equality>
   <actuator>
-    <position name="index_pip" joint="index_pip" class="v21" kp="0.96" ctrlrange="-0.0872664626 1.65806279" forcerange="-0.5749 0.5749" />
-    <position name="index_mcp_flex" joint="index_mcp_flex" class="v21" kp="1.022" ctrlrange="-0.174532925 1.57079633" forcerange="-0.6046 0.6046" />
-    <position name="index_mcp_abd" joint="index_mcp_abd" class="v21" kp="1.083" ctrlrange="-0.174532925 0.261799388" forcerange="-0.6046 0.6046" />
-    <position name="thumb_ip" joint="thumb_ip" class="v21" kp="0.754" ctrlrange="-0.261799388 1.48352986" forcerange="-0.4125 0.4125" />
-    <position name="thumb_mcp_flex" joint="thumb_mcp_flex" class="v21" kp="0.848" ctrlrange="-0.174532925 1.22173048" forcerange="-0.4894 0.4894" />
-    <position name="thumb_cmc_flex" joint="thumb_cmc_flex" class="v21" kp="0.878" ctrlrange="-0.645771823 1.09955743" forcerange="-0.4057 0.4057" />
-    <position name="thumb_cmc_rot" joint="thumb_cmc_rot" class="v21" kp="1.002" ctrlrange="-0.541052068 1.91986218" forcerange="-0.5377 0.5377" />
-    <position name="middle_pip" joint="middle_pip" class="v21" kp="0.96" ctrlrange="-0.0872664626 1.65806279" forcerange="-0.5749 0.5749" />
-    <position name="middle_mcp_flex" joint="middle_mcp_flex" class="v21" kp="1.022" ctrlrange="-0.174532925 1.57079633" forcerange="-0.6046 0.6046" />
-    <position name="middle_mcp_abd" joint="middle_mcp_abd" class="v21" kp="1.083" ctrlrange="-0.261799388 0.261799388" forcerange="-0.6046 0.6046" />
-    <position name="ring_pip" joint="ring_pip" class="v21" kp="0.96" ctrlrange="-0.0872664626 1.65806279" forcerange="-0.5749 0.5749" />
-    <position name="ring_mcp_flex" joint="ring_mcp_flex" class="v21" kp="1.022" ctrlrange="-0.174532925 1.57079633" forcerange="-0.6046 0.6046" />
-    <position name="ring_mcp_abd" joint="ring_mcp_abd" class="v21" kp="1.083" ctrlrange="-0.261799388 0.261799388" forcerange="-0.6046 0.6046" />
-    <position name="little_pip" joint="little_pip" class="v21" kp="0.96" ctrlrange="-0.0872664626 1.65806279" forcerange="-0.5749 0.5749" />
-    <position name="little_mcp_flex" joint="little_mcp_flex" class="v21" kp="1.022" ctrlrange="-0.174532925 1.57079633" forcerange="-0.6046 0.6046" />
-    <position name="little_mcp_abd" joint="little_mcp_abd" class="v21" kp="1.083" ctrlrange="-0.261799388 0.130899694" forcerange="-0.6046 0.6046" />
+    <position name="index_pip" joint="index_pip" class="v21" kp="0.96" ctrlrange="-0.686120629 2.17110757" forcerange="-0.5749 0.5749" />
+    <position name="index_mcp_flex" joint="index_mcp_flex" class="v21" kp="1.022" ctrlrange="-0.766118052 2.16238145" forcerange="-0.6046 0.6046" />
+    <position name="index_mcp_abd" joint="index_mcp_abd" class="v21" kp="1.083" ctrlrange="-0.732797006 0.820063469" forcerange="-0.6046 0.6046" />
+    <position name="thumb_ip" joint="thumb_ip" class="v21" kp="0.754" ctrlrange="-0.808881616 2.03061209" forcerange="-0.4125 0.4125" />
+    <position name="thumb_mcp_flex" joint="thumb_mcp_flex" class="v21" kp="0.848" ctrlrange="-0.751655567 1.79885312" forcerange="-0.4894 0.4894" />
+    <position name="thumb_cmc_flex" joint="thumb_cmc_flex" class="v21" kp="0.878" ctrlrange="-1.10784472 1.56163032" forcerange="-0.4057 0.4057" />
+    <position name="thumb_cmc_rot" joint="thumb_cmc_rot" class="v21" kp="1.002" ctrlrange="-1.07767881 2.17110757" forcerange="-0.5377 0.5377" />
+    <position name="middle_pip" joint="middle_pip" class="v21" kp="0.96" ctrlrange="-0.686120629 2.17110757" forcerange="-0.5749 0.5749" />
+    <position name="middle_mcp_flex" joint="middle_mcp_flex" class="v21" kp="1.022" ctrlrange="-0.766118052 2.16238145" forcerange="-0.6046 0.6046" />
+    <position name="middle_mcp_abd" joint="middle_mcp_abd" class="v21" kp="1.083" ctrlrange="-0.820063469 0.820063469" forcerange="-0.6046 0.6046" />
+    <position name="ring_pip" joint="ring_pip" class="v21" kp="0.96" ctrlrange="-0.686120629 2.17110757" forcerange="-0.5749 0.5749" />
+    <position name="ring_mcp_flex" joint="ring_mcp_flex" class="v21" kp="1.022" ctrlrange="-0.766118052 2.16238145" forcerange="-0.6046 0.6046" />
+    <position name="ring_mcp_abd" joint="ring_mcp_abd" class="v21" kp="1.083" ctrlrange="-0.820063469 0.820063469" forcerange="-0.6046 0.6046" />
+    <position name="little_pip" joint="little_pip" class="v21" kp="0.96" ctrlrange="-0.686120629 2.17110757" forcerange="-0.5749 0.5749" />
+    <position name="little_mcp_flex" joint="little_mcp_flex" class="v21" kp="1.022" ctrlrange="-0.766118052 2.16238145" forcerange="-0.6046 0.6046" />
+    <position name="little_mcp_abd" joint="little_mcp_abd" class="v21" kp="1.083" ctrlrange="-0.820063469 0.689163775" forcerange="-0.6046 0.6046" />
     <position name="wrist_flex" joint="wrist_flex" class="v21" kp="21.43" ctrlrange="-0.872664626 0.872664626" forcerange="-4.318 4.318" />
     <position name="wrist_dev" joint="wrist_dev" class="v21" kp="216.56" ctrlrange="-0.523598776 0.34906585" forcerange="-15.215 15.215" />
   </actuator>
+  <sensor>
+    <jointpos name="index_pip_pos" joint="index_pip" />
+    <jointpos name="index_mcp_flex_pos" joint="index_mcp_flex" />
+    <jointpos name="index_mcp_abd_pos" joint="index_mcp_abd" />
+    <jointpos name="thumb_ip_pos" joint="thumb_ip" />
+    <jointpos name="thumb_mcp_flex_pos" joint="thumb_mcp_flex" />
+    <jointpos name="thumb_cmc_flex_pos" joint="thumb_cmc_flex" />
+    <jointpos name="thumb_cmc_rot_pos" joint="thumb_cmc_rot" />
+    <jointpos name="middle_pip_pos" joint="middle_pip" />
+    <jointpos name="middle_mcp_flex_pos" joint="middle_mcp_flex" />
+    <jointpos name="middle_mcp_abd_pos" joint="middle_mcp_abd" />
+    <jointpos name="ring_pip_pos" joint="ring_pip" />
+    <jointpos name="ring_mcp_flex_pos" joint="ring_mcp_flex" />
+    <jointpos name="ring_mcp_abd_pos" joint="ring_mcp_abd" />
+    <jointpos name="little_pip_pos" joint="little_pip" />
+    <jointpos name="little_mcp_flex_pos" joint="little_mcp_flex" />
+    <jointpos name="little_mcp_abd_pos" joint="little_mcp_abd" />
+    <jointpos name="wrist_flex_pos" joint="wrist_flex" />
+    <jointpos name="wrist_dev_pos" joint="wrist_dev" />
+    <actuatorfrc name="index_pip_frc" actuator="index_pip" />
+    <actuatorfrc name="index_mcp_flex_frc" actuator="index_mcp_flex" />
+    <actuatorfrc name="index_mcp_abd_frc" actuator="index_mcp_abd" />
+    <actuatorfrc name="thumb_ip_frc" actuator="thumb_ip" />
+    <actuatorfrc name="thumb_mcp_flex_frc" actuator="thumb_mcp_flex" />
+    <actuatorfrc name="thumb_cmc_flex_frc" actuator="thumb_cmc_flex" />
+    <actuatorfrc name="thumb_cmc_rot_frc" actuator="thumb_cmc_rot" />
+    <actuatorfrc name="middle_pip_frc" actuator="middle_pip" />
+    <actuatorfrc name="middle_mcp_flex_frc" actuator="middle_mcp_flex" />
+    <actuatorfrc name="middle_mcp_abd_frc" actuator="middle_mcp_abd" />
+    <actuatorfrc name="ring_pip_frc" actuator="ring_pip" />
+    <actuatorfrc name="ring_mcp_flex_frc" actuator="ring_mcp_flex" />
+    <actuatorfrc name="ring_mcp_abd_frc" actuator="ring_mcp_abd" />
+    <actuatorfrc name="little_pip_frc" actuator="little_pip" />
+    <actuatorfrc name="little_mcp_flex_frc" actuator="little_mcp_flex" />
+    <actuatorfrc name="little_mcp_abd_frc" actuator="little_mcp_abd" />
+    <actuatorfrc name="wrist_flex_frc" actuator="wrist_flex" />
+    <actuatorfrc name="wrist_dev_frc" actuator="wrist_dev" />
+  </sensor>
 </mujoco>

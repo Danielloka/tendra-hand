@@ -1,88 +1,108 @@
-# Actuator parameters (V2.1, joint level)
+# Actuator parameters (V2.1, joint level): 16 x Feetech HLS3606M + 2 x STS3215 wrist
 
-`actuators.json` holds one entry per servo joint (16) and per wrist joint (2), all **at the joint, + = closing**, for a MuJoCo
-`position` actuator (`kp`, `forcerange`), joint `damping`, `armature`, `frictionloss`. Validate and step-test: `uv run python model/check_actuators.py`.
-Status: derived from datasheets plus the V2.1 study, **no bench measurement yet**. Every estimate is marked.
+Owner decision 2026-11-17: **all 16 hand servos are the HLS3606M** (SCS0009 dropped). `actuators.json` (`servo_model: "HLS3606M"`) holds one entry per servo joint (16)
+and wrist joint (2), all **at the joint, + = closing**, for a MuJoCo `position` actuator (`kp`, `forcerange`), joint `damping`, `armature`, `frictionloss`.
+Validate and step-test: `uv run python model/check_actuators.py`. Status: datasheet + V2.1 study, **no bench measurement yet**; estimates are marked.
 
 ## 1. Servo data (datasheet)
 
-| | SCS0009 (fingers, thumb) | STS3215 12 V (wrist) |
+| | HLS3606M (16 hand joints) | STS3215 12 V (wrist) |
 |---|---|---|
-| Stall torque | 2.3 kg·cm @ 6 V = **0.226 N·m** (rated 0.7 kg·cm = 0.074 N·m) | 30 kg·cm = **2.94 N·m** (7.4 V version: 19.5 kg·cm = 1.91 N·m) |
-| No-load speed | 0.1 s/60° @ 6 V = 10.5 rad/s | 0.222 s/60° = 4.72 rad/s (7.4 V: 0.192 s/60°) |
-| Gearbox / encoder | 1:416 metal, 10 bit (0.29°/tick) | 1:345, 12 bit |
-| Stall current | 1.0 A | 2.7 A |
+| Voltage | 4.5-7.4 V (design 6 V) | 12 V version (7.4 V version also exists) |
+| Stall torque | 6 kg·cm @ 6 V = **0.588 N·m** (4.8 kg·cm @ 4.8 V); study: 0.59 N·m, rated 0.15 N·m | 30 kg·cm = **2.94 N·m** (7.4 V: 19.5 kg·cm) |
+| No-load speed | 0.09 s/60° @ 6 V = 11.6 rad/s (111 rpm); 0.11 s/60° @ 4.8 V | 0.222 s/60° = 4.72 rad/s |
+| Stall / no-load current | **1.3 A** / 150 mA @ 6 V | 2.7 A / 180 mA |
+| Gearbox | **1:205**, metal gears, aluminium case, coreless motor, 20.6 g (C001) | 1:345 |
+| Encoder | 12-bit magnetic (4096 counts, 0.088°), 360° | 12-bit |
+| Modes | angle servo, constant speed, **constant current ("constant force", torque target register)** | position |
 
-Sources: <https://partsbaba.com/products/scs0009-6v-2-3kg-300deg-serial-bus-servo-motor>, <https://openelab.io/products/feetech-scs0009-ultra-compact-servo>,
-<https://www.dfrobot.com/product-2962.html> (12 V), <https://www.waveshare.com/product/st3215-servo.htm?sku=22414> (7.4 V),
-<https://servodatabase.com/servo/feetech/sts3215>, <https://core-electronics.com.au/attachments/uploads/sts3215-smart-servo-datasheet-translated.pdf>.
-Disagreement: retailers mix the 6 V / 7.4 V / 12 V STS3215 figures; the V2 study uses the 12 V part (2.94 N·m). The project's own V1 supply is 5-6 V:
-at 5 V expect about 0.8x the 6 V torque (covered by the torque randomisation). The study's 0.236 / 0.226 N·m and 236 deg/s joint speed agree with the above.
+Sources: <https://openelab.io/products/feetech-hl3606-ttl-servo-motor> (specs above), <https://evelta.com/hl-3606-c001-6v-6kg-360deg-metal-gear-single-shaft-ttl-servo-motor>,
+<https://www.switch-science.com/products/9823> (12-bit, 0.088°, 25T/4.95 mm horn), <https://rcdrone.top/products/feetech-hl-3606-servo-motor>; STS3215:
+<https://www.dfrobot.com/product-2962.html>, <https://www.waveshare.com/product/st3215-servo.htm?sku=22414>, <https://servodatabase.com/servo/feetech/sts3215>.
+Project notes: `research/log.md` 2026-09-30/10-01 (0.59 N·m, 1:205, 25T).
+**Hedges:** (a) the torque is quoted only at 6 V ("6 kg" in some shops may be a constant-force rating, not stall); (b) naming is mixed (HL-3606, HLS3606M, one SKU HLS3612);
+(c) multi-turn mode, current-sensing resolution (STS-family registers are ~6.5 mA/unit) and angle range are **not on any shop page I could read**: get the Feetech memory-table manual
+before writing the driver. Review item 11b (multi-turn) is still open; it is not needed here because the spool/drum ratio is unchanged (servo travel 280° fits one turn).
+Retailers mix the 6 / 7.4 / 12 V STS3215 figures; the V2 study's 12 V part is used.
 
-## 2. Transmission and efficiency (fingers and thumb)
+## 2. Transmission and efficiency (HLS does **not** change the spool or drum)
 
-- Spool line radius 5 mm (the review fix "every spool r 5"), drum line radius 7 mm + 0.235 = 7.235 mm (brass ring), so **ratio G = 1.447 on all 16 servo joints**
-  (reports 12, 16; `travel_table.json`). Thumb drums use the same 1.447 (`cad/18_thumb.py`). Caveat: for `thumb_cmc_rot` the CAD slopes are
-  0.216 / 0.120 mm/deg (flex/ext strand, loop not closed, `out/18/thumb/checks.json: loops`), i.e. flex arm up to 12 mm. 1.447 used (the conservative ext value is 1.38).
-- Efficiency eta (fraction of servo torque that reaches the joint):
-  - route servo to knuckle: 0.92 median with bare strands over metal guides and wrist eyes (report 09/13: median 0.90-0.92), x 0.97 for the PTFE liner bends in the palm (13 §5) = **0.89**;
-  - joint friction (report 12 §1, greased brass bushes mu 0.15): PIP incl. the DIP bar 0.949, MCP 0.998, abd 0.998;
-  - so mcp_flex / mcp_abd **0.888**, pip **0.845**;
-  - thumb: per-strand eta from the CAD (`out/18/thumb/checks.json: eta_strand`, flex strands 0.859 / 0.648 / 0.781 / 0.659 for cmc_rot / cmc_flex / mcp / ip, 8 sliding turns of 60-170 deg) x 0.92 forearm side = **0.79 / 0.60 / 0.72 / 0.61**.
-- **Joint torque limit** = 0.226 x 1.447 x eta: finger mcp 0.291, pip 0.276 N·m; thumb 0.258 / 0.195 / 0.235 / 0.198 N·m. This is the stall peak. The servo backs off after 2 s above 80 %, so
-  `continuous_torque_Nm` (rated 0.074 x G x eta ~ 0.09 N·m) is also in the JSON for later use as a sustained limit. Loop pretension (5 N x 7.2 mm = 0.036 N·m) is not subtracted: it cancels
-  in a balanced loop and acts equally on both directions.
-- **Cross-check:** index pinch at stall = (0.276 - 0.036) / 0.0462 m (PIP drive lever, report 12) = **5.2 N**; reports: 5.6 N (hand, report 12), 5.9 N (bench), 5.4-6.8 N per finger (report 18-fingers). Within 10 %, the lower eta
-  (liners, hand case) explains it. Thumb: cmc_flex limits at 0.195 N·m; report 18 thumb gives 4.1-4.4 N pinch. OK.
-- **Speed limit** = 0.6 x no-load / G = 0.6 x 10.47 / 1.447 = **4.3 rad/s** (loaded; report 01 uses 236 deg/s = 4.1 rad/s). No-load joint speed would be 7.2 rad/s.
+- Spool line radius 5 mm, drum line radius 7.235 mm (7 mm + 14x0.5 brass ring) on every servo joint: **G = 1.447** (reports 12, 16, 18; `travel_table.json`; the thumb uses the same).
+  The study checks HLS at "r 5" (spool); report 01 notes a smaller spool is impossible on the 4.95 mm spline. The 25T spline needs new hubs, not a new ratio.
+  Caveat `thumb_cmc_rot`: CAD flex/ext slopes 0.216 / 0.120 mm/° (loop not closed), 1.447 used.
+- Efficiency eta (unchanged by the servo, capstan loss does not depend on tension): finger route 0.92 x 0.97 liners = 0.89; joint friction MCP/abd 0.998, PIP 0.949 (incl. the DIP bar) =>
+  **mcp 0.888, pip 0.845**; thumb (CAD eta_strand x 0.92) **0.79 / 0.60 / 0.72 / 0.61** (cmc_rot / cmc_flex / mcp / ip). Reports 09, 12 §1, 13, `out/18/thumb/checks.json`.
+- **Joint torque limit** = 0.588 x 1.447 x eta: mcp/abd **0.756**, pip **0.719**, thumb **0.672 / 0.507 / 0.612 / 0.516 N·m** (peak stall). `forcerange_cap80` (80 %, the firmware/constant-current cap recommended in §8) is also in the JSON.
+  `continuous_torque_Nm` (rated 0.15 x G x eta ~ 0.19) for sustained holds. HLS back-off: same 80 % / 2 s behaviour assumed (STS-family rule; verify).
+- **Pinch cross-check (index, PIP-limited):** (0.719 - 0.036 pretension) / 0.0462 m = **14.8 N** at stall, **11.7 N** at the 80 % cap. Reports: 11.6 N (review 10, dorsal crossing), 15.7 N (hand), 16.6 N (bench), 17.6 N (CAD fix),
+  80 %: 12.4-13.1 N. Inside the range; the lower value is the extra 0.97 liner loss. Thumb cmc_flex: 0.507 N·m vs the report's 10.6 N index-pad pinch (lever ~48 mm, plausible).
+- **Speed limit** = 0.6 x 11.6 / 1.447 = **4.8 rad/s** (loaded, 6 V; no-load joint speed 8.0 rad/s). At 5 V scale by ~0.8.
 
 ## 3. Stiffness, damping, armature, friction (fingers, thumb)
 
-- **Tendon stiffness (series):** K_t = r^2 EA / L, r = 7.235 mm, EA = 7 kN (PE#8 braid, report 02 gives 5.5-11 kN; 7 kN allows for crimps/knots), L = strand length servo to joint 0.28-0.40 m
-  (abd 0.28, mcp 0.30, pip 0.32, thumb 0.30-0.40). Gives **K_t ~ 0.9-1.3 N·m/rad** (report 01: 80 lb braid 3.0 N·m/rad for a short 230 mm single strand; report 02: line stretch ~13 deg at SCS stall = ~1.4 N·m/rad;
-  18 N/mm loop = 0.94). Reported per joint as `tendon_stiffness_Nm_rad`.
-- **Servo P stiffness at the joint:** assume the servo asks for full stall torque at 10 deg shaft error (typical hobby bus servo, **estimate**): k_s = 0.226/0.1745 = 1.30 N·m/rad at the shaft;
-  at the joint k = eta G^2 k_s = 2.4 N·m/rad. kp (MuJoCo) = series(k, K_t) = **0.59-0.85 N·m/rad** (index mcp 0.81, pip 0.76; thumb lower from eta and longer strands).
-  Torque saturates at about 20 deg error, about like the reports' "sag" numbers. MuJoCo has no separate tendon spring, so kp is the series value.
-- **Armature** (reflected rotor): coreless rotor ~2e-9 kg·m^2 (**estimate**, 0.8-5e-9) x 416^2 x G^2 = **7.2e-4 kg·m^2** at the joint. It dominates the finger links (6e-6 .. 1e-4), which is why a 30 deg step takes ~0.12 s.
-- **Link inertia** (`load_inertia_kgm2`): point masses (+ rod terms) from the CAD masses (`out/18/checks.json`: index yoke 3.85 g, proximal 10.98, middle 4.64, distal 4.19 + skin 0.66, little 8.6 / 3.8 / 3.7; thumb base 6.9,
-  metacarpal 17.6, proximal 11.1, distal 6.3, +1-1.5 g pins/rings) at assumed phalanx COM distances (index 22 / 58 / 83 mm from the MCP, PIP 13 / 38 mm; thumb 20-80 mm). Index MCP/abd 6.3e-5, PIP 9e-6;
-  middle x1.3, ring x1.15, little x0.55 (lengths scale estimated). abd uses the MCP value (finger straight). Thumb: cmc_rot 1.0e-4, cmc_flex 8.6e-5, mcp 1.6e-5, ip 1.5e-6.
-- **Damping** = 2 zeta sqrt(kp (I_load + armature)), zeta = 1: **0.041-0.052 N·m·s/rad**. It also gives a terminal speed at full torque = 0.29/0.05 = 5.8 rad/s, close to the real servo speed, so no extra rate limit is needed in MuJoCo.
-- **Frictionloss** = 3 % of the torque limit (0.006-0.009 N·m): gearbox 1:416 (not backdrivable) plus brass bush/guide friction (1 - eta is load-dependent and already in the torque limit). Gives 0.2 deg steady-state error. **Estimate**; randomised x0.4-3.
+- **Tendon stiffness (series):** K_t = r² EA / L = 7.235 mm² x 7 kN / (0.28-0.40 m) = **0.9-1.3 N·m/rad** (PE#8, EA 5.5-11 kN in report 02). At HLS stall this gives a lag of 0.7 N·m / 1.2 = 0.6 rad = **35°**;
+  report 02 quotes 31° at HLS with a steel coil and 208° with PTFE, so the line (not the servo) is the compliance. Joint-angle sensing is mandatory (report 01 §3.3).
+- **Servo P stiffness at the joint:** full stall torque at 10° shaft error (**estimate**) => k_s = 0.588/0.1745 = 3.37 N·m/rad; at the joint eta G² k_s = **6.0-6.3 N·m/rad**. kp (MuJoCo) = series(k_joint, K_t) = **0.75-1.08 N·m/rad**
+  (index mcp 1.02, pip 0.96, thumb 0.75-1.0). The tendon dominates, so the HLS is only ~25 % stiffer than the SCS case despite 2.6x torque.
+- **Armature** (reflected rotor): coreless rotor ~3e-9 kg·m² (**estimate**, 1-6e-9) x 205² x G² = **2.6e-4 kg·m²** at the joint (SCS case was 7.2e-4 with 1:416: gearbox ratio² is 4.1x lower).
+  Still larger than the finger links (6e-6 to 1e-4).
+- **Link inertia** (`load_inertia_kgm2`): unchanged from the CAD-mass estimate (index yoke 3.85 g, proximal 10.98, middle 4.64, distal 4.19 + skin; thumb 6.9 / 17.6 / 11.1 / 6.3 g at assumed COM distances):
+  index MCP/abd 6.3e-5, PIP 9e-6, middle x1.3, ring x1.15, little x0.55; thumb 1.0e-4 / 8.6e-5 / 1.6e-5 / 1.5e-6.
+- **Damping** = 2 zeta sqrt(kp (I + armature)) with **zeta = 1.8** (0.051-0.070 N·m·s/rad). The HLS is fast (11.6 rad/s no load) and a critically damped sim joint would take ~50 ms for a 30° step, faster than the real,
+  speed-limited servo (30° at 4.8 rad/s = 109 ms minimum); zeta 1.8 reproduces ~150 ms. The terminal speed at full torque is still ~11 rad/s, so the **env must rate-limit commands** to `velocity_limit_rad_s`.
+- **Frictionloss** = 3 % of the torque limit (0.015-0.023 N·m): 1:205 metal gearbox, not backdrivable + bush/guide friction (**estimate**; randomised x0.4-3).
 
-## 4. Wrist (2 x STS3215 12 V through the V2 gear + crank + rod drive)
+## 4. Wrist (2 x STS3215 12 V through the V2 gear + crank + rod drive), unchanged
 
-- V2 report 03 / `out/wrist/wrist_summary.json`: 14T:36T spur (2.57:1) + crank + M4 rod, DE-optimised. Joint torque at servo stall: **flex min 3.63, median 5.08 N·m; dev min 16.1, median 17.9 N·m**; continuous (30 % rated) flex 1.11 min (1.56 median), dev 4.9.
-  The reports' effective torque ratio (capacity / 2.94): flex 1.23-1.73 (median **1.73**), dev 5.5-6.1 (**5.5**); servo travel -144..+150 deg.
-  The ratio varies with pose (crank angle, transmission angle >= 30 deg); the JSON takes the median. **Open: whether the flex figure uses one or both servos** (the report does not say, the rods give 187 N per N·m).
-- eta **0.85** (spur 0.95 x 2 ball joints 0.95 x plain bushes; the W13 bushes lose 0.28 N·m at a full SCS squeeze, report 13). forcerange flex +-4.32, dev +-15.2 N·m (dev is oversized by design: the palm balls sit far out).
-  Real sustained loads are far lower (hand alone 0.2 N·m, fist at SCS 0.39 N·m, report 13), so `continuous_torque_Nm` (1.56 / 4.9 x eta) is provided.
-- Speed: 0.8 x 4.72 / ratio = **2.2 rad/s flex, 0.69 rad/s dev** (dev ratio large: slow). **Uncertain**, the effective angular ratio flex could be up to 2.9 (travel 294 deg over 100 deg).
-- kp = 0.5 x eta ratio^2 (2.94/0.1745) with factor 0.5 for gear backlash and rod compliance = **21 (flex), 217 (dev) N·m/rad**. Load inertia of palm + fingers + thumb ~ 0.28 kg at ~75 mm: **1.8e-3 kg·m^2**.
-  Armature = 5e-9 x 345^2 x ratio^2 = **1.8e-3 (flex), 1.8e-2 (dev)**. Damping zeta 1.3 (0.72, 5.4). Frictionloss 3 % of the limit.
-- Wrist joints take **large** action limits from `velocity_limit_rad_s`; in MuJoCo the position actuator can slew faster (dev 20 deg in 0.1 s vs 0.5 s real), so the env must rate-limit commands.
+Joint capacity at stall flex min 3.63 / median 5.08 N·m, dev 16.1 / 17.9 N·m (V2 `wrist_summary.json`), effective torque ratio flex 1.73, dev 5.5 (median), eta 0.85 => forcerange **4.32 / 15.2 N·m**;
+speed 0.8 x 4.72 / ratio = 2.2 / 0.69 rad/s; kp 21 / 217 N·m/rad (0.5 backlash factor); armature 5e-9 x 345² x ratio² = 1.8e-3 / 1.8e-2; load inertia 1.8e-3 kg·m²; zeta 1.3. With HLS fingers the fist
+loads the wrist more: drive torque 1.01 N·m (report 13, HLS fist at 80 %) vs 3.63 N·m flex capacity: OK. Open: one vs both servos in the capacity figure; effective angular ratio (flex up to 2.9).
 
-## 5. Step response (30 deg fingers / 20 deg wrist, 2 ms step, `check_actuators.py`)
+## 5. Step response (`check_actuators.py`, 30° fingers / 20° wrist, 2 ms step)
 
 | group | rise 10-90 % | overshoot | 2 % settling | steady error |
 |---|---|---|---|---|
-| finger/thumb joints | 114-144 ms | 0 % | 0.29-0.36 s | -0.5..-0.8 % (friction) |
+| finger/thumb joints | 144-166 ms | 0 % | 0.53-0.64 s | -0.08..-0.27 % |
 | wrist_flex | 72 ms | 0 % | 0.17 s | 0 |
 | wrist_dev | 104 ms | 0 % | 0.16 s | 0 |
 
-Critically damped by design; real servos have a small overshoot (PD, backlash).
+## 6. Randomisation (`randomization` in the JSON)
 
-## 6. Randomisation (see `randomization` in the JSON)
+Torque x0.6-1.05 (cap at ~80 %, 5 V = x0.8, eta spread, supply sag), kp x0.5-1.6, damping x0.5-2, armature x0.4-2.5, frictionloss x0.4-3, thumb eta extra x0.8-1.1, velocity x0.6-1.0, link inertia x0.7-1.4;
+plus deadband 0-1.5° (12-bit encoder, 0.088°/tick; gearbox backlash dominates), latency 10-50 ms (1 Mbps bus, 16 servos), backlash 0-2°. Sample once per episode.
 
-Torque x0.7-1.1 (5 V supply, back-off, eta spread), kp x0.5-1.6 (log), damping x0.5-2, armature x0.4-2.5, frictionloss x0.4-3, thumb eta extra x0.8-1.1, velocity limit x0.6-1.0,
-link inertia x0.7-1.4, plus non-MuJoCo effects to inject in the env: deadband 0-1.5 deg, latency 10-50 ms (1 Mbps bus, 16 servos), backlash 0-2 deg. Sample once per episode.
+## 7. Power (16 x HLS3606M)
 
-## 7. Biggest uncertainties, measure first
+- Stall current **1.3 A @ 6 V** each (shop figure; hedge) => **20.8 A** if all 16 stall at once; no-load 0.15 A each (2.4 A). The reports size for >= 15 A (V1) at 5-6 V; with HLS:
+  - a **6 V supply of >= 25 A** peak (e.g. 6 V / 30 A) for the hand, or 7.4 V is the servo maximum (4.5-7.4 V) so keep it at 6 V;
+  - realistic grasp load: fist = 16 flex strands at <= 80 % torque ~ 16 x 1.0 A = 16 A; power grasp (12 strands at 50 %) ~ 8-10 A; pinch ~ 2-3 A; sustained holds are limited to the rated 0.15 N·m (~25 % torque, ~0.4 A each);
+  - **4 branches** (5 servos on the 6 V bus + 4 per branch, thick 16 AWG star wiring), 1000-2200 µF low-ESR per branch and a TVS, because the bus drops 0.3 V per 5 A over ~0.1 ohm wiring and torque falls ~20 % at 5 V;
+  - constant-current mode (firmware cap at 80 %) also caps the supply peak at ~16 A;
+  - **wrist: 2 x STS3215 at 12 V, 2.7 A stall each** (5.4 A) on a separate 12 V / >= 8 A branch (ground shared).
+- Heat: HLS holding > 80 % for > 2 s backs off; a 1.3 A stall in a closed forearm needs airflow; the forearm already holds 599 g of servos.
 
-1. **Servo P-stiffness / saturation angle** (10 deg assumed): step test one SCS0009 on a free inertia through a loaded tendon, read position feedback. Sets kp (x2 either way).
-2. **Rotor/gear inertia** (armature 7e-4): measure the step rise time with no tendon load; drives the whole timing.
-3. **Real efficiency per joint** (esp. thumb cmc_flex/ip 0.6, wrist eyes) and the pinch force: first bench finger test (pass >= 4.5 N at 80 %).
-4. **Tendon EA / creep** (K_t, and loop pretension).
-5. **Wrist drive**: torque per servo (one or two), true effective ratio vs pose, backlash, STS3215 speed under load; `thumb_cmc_rot` drum arm.
-6. SCS0009 supply (5 V vs 6 V) and back-off behaviour (2 s above 80 %).
+## 8. Part ratings vs the HLS stall pull (flags)
+
+Strand tension at stall = 0.588 N·m / 5 mm = **117.6 N on every one of the 16 joints** (80 % cap 94 N); the V2.1 design class is ~118-120 N, so nothing is above it, but these parts are marginal (reports 02, 10, 12, 13):
+
+| Part | Rating / margin at HLS | Action |
+|---|---|---|
+| **Fuse cup** (report 12 §5) | HLS cup (0.8 mm lip on its side) trips at **148 N** = 1.26 x stall, 1.57 x the 80 % cap; at -25 % scatter 111 N < stall. **The SCS cup (67 N) would trip at 0.57 x stall** | print the HLS cups only; cap at 80 % in firmware (constant-current mode) |
+| MR63 redirect roller / idler | s0 **0.48 / 0.59** at 80 % (155 / 126 N) | F683ZZ/MR83 or a hardened dowel (eta 0.79 => pinch -21 %) |
+| MR84 MCP lug bearing | s0 0.93 at stall (150 N at 80 %) | torque cap 80 % is what keeps it below 1 |
+| Spool dog pins | 64 N per pin = 27 MPa on PETG (report 02) | brass liners in the slots or 3 dogs |
+| Wrist-eye lip | 418 MPa at HLS (160 at SCS), report 09/10 | the architecture decider; bench test the eye plate first |
+| abd x-nip pins | line on Ø2 / Ø1.5 pin 255 / 340 MPa (report 12 #8) | only when abducted; bench |
+| Wrist compression | 1670 N (fist at 80 %): ring 7075 SF 1.2, bronze bush s0 1.1 (iglidur 2.2), hollow pins SF 1.6 | iglidur G bushes + 7075 (report 13) |
+| PE#8 line | 445 N break: SF 3.8 at stall, ~2.9 if the real rating is 350 N | measure |
+| Drum PETG under the ring | 11.3 MPa vs 12 MPa creep limit | marginal; metal ring is in the design |
+| MCP axle | 98 MPa (nested tube), fine | - |
+
+## 9. Biggest uncertainties, measure first
+
+1. Servo P-stiffness / saturation angle (10° assumed) and the **constant-current register** (units, limit) on one HLS3606M.
+2. HLS stall torque vs voltage (6 V only quoted) and stall current (1.3 A shops); the 80 %/2 s back-off and whether it applies.
+3. Rotor/gear inertia (armature 2.6e-4) and speed under load (4.8 rad/s).
+4. Real efficiency per joint (thumb 0.6) and pinch force (pass >= 11 N at 80 %); tendon EA and creep (35° stretch lag at stall).
+5. Fuse cup trip distribution, MR63/eye-plate wear (§8).
+6. Wrist drive: one vs both servos, effective ratio, backlash.

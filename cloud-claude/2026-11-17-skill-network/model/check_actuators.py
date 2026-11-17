@@ -35,6 +35,8 @@ def validate(d):
                 errs.append(f"{n}.forcerange not symmetric")
             if not 0 < v.get("efficiency", 0) <= 1:
                 errs.append(f"{n}.efficiency outside (0,1]")
+    if d.get("servo_model") != "HLS3606M":
+        errs.append("servo_model must be HLS3606M")
     for k in ("servos", "wrist", "randomization"):
         if k not in d:
             errs.append(f"missing section {k}")
@@ -86,10 +88,23 @@ def main():
             print(f"{n:16s} {v['kp']:7.3f} {v['forcerange'][1]:8.4f} {v['damping']:7.4f} {v['armature']:8.5f} "
                   f"{v['load_inertia_kgm2']:8.1e} {r*1e3:8.0f} {o:6.1f} {s*1e3:9.0f} {e:8.2f} {v['velocity_limit_rad_s']:10.2f}")
     print("(fingers: 30 deg step; wrist: 20 deg step)")
-    # cross-check: index pinch force = (tau_pip - pretension) / lever, vs reports 5.6-6.7 N (SCS0009)
+    # cross-check: index pinch force = (tau_pip - pretension) / lever, vs the reports' HLS3606M numbers
     pip = d["servos"]["index_pip"]
     pre = 5.0 * 7.235e-3
-    print(f"index pinch at stall ~ {(pip['forcerange'][1]-pre)/0.0462:.1f} N (report 12: 5.6 N hand / 5.9 N bench)")
+    f100 = (pip['forcerange'][1] - pre) / 0.0462
+    f80 = (pip['forcerange_cap80'][1] - pre) / 0.0462
+    print(f"index pinch: stall {f100:.1f} N, 80 % cap {f80:.1f} N "
+          "(reports, HLS3606M: 11.6 N (review) / 15.7 N hand / 16.6 N bench / 17.6 N after the roller fix; 80 %: 12.4-13.1 N)")
+    # strand tension at stall vs part ratings (reports 02, 12, 13)
+    print("\nstrand tension at servo stall (5 mm spool):")
+    for n, v in d["servos"].items():
+        t = v["strand_tension_stall_N"]
+        break
+    print(f"  {t:.1f} N on every joint (80 % cap {0.8*t:.1f} N). Fuse cup HLS version trips at 148 N (1.26x stall, 111 N at -25 % scatter = BELOW stall); "
+          "SCS version (67 N) would trip at 0.57x stall.")
+    print("  other limits: PE#8 445 N break (SF 3.8), MR63 roller/idler s0 0.48/0.59 at 80 %, MR84 lug 0.93, dog slots 27 MPa on PETG, eye lip 418 MPa")
+    # power
+    print(f"\nstall current 16 x 1.3 A = {16*1.3:.1f} A at 6 V (+ 2 x 2.7 A at 12 V for the wrist)")
 
 
 if __name__ == "__main__":

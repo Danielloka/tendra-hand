@@ -1,0 +1,1410 @@
+{
+ "source": {
+  "study": "cloud-claude/2026-11-14-hardware-ideas",
+  "git_rev": "b41d22314e29840f82ed9c54a888537b7dfc6818",
+  "poses_sha256": "c87d6cba13b345b84a605af87ad5624c814b066d6f17e43d8360b60db3ed6b59"
+ },
+ "part_meshes": {
+  "mesh_pose": "wrist_flex_+40",
+  "fk_vs_posesjson_T_max_abs": 0.0,
+  "parts_with_package_stl": 470,
+  "package_stl_max_dev_mm": 0.000121,
+  "package_stl_worst_part": "middle_tip_skin",
+  "fk_vs_posesjson_all_poses_max_abs": 0.0
+ },
+ "joints": {
+  "wrist_dev": {
+   "parent": "forearm",
+   "child": "wrist_ring",
+   "leader": "wrist_dev",
+   "samples": 41,
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "pivot_mm": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  },
+  "wrist_flex": {
+   "parent": "wrist_ring",
+   "child": "palm",
+   "leader": "wrist_flex",
+   "samples": 41,
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_mm": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  },
+  "index_mcp_abd": {
+   "parent": "palm",
+   "child": "index_yoke",
+   "leader": "index_mcp_abd",
+   "samples": 41,
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "pivot_mm": [
+    20.0,
+    -2.0,
+    79.0
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  },
+  "index_mcp_flex": {
+   "parent": "index_yoke",
+   "child": "index_proximal",
+   "leader": "index_mcp_flex",
+   "samples": 41,
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_mm": [
+    20.0,
+    -2.0,
+    92.0
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  },
+  "index_pip": {
+   "parent": "index_proximal",
+   "child": "index_middle",
+   "leader": "index_pip",
+   "samples": 41,
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_mm": [
+    20.0,
+    -2.0,
+    134.0
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  },
+  "index_dip": {
+   "parent": "index_middle",
+   "child": "index_distal",
+   "leader": "index_pip",
+   "samples": 201,
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_mm": [
+    20.0,
+    -2.0,
+    158.0
+   ],
+   "residual_rot_deg": 1e-06,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0,
+   "poly_max_err_deg": 0.040239,
+   "angle_range_deg": [
+    -3.320059,
+    71.40076
+   ],
+   "fitted_angle_vs_F_dip_max_deg": 0.0
+  },
+  "index_bar": {
+   "parent": "index_proximal",
+   "child": "index_bar",
+   "leader": "index_pip",
+   "samples": 201,
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_mm": [
+    12.55,
+    0.453043,
+    138.471306
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0,
+   "poly_max_err_deg": 0.065172,
+   "angle_range_deg": [
+    -6.200618,
+    87.360939
+   ]
+  },
+  "middle_mcp_abd": {
+   "parent": "palm",
+   "child": "middle_yoke",
+   "leader": "middle_mcp_abd",
+   "samples": 41,
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "pivot_mm": [
+    0.0,
+    -2.0,
+    83.0
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  },
+  "middle_mcp_flex": {
+   "parent": "middle_yoke",
+   "child": "middle_proximal",
+   "leader": "middle_mcp_flex",
+   "samples": 41,
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_mm": [
+    0.0,
+    -2.0,
+    96.0
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  },
+  "middle_pip": {
+   "parent": "middle_proximal",
+   "child": "middle_middle",
+   "leader": "middle_pip",
+   "samples": 41,
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_mm": [
+    0.0,
+    -2.0,
+    141.0
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  },
+  "middle_dip": {
+   "parent": "middle_middle",
+   "child": "middle_distal",
+   "leader": "middle_pip",
+   "samples": 201,
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_mm": [
+    0.0,
+    -2.0,
+    168.0
+   ],
+   "residual_rot_deg": 1e-06,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0,
+   "poly_max_err_deg": 0.031919,
+   "angle_range_deg": [
+    -3.226302,
+    71.393158
+   ],
+   "fitted_angle_vs_F_dip_max_deg": 0.0
+  },
+  "middle_bar": {
+   "parent": "middle_proximal",
+   "child": "middle_bar",
+   "leader": "middle_pip",
+   "samples": 201,
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_mm": [
+    -7.45,
+    0.472529,
+    145.460561
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0,
+   "poly_max_err_deg": 0.04357,
+   "angle_range_deg": [
+    -6.093688,
+    89.914473
+   ]
+  },
+  "ring_mcp_abd": {
+   "parent": "palm",
+   "child": "ring_yoke",
+   "leader": "ring_mcp_abd",
+   "samples": 41,
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "pivot_mm": [
+    -20.0,
+    -2.0,
+    80.0
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  },
+  "ring_mcp_flex": {
+   "parent": "ring_yoke",
+   "child": "ring_proximal",
+   "leader": "ring_mcp_flex",
+   "samples": 41,
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_mm": [
+    -20.0,
+    -2.0,
+    93.0
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  },
+  "ring_pip": {
+   "parent": "ring_proximal",
+   "child": "ring_middle",
+   "leader": "ring_pip",
+   "samples": 41,
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_mm": [
+    -20.0,
+    -2.0,
+    136.0
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  },
+  "ring_dip": {
+   "parent": "ring_middle",
+   "child": "ring_distal",
+   "leader": "ring_pip",
+   "samples": 201,
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_mm": [
+    -20.0,
+    -2.0,
+    162.0
+   ],
+   "residual_rot_deg": 1e-06,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0,
+   "poly_max_err_deg": 0.059487,
+   "angle_range_deg": [
+    -3.415471,
+    71.363017
+   ],
+   "fitted_angle_vs_F_dip_max_deg": 0.0
+  },
+  "ring_bar": {
+   "parent": "ring_proximal",
+   "child": "ring_bar",
+   "leader": "ring_pip",
+   "samples": 201,
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_mm": [
+    -27.45,
+    0.820053,
+    140.260635
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0,
+   "poly_max_err_deg": 0.058503,
+   "angle_range_deg": [
+    -6.028151,
+    86.289013
+   ]
+  },
+  "little_mcp_abd": {
+   "parent": "palm",
+   "child": "little_yoke",
+   "leader": "little_mcp_abd",
+   "samples": 41,
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "pivot_mm": [
+    -40.0,
+    -2.0,
+    72.0
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  },
+  "little_mcp_flex": {
+   "parent": "little_yoke",
+   "child": "little_proximal",
+   "leader": "little_mcp_flex",
+   "samples": 41,
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_mm": [
+    -40.0,
+    -2.0,
+    85.0
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  },
+  "little_pip": {
+   "parent": "little_proximal",
+   "child": "little_middle",
+   "leader": "little_pip",
+   "samples": 41,
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_mm": [
+    -40.0,
+    -2.0,
+    119.0
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  },
+  "little_dip": {
+   "parent": "little_middle",
+   "child": "little_distal",
+   "leader": "little_pip",
+   "samples": 201,
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_mm": [
+    -40.0,
+    -2.0,
+    139.0
+   ],
+   "residual_rot_deg": 1e-06,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0,
+   "poly_max_err_deg": 0.11769,
+   "angle_range_deg": [
+    -3.329001,
+    71.679643
+   ],
+   "fitted_angle_vs_F_dip_max_deg": 0.0
+  },
+  "little_bar": {
+   "parent": "little_proximal",
+   "child": "little_bar",
+   "leader": "little_pip",
+   "samples": 201,
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_mm": [
+    -47.449999,
+    0.071815,
+    123.660213
+   ],
+   "residual_rot_deg": 0.0,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0,
+   "poly_max_err_deg": 0.1251,
+   "angle_range_deg": [
+    -6.497931,
+    84.679435
+   ]
+  },
+  "thumb_cmc_rot": {
+   "parent": "palm",
+   "child": "thumb_base",
+   "leader": "thumb_cmc_rot",
+   "samples": 41,
+   "axis": [
+    0.40979,
+    -0.56499,
+    0.716141
+   ],
+   "pivot_mm": [
+    39.787478,
+    -17.86472,
+    50.444432
+   ],
+   "residual_rot_deg": 1e-06,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 1e-06,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  },
+  "thumb_cmc_flex": {
+   "parent": "thumb_base",
+   "child": "thumb_metacarpal",
+   "leader": "thumb_cmc_flex",
+   "samples": 41,
+   "axis": [
+    0.131887,
+    -0.740141,
+    -0.659392
+   ],
+   "pivot_mm": [
+    39.787478,
+    -17.86472,
+    50.444432
+   ],
+   "residual_rot_deg": 1e-06,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 1e-06,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  },
+  "thumb_mcp_flex": {
+   "parent": "thumb_metacarpal",
+   "child": "thumb_proximal",
+   "leader": "thumb_mcp_flex",
+   "samples": 41,
+   "axis": [
+    -0.829196,
+    0.245585,
+    0.502118
+   ],
+   "pivot_mm": [
+    52.28646,
+    -46.506881,
+    85.094062
+   ],
+   "residual_rot_deg": 1e-06,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  },
+  "thumb_ip": {
+   "parent": "thumb_proximal",
+   "child": "thumb_distal",
+   "leader": "thumb_ip",
+   "samples": 41,
+   "axis": [
+    -0.880981,
+    0.155958,
+    0.44671
+   ],
+   "pivot_mm": [
+    61.931944,
+    -68.610082,
+    111.833236
+   ],
+   "residual_rot_deg": 1e-06,
+   "residual_pos_mm": 0.0,
+   "axis_spread_deg": 0.0,
+   "cad_axis_angle_deg": 0.0,
+   "cad_axis_same_sign": true,
+   "cad_pivot_off_axis_mm": 0.0
+  }
+ },
+ "bar_pure_rotation_about_pin_A_at_other_mcp_abd": {
+  "max_residual_deg_or_mm": {
+   "index": 0.157507,
+   "middle": 0.110615,
+   "ring": 0.143219,
+   "little": 0.270001
+  },
+  "note": "bar relative to proximal vs the fitted hinge, at MCP 70/abd 10 and MCP -10/wrist 30, pip swept"
+ },
+ "mass": {
+  "total_g": 1112.92,
+  "checks_json_total_g": 1112.9,
+  "by_body_g": {
+   "forearm": {
+    "mass_g": 786.55,
+    "parts": 87,
+    "non_exact": {}
+   },
+   "wrist_ring": {
+    "mass_g": 39.95,
+    "parts": 6,
+    "non_exact": {
+     "ring_w13": "voxel 0.25 mm (217352 voxels)"
+    }
+   },
+   "palm": {
+    "mass_g": 117.76,
+    "parts": 135,
+    "non_exact": {
+     "little_liner_abd_ext": "voxel 0.25 mm (14088 voxels)"
+    }
+   },
+   "index_yoke": {
+    "mass_g": 5.5,
+    "parts": 30,
+    "non_exact": {}
+   },
+   "index_proximal": {
+    "mass_g": 11.77,
+    "parts": 19,
+    "non_exact": {}
+   },
+   "index_middle": {
+    "mass_g": 5.97,
+    "parts": 12,
+    "non_exact": {}
+   },
+   "index_distal": {
+    "mass_g": 5.39,
+    "parts": 13,
+    "non_exact": {}
+   },
+   "index_bar": {
+    "mass_g": 0.44,
+    "parts": 1,
+    "non_exact": {}
+   },
+   "thumb_base": {
+    "mass_g": 9.63,
+    "parts": 12,
+    "non_exact": {}
+   },
+   "thumb_metacarpal": {
+    "mass_g": 21.26,
+    "parts": 16,
+    "non_exact": {}
+   },
+   "thumb_proximal": {
+    "mass_g": 13.57,
+    "parts": 15,
+    "non_exact": {}
+   },
+   "thumb_distal": {
+    "mass_g": 9.07,
+    "parts": 10,
+    "non_exact": {}
+   },
+   "middle_yoke": {
+    "mass_g": 5.5,
+    "parts": 30,
+    "non_exact": {}
+   },
+   "middle_proximal": {
+    "mass_g": 12.67,
+    "parts": 19,
+    "non_exact": {}
+   },
+   "middle_middle": {
+    "mass_g": 6.77,
+    "parts": 12,
+    "non_exact": {}
+   },
+   "middle_distal": {
+    "mass_g": 5.65,
+    "parts": 13,
+    "non_exact": {}
+   },
+   "middle_bar": {
+    "mass_g": 0.51,
+    "parts": 1,
+    "non_exact": {}
+   },
+   "ring_yoke": {
+    "mass_g": 5.5,
+    "parts": 30,
+    "non_exact": {}
+   },
+   "ring_proximal": {
+    "mass_g": 12.07,
+    "parts": 19,
+    "non_exact": {}
+   },
+   "ring_middle": {
+    "mass_g": 6.49,
+    "parts": 12,
+    "non_exact": {}
+   },
+   "ring_distal": {
+    "mass_g": 5.39,
+    "parts": 13,
+    "non_exact": {}
+   },
+   "ring_bar": {
+    "mass_g": 0.48,
+    "parts": 1,
+    "non_exact": {}
+   },
+   "little_yoke": {
+    "mass_g": 5.5,
+    "parts": 30,
+    "non_exact": {}
+   },
+   "little_proximal": {
+    "mass_g": 9.36,
+    "parts": 19,
+    "non_exact": {}
+   },
+   "little_middle": {
+    "mass_g": 4.96,
+    "parts": 9,
+    "non_exact": {}
+   },
+   "little_distal": {
+    "mass_g": 4.86,
+    "parts": 13,
+    "non_exact": {}
+   },
+   "little_bar": {
+    "mass_g": 0.35,
+    "parts": 1,
+    "non_exact": {}
+   }
+  },
+  "method": "per part: real mass from checks.json mass_g, COM/inertia from its q = 0 mesh scaled to that mass (exact for watertight meshes; non-watertight: repaired or voxelised, listed)"
+ },
+ "meshes": {
+  "visual_faces_total": 446992,
+  "by_body": {
+   "forearm": {
+    "source_faces": 417396,
+    "visual_faces": 251892
+   },
+   "wrist_ring": {
+    "source_faces": 58840,
+    "visual_faces": 5994
+   },
+   "palm": {
+    "source_faces": 208122,
+    "visual_faces": 64272
+   },
+   "index_yoke": {
+    "source_faces": 25774,
+    "visual_faces": 9780
+   },
+   "index_proximal": {
+    "source_faces": 13068,
+    "visual_faces": 6000
+   },
+   "index_middle": {
+    "source_faces": 10646,
+    "visual_faces": 5000
+   },
+   "index_distal": {
+    "source_faces": 7540,
+    "visual_faces": 5000
+   },
+   "index_bar": {
+    "source_faces": 1020,
+    "visual_faces": 398
+   },
+   "thumb_base": {
+    "source_faces": 12356,
+    "visual_faces": 5000
+   },
+   "thumb_metacarpal": {
+    "source_faces": 14432,
+    "visual_faces": 6000
+   },
+   "thumb_proximal": {
+    "source_faces": 13732,
+    "visual_faces": 5000
+   },
+   "thumb_distal": {
+    "source_faces": 12712,
+    "visual_faces": 5000
+   },
+   "middle_yoke": {
+    "source_faces": 25774,
+    "visual_faces": 9720
+   },
+   "middle_proximal": {
+    "source_faces": 13066,
+    "visual_faces": 6000
+   },
+   "middle_middle": {
+    "source_faces": 10604,
+    "visual_faces": 5000
+   },
+   "middle_distal": {
+    "source_faces": 7538,
+    "visual_faces": 5000
+   },
+   "middle_bar": {
+    "source_faces": 1020,
+    "visual_faces": 398
+   },
+   "ring_yoke": {
+    "source_faces": 25774,
+    "visual_faces": 9140
+   },
+   "ring_proximal": {
+    "source_faces": 13072,
+    "visual_faces": 6000
+   },
+   "ring_middle": {
+    "source_faces": 10626,
+    "visual_faces": 5000
+   },
+   "ring_distal": {
+    "source_faces": 7544,
+    "visual_faces": 5000
+   },
+   "ring_bar": {
+    "source_faces": 1020,
+    "visual_faces": 398
+   },
+   "little_yoke": {
+    "source_faces": 25778,
+    "visual_faces": 9602
+   },
+   "little_proximal": {
+    "source_faces": 13064,
+    "visual_faces": 6000
+   },
+   "little_middle": {
+    "source_faces": 10580,
+    "visual_faces": 5000
+   },
+   "little_distal": {
+    "source_faces": 7550,
+    "visual_faces": 5000
+   },
+   "little_bar": {
+    "source_faces": 1020,
+    "visual_faces": 398
+   }
+  },
+  "decimation": "fast-simplification (quadric)"
+ },
+ "collision": {
+  "by_body": {
+   "forearm": [
+    {
+     "file": "forearm_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.085481,
+     "parts": "87 parts"
+    },
+    {
+     "file": "forearm_c1.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.33934,
+     "parts": "87 parts"
+    }
+   ],
+   "wrist_ring": [
+    {
+     "file": "wrist_ring_c0.stl",
+     "kind": "coacd",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.128216,
+     "parts": [
+      "ring_w13"
+     ]
+    },
+    {
+     "file": "wrist_ring_c1.stl",
+     "kind": "coacd",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.089963,
+     "parts": [
+      "ring_w13"
+     ]
+    },
+    {
+     "file": "wrist_ring_c2.stl",
+     "kind": "coacd",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.084291,
+     "parts": [
+      "ring_w13"
+     ]
+    },
+    {
+     "file": "wrist_ring_c3.stl",
+     "kind": "coacd",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.116313,
+     "parts": [
+      "ring_w13"
+     ]
+    }
+   ],
+   "palm": [
+    {
+     "file": "palm_c0.stl",
+     "kind": "coacd",
+     "cls": "geom",
+     "verts": 10,
+     "hull_reduction_dev_mm": 0.0,
+     "parts": [
+      "palm_v21"
+     ]
+    },
+    {
+     "file": "palm_c1.stl",
+     "kind": "coacd",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.030641,
+     "parts": [
+      "palm_v21"
+     ]
+    },
+    {
+     "file": "palm_c2.stl",
+     "kind": "coacd",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.001402,
+     "parts": [
+      "palm_v21"
+     ]
+    },
+    {
+     "file": "palm_c3.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.0,
+     "parts": "4 parts"
+    },
+    {
+     "file": "palm_c4.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.494904,
+     "parts": [
+      "thumb_mount"
+     ]
+    },
+    {
+     "file": "palm_c5.stl",
+     "kind": "hull",
+     "cls": "pad",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.092199,
+     "parts": [
+      "palm_hypothenar_pad"
+     ]
+    },
+    {
+     "file": "palm_c6.stl",
+     "kind": "hull",
+     "cls": "pad",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.218745,
+     "parts": [
+      "palm_pad"
+     ]
+    }
+   ],
+   "index_yoke": [
+    {
+     "file": "index_yoke_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.222041,
+     "parts": "30 parts"
+    }
+   ],
+   "index_proximal": [
+    {
+     "file": "index_proximal_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.122147,
+     "parts": "18 parts"
+    },
+    {
+     "file": "index_proximal_c1.stl",
+     "kind": "hull",
+     "cls": "pad",
+     "verts": 10,
+     "hull_reduction_dev_mm": 0.0,
+     "parts": [
+      "index_pad_prox_silicone"
+     ]
+    }
+   ],
+   "index_middle": [
+    {
+     "file": "index_middle_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.186551,
+     "parts": "11 parts"
+    },
+    {
+     "file": "index_middle_c1.stl",
+     "kind": "hull",
+     "cls": "pad",
+     "verts": 10,
+     "hull_reduction_dev_mm": 0.0,
+     "parts": [
+      "index_pad_mid_silicone"
+     ]
+    }
+   ],
+   "index_distal": [
+    {
+     "file": "index_distal_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.116,
+     "parts": "12 parts"
+    },
+    {
+     "file": "index_distal_c1.stl",
+     "kind": "hull",
+     "cls": "pad",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.05855,
+     "parts": [
+      "index_tip_skin"
+     ]
+    }
+   ],
+   "index_bar": [],
+   "thumb_base": [
+    {
+     "file": "thumb_base_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.169164,
+     "parts": "12 parts"
+    }
+   ],
+   "thumb_metacarpal": [
+    {
+     "file": "thumb_metacarpal_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.094296,
+     "parts": "15 parts"
+    },
+    {
+     "file": "thumb_metacarpal_c1.stl",
+     "kind": "hull",
+     "cls": "pad",
+     "verts": 16,
+     "hull_reduction_dev_mm": 0.0,
+     "parts": [
+      "thenar_pad"
+     ]
+    }
+   ],
+   "thumb_proximal": [
+    {
+     "file": "thumb_proximal_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.105849,
+     "parts": "15 parts"
+    }
+   ],
+   "thumb_distal": [
+    {
+     "file": "thumb_distal_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.267469,
+     "parts": "9 parts"
+    },
+    {
+     "file": "thumb_distal_c1.stl",
+     "kind": "hull",
+     "cls": "pad",
+     "verts": 34,
+     "hull_reduction_dev_mm": 0.0,
+     "parts": [
+      "tip_skin"
+     ]
+    }
+   ],
+   "middle_yoke": [
+    {
+     "file": "middle_yoke_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.19855,
+     "parts": "30 parts"
+    }
+   ],
+   "middle_proximal": [
+    {
+     "file": "middle_proximal_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.122531,
+     "parts": "18 parts"
+    },
+    {
+     "file": "middle_proximal_c1.stl",
+     "kind": "hull",
+     "cls": "pad",
+     "verts": 8,
+     "hull_reduction_dev_mm": 0.0,
+     "parts": [
+      "middle_pad_prox_silicone"
+     ]
+    }
+   ],
+   "middle_middle": [
+    {
+     "file": "middle_middle_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.186776,
+     "parts": "11 parts"
+    },
+    {
+     "file": "middle_middle_c1.stl",
+     "kind": "hull",
+     "cls": "pad",
+     "verts": 10,
+     "hull_reduction_dev_mm": 0.0,
+     "parts": [
+      "middle_pad_mid_silicone"
+     ]
+    }
+   ],
+   "middle_distal": [
+    {
+     "file": "middle_distal_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.086468,
+     "parts": "12 parts"
+    },
+    {
+     "file": "middle_distal_c1.stl",
+     "kind": "hull",
+     "cls": "pad",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.053382,
+     "parts": [
+      "middle_tip_skin"
+     ]
+    }
+   ],
+   "middle_bar": [],
+   "ring_yoke": [
+    {
+     "file": "ring_yoke_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.225027,
+     "parts": "30 parts"
+    }
+   ],
+   "ring_proximal": [
+    {
+     "file": "ring_proximal_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.122283,
+     "parts": "18 parts"
+    },
+    {
+     "file": "ring_proximal_c1.stl",
+     "kind": "hull",
+     "cls": "pad",
+     "verts": 8,
+     "hull_reduction_dev_mm": 0.0,
+     "parts": [
+      "ring_pad_prox_silicone"
+     ]
+    }
+   ],
+   "ring_middle": [
+    {
+     "file": "ring_middle_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.186558,
+     "parts": "11 parts"
+    },
+    {
+     "file": "ring_middle_c1.stl",
+     "kind": "hull",
+     "cls": "pad",
+     "verts": 10,
+     "hull_reduction_dev_mm": 0.0,
+     "parts": [
+      "ring_pad_mid_silicone"
+     ]
+    }
+   ],
+   "ring_distal": [
+    {
+     "file": "ring_distal_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.114895,
+     "parts": "12 parts"
+    },
+    {
+     "file": "ring_distal_c1.stl",
+     "kind": "hull",
+     "cls": "pad",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.049541,
+     "parts": [
+      "ring_tip_skin"
+     ]
+    }
+   ],
+   "ring_bar": [],
+   "little_yoke": [
+    {
+     "file": "little_yoke_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.221247,
+     "parts": "30 parts"
+    }
+   ],
+   "little_proximal": [
+    {
+     "file": "little_proximal_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.125358,
+     "parts": "18 parts"
+    },
+    {
+     "file": "little_proximal_c1.stl",
+     "kind": "hull",
+     "cls": "pad",
+     "verts": 8,
+     "hull_reduction_dev_mm": 0.0,
+     "parts": [
+      "little_pad_prox_silicone"
+     ]
+    }
+   ],
+   "little_middle": [
+    {
+     "file": "little_middle_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.186558,
+     "parts": "9 parts"
+    }
+   ],
+   "little_distal": [
+    {
+     "file": "little_distal_c0.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.084278,
+     "parts": "12 parts"
+    },
+    {
+     "file": "little_distal_c1.stl",
+     "kind": "hull",
+     "cls": "pad",
+     "verts": 64,
+     "hull_reduction_dev_mm": 0.058548,
+     "parts": [
+      "little_tip_skin"
+     ]
+    }
+   ],
+   "little_bar": []
+  },
+  "pieces_total": 46,
+  "rationale": "Hand-chosen convex hulls of the load-bearing printed parts, one per phalanx, plus a separate hull per silicone pad (fingertip skin, proximal/middle pads, palm/hypothenar/thenar pads) in class v21_pad: the pads are the real contact surfaces and get rubber friction, and a pad hull sticks out of the phalanx hull on the palm side, so grasps touch pads first. CoACD only where one hull would be badly wrong: the palm shell (thumb bay cut) and the wrist ring (a loop). Hulls reduced to <= 64 vertices by greedy farthest-outside insertion (deviation listed per piece, inside the true hull). Few small convex pieces keep GPU (MJX/Warp) narrow-phase cost low; the forearm is 2 coarse hulls (it only meets the table)."
+ },
+ "sites": {
+  "palm_centre_ray_origin_mm": [
+   -8.5,
+   18.99999,
+   43.699997
+  ],
+  "forearm_flange_face_area_mm2": 3542.250269,
+  "index_tip_normal": [
+   0.0,
+   -0.925985,
+   -0.377561
+  ],
+  "middle_tip_normal": [
+   0.0,
+   -0.928365,
+   -0.371669
+  ],
+  "ring_tip_normal": [
+   0.0,
+   -0.925985,
+   -0.377561
+  ],
+  "little_tip_normal": [
+   0.0,
+   -0.921431,
+   -0.388542
+  ],
+  "thumb_tip_normal": [
+   0.271115,
+   0.940146,
+   0.206451
+  ]
+ },
+ "notes": [
+  "The _render STLs are at pose wrist_flex_+40 (the CAD renderer's last pose), forearm-only parts at open (identity); q = 0 meshes recovered with the exact FK (see part_meshes).",
+  "Wrist cranks/rods (wrist_crank_*, wrist_rod_*) move with the wrist in reality; the CAD poses them as static forearm parts (identity), so they are merged into the forearm here (21 g).",
+  "Wrist rotations: 09_eyeplate_kin.R_ring/R_palm (= 13_wrist_parts.KIN), ranges FLEX_RANGE/DEV_RANGE."
+ ]
+}

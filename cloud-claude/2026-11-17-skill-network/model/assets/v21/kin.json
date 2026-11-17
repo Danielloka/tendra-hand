@@ -1,0 +1,1387 @@
+{
+ "source": {
+  "study": "cloud-claude/2026-11-14-hardware-ideas",
+  "git_rev": "b41d22314e29840f82ed9c54a888537b7dfc6818",
+  "poses_sha256": "c87d6cba13b345b84a605af87ad5624c814b066d6f17e43d8360b60db3ed6b59"
+ },
+ "conventions": "hand frame (origin wrist centre, +Z fingers, -Y palm, +X thumb), SI. pivot_m: hand frame at q = 0. com_m: body frame (= hand frame minus pivot). inertia about the COM, hand axes [ixx, iyy, izz, ixy, ixz, iyz]. Meshes in the body frame, metres. Couplings: joint = sum c_k * leader^k (rad).",
+ "bodies": {
+  "forearm": {
+   "parent": null,
+   "joint": null,
+   "axis": null,
+   "pivot_m": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "range_rad": null,
+   "mass_kg": 0.78655,
+   "com_m": [
+    0.000200944,
+    -0.000430909,
+    -0.135133933
+   ],
+   "inertia": [
+    0.003123695,
+    0.003584623,
+    0.00104681,
+    1.823e-06,
+    8.938e-06,
+    1.5727e-05
+   ],
+   "visual_mesh": "meshes/forearm.stl",
+   "collision_meshes": [
+    "meshes/forearm_c0.stl",
+    "meshes/forearm_c1.stl"
+   ],
+   "collision_class": [
+    "geom",
+    "geom"
+   ],
+   "fit_residual": null
+  },
+  "wrist_ring": {
+   "parent": "forearm",
+   "joint": "wrist_dev",
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "pivot_m": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "range_rad": [
+    -0.523598776,
+    0.34906585
+   ],
+   "mass_kg": 0.03995,
+   "com_m": [
+    -0.000196905,
+    -0.000261949,
+    -6.8876e-05
+   ],
+   "inertia": [
+    7.909e-06,
+    4.752e-06,
+    1.2054e-05,
+    7.8e-08,
+    2.3e-08,
+    2.6e-08
+   ],
+   "visual_mesh": "meshes/wrist_ring.stl",
+   "collision_meshes": [
+    "meshes/wrist_ring_c0.stl",
+    "meshes/wrist_ring_c1.stl",
+    "meshes/wrist_ring_c2.stl",
+    "meshes/wrist_ring_c3.stl"
+   ],
+   "collision_class": [
+    "geom",
+    "geom",
+    "geom",
+    "geom"
+   ],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  },
+  "palm": {
+   "parent": "wrist_ring",
+   "joint": "wrist_flex",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_m": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "range_rad": [
+    -0.872664626,
+    0.872664626
+   ],
+   "mass_kg": 0.11776,
+   "com_m": [
+    0.000986088,
+    -6.9702e-05,
+    0.042259295
+   ],
+   "inertia": [
+    6.5746e-05,
+    0.000122161,
+    8.1041e-05,
+    9.94e-07,
+    1.0607e-05,
+    -3.396e-06
+   ],
+   "visual_mesh": "meshes/palm.stl",
+   "collision_meshes": [
+    "meshes/palm_c0.stl",
+    "meshes/palm_c1.stl",
+    "meshes/palm_c2.stl",
+    "meshes/palm_c3.stl",
+    "meshes/palm_c4.stl",
+    "meshes/palm_c5.stl",
+    "meshes/palm_c6.stl"
+   ],
+   "collision_class": [
+    "geom",
+    "geom",
+    "geom",
+    "geom",
+    "geom",
+    "pad",
+    "pad"
+   ],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  },
+  "index_yoke": {
+   "parent": "palm",
+   "joint": "index_mcp_abd",
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "pivot_m": [
+    0.02,
+    -0.002,
+    0.079
+   ],
+   "range_rad": [
+    -0.174532925,
+    0.261799388
+   ],
+   "mass_kg": 0.0055,
+   "com_m": [
+    1.1435e-05,
+    0.001730687,
+    0.004303106
+   ],
+   "inertia": [
+    4.33e-07,
+    2.64e-07,
+    3.12e-07,
+    -1.1e-08,
+    3e-09,
+    2e-08
+   ],
+   "visual_mesh": "meshes/index_yoke.stl",
+   "collision_meshes": [
+    "meshes/index_yoke_c0.stl"
+   ],
+   "collision_class": [
+    "geom"
+   ],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  },
+  "index_proximal": {
+   "parent": "index_yoke",
+   "joint": "index_mcp_flex",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_m": [
+    0.02,
+    -0.002,
+    0.092
+   ],
+   "range_rad": [
+    -0.174532925,
+    1.570796327
+   ],
+   "mass_kg": 0.01177,
+   "com_m": [
+    -8.4843e-05,
+    0.000110056,
+    0.021220207
+   ],
+   "inertia": [
+    2.367e-06,
+    2.474e-06,
+    5.49e-07,
+    2.1e-08,
+    2.9e-08,
+    -2e-09
+   ],
+   "visual_mesh": "meshes/index_proximal.stl",
+   "collision_meshes": [
+    "meshes/index_proximal_c0.stl",
+    "meshes/index_proximal_c1.stl"
+   ],
+   "collision_class": [
+    "geom",
+    "pad"
+   ],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  },
+  "index_middle": {
+   "parent": "index_proximal",
+   "joint": "index_pip",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_m": [
+    0.02,
+    -0.002,
+    0.134
+   ],
+   "range_rad": [
+    -0.087266463,
+    1.658062789
+   ],
+   "mass_kg": 0.00597,
+   "com_m": [
+    0.000674172,
+    0.000264943,
+    0.012258825
+   ],
+   "inertia": [
+    6.23e-07,
+    6.07e-07,
+    1.55e-07,
+    3e-09,
+    3e-09,
+    3e-09
+   ],
+   "visual_mesh": "meshes/index_middle.stl",
+   "collision_meshes": [
+    "meshes/index_middle_c0.stl",
+    "meshes/index_middle_c1.stl"
+   ],
+   "collision_class": [
+    "geom",
+    "pad"
+   ],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  },
+  "index_distal": {
+   "parent": "index_middle",
+   "joint": "index_dip",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_m": [
+    0.02,
+    -0.002,
+    0.158
+   ],
+   "range_rad": [
+    -0.07539925,
+    1.263631647
+   ],
+   "mass_kg": 0.00539,
+   "com_m": [
+    -0.000160911,
+    -0.000249468,
+    0.010518475
+   ],
+   "inertia": [
+    4.34e-07,
+    4.42e-07,
+    2.12e-07,
+    -9e-09,
+    -1.6e-08,
+    -8e-09
+   ],
+   "visual_mesh": "meshes/index_distal.stl",
+   "collision_meshes": [
+    "meshes/index_distal_c0.stl",
+    "meshes/index_distal_c1.stl"
+   ],
+   "collision_class": [
+    "geom",
+    "pad"
+   ],
+   "fit_residual": {
+    "rot_deg": 1.207e-06,
+    "pos_mm": 0.0
+   }
+  },
+  "index_bar": {
+   "parent": "index_proximal",
+   "joint": "index_bar",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_m": [
+    0.01255,
+    0.000453043,
+    0.138471306
+   ],
+   "range_rad": [
+    -0.125674497,
+    1.542189311
+   ],
+   "mass_kg": 0.00044,
+   "com_m": [
+    0.0,
+    -0.004526576,
+    0.009778731
+   ],
+   "inertia": [
+    1.9e-08,
+    1.5e-08,
+    4e-09,
+    0.0,
+    0.0,
+    7e-09
+   ],
+   "visual_mesh": "meshes/index_bar.stl",
+   "collision_meshes": [],
+   "collision_class": [],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  },
+  "thumb_base": {
+   "parent": "palm",
+   "joint": "thumb_cmc_rot",
+   "axis": [
+    0.409790221,
+    -0.564989709,
+    0.716141469
+   ],
+   "pivot_m": [
+    0.039787478,
+    -0.01786472,
+    0.050444432
+   ],
+   "range_rad": [
+    -0.541052068,
+    1.919862177
+   ],
+   "mass_kg": 0.00963,
+   "com_m": [
+    -0.005141561,
+    0.006734397,
+    -0.009762806
+   ],
+   "inertia": [
+    1.436e-06,
+    1.004e-06,
+    1.126e-06,
+    2.35e-07,
+    -1.33e-07,
+    4.4e-08
+   ],
+   "visual_mesh": "meshes/thumb_base.stl",
+   "collision_meshes": [
+    "meshes/thumb_base_c0.stl"
+   ],
+   "collision_class": [
+    "geom"
+   ],
+   "fit_residual": {
+    "rot_deg": 1.207e-06,
+    "pos_mm": 0.0
+   }
+  },
+  "thumb_metacarpal": {
+   "parent": "thumb_base",
+   "joint": "thumb_cmc_flex",
+   "axis": [
+    0.13188664,
+    -0.740140802,
+    -0.659391771
+   ],
+   "pivot_m": [
+    0.039787478,
+    -0.01786472,
+    0.050444432
+   ],
+   "range_rad": [
+    -0.645771823,
+    1.099557429
+   ],
+   "mass_kg": 0.02126,
+   "com_m": [
+    0.004644094,
+    -0.012245811,
+    0.01494035
+   ],
+   "inertia": [
+    6.013e-06,
+    4.567e-06,
+    3.389e-06,
+    7.93e-07,
+    -7.49e-07,
+    2.316e-06
+   ],
+   "visual_mesh": "meshes/thumb_metacarpal.stl",
+   "collision_meshes": [
+    "meshes/thumb_metacarpal_c0.stl",
+    "meshes/thumb_metacarpal_c1.stl"
+   ],
+   "collision_class": [
+    "geom",
+    "pad"
+   ],
+   "fit_residual": {
+    "rot_deg": 1.207e-06,
+    "pos_mm": 0.0
+   }
+  },
+  "thumb_proximal": {
+   "parent": "thumb_metacarpal",
+   "joint": "thumb_mcp_flex",
+   "axis": [
+    -0.829195776,
+    0.245585241,
+    0.50211777
+   ],
+   "pivot_m": [
+    0.05228646,
+    -0.046506881,
+    0.085094062
+   ],
+   "range_rad": [
+    -0.174532925,
+    1.221730476
+   ],
+   "mass_kg": 0.01357,
+   "com_m": [
+    0.004623972,
+    -0.010046888,
+    0.011561113
+   ],
+   "inertia": [
+    2.5e-06,
+    2.033e-06,
+    1.747e-06,
+    4.62e-07,
+    -3.88e-07,
+    9.64e-07
+   ],
+   "visual_mesh": "meshes/thumb_proximal.stl",
+   "collision_meshes": [
+    "meshes/thumb_proximal_c0.stl"
+   ],
+   "collision_class": [
+    "geom"
+   ],
+   "fit_residual": {
+    "rot_deg": 1.207e-06,
+    "pos_mm": 0.0
+   }
+  },
+  "thumb_distal": {
+   "parent": "thumb_proximal",
+   "joint": "thumb_ip",
+   "axis": [
+    -0.880981026,
+    0.155957632,
+    0.446709804
+   ],
+   "pivot_m": [
+    0.061931944,
+    -0.068610082,
+    0.111833236
+   ],
+   "range_rad": [
+    -0.261799388,
+    1.483529864
+   ],
+   "mass_kg": 0.00907,
+   "com_m": [
+    0.0030119,
+    -0.005923436,
+    0.007999233
+   ],
+   "inertia": [
+    1.132e-06,
+    8.87e-07,
+    6.66e-07,
+    1.49e-07,
+    -2.03e-07,
+    4.07e-07
+   ],
+   "visual_mesh": "meshes/thumb_distal.stl",
+   "collision_meshes": [
+    "meshes/thumb_distal_c0.stl",
+    "meshes/thumb_distal_c1.stl"
+   ],
+   "collision_class": [
+    "geom",
+    "pad"
+   ],
+   "fit_residual": {
+    "rot_deg": 1.207e-06,
+    "pos_mm": 0.0
+   }
+  },
+  "middle_yoke": {
+   "parent": "palm",
+   "joint": "middle_mcp_abd",
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "pivot_m": [
+    0.0,
+    -0.002,
+    0.083
+   ],
+   "range_rad": [
+    -0.261799388,
+    0.261799388
+   ],
+   "mass_kg": 0.0055,
+   "com_m": [
+    1.1436e-05,
+    0.001730348,
+    0.004304346
+   ],
+   "inertia": [
+    4.33e-07,
+    2.64e-07,
+    3.12e-07,
+    -1.1e-08,
+    3e-09,
+    2e-08
+   ],
+   "visual_mesh": "meshes/middle_yoke.stl",
+   "collision_meshes": [
+    "meshes/middle_yoke_c0.stl"
+   ],
+   "collision_class": [
+    "geom"
+   ],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  },
+  "middle_proximal": {
+   "parent": "middle_yoke",
+   "joint": "middle_mcp_flex",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_m": [
+    0.0,
+    -0.002,
+    0.096
+   ],
+   "range_rad": [
+    -0.174532925,
+    1.570796327
+   ],
+   "mass_kg": 0.01267,
+   "com_m": [
+    -9.7988e-05,
+    0.000105907,
+    0.022669912
+   ],
+   "inertia": [
+    2.806e-06,
+    2.918e-06,
+    5.88e-07,
+    2.1e-08,
+    3.2e-08,
+    -3e-09
+   ],
+   "visual_mesh": "meshes/middle_proximal.stl",
+   "collision_meshes": [
+    "meshes/middle_proximal_c0.stl",
+    "meshes/middle_proximal_c1.stl"
+   ],
+   "collision_class": [
+    "geom",
+    "pad"
+   ],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  },
+  "middle_middle": {
+   "parent": "middle_proximal",
+   "joint": "middle_pip",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_m": [
+    0.0,
+    -0.002,
+    0.141
+   ],
+   "range_rad": [
+    -0.087266463,
+    1.658062789
+   ],
+   "mass_kg": 0.00677,
+   "com_m": [
+    0.000637102,
+    0.00023169,
+    0.01382943
+   ],
+   "inertia": [
+    7.93e-07,
+    7.77e-07,
+    1.83e-07,
+    3e-09,
+    3e-09,
+    4e-09
+   ],
+   "visual_mesh": "meshes/middle_middle.stl",
+   "collision_meshes": [
+    "meshes/middle_middle_c0.stl",
+    "meshes/middle_middle_c1.stl"
+   ],
+   "collision_class": [
+    "geom",
+    "pad"
+   ],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  },
+  "middle_distal": {
+   "parent": "middle_middle",
+   "joint": "middle_dip",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_m": [
+    0.0,
+    -0.002,
+    0.168
+   ],
+   "range_rad": [
+    -0.073762882,
+    1.263498972
+   ],
+   "mass_kg": 0.00565,
+   "com_m": [
+    -0.000146127,
+    -0.000246112,
+    0.011117326
+   ],
+   "inertia": [
+    4.75e-07,
+    4.82e-07,
+    2.21e-07,
+    -9e-09,
+    -1.5e-08,
+    -6e-09
+   ],
+   "visual_mesh": "meshes/middle_distal.stl",
+   "collision_meshes": [
+    "meshes/middle_distal_c0.stl",
+    "meshes/middle_distal_c1.stl"
+   ],
+   "collision_class": [
+    "geom",
+    "pad"
+   ],
+   "fit_residual": {
+    "rot_deg": 1.207e-06,
+    "pos_mm": 0.0
+   }
+  },
+  "middle_bar": {
+   "parent": "middle_proximal",
+   "joint": "middle_bar",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_m": [
+    -0.00745,
+    0.000472529,
+    0.145460561
+   ],
+   "range_rad": [
+    -0.123808203,
+    1.586756894
+   ],
+   "mass_kg": 0.00051,
+   "com_m": [
+    0.0,
+    -0.004496279,
+    0.011583597
+   ],
+   "inertia": [
+    2.9e-08,
+    2.4e-08,
+    4e-09,
+    0.0,
+    0.0,
+    9e-09
+   ],
+   "visual_mesh": "meshes/middle_bar.stl",
+   "collision_meshes": [],
+   "collision_class": [],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  },
+  "ring_yoke": {
+   "parent": "palm",
+   "joint": "ring_mcp_abd",
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "pivot_m": [
+    -0.02,
+    -0.002,
+    0.08
+   ],
+   "range_rad": [
+    -0.261799388,
+    0.261799388
+   ],
+   "mass_kg": 0.0055,
+   "com_m": [
+    1.1435e-05,
+    0.001730568,
+    0.004303539
+   ],
+   "inertia": [
+    4.33e-07,
+    2.64e-07,
+    3.12e-07,
+    -1.1e-08,
+    3e-09,
+    2e-08
+   ],
+   "visual_mesh": "meshes/ring_yoke.stl",
+   "collision_meshes": [
+    "meshes/ring_yoke_c0.stl"
+   ],
+   "collision_class": [
+    "geom"
+   ],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  },
+  "ring_proximal": {
+   "parent": "ring_yoke",
+   "joint": "ring_mcp_flex",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_m": [
+    -0.02,
+    -0.002,
+    0.093
+   ],
+   "range_rad": [
+    -0.174532925,
+    1.570796327
+   ],
+   "mass_kg": 0.01207,
+   "com_m": [
+    -8.9032e-05,
+    0.000113548,
+    0.021700169
+   ],
+   "inertia": [
+    2.506e-06,
+    2.615e-06,
+    5.63e-07,
+    2.1e-08,
+    3e-08,
+    -4e-09
+   ],
+   "visual_mesh": "meshes/ring_proximal.stl",
+   "collision_meshes": [
+    "meshes/ring_proximal_c0.stl",
+    "meshes/ring_proximal_c1.stl"
+   ],
+   "collision_class": [
+    "geom",
+    "pad"
+   ],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  },
+  "ring_middle": {
+   "parent": "ring_proximal",
+   "joint": "ring_pip",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_m": [
+    -0.02,
+    -0.002,
+    0.136
+   ],
+   "range_rad": [
+    -0.087266463,
+    1.658062789
+   ],
+   "mass_kg": 0.00649,
+   "com_m": [
+    0.000658079,
+    0.00024468,
+    0.013299905
+   ],
+   "inertia": [
+    7.32e-07,
+    7.16e-07,
+    1.73e-07,
+    3e-09,
+    3e-09,
+    4e-09
+   ],
+   "visual_mesh": "meshes/ring_middle.stl",
+   "collision_meshes": [
+    "meshes/ring_middle_c0.stl",
+    "meshes/ring_middle_c1.stl"
+   ],
+   "collision_class": [
+    "geom",
+    "pad"
+   ],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  },
+  "ring_distal": {
+   "parent": "ring_middle",
+   "joint": "ring_dip",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_m": [
+    -0.02,
+    -0.002,
+    0.162
+   ],
+   "range_rad": [
+    -0.077064514,
+    1.262972898
+   ],
+   "mass_kg": 0.00539,
+   "com_m": [
+    -0.00016197,
+    -0.000252605,
+    0.010513155
+   ],
+   "inertia": [
+    4.35e-07,
+    4.42e-07,
+    2.12e-07,
+    -9e-09,
+    -1.6e-08,
+    -8e-09
+   ],
+   "visual_mesh": "meshes/ring_distal.stl",
+   "collision_meshes": [
+    "meshes/ring_distal_c0.stl",
+    "meshes/ring_distal_c1.stl"
+   ],
+   "collision_class": [
+    "geom",
+    "pad"
+   ],
+   "fit_residual": {
+    "rot_deg": 1.207e-06,
+    "pos_mm": 0.0
+   }
+  },
+  "ring_bar": {
+   "parent": "ring_proximal",
+   "joint": "ring_bar",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_m": [
+    -0.02745,
+    0.000820053,
+    0.140260635
+   ],
+   "range_rad": [
+    -0.122664383,
+    1.523480682
+   ],
+   "mass_kg": 0.00048,
+   "com_m": [
+    0.0,
+    -0.004731879,
+    0.010842491
+   ],
+   "inertia": [
+    2.4e-08,
+    2e-08,
+    4e-09,
+    0.0,
+    0.0,
+    9e-09
+   ],
+   "visual_mesh": "meshes/ring_bar.stl",
+   "collision_meshes": [],
+   "collision_class": [],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  },
+  "little_yoke": {
+   "parent": "palm",
+   "joint": "little_mcp_abd",
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "pivot_m": [
+    -0.04,
+    -0.002,
+    0.072
+   ],
+   "range_rad": [
+    -0.261799388,
+    0.130899694
+   ],
+   "mass_kg": 0.0055,
+   "com_m": [
+    1.1431e-05,
+    0.001731885,
+    0.00429892
+   ],
+   "inertia": [
+    4.33e-07,
+    2.64e-07,
+    3.12e-07,
+    -1.1e-08,
+    3e-09,
+    2e-08
+   ],
+   "visual_mesh": "meshes/little_yoke.stl",
+   "collision_meshes": [
+    "meshes/little_yoke_c0.stl"
+   ],
+   "collision_class": [
+    "geom"
+   ],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  },
+  "little_proximal": {
+   "parent": "little_yoke",
+   "joint": "little_mcp_flex",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_m": [
+    -0.04,
+    -0.002,
+    0.085
+   ],
+   "range_rad": [
+    -0.174532925,
+    1.570796327
+   ],
+   "mass_kg": 0.00936,
+   "com_m": [
+    -3.933e-05,
+    0.000116014,
+    0.017365861
+   ],
+   "inertia": [
+    1.443e-06,
+    1.539e-06,
+    4.45e-07,
+    1.8e-08,
+    2.1e-08,
+    0.0
+   ],
+   "visual_mesh": "meshes/little_proximal.stl",
+   "collision_meshes": [
+    "meshes/little_proximal_c0.stl",
+    "meshes/little_proximal_c1.stl"
+   ],
+   "collision_class": [
+    "geom",
+    "pad"
+   ],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  },
+  "little_middle": {
+   "parent": "little_proximal",
+   "joint": "little_pip",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_m": [
+    -0.04,
+    -0.002,
+    0.119
+   ],
+   "range_rad": [
+    -0.087266463,
+    1.658062789
+   ],
+   "mass_kg": 0.00496,
+   "com_m": [
+    0.000732273,
+    0.000258638,
+    0.010162841
+   ],
+   "inertia": [
+    4.39e-07,
+    4.21e-07,
+    1.18e-07,
+    3e-09,
+    3e-09,
+    1e-09
+   ],
+   "visual_mesh": "meshes/little_middle.stl",
+   "collision_meshes": [
+    "meshes/little_middle_c0.stl"
+   ],
+   "collision_class": [
+    "geom"
+   ],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  },
+  "little_distal": {
+   "parent": "little_middle",
+   "joint": "little_dip",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_m": [
+    -0.04,
+    -0.002,
+    0.139
+   ],
+   "range_rad": [
+    -0.075555326,
+    1.268499072
+   ],
+   "mass_kg": 0.00486,
+   "com_m": [
+    -0.000194177,
+    -0.000219114,
+    0.009291556
+   ],
+   "inertia": [
+    3.57e-07,
+    3.66e-07,
+    1.93e-07,
+    -9e-09,
+    -1.5e-08,
+    -1e-08
+   ],
+   "visual_mesh": "meshes/little_distal.stl",
+   "collision_meshes": [
+    "meshes/little_distal_c0.stl",
+    "meshes/little_distal_c1.stl"
+   ],
+   "collision_class": [
+    "geom",
+    "pad"
+   ],
+   "fit_residual": {
+    "rot_deg": 1.207e-06,
+    "pos_mm": 0.0
+   }
+  },
+  "little_bar": {
+   "parent": "little_proximal",
+   "joint": "little_bar",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "pivot_m": [
+    -0.047449999,
+    7.1815e-05,
+    0.123660213
+   ],
+   "range_rad": [
+    -0.13086358,
+    1.495388245
+   ],
+   "mass_kg": 0.00035,
+   "com_m": [
+    0.0,
+    -0.004338036,
+    0.00733738
+   ],
+   "inertia": [
+    1e-08,
+    7e-09,
+    3e-09,
+    0.0,
+    0.0,
+    4e-09
+   ],
+   "visual_mesh": "meshes/little_bar.stl",
+   "collision_meshes": [],
+   "collision_class": [],
+   "fit_residual": {
+    "rot_deg": 0.0,
+    "pos_mm": 0.0
+   }
+  }
+ },
+ "couplings": {
+  "index_dip": {
+   "leader": "index_pip",
+   "poly": [
+    0.0,
+    0.689081555,
+    0.221291183,
+    -0.218965371,
+    0.065186727
+   ]
+  },
+  "index_bar": {
+   "leader": "index_pip",
+   "poly": [
+    0.0,
+    1.237380548,
+    -0.173614151,
+    -0.032382997,
+    0.013115393
+   ]
+  },
+  "middle_dip": {
+   "leader": "middle_pip",
+   "poly": [
+    0.0,
+    0.673913636,
+    0.236681309,
+    -0.207210501,
+    0.05590611
+   ]
+  },
+  "middle_bar": {
+   "leader": "middle_pip",
+   "poly": [
+    0.0,
+    1.216266552,
+    -0.132217262,
+    -0.044964042,
+    0.016122834
+   ]
+  },
+  "ring_dip": {
+   "leader": "ring_pip",
+   "poly": [
+    0.0,
+    0.702926682,
+    0.184302301,
+    -0.192876913,
+    0.059738025
+   ]
+  },
+  "ring_bar": {
+   "leader": "ring_pip",
+   "poly": [
+    0.0,
+    1.201358202,
+    -0.17068175,
+    -0.018737034,
+    0.009230506
+   ]
+  },
+  "little_dip": {
+   "leader": "little_pip",
+   "poly": [
+    0.0,
+    0.689809008,
+    0.246234994,
+    -0.269107024,
+    0.086660196
+   ]
+  },
+  "little_bar": {
+   "leader": "little_pip",
+   "poly": [
+    0.0,
+    1.299335818,
+    -0.237866901,
+    -0.02011676,
+    0.009443475
+   ]
+  }
+ },
+ "sites": {
+  "wrist_centre": {
+   "body": "forearm",
+   "pos_m": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "quat": [
+    1.0,
+    0,
+    0,
+    0
+   ]
+  },
+  "forearm_flange": {
+   "body": "forearm",
+   "pos_m": [
+    0.0,
+    0.0,
+    -0.23
+   ],
+   "quat": [
+    1.0,
+    0,
+    0,
+    0
+   ]
+  },
+  "palm_centre": {
+   "body": "palm",
+   "pos_m": [
+    -0.0085,
+    -0.016000025,
+    0.043699997
+   ],
+   "quat": [
+    0.707106781,
+    0.707106781,
+    0.0,
+    0.0
+   ]
+  },
+  "index_tip": {
+   "body": "index_distal",
+   "pos_m": [
+    0.0,
+    -0.008800099,
+    0.014444216
+   ],
+   "quat": [
+    0.557870597,
+    0.829927947,
+    0.0,
+    0.0
+   ]
+  },
+  "middle_tip": {
+   "body": "middle_distal",
+   "pos_m": [
+    0.0,
+    -0.008800109,
+    0.014861711
+   ],
+   "quat": [
+    0.560504656,
+    0.828151273,
+    0.0,
+    0.0
+   ]
+  },
+  "ring_tip": {
+   "body": "ring_distal",
+   "pos_m": [
+    0.0,
+    -0.008800104,
+    0.014444215
+   ],
+   "quat": [
+    0.557870552,
+    0.829927977,
+    0.0,
+    0.0
+   ]
+  },
+  "little_tip": {
+   "body": "little_distal",
+   "pos_m": [
+    0.0,
+    -0.008800088,
+    0.013643109
+   ],
+   "quat": [
+    0.552927659,
+    0.833229263,
+    0.0,
+    0.0
+   ]
+  },
+  "thumb_tip": {
+   "body": "thumb_distal",
+   "pos_m": [
+    0.007866592,
+    -0.003851751,
+    0.016858787
+   ],
+   "quat": [
+    0.776675992,
+    -0.605237051,
+    0.174535145,
+    0.0
+   ]
+  }
+ }
+}

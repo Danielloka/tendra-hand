@@ -63,9 +63,14 @@ def analyse(model, height: float = br.PALM_HEIGHT, x_range=(0.10, 0.90), y_range
 
 
 def largest_rectangles(mask: np.ndarray, xs, ys, min_w=0.40, min_h=0.30):
-    """All maximal-ish axis-aligned rectangles fully reachable with side >= (min_w along x, min_h along y):
-    returns the one with the largest area plus the list of top candidates [(area, x0, x1, y0, y1)]."""
-    step = xs[1] - xs[0]
+    """Fully reachable axis-aligned rectangles that are at least 40 x 30 cm in either orientation
+    (min_w x min_h along x/y, or the other way round), best first: [(area, x0, x1, y0, y1)]."""
+    out = _rects(mask, xs, ys, min_w, min_h) + _rects(mask, xs, ys, min_h, min_w)
+    out.sort(reverse=True)
+    return out
+
+
+def _rects(mask, xs, ys, min_w, min_h):
     out = []
     nx, ny = mask.shape
     for i0 in range(nx):
@@ -82,7 +87,6 @@ def largest_rectangles(mask: np.ndarray, xs, ys, min_w=0.40, min_h=0.30):
                 w, h = xs[i1] - xs[i0], ys[j1] - ys[j0]
                 if w >= min_w - 1e-9 and h >= min_h - 1e-9:
                     out.append((w * h, xs[i0], xs[i1], ys[j0], ys[j1]))
-    out.sort(reverse=True)
     return out
 
 

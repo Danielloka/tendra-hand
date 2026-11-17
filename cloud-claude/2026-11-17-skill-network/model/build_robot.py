@@ -68,10 +68,10 @@ J5_IN_LINK4 = np.array([0.0, 0.0, -0.0955])  # OpenArm's link5 position in link4
 # Scene numbers
 # ----------------------------------------------------------------------------------------------------------
 TABLE_TOP = 0.40  # m; OpenArm's own tables (shoulders at 0.698 = 0.30 above the top)
-TABLE_CENTRE = (0.50, -0.10)  # x, y of the table's middle (set by workspace analysis)
-TABLE_HALF = (0.40, 0.55)  # half size x, y
+TABLE_CENTRE = (0.45, 0.0)  # x, y of the table's middle (symmetric about the body, ready for a left arm)
+TABLE_HALF = (0.33, 0.65)  # half size x, y
 PALM_HEIGHT = 0.10  # `table` keyframe: palm centre this far above the table top
-TABLE_POSE_XY = (0.50, -0.10)  # where the `table` keyframe puts the palm centre (above the table)
+TABLE_POSE_XY = (0.35, -0.28)  # where the `table` keyframe puts the palm centre (above the table)
 
 # Wrist camera: pose in the forearm (= hand frame at q = 0, mm -> m). See camera_report() in the tests.
 WRIST_CAM_POS = (0.0, -0.046, -0.085)
@@ -81,7 +81,7 @@ WRIST_CAM_RES = (640, 480)
 # Head camera on a pole behind the shoulders.
 POLE_XY = (-0.32, 0.0)
 HEAD_CAM_POS = (-0.32, 0.0, 1.38)
-HEAD_CAM_TARGET = (0.50, -0.10, 0.40)
+HEAD_CAM_TARGET = (0.45, -0.15, 0.40)
 HEAD_CAM_RES = (1280, 720)
 HEAD_CAM_FOVY_DEG = 2 * math.degrees(math.atan(math.tan(math.radians(69.0 / 2)) * 720 / 1280))  # 42.3
 
@@ -426,10 +426,10 @@ def _add_scene_basics(spec: mujoco.MjSpec) -> None:
 
 # test objects: name -> (geom type, size, mass kg, rgba, position (x, y), half height above table)
 OBJECTS = {
-    "cube": (mujoco.mjtGeom.mjGEOM_BOX, [0.025, 0.025, 0.025], 0.12, [0.2, 0.45, 0.85, 1], (0.40, -0.30)),
-    "cylinder": (mujoco.mjtGeom.mjGEOM_CYLINDER, [0.030, 0.050], 0.15, [0.85, 0.25, 0.2, 1], (0.55, -0.28)),
-    "ball": (mujoco.mjtGeom.mjGEOM_SPHERE, [0.030], 0.06, [0.95, 0.75, 0.15, 1], (0.48, -0.40)),
-    "mug_box": (mujoco.mjtGeom.mjGEOM_BOX, [0.040, 0.040, 0.0475], 0.30, [0.3, 0.7, 0.4, 1], (0.65, -0.12)),
+    "cube": (mujoco.mjtGeom.mjGEOM_BOX, [0.025, 0.025, 0.025], 0.12, [0.2, 0.45, 0.85, 1], (0.30, -0.40)),
+    "cylinder": (mujoco.mjtGeom.mjGEOM_CYLINDER, [0.030, 0.050], 0.15, [0.85, 0.25, 0.2, 1], (0.42, -0.36)),
+    "ball": (mujoco.mjtGeom.mjGEOM_SPHERE, [0.030], 0.06, [0.95, 0.75, 0.15, 1], (0.32, -0.22)),
+    "mug_box": (mujoco.mjtGeom.mjGEOM_BOX, [0.040, 0.040, 0.0475], 0.30, [0.3, 0.7, 0.4, 1], (0.47, -0.20)),
 }
 
 

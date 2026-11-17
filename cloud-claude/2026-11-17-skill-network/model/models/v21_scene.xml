@@ -75,11 +75,11 @@
     <geom name="openarm_body_link0_visual" class="pedestal_visual" pos="0 0 0" quat="1 0 0 0" type="mesh" material="openarm_body_link0_material" mesh="body_link0" />
     <geom name="openarm_body_link0_collision" class="pedestal_collision" pos="0 0 0" quat="1 0 0 0" type="mesh" mesh="body_link0_symp" />
     <geom name="floor" size="3 3 0.1" type="plane" friction="0.8 0.01" material="floor_mat" />
-    <geom name="table" size="0.4 0.55 0.02" pos="0.5 -0.1 0.38" type="box" friction="0.8 0.01" material="table_mat" />
-    <geom name="table_leg0" size="0.025 0.025 0.18" pos="0.86 0.41 0.18" type="box" contype="0" conaffinity="0" material="leg_mat" />
-    <geom name="table_leg1" size="0.025 0.025 0.18" pos="0.86 -0.61 0.18" type="box" contype="0" conaffinity="0" material="leg_mat" />
-    <geom name="table_leg2" size="0.025 0.025 0.18" pos="0.14 0.41 0.18" type="box" contype="0" conaffinity="0" material="leg_mat" />
-    <geom name="table_leg3" size="0.025 0.025 0.18" pos="0.14 -0.61 0.18" type="box" contype="0" conaffinity="0" material="leg_mat" />
+    <geom name="table" size="0.33 0.65 0.02" pos="0.45 0 0.38" type="box" friction="0.8 0.01" material="table_mat" />
+    <geom name="table_leg0" size="0.025 0.025 0.18" pos="0.74 0.61 0.18" type="box" contype="0" conaffinity="0" material="leg_mat" />
+    <geom name="table_leg1" size="0.025 0.025 0.18" pos="0.74 -0.61 0.18" type="box" contype="0" conaffinity="0" material="leg_mat" />
+    <geom name="table_leg2" size="0.025 0.025 0.18" pos="0.16 0.61 0.18" type="box" contype="0" conaffinity="0" material="leg_mat" />
+    <geom name="table_leg3" size="0.025 0.025 0.18" pos="0.16 -0.61 0.18" type="box" contype="0" conaffinity="0" material="leg_mat" />
     <light name="key" pos="0.6 -0.6 2.2" dir="-0.188144 0.282216 -0.940721" diffuse="0.65 0.65 0.65" specular="0.2 0.2 0.2" />
     <light name="fill" castshadow="false" pos="-0.8 0.8 1.8" dir="0.348155 -0.348155 -0.870388" diffuse="0.3 0.3 0.3" />
     <frame pos="0 0 0.698">
@@ -235,21 +235,21 @@
       <geom name="head_pole_post" size="0.018 0.69" pos="0 0 0.69" quat="0 1 0 0" type="cylinder" contype="0" conaffinity="0" group="2" rgba="0.2 0.2 0.22 1" />
       <geom name="head_pole_foot" size="0.11 0.006" pos="0 0 0.006" quat="0 1 0 0" type="cylinder" contype="0" conaffinity="0" group="2" rgba="0.2 0.2 0.22 1" />
       <geom name="head_cam_body" size="0.012 0.045 0.012" pos="0 0 1.4" type="box" contype="0" conaffinity="0" group="2" rgba="0.05 0.05 0.05 1" />
-      <camera name="head_cam" quat="0.622693 0.227434 -0.256855 -0.703245" resolution="1280 720" pos="0 0 1.38" fovy="42.2726" />
+      <camera name="head_cam" quat="0.600041 0.210583 -0.255564 -0.728212" resolution="1280 720" pos="0 0 1.38" fovy="42.2726" />
     </body>
-    <body name="cube" pos="0.4 -0.3 0.426">
+    <body name="cube" pos="0.3 -0.4 0.426">
       <joint name="cube_free" type="free" />
       <geom name="cube" size="0.025 0.025 0.025" type="box" priority="1" friction="1 0.01" rgba="0.2 0.45 0.85 1" mass="0.12" />
     </body>
-    <body name="cylinder" pos="0.55 -0.28 0.451">
+    <body name="cylinder" pos="0.42 -0.36 0.451">
       <joint name="cylinder_free" type="free" />
       <geom name="cylinder" size="0.03 0.05" type="cylinder" priority="1" friction="1 0.01" rgba="0.85 0.25 0.2 1" mass="0.15" />
     </body>
-    <body name="ball" pos="0.48 -0.4 0.431">
+    <body name="ball" pos="0.32 -0.22 0.431">
       <joint name="ball_free" type="free" />
       <geom name="ball" size="0.03" priority="1" friction="1 0.01" rgba="0.95 0.75 0.15 1" mass="0.06" />
     </body>
-    <body name="mug_box" pos="0.65 -0.12 0.4485">
+    <body name="mug_box" pos="0.47 -0.2 0.4485">
       <joint name="mug_box_free" type="free" />
       <geom name="mug_box" size="0.04 0.04 0.0475" type="box" priority="1" friction="1 0.01" rgba="0.3 0.7 0.4 1" mass="0.3" />
     </body>
@@ -264,7 +264,7 @@
     <joint name="right_little_dip_couple" joint1="right_little_dip" joint2="right_little_pip" polycoef="0 0.75 0 0 0" />
   </equality>
   <actuator>
-    <general name="right_shoulder_pitch" class="motor_DM8009" joint="right_shoulder_pitch" ctrlrange="-1.39626 3.49066" gainprm="230" biasprm="0 -230 -15.047" />
+    <general name="right_shoulder_pitch" class="motor_DM8009" joint="right_shoulder_pitch" ctrlrange="-1.39626 3.49066" gainprm="230" biasprm="0 -230 -13.46" />
     <general name="right_shoulder_roll" class="motor_DM8009" joint="right_shoulder_roll" ctrlrange="-0.174533 3.31613" gainprm="230" biasprm="0 -230 -16.299" />
     <general name="right_shoulder_yaw" class="motor_DM4340" joint="right_shoulder_yaw" ctrlrange="-1.5708 1.5708" gainprm="190" biasprm="0 -190 -12.706" />
     <general name="right_elbow" class="motor_DM4340" joint="right_elbow" ctrlrange="0 2.44346" gainprm="190" biasprm="0 -190 -12.7" />
@@ -289,8 +289,8 @@
     <general name="right_little_mcp_abd" joint="right_little_mcp_abd" ctrlrange="-0.35 0.35" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
   </actuator>
   <keyframe>
-    <key name="rest" qpos="0 0.6 0 0.1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.4 -0.3 0.426 1 0 0 0 0.55 -0.28 0.451 1 0 0 0 0.48 -0.4 0.431 1 0 0 0 0.65 -0.12 0.4485 1 0 0 0" ctrl="0 0.6 0 0.1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" />
-    <key name="ready" qpos="0 0 0 1.5708 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.4 -0.3 0.426 1 0 0 0 0.55 -0.28 0.451 1 0 0 0 0.48 -0.4 0.431 1 0 0 0 0.65 -0.12 0.4485 1 0 0 0" ctrl="0 0 0 1.5708 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" />
-    <key name="table" qpos="0.6634 0.0338 -0.2699 0.8971 1.3734 -0.1883 -0.0336 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.4 -0.3 0.426 1 0 0 0 0.55 -0.28 0.451 1 0 0 0 0.48 -0.4 0.431 1 0 0 0 0.65 -0.12 0.4485 1 0 0 0" ctrl="0.6634 0.0338 -0.2699 0.8971 1.3734 -0.0336 -0.1883 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" />
+    <key name="rest" qpos="0 0.6 0 0.1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 -0.4 0.426 1 0 0 0 0.42 -0.36 0.451 1 0 0 0 0.32 -0.22 0.431 1 0 0 0 0.47 -0.2 0.4485 1 0 0 0" ctrl="0 0.6 0 0.1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" />
+    <key name="ready" qpos="0 0 0 1.5708 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 -0.4 0.426 1 0 0 0 0.42 -0.36 0.451 1 0 0 0 0.32 -0.22 0.431 1 0 0 0 0.47 -0.2 0.4485 1 0 0 0" ctrl="0 0 0 1.5708 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" />
+    <key name="table" qpos="-0.083 0.3838 0.1801 1.6509 1.17 0.136 0.0599 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 -0.4 0.426 1 0 0 0 0.42 -0.36 0.451 1 0 0 0 0.32 -0.22 0.431 1 0 0 0 0.47 -0.2 0.4485 1 0 0 0" ctrl="-0.083 0.3838 0.1801 1.6509 1.17 0.0599 0.136 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" />
   </keyframe>
 </mujoco>

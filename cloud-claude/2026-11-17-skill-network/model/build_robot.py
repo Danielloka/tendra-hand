@@ -434,7 +434,7 @@ OBJECTS = {
     "cube": (mujoco.mjtGeom.mjGEOM_BOX, [0.025, 0.025, 0.025], 0.12, [0.2, 0.45, 0.85, 1], (0.28, -0.43)),
     "cylinder": (mujoco.mjtGeom.mjGEOM_CYLINDER, [0.030, 0.050], 0.15, [0.85, 0.25, 0.2, 1], (0.42, -0.43)),
     "ball": (mujoco.mjtGeom.mjGEOM_SPHERE, [0.030], 0.06, [0.95, 0.75, 0.15, 1], (0.30, -0.25)),
-    "mug_box": (mujoco.mjtGeom.mjGEOM_BOX, [0.040, 0.040, 0.0475], 0.30, [0.3, 0.7, 0.4, 1], (0.42, -0.27)),
+    "mug_box": (mujoco.mjtGeom.mjGEOM_BOX, [0.040, 0.040, 0.0475], 0.30, [0.3, 0.7, 0.4, 1], (0.52, -0.30)),
 }
 
 

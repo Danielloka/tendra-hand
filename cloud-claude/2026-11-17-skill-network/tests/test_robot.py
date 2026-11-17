@@ -351,7 +351,7 @@ def test_head_camera_sees_the_table(robot):
     assert cam_pos[0] < -0.1 and cam_pos[2] > 1.0  # behind the shoulders (shoulder x = 0), above them (0.698)
     cx, cy = br.TABLE_CENTRE
     for point in ([cx, cy, br.TABLE_TOP], [*br.TABLE_POSE_XY, br.TABLE_TOP],
-                  [0.28, -0.43, br.TABLE_TOP], [0.42, -0.27, br.TABLE_TOP]):  # fmt: skip
+                  [0.28, -0.43, br.TABLE_TOP], [0.52, -0.30, br.TABLE_TOP]):  # fmt: skip
         u, v, depth = project(robot, d, "head_cam", point)
         assert 0.05 * W < u < 0.95 * W and 0.05 * H < v < 0.95 * H and depth > 0.3, (point, u, v)
     # the right workspace (the 40 x 30 cm region) is fully in view

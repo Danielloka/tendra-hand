@@ -16,9 +16,22 @@ ASSETS = ROOT / "model" / "assets" / "v21"
 POSES_JSON = ROOT.parent / "2026-11-14-hardware-ideas" / "out" / "18" / "poses.json"
 
 SERVO_JOINTS = (
-    "index_pip", "index_mcp_flex", "index_mcp_abd", "thumb_ip", "thumb_mcp_flex", "thumb_cmc_flex", "thumb_cmc_rot",
-    "middle_pip", "middle_mcp_flex", "middle_mcp_abd", "ring_pip", "ring_mcp_flex", "ring_mcp_abd", "little_pip",
-    "little_mcp_flex", "little_mcp_abd",
+    "index_pip",
+    "index_mcp_flex",
+    "index_mcp_abd",
+    "thumb_ip",
+    "thumb_mcp_flex",
+    "thumb_cmc_flex",
+    "thumb_cmc_rot",
+    "middle_pip",
+    "middle_mcp_flex",
+    "middle_mcp_abd",
+    "ring_pip",
+    "ring_mcp_flex",
+    "ring_mcp_abd",
+    "little_pip",
+    "little_mcp_flex",
+    "little_mcp_abd",
 )
 WRIST_JOINTS = ("wrist_flex", "wrist_dev")
 FINGERS = ("index", "middle", "ring", "little")
@@ -51,8 +64,22 @@ def set_cad_q(m: mujoco.MjModel, d: mujoco.MjData, q_deg: dict[str, float]) -> N
         d.qpos[m.joint(j).qposadr[0]] = poly(c["poly"], d.qpos[m.joint(c["leader"]).qposadr[0]])
 
 
-def pose_errors(m: mujoco.MjModel, d: mujoco.MjData, T_cad: dict[str, list[float]]) -> dict[str, tuple[float, float]]:
-    """Per body (position error mm, rotation error deg) of the MuJoCo body frame vs the CAD transform.
+def _corners(m: mujoco.MjModel, b: str) -> np.ndarray:
+    """Body-frame corners (m) of the body's visual mesh bounding box: where a rotation error shows up most."""
+    g = m.geom(f"{b}_vis")
+    c, h = m.geom_aabb[g.id][:3], m.geom_aabb[g.id][3:]
+    loc = np.array([c + h * np.array([sx, sy, sz]) for sx in (-1, 1) for sy in (-1, 1) for sz in (-1, 1)])
+    R = np.zeros(9)
+    mujoco.mju_quat2Mat(R, m.geom_quat[g.id])
+    return loc @ R.reshape(3, 3).T + m.geom_pos[g.id]
+
+
+def pose_errors(
+    m: mujoco.MjModel, d: mujoco.MjData, T_cad: dict[str, list[float]]
+) -> dict[str, tuple[float, float]]:
+    """Per body (position error mm, rotation error deg) of the MuJoCo body vs the CAD transform.
+
+    Position error = max displacement over the body origin and its mesh bounding-box corners.
 
     The CAD gives each body's transform from its q = 0 pose (3x4, mm). At q = 0 the MuJoCo body frame sits at the
     body's pivot with identity rotation, so its CAD-predicted pose is (R, R pivot + t).
@@ -64,8 +91,14 @@ def pose_errors(m: mujoco.MjModel, d: mujoco.MjData, T_cad: dict[str, list[float
         piv = np.asarray(kin()["bodies"][b]["pivot_m"]) * 1000.0
         p_exp = T[:, :3] @ piv + T[:, 3]
         bid = m.body(b).id
-        dp = float(np.linalg.norm(d.xpos[bid] * 1000.0 - p_exp))
         R = d.xmat[bid].reshape(3, 3)
-        c = (np.trace(T[:, :3].T @ R) - 1) / 2
-        out[b] = (dp, math.degrees(math.acos(max(-1.0, min(1.0, c)))))
+        cb = _corners(m, b) * 1000.0
+        cad_pts = np.vstack([p_exp, (cb + piv) @ T[:, :3].T + T[:, 3]])
+        mj_pts = np.vstack([d.xpos[bid] * 1000.0, cb @ R.T + d.xpos[bid] * 1000.0])
+        dp = float(np.linalg.norm(cad_pts - mj_pts, axis=1).max())
+        E = T[:, :3].T @ R
+        # angle from the skew part (robust near 0; the trace/acos form turns 1e-8 rounding into ~0.06 deg)
+        s = 0.5 * np.linalg.norm([E[2, 1] - E[1, 2], E[0, 2] - E[2, 0], E[1, 0] - E[0, 1]])
+        ang = math.asin(min(1.0, s)) if np.trace(E) > 1.0 else math.pi - math.asin(min(1.0, s))
+        out[b] = (dp, math.degrees(ang))
     return out

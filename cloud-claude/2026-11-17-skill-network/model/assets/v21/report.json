@@ -6,11 +6,11 @@
  },
  "part_meshes": {
   "mesh_pose": "wrist_flex_+40",
-  "fk_vs_posesjson_T_max_abs": 0.0,
+  "fk_vs_posesjson_T_max_abs": 4.76493e-07,
   "parts_with_package_stl": 470,
-  "package_stl_max_dev_mm": 0.000121,
+  "package_stl_max_dev_mm": 0.000120708,
   "package_stl_worst_part": "middle_tip_skin",
-  "fk_vs_posesjson_all_poses_max_abs": 0.0
+  "fk_vs_posesjson_all_poses_max_abs": 4.99832e-07
  },
  "joints": {
   "wrist_dev": {
@@ -138,16 +138,16 @@
     -2.0,
     158.0
    ],
-   "residual_rot_deg": 1e-06,
+   "residual_rot_deg": 1.20742e-06,
    "residual_pos_mm": 0.0,
    "axis_spread_deg": 0.0,
    "cad_axis_angle_deg": 0.0,
    "cad_axis_same_sign": true,
    "cad_pivot_off_axis_mm": 0.0,
-   "poly_max_err_deg": 0.040239,
+   "poly_max_err_deg": 0.0180003,
    "angle_range_deg": [
-    -3.320059,
-    71.40076
+    -3.32006,
+    71.4008
    ],
    "fitted_angle_vs_F_dip_max_deg": 0.0
   },
@@ -164,7 +164,7 @@
    "pivot_mm": [
     12.55,
     0.453043,
-    138.471306
+    138.471
    ],
    "residual_rot_deg": 0.0,
    "residual_pos_mm": 0.0,
@@ -172,10 +172,10 @@
    "cad_axis_angle_deg": 0.0,
    "cad_axis_same_sign": true,
    "cad_pivot_off_axis_mm": 0.0,
-   "poly_max_err_deg": 0.065172,
+   "poly_max_err_deg": 0.036834,
    "angle_range_deg": [
-    -6.200618,
-    87.360939
+    -6.20062,
+    87.3609
    ]
   },
   "middle_mcp_abd": {
@@ -259,16 +259,16 @@
     -2.0,
     168.0
    ],
-   "residual_rot_deg": 1e-06,
-   "residual_pos_mm": 0.0,
+   "residual_rot_deg": 1.20742e-06,
+   "residual_pos_mm": 1.27106e-13,
    "axis_spread_deg": 0.0,
    "cad_axis_angle_deg": 0.0,
    "cad_axis_same_sign": true,
    "cad_pivot_off_axis_mm": 0.0,
-   "poly_max_err_deg": 0.031919,
+   "poly_max_err_deg": 0.0159645,
    "angle_range_deg": [
-    -3.226302,
-    71.393158
+    -3.2263,
+    71.3932
    ],
    "fitted_angle_vs_F_dip_max_deg": 0.0
   },
@@ -285,7 +285,7 @@
    "pivot_mm": [
     -7.45,
     0.472529,
-    145.460561
+    145.461
    ],
    "residual_rot_deg": 0.0,
    "residual_pos_mm": 0.0,
@@ -293,10 +293,10 @@
    "cad_axis_angle_deg": 0.0,
    "cad_axis_same_sign": true,
    "cad_pivot_off_axis_mm": 0.0,
-   "poly_max_err_deg": 0.04357,
+   "poly_max_err_deg": 0.0257924,
    "angle_range_deg": [
-    -6.093688,
-    89.914473
+    -6.09369,
+    89.9145
    ]
   },
   "ring_mcp_abd": {
@@ -380,16 +380,16 @@
     -2.0,
     162.0
    ],
-   "residual_rot_deg": 1e-06,
-   "residual_pos_mm": 0.0,
+   "residual_rot_deg": 1.20742e-06,
+   "residual_pos_mm": 1.27106e-13,
    "axis_spread_deg": 0.0,
    "cad_axis_angle_deg": 0.0,
    "cad_axis_same_sign": true,
    "cad_pivot_off_axis_mm": 0.0,
-   "poly_max_err_deg": 0.059487,
+   "poly_max_err_deg": 0.0239788,
    "angle_range_deg": [
-    -3.415471,
-    71.363017
+    -3.41547,
+    71.363
    ],
    "fitted_angle_vs_F_dip_max_deg": 0.0
   },
@@ -406,18 +406,18 @@
    "pivot_mm": [
     -27.45,
     0.820053,
-    140.260635
+    140.261
    ],
    "residual_rot_deg": 0.0,
-   "residual_pos_mm": 0.0,
+   "residual_pos_mm": 1.42109e-13,
    "axis_spread_deg": 0.0,
    "cad_axis_angle_deg": 0.0,
    "cad_axis_same_sign": true,
    "cad_pivot_off_axis_mm": 0.0,
-   "poly_max_err_deg": 0.058503,
+   "poly_max_err_deg": 0.0321285,
    "angle_range_deg": [
-    -6.028151,
-    86.289013
+    -6.02815,
+    86.289
    ]
   },
   "little_mcp_abd": {
@@ -501,16 +501,16 @@
     -2.0,
     139.0
    ],
-   "residual_rot_deg": 1e-06,
+   "residual_rot_deg": 1.20742e-06,
    "residual_pos_mm": 0.0,
    "axis_spread_deg": 0.0,
    "cad_axis_angle_deg": 0.0,
    "cad_axis_same_sign": true,
    "cad_pivot_off_axis_mm": 0.0,
-   "poly_max_err_deg": 0.11769,
+   "poly_max_err_deg": 0.046377,
    "angle_range_deg": [
-    -3.329001,
-    71.679643
+    -3.329,
+    71.6796
    ],
    "fitted_angle_vs_F_dip_max_deg": 0.0
   },
@@ -525,9 +525,9 @@
     0.0
    ],
    "pivot_mm": [
-    -47.449999,
-    0.071815,
-    123.660213
+    -47.45,
+    0.0718154,
+    123.66
    ],
    "residual_rot_deg": 0.0,
    "residual_pos_mm": 0.0,
@@ -535,10 +535,10 @@
    "cad_axis_angle_deg": 0.0,
    "cad_axis_same_sign": true,
    "cad_pivot_off_axis_mm": 0.0,
-   "poly_max_err_deg": 0.1251,
+   "poly_max_err_deg": 0.0651226,
    "angle_range_deg": [
-    -6.497931,
-    84.679435
+    -6.49793,
+    84.6794
    ]
   },
   "thumb_cmc_rot": {
@@ -552,13 +552,13 @@
     0.716141
    ],
    "pivot_mm": [
-    39.787478,
-    -17.86472,
-    50.444432
+    39.7875,
+    -17.8647,
+    50.4444
    ],
-   "residual_rot_deg": 1e-06,
+   "residual_rot_deg": 1.20742e-06,
    "residual_pos_mm": 0.0,
-   "axis_spread_deg": 1e-06,
+   "axis_spread_deg": 8.53774e-07,
    "cad_axis_angle_deg": 0.0,
    "cad_axis_same_sign": true,
    "cad_pivot_off_axis_mm": 0.0
@@ -574,13 +574,13 @@
     -0.659392
    ],
    "pivot_mm": [
-    39.787478,
-    -17.86472,
-    50.444432
+    39.7875,
+    -17.8647,
+    50.4444
    ],
-   "residual_rot_deg": 1e-06,
+   "residual_rot_deg": 1.20742e-06,
    "residual_pos_mm": 0.0,
-   "axis_spread_deg": 1e-06,
+   "axis_spread_deg": 8.53774e-07,
    "cad_axis_angle_deg": 0.0,
    "cad_axis_same_sign": true,
    "cad_pivot_off_axis_mm": 0.0
@@ -596,11 +596,11 @@
     0.502118
    ],
    "pivot_mm": [
-    52.28646,
-    -46.506881,
-    85.094062
+    52.2865,
+    -46.5069,
+    85.0941
    ],
-   "residual_rot_deg": 1e-06,
+   "residual_rot_deg": 1.20742e-06,
    "residual_pos_mm": 0.0,
    "axis_spread_deg": 0.0,
    "cad_axis_angle_deg": 0.0,
@@ -618,11 +618,11 @@
     0.44671
    ],
    "pivot_mm": [
-    61.931944,
-    -68.610082,
-    111.833236
+    61.9319,
+    -68.6101,
+    111.833
    ],
-   "residual_rot_deg": 1e-06,
+   "residual_rot_deg": 1.20742e-06,
    "residual_pos_mm": 0.0,
    "axis_spread_deg": 0.0,
    "cad_axis_angle_deg": 0.0,
@@ -631,13 +631,25 @@
   }
  },
  "bar_pure_rotation_about_pin_A_at_other_mcp_abd": {
-  "max_residual_deg_or_mm": {
-   "index": 0.157507,
-   "middle": 0.110615,
-   "ring": 0.143219,
-   "little": 0.270001
+  "max_change": {
+   "index": {
+    "rot_deg": 0.0,
+    "pos_mm": 1.53148e-13
+   },
+   "middle": {
+    "rot_deg": 0.0,
+    "pos_mm": 1.19175e-13
+   },
+   "ring": {
+    "rot_deg": 0.0,
+    "pos_mm": 1.34828e-13
+   },
+   "little": {
+    "rot_deg": 0.0,
+    "pos_mm": 1.0846e-13
+   }
   },
-  "note": "bar relative to proximal vs the fitted hinge, at MCP 70/abd 10 and MCP -10/wrist 30, pip swept"
+  "note": "bar-in-proximal transform at MCP 70/abd 10 and MCP -10/wrist 30 vs MCP 0, pip swept: it depends on the pip only, and the pip sweep fits a pure hinge about pin A (joints.<f>_bar residuals)"
  },
  "mass": {
   "total_g": 1112.92,
@@ -786,115 +798,282 @@
   "method": "per part: real mass from checks.json mass_g, COM/inertia from its q = 0 mesh scaled to that mass (exact for watertight meshes; non-watertight: repaired or voxelised, listed)"
  },
  "meshes": {
-  "visual_faces_total": 446992,
+  "visual_faces_total": 148465,
   "by_body": {
    "forearm": {
     "source_faces": 417396,
-    "visual_faces": 251892
+    "visual_faces": 8462,
+    "parts": 87,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 34,
+     "hull": 16,
+     "cluster": 37
+    }
    },
    "wrist_ring": {
     "source_faces": 58840,
-    "visual_faces": 5994
+    "visual_faces": 5950,
+    "parts": 6,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 6
+    }
    },
    "palm": {
     "source_faces": 208122,
-    "visual_faces": 64272
+    "visual_faces": 19274,
+    "parts": 135,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 75,
+     "cluster": 43,
+     "hull": 17
+    }
    },
    "index_yoke": {
     "source_faces": 25774,
-    "visual_faces": 9780
+    "visual_faces": 6847,
+    "parts": 30,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 14,
+     "hull": 14,
+     "cluster": 2
+    }
    },
    "index_proximal": {
     "source_faces": 13068,
-    "visual_faces": 6000
+    "visual_faces": 6062,
+    "parts": 19,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 18,
+     "hull": 1
+    }
    },
    "index_middle": {
     "source_faces": 10646,
-    "visual_faces": 5000
+    "visual_faces": 5478,
+    "parts": 12,
+    "dropped_tiny": 0,
+    "method": {
+     "hull": 2,
+     "cluster": 2,
+     "quadric": 8
+    }
    },
    "index_distal": {
     "source_faces": 7540,
-    "visual_faces": 5000
+    "visual_faces": 4638,
+    "parts": 13,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 12,
+     "hull": 1
+    }
    },
    "index_bar": {
     "source_faces": 1020,
-    "visual_faces": 398
+    "visual_faces": 398,
+    "parts": 1,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 1
+    }
    },
    "thumb_base": {
     "source_faces": 12356,
-    "visual_faces": 5000
+    "visual_faces": 5136,
+    "parts": 12,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 12
+    }
    },
    "thumb_metacarpal": {
     "source_faces": 14432,
-    "visual_faces": 6000
+    "visual_faces": 5981,
+    "parts": 16,
+    "dropped_tiny": 0,
+    "method": {
+     "cluster": 2,
+     "quadric": 12,
+     "hull": 2
+    }
    },
    "thumb_proximal": {
     "source_faces": 13732,
-    "visual_faces": 5000
+    "visual_faces": 5511,
+    "parts": 15,
+    "dropped_tiny": 0,
+    "method": {
+     "cluster": 2,
+     "quadric": 11,
+     "hull": 2
+    }
    },
    "thumb_distal": {
     "source_faces": 12712,
-    "visual_faces": 5000
+    "visual_faces": 4260,
+    "parts": 10,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 10
+    }
    },
    "middle_yoke": {
     "source_faces": 25774,
-    "visual_faces": 9720
+    "visual_faces": 6845,
+    "parts": 30,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 14,
+     "hull": 14,
+     "cluster": 2
+    }
    },
    "middle_proximal": {
     "source_faces": 13066,
-    "visual_faces": 6000
+    "visual_faces": 6082,
+    "parts": 19,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 18,
+     "hull": 1
+    }
    },
    "middle_middle": {
     "source_faces": 10604,
-    "visual_faces": 5000
+    "visual_faces": 5542,
+    "parts": 12,
+    "dropped_tiny": 0,
+    "method": {
+     "hull": 2,
+     "cluster": 2,
+     "quadric": 8
+    }
    },
    "middle_distal": {
     "source_faces": 7538,
-    "visual_faces": 5000
+    "visual_faces": 4656,
+    "parts": 13,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 12,
+     "hull": 1
+    }
    },
    "middle_bar": {
     "source_faces": 1020,
-    "visual_faces": 398
+    "visual_faces": 398,
+    "parts": 1,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 1
+    }
    },
    "ring_yoke": {
     "source_faces": 25774,
-    "visual_faces": 9140
+    "visual_faces": 6565,
+    "parts": 30,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 15,
+     "hull": 13,
+     "cluster": 2
+    }
    },
    "ring_proximal": {
     "source_faces": 13072,
-    "visual_faces": 6000
+    "visual_faces": 6074,
+    "parts": 19,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 18,
+     "hull": 1
+    }
    },
    "ring_middle": {
     "source_faces": 10626,
-    "visual_faces": 5000
+    "visual_faces": 5444,
+    "parts": 12,
+    "dropped_tiny": 0,
+    "method": {
+     "hull": 2,
+     "cluster": 2,
+     "quadric": 8
+    }
    },
    "ring_distal": {
     "source_faces": 7544,
-    "visual_faces": 5000
+    "visual_faces": 4638,
+    "parts": 13,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 12,
+     "hull": 1
+    }
    },
    "ring_bar": {
     "source_faces": 1020,
-    "visual_faces": 398
+    "visual_faces": 398,
+    "parts": 1,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 1
+    }
    },
    "little_yoke": {
     "source_faces": 25778,
-    "visual_faces": 9602
+    "visual_faces": 6934,
+    "parts": 30,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 14,
+     "hull": 14,
+     "cluster": 2
+    }
    },
    "little_proximal": {
     "source_faces": 13064,
-    "visual_faces": 6000
+    "visual_faces": 6040,
+    "parts": 19,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 18,
+     "hull": 1
+    }
    },
    "little_middle": {
     "source_faces": 10580,
-    "visual_faces": 5000
+    "visual_faces": 5852,
+    "parts": 9,
+    "dropped_tiny": 0,
+    "method": {
+     "hull": 2,
+     "cluster": 2,
+     "quadric": 5
+    }
    },
    "little_distal": {
     "source_faces": 7550,
-    "visual_faces": 5000
+    "visual_faces": 4602,
+    "parts": 13,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 12,
+     "hull": 1
+    }
    },
    "little_bar": {
     "source_faces": 1020,
-    "visual_faces": 398
+    "visual_faces": 398,
+    "parts": 1,
+    "dropped_tiny": 0,
+    "method": {
+     "quadric": 1
+    }
    }
   },
   "decimation": "fast-simplification (quadric)"
@@ -907,7 +1086,7 @@
      "kind": "hull",
      "cls": "geom",
      "verts": 64,
-     "hull_reduction_dev_mm": 0.085481,
+     "hull_reduction_dev_mm": 0.0854808,
      "parts": "87 parts"
     },
     {
@@ -935,7 +1114,7 @@
      "kind": "coacd",
      "cls": "geom",
      "verts": 64,
-     "hull_reduction_dev_mm": 0.089963,
+     "hull_reduction_dev_mm": 0.0899628,
      "parts": [
       "ring_w13"
      ]
@@ -945,7 +1124,7 @@
      "kind": "coacd",
      "cls": "geom",
      "verts": 64,
-     "hull_reduction_dev_mm": 0.084291,
+     "hull_reduction_dev_mm": 0.0842914,
      "parts": [
       "ring_w13"
      ]
@@ -977,7 +1156,7 @@
      "kind": "coacd",
      "cls": "geom",
      "verts": 64,
-     "hull_reduction_dev_mm": 0.030641,
+     "hull_reduction_dev_mm": 0.0306406,
      "parts": [
       "palm_v21"
      ]
@@ -987,7 +1166,7 @@
      "kind": "coacd",
      "cls": "geom",
      "verts": 64,
-     "hull_reduction_dev_mm": 0.001402,
+     "hull_reduction_dev_mm": 0.00140249,
      "parts": [
       "palm_v21"
      ]
@@ -997,11 +1176,25 @@
      "kind": "hull",
      "cls": "geom",
      "verts": 64,
-     "hull_reduction_dev_mm": 0.0,
-     "parts": "4 parts"
+     "hull_reduction_dev_mm": 5.37837e-08,
+     "parts": [
+      "index_knuckle_module",
+      "middle_knuckle_module",
+      "ring_knuckle_module"
+     ]
     },
     {
      "file": "palm_c4.stl",
+     "kind": "hull",
+     "cls": "geom",
+     "verts": 48,
+     "hull_reduction_dev_mm": 0.0,
+     "parts": [
+      "little_knuckle_module"
+     ]
+    },
+    {
+     "file": "palm_c5.stl",
      "kind": "hull",
      "cls": "geom",
      "verts": 64,
@@ -1011,17 +1204,17 @@
      ]
     },
     {
-     "file": "palm_c5.stl",
+     "file": "palm_c6.stl",
      "kind": "hull",
      "cls": "pad",
      "verts": 64,
-     "hull_reduction_dev_mm": 0.092199,
+     "hull_reduction_dev_mm": 0.0921987,
      "parts": [
       "palm_hypothenar_pad"
      ]
     },
     {
-     "file": "palm_c6.stl",
+     "file": "palm_c7.stl",
      "kind": "hull",
      "cls": "pad",
      "verts": 64,
@@ -1095,7 +1288,7 @@
      "kind": "hull",
      "cls": "pad",
      "verts": 64,
-     "hull_reduction_dev_mm": 0.05855,
+     "hull_reduction_dev_mm": 0.0585497,
      "parts": [
       "index_tip_skin"
      ]
@@ -1118,7 +1311,7 @@
      "kind": "hull",
      "cls": "geom",
      "verts": 64,
-     "hull_reduction_dev_mm": 0.094296,
+     "hull_reduction_dev_mm": 0.0942962,
      "parts": "15 parts"
     },
     {
@@ -1218,7 +1411,7 @@
      "kind": "hull",
      "cls": "geom",
      "verts": 64,
-     "hull_reduction_dev_mm": 0.086468,
+     "hull_reduction_dev_mm": 0.0864681,
      "parts": "12 parts"
     },
     {
@@ -1226,7 +1419,7 @@
      "kind": "hull",
      "cls": "pad",
      "verts": 64,
-     "hull_reduction_dev_mm": 0.053382,
+     "hull_reduction_dev_mm": 0.0533824,
      "parts": [
       "middle_tip_skin"
      ]
@@ -1297,7 +1490,7 @@
      "kind": "hull",
      "cls": "pad",
      "verts": 64,
-     "hull_reduction_dev_mm": 0.049541,
+     "hull_reduction_dev_mm": 0.0495405,
      "parts": [
       "ring_tip_skin"
      ]
@@ -1350,7 +1543,7 @@
      "kind": "hull",
      "cls": "geom",
      "verts": 64,
-     "hull_reduction_dev_mm": 0.084278,
+     "hull_reduction_dev_mm": 0.0842784,
      "parts": "12 parts"
     },
     {
@@ -1358,7 +1551,7 @@
      "kind": "hull",
      "cls": "pad",
      "verts": 64,
-     "hull_reduction_dev_mm": 0.058548,
+     "hull_reduction_dev_mm": 0.0585477,
      "parts": [
       "little_tip_skin"
      ]
@@ -1366,16 +1559,16 @@
    ],
    "little_bar": []
   },
-  "pieces_total": 46,
+  "pieces_total": 47,
   "rationale": "Hand-chosen convex hulls of the load-bearing printed parts, one per phalanx, plus a separate hull per silicone pad (fingertip skin, proximal/middle pads, palm/hypothenar/thenar pads) in class v21_pad: the pads are the real contact surfaces and get rubber friction, and a pad hull sticks out of the phalanx hull on the palm side, so grasps touch pads first. CoACD only where one hull would be badly wrong: the palm shell (thumb bay cut) and the wrist ring (a loop). Hulls reduced to <= 64 vertices by greedy farthest-outside insertion (deviation listed per piece, inside the true hull). Few small convex pieces keep GPU (MJX/Warp) narrow-phase cost low; the forearm is 2 coarse hulls (it only meets the table)."
  },
  "sites": {
   "palm_centre_ray_origin_mm": [
    -8.5,
-   18.99999,
-   43.699997
+   19.0,
+   43.7
   ],
-  "forearm_flange_face_area_mm2": 3542.250269,
+  "forearm_flange_face_area_mm2": 3542.25,
   "index_tip_normal": [
    0.0,
    -0.925985,

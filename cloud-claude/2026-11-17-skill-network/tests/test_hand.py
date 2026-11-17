@@ -14,16 +14,27 @@ import sys
 import mujoco
 import numpy as np
 import pytest
-
 from hand_helpers import (
-    ASSETS, FINGERS, POSES_JSON, ROOT, SERVO_JOINTS, WRIST_JOINTS, fk_reference, kin, load_model, poly, pose_errors,
+    ASSETS,
+    FINGERS,
+    POSES_JSON,
+    ROOT,
+    SERVO_JOINTS,
+    WRIST_JOINTS,
+    fk_reference,
+    kin,
+    load_model,
+    poly,
+    pose_errors,
     set_cad_q,
 )
 
 TOL_MM, TOL_DEG = 0.1, 0.1
-CONTRACT_BODIES = (["forearm", "wrist_ring", "palm"]
-                   + [f"{f}_{b}" for f in FINGERS for b in ("yoke", "proximal", "middle", "distal", "bar")]
-                   + [f"thumb_{b}" for b in ("base", "metacarpal", "proximal", "distal")])
+CONTRACT_BODIES = (
+    ["forearm", "wrist_ring", "palm"]
+    + [f"{f}_{b}" for f in FINGERS for b in ("yoke", "proximal", "middle", "distal", "bar")]
+    + [f"thumb_{b}" for b in ("base", "metacarpal", "proximal", "distal")]
+)
 
 
 @pytest.fixture(scope="module")
@@ -44,8 +55,12 @@ def test_names_order_limits(model):
     assert names == set(CONTRACT_BODIES)
     assert model.body("forearm").parentid[0] == 0 and model.body_jntnum[model.body("forearm").id] == 0
     joints = {model.joint(i).name for i in range(model.njnt)}
-    assert joints == set(SERVO_JOINTS) | set(WRIST_JOINTS) | {f"{f}_dip" for f in FINGERS} | {f"{f}_bar" for f in FINGERS}
-    assert all(model.jnt_type[i] == mujoco.mjtJoint.mjJNT_HINGE and model.jnt_limited[i] for i in range(model.njnt))
+    assert joints == set(SERVO_JOINTS) | set(WRIST_JOINTS) | {f"{f}_dip" for f in FINGERS} | {
+        f"{f}_bar" for f in FINGERS
+    }
+    assert all(
+        model.jnt_type[i] == mujoco.mjtJoint.mjJNT_HINGE and model.jnt_limited[i] for i in range(model.njnt)
+    )
     acts = [model.actuator(i).name for i in range(model.nu)]
     assert acts == [*SERVO_JOINTS, "wrist_flex", "wrist_dev"]
     act = _act()
@@ -57,7 +72,7 @@ def test_names_order_limits(model):
         np.testing.assert_allclose(model.actuator_forcerange[i], act[a]["forcerange"], rtol=1e-6)
         np.testing.assert_allclose(model.dof_damping[model.jnt_dofadr[jid]], act[a]["damping"], rtol=1e-6)
         np.testing.assert_allclose(model.dof_armature[model.jnt_dofadr[jid]], act[a]["armature"], rtol=1e-6)
-    for b, d in kin()["bodies"].items():
+    for d in kin()["bodies"].values():
         if d["joint"]:
             np.testing.assert_allclose(model.jnt_range[model.joint(d["joint"]).id], d["range_rad"], atol=1e-9)
     for s in ("wrist_centre", "forearm_flange", "palm_centre", "thumb_tip", *(f"{f}_tip" for f in FINGERS)):
@@ -66,9 +81,18 @@ def test_names_order_limits(model):
 
 def test_cad_ranges(model):
     """Servo/wrist ranges equal the CAD's (deg): fingers 16_finger RANGE + F.ABD_RANGE, thumb T.RANGES, wrist 09."""
-    exp = {"wrist_flex": (-50, 50), "wrist_dev": (-30, 20), "thumb_cmc_rot": (-31, 110), "thumb_cmc_flex": (-37, 63),
-           "thumb_mcp_flex": (-10, 70), "thumb_ip": (-15, 85), "index_mcp_abd": (-10, 15),
-           "middle_mcp_abd": (-15, 15), "ring_mcp_abd": (-15, 15), "little_mcp_abd": (-15, 7.5)}
+    exp = {
+        "wrist_flex": (-50, 50),
+        "wrist_dev": (-30, 20),
+        "thumb_cmc_rot": (-31, 110),
+        "thumb_cmc_flex": (-37, 63),
+        "thumb_mcp_flex": (-10, 70),
+        "thumb_ip": (-15, 85),
+        "index_mcp_abd": (-10, 15),
+        "middle_mcp_abd": (-15, 15),
+        "ring_mcp_abd": (-15, 15),
+        "little_mcp_abd": (-15, 7.5),
+    }
     exp.update({f"{f}_mcp_flex": (-10, 90) for f in FINGERS})
     exp.update({f"{f}_pip": (-5, 95) for f in FINGERS})
     for j, r in exp.items():
@@ -88,10 +112,20 @@ def test_signs(model):
         for j in (f"{f}_mcp_flex", f"{f}_pip"):
             assert tip(f"{f}_tip", j, 20)[1] < tip(f"{f}_tip", j, 0)[1] - 1e-3
         assert tip(f"{f}_tip", f"{f}_mcp_abd", 10)[0] > tip(f"{f}_tip", f"{f}_mcp_abd", 0)[0] + 1e-3
-    for j in ("thumb_cmc_flex", "thumb_mcp_flex", "thumb_ip"):  # thumb flexion: tip moves toward the palm (-Y)
-        assert tip("thumb_tip", j, 20)[1] < tip("thumb_tip", j, 0)[1]
-    # opposition: the thumb tip swings across the palm, toward the fingers (-X)
-    assert tip("thumb_tip", "thumb_cmc_rot", 40)[0] < tip("thumb_tip", "thumb_cmc_rot", 0)[0]
+
+    # thumb (its q = 0 is not an anatomical rest pose, so test from the CAD poses): flexion (+) brings the thumb
+    # tip closer to the palm centre, opposition (+) toward the palm and the middle fingertip
+    def dist(q, site):
+        set_cad_q(model, d, q)
+        mujoco.mj_kinematics(model, d)
+        return float(np.linalg.norm(d.site("thumb_tip").xpos - d.site(site).xpos))
+
+    for pose in ("open", "relaxed", "tip_pinch"):
+        q = fk_reference()["poses"][pose]["q"]
+        for j in ("thumb_cmc_flex", "thumb_mcp_flex", "thumb_ip", "thumb_cmc_rot"):
+            assert dist({**q, j: q[j] + 10}, "palm_centre") < dist(q, "palm_centre"), (pose, j)
+    q = fk_reference()["poses"]["open"]["q"]
+    assert dist({**q, "thumb_cmc_rot": q["thumb_cmc_rot"] + 10}, "middle_tip") < dist(q, "middle_tip")
     assert tip("middle_tip", "wrist_flex", 20)[1] < tip("middle_tip", "wrist_flex", 0)[1] - 1e-3
     assert tip("middle_tip", "wrist_dev", 10)[0] > tip("middle_tip", "wrist_dev", 0)[0] + 1e-3
     # couplings close with the PIP
@@ -102,14 +136,15 @@ def test_signs(model):
 # ------------------------------------------------------------------------------------------- kinematic fidelity
 def _check_configs(model, configs) -> tuple[float, float, str]:
     d = mujoco.MjData(model)
-    worst_p, worst_r, where = 0.0, 0.0, ""
+    worst_p, worst_r, wp, wr = 0.0, 0.0, "", ""
     for name, q, T in configs:
         set_cad_q(model, d, q)
         for b, (ep, er) in pose_errors(model, d, T).items():
-            if ep > worst_p or er > worst_r:
-                where = f"{name}:{b}" if ep > worst_p else where
-            worst_p, worst_r = max(worst_p, ep), max(worst_r, er)
-    return worst_p, worst_r, where
+            if ep > worst_p:
+                worst_p, wp = ep, f"{name}:{b}"
+            if er > worst_r:
+                worst_r, wr = er, f"{name}:{b}"
+    return worst_p, worst_r, f"mm at {wp}, deg at {wr}"
 
 
 def test_fidelity_cad_poses(model):
@@ -121,9 +156,13 @@ def test_fidelity_cad_poses(model):
         part_body = {}
         for n, cb in pj["parts"].items():
             g = cb.split(":")
-            part_body[n] = ({"forearm": "forearm", "ring": "wrist_ring", "palm": "palm"}.get(cb) or
-                            ("palm" if g[1] in ("mount",) or g[1].endswith("_module") else
-                             f"thumb_{g[1]}" if g[0] == "thumb" else g[1]))
+            part_body[n] = {"forearm": "forearm", "ring": "wrist_ring", "palm": "palm"}.get(cb) or (
+                "palm"
+                if g[1] in ("mount",) or g[1].endswith("_module")
+                else f"thumb_{g[1]}"
+                if g[0] == "thumb"
+                else g[1]
+            )
         for pn, p in pj["poses"].items():
             for n, b in part_body.items():
                 if b == "forearm" or n.startswith(("wrist_crank", "wrist_rod")):
@@ -210,22 +249,37 @@ def _self_contacts(m, d) -> list[tuple[str, str, float]]:
 def test_no_self_contact_at_rest(model):
     """Open hand (q = 0) and the CAD 'open' / 'spread' / wrist poses: no hand self-contact at all."""
     d = mujoco.MjData(model)
-    for name, p in [("q0", {"q": {}})] + [(n, fk_reference()["poses"][n])
-                                         for n in ("open", "spread", "wrist_flex_+40", "wrist_dev_-20")]:
+    for name, p in [("q0", {"q": {}})] + [
+        (n, fk_reference()["poses"][n]) for n in ("open", "spread", "wrist_flex_+40", "wrist_dev_-20")
+    ]:
         set_cad_q(model, d, p["q"])
         mujoco.mj_forward(model, d)
         assert _self_contacts(model, d) == [], name
 
 
+# Contacts that are in the CAD itself: the designed pinches (checks.json interference: tip_pinch
+# index_tip_skin/tip_skin 3.0 mm^3, thumb_to_little little_tip_skin/tip_skin 7.1 mm^3), and a CAD problem found
+# here: in the 'fist' pose the little fingertip skin is 1.77 mm inside the little knuckle module (trimesh signed
+# distance on the CAD meshes; the hull gives 2.27 mm). The CAD's interference check does not report it.
+CAD_CONTACTS = {
+    "tip_pinch": {("index_distal", "thumb_distal")},
+    "thumb_to_little": {("thumb_distal", "little_distal")},
+    "fist": {("palm", "little_distal")},
+}
+
+
 def test_self_contact_cad_poses(model):
-    """Grasp poses: only fingertip-thumb style contacts (non-adjacent), each shallow (< 2 mm, hull artefacts)."""
+    """The 9 CAD poses: no self-contact except the ones the CAD has (pinches, little tip in the fist), < 2.5 mm."""
     d = mujoco.MjData(model)
     for name, p in fk_reference()["poses"].items():
         set_cad_q(model, d, p["q"])
         mujoco.mj_forward(model, d)
-        sc = _self_contacts(model, d)
-        print(name, sorted({(a, b, round(x * 1000, 2)) for a, b, x in sc}))
-        assert all(x > -0.002 for _, _, x in sc), (name, sc)
+        allowed = CAD_CONTACTS.get(name, set())
+        for b1, b2, dist in _self_contacts(model, d):
+            assert (b1, b2) in allowed or (b2, b1) in allowed, (name, b1, b2, dist)
+            assert dist > -0.0025, (name, b1, b2, dist)
+        for pair in allowed:  # and the pinch really touches
+            assert any({b1, b2} == set(pair) for b1, b2, _ in _self_contacts(model, d)), (name, pair)
 
 
 # ------------------------------------------------------------------------------------------- physics
@@ -235,7 +289,7 @@ def _sim(model, ctrl: dict[str, float], t: float, record=None):
     for i in range(model.nu):
         d.ctrl[i] = ctrl.get(model.actuator(i).name, 0.0)
     rec = []
-    for _ in range(int(round(t / model.opt.timestep))):
+    for _ in range(round(t / model.opt.timestep)):
         mujoco.mj_step(model, d)
         if record:
             rec.append(record(d))
@@ -282,8 +336,10 @@ def test_bar_never_collides(model):
     bars = {model.body(f"{f}_bar").id for f in FINGERS}
 
     def rec(d):
-        return any(model.geom_bodyid[c.geom1] in bars or model.geom_bodyid[c.geom2] in bars
-                   for c in d.contact[: d.ncon])
+        return any(
+            model.geom_bodyid[c.geom1] in bars or model.geom_bodyid[c.geom2] in bars
+            for c in d.contact[: d.ncon]
+        )
 
     d, r = _sim(model, targets, 0.6, rec)
     assert np.all(np.isfinite(d.qpos)) and not any(r)
@@ -292,22 +348,51 @@ def test_bar_never_collides(model):
 # ------------------------------------------------------------------------------------------- warp, builders
 @pytest.mark.warp
 def test_warp_put_model_and_step(model):
+    """MuJoCo Warp (CPU): put_model, then step from the tip_pinch pose (self contacts active) and compare the
+    contact count and the state after 10 steps with MuJoCo C."""
     wp = pytest.importorskip("warp")
     mjw = pytest.importorskip("mujoco_warp")
     d = mujoco.MjData(model)
+    set_cad_q(model, d, fk_reference()["poses"]["tip_pinch"]["q"])
+    d.ctrl[:] = [d.qpos[model.jnt_qposadr[model.actuator_trnid[i, 0]]] for i in range(model.nu)]
     mujoco.mj_forward(model, d)
+    assert d.ncon > 0
     with wp.ScopedDevice("cpu"):
         mw = mjw.put_model(model)
-        dw = mjw.put_data(model, d)
-        for _ in range(5):
+        dw = mjw.put_data(model, d, nconmax=256, njmax=1024)
+        for _ in range(10):
             mjw.step(mw, dw)
-        q = dw.qpos.numpy()
+        q = dw.qpos.numpy()[0]
+    for _ in range(10):
+        mujoco.mj_step(model, d)
     assert np.all(np.isfinite(q))
+    assert np.abs(q - d.qpos).max() < 1e-3, np.abs(q - d.qpos).max()
+
+
+def test_attach_with_prefix(model, tmp_path):
+    """Attachable: MjSpec.attach with a prefix into a degree-angle parent keeps radian ranges and finds the meshes."""
+    from hand_helpers import XML
+
+    child = mujoco.MjSpec.from_file(str(XML))
+    parent = mujoco.MjSpec.from_string(
+        '<mujoco><worldbody><body name="arm" pos="0 0 1"><site name="flange"/></body></worldbody></mujoco>'
+    )
+    parent.attach(child, site=parent.site("flange"), prefix="right_")
+    m = parent.compile()
+    assert m.nu == model.nu and m.actuator(0).name == "right_index_pip"
+    for j in ("index_pip", "thumb_cmc_rot", "wrist_flex"):
+        np.testing.assert_allclose(m.joint(f"right_{j}").range, model.joint(j).range)
+    text = XML.read_text()
+    assert "<option" not in text and "<size" not in text and "<visual" not in text
 
 
 def test_build_hand_check():
-    r = subprocess.run([sys.executable, str(ROOT / "model" / "build_hand.py"), "--check"], capture_output=True,
-                       text=True)
+    r = subprocess.run(
+        [sys.executable, str(ROOT / "model" / "build_hand.py"), "--check"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
     assert r.returncode == 0, r.stdout + r.stderr
 
 
@@ -315,6 +400,10 @@ def test_build_hand_check():
 def test_extract_check():
     """extract_v21.py --check (slow: re-extracts everything, ~1-2 min; needs the cad group)."""
     pytest.importorskip("cadquery")
-    r = subprocess.run([sys.executable, str(ROOT / "model" / "extract_v21.py"), "--check"], capture_output=True,
-                       text=True)
+    r = subprocess.run(
+        [sys.executable, str(ROOT / "model" / "extract_v21.py"), "--check"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
     assert r.returncode == 0, r.stdout + r.stderr

@@ -24,7 +24,7 @@ package = false
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 cache_dir = ".venv/.pytest_cache"
-markers = ["warp: needs the warp group (uv run --group warp pytest -m warp)", "cad: needs the cad group"]
+markers = ["slow: slow sweeps (uv run pytest -m slow)", "warp: needs the warp group (uv run --group warp pytest -m warp)", "cad: needs the cad group"]
 
 [tool.ruff]
 line-length = 110

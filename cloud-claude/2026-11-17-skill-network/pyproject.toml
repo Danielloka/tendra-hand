@@ -1,0 +1,31 @@
+[project]
+name = "tendra-skills"
+version = "0.0.1"
+description = "Study: V2.1 hand on OpenArm in MuJoCo, and a shared skill network (cloud-claude/2026-11-17-skill-network)"
+requires-python = ">=3.12,<3.13"
+license = "Apache-2.0"
+dependencies = [
+    "mujoco==3.14.0",
+    "numpy>=2.0",
+    "openarm-mujoco==2.3.0",
+]
+
+[dependency-groups]
+# Only for model/extract_v21.py (reads the V2.1 CadQuery study); everything else runs without it.
+cad = ["cadquery>=2.4", "scipy>=1.13", "trimesh>=4.4", "manifold3d", "rtree", "coacd"]
+# GPU-path compatibility checks (run on CPU here; on GPU on RunPod later).
+warp = ["mujoco-warp==3.14.0", "warp-lang==1.17.0"]
+dev = ["pytest>=8", "ruff>=0.6", "trimesh>=4.4", "pillow"]
+
+[tool.uv]
+default-groups = ["dev"]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+cache_dir = ".venv/.pytest_cache"
+markers = ["warp: needs the warp group (uv run --group warp pytest -m warp)", "cad: needs the cad group"]
+
+[tool.ruff]
+line-length = 110
+cache-dir = ".venv/.ruff_cache"

@@ -71,17 +71,17 @@ TABLE_TOP = 0.40  # m; OpenArm's own tables (shoulders at 0.698 = 0.30 above the
 TABLE_CENTRE = (0.45, 0.0)  # x, y of the table's middle (symmetric about the body, ready for a left arm)
 TABLE_HALF = (0.33, 0.65)  # half size x, y
 PALM_HEIGHT = 0.10  # `table` keyframe: palm centre this far above the table top
-TABLE_POSE_XY = (0.35, -0.28)  # where the `table` keyframe puts the palm centre (above the table)
+TABLE_POSE_XY = (0.30, -0.30)  # where the `table` keyframe puts the palm centre (above the table)
 
 # Wrist camera: pose in the forearm (= hand frame at q = 0, mm -> m). See camera_report() in the tests.
-WRIST_CAM_POS = (0.0, -0.046, -0.085)
-WRIST_CAM_TILT_DEG = 12.0  # looks along the fingers (+Z), tilted this far toward the palm side (-Y)
+WRIST_CAM_POS = (0.0, -0.100, -0.090)  # 64 mm off the forearm shell (y -36 mm) on a small bracket
+WRIST_CAM_TILT_DEG = 4.0  # looks along the fingers (+Z), tilted this far toward the palm side (-Y)
 WRIST_CAM_FOVY_DEG = 93.0  # 640 x 480, horizontal FOV 110 deg
 WRIST_CAM_RES = (640, 480)
 # Head camera on a pole behind the shoulders.
 POLE_XY = (-0.32, 0.0)
 HEAD_CAM_POS = (-0.32, 0.0, 1.38)
-HEAD_CAM_TARGET = (0.45, -0.15, 0.40)
+HEAD_CAM_TARGET = (0.40, -0.20, 0.40)
 HEAD_CAM_RES = (1280, 720)
 HEAD_CAM_FOVY_DEG = 2 * math.degrees(math.atan(math.tan(math.radians(69.0 / 2)) * 720 / 1280))  # 42.3
 
@@ -163,8 +163,7 @@ def stub_hand_spec() -> mujoco.MjSpec:
                   rgba=rgba_shell, contype=1, conaffinity=1, friction=[1.0, 0.01, 0.001])  # fmt: skip
     palm.add_site(name="palm_centre", pos=[0, -0.014, 0.045], quat=_quat_x(90), size=[0.003])  # z = out of palm
 
-    servo_kw = dict(kp=1.5, kv=0.04, forcerange=(-0.25, 0.25))
-    equalities = []
+    servo_kw = {"kp": 1.5, "kv": 0.04, "forcerange": (-0.25, 0.25)}
 
     def joint(body, name, axis, rng):
         body.add_joint(name=name, type=hinge, axis=axis, range=list(rng),
@@ -369,7 +368,7 @@ def _add_cameras(spec: mujoco.MjSpec, side: str) -> None:
     existing = [s for s in spec.sites if s.name == f"{side}_wrist_cam_mount"]
     if existing:  # the hand file chose its own mount: use its pose
         mount = existing[0]
-        pos, quat = list(mount.pos), None
+        pos = list(mount.pos)
         cam = forearm.add_camera(name=f"{side}_wrist_cam", pos=pos, fovy=WRIST_CAM_FOVY_DEG, resolution=list(WRIST_CAM_RES))
         cam.alt.type = mujoco.mjtOrientation.mjORIENTATION_QUAT
         cam.alt.quat = list(mount.quat)
@@ -385,7 +384,10 @@ def _add_cameras(spec: mujoco.MjSpec, side: str) -> None:
                                 rgba=[0.1, 0.8, 0.2, 1], group=4)  # fmt: skip
         site.alt.type = mujoco.mjtOrientation.mjORIENTATION_XYAXES
         site.alt.xyaxes = xyaxes
-        # a small visual board + lens so a render shows where the camera is
+        # visual bracket + board + lens so a render shows where the camera is (no collision)
+        forearm.add_geom(name=f"{side}_wrist_cam_bracket", type=mujoco.mjtGeom.mjGEOM_BOX,
+                         size=[0.006, 0.027, 0.012], pos=[0.0, (-0.036 + WRIST_CAM_POS[1]) / 2, WRIST_CAM_POS[2]],
+                         rgba=[0.3, 0.3, 0.33, 1], contype=0, conaffinity=0, group=2)  # fmt: skip
         forearm.add_geom(name=f"{side}_wrist_cam_board", type=mujoco.mjtGeom.mjGEOM_BOX, size=[0.012, 0.0035, 0.012],
                          pos=[WRIST_CAM_POS[0], WRIST_CAM_POS[1] - 0.0035, WRIST_CAM_POS[2]], rgba=[0.1, 0.25, 0.1, 1],
                          contype=0, conaffinity=0, group=2)  # fmt: skip
@@ -414,6 +416,9 @@ def _add_scene_basics(spec: mujoco.MjSpec) -> None:
     spec.add_material(name="leg_mat", rgba=[0.25, 0.25, 0.27, 1])
     wb.add_geom(name="floor", type=mujoco.mjtGeom.mjGEOM_PLANE, size=[3, 3, 0.1], material="floor_mat",
                 friction=[0.8, 0.01, 0.0001])  # fmt: skip
+    ov = wb.add_camera(name="overview", pos=[1.25, 0.95, 1.25], fovy=45.0, resolution=[960, 720])  # for renders
+    ov.alt.type = mujoco.mjtOrientation.mjORIENTATION_XYAXES
+    ov.alt.xyaxes = look_at_xyaxes([1.25, 0.95, 1.25], [0.25, -0.2, 0.5], [0, 0, 1])
     cx, cy = TABLE_CENTRE
     hx, hy = TABLE_HALF
     wb.add_geom(name="table", type=mujoco.mjtGeom.mjGEOM_BOX, size=[hx, hy, 0.02], pos=[cx, cy, TABLE_TOP - 0.02],
@@ -426,10 +431,10 @@ def _add_scene_basics(spec: mujoco.MjSpec) -> None:
 
 # test objects: name -> (geom type, size, mass kg, rgba, position (x, y), half height above table)
 OBJECTS = {
-    "cube": (mujoco.mjtGeom.mjGEOM_BOX, [0.025, 0.025, 0.025], 0.12, [0.2, 0.45, 0.85, 1], (0.30, -0.40)),
-    "cylinder": (mujoco.mjtGeom.mjGEOM_CYLINDER, [0.030, 0.050], 0.15, [0.85, 0.25, 0.2, 1], (0.42, -0.36)),
-    "ball": (mujoco.mjtGeom.mjGEOM_SPHERE, [0.030], 0.06, [0.95, 0.75, 0.15, 1], (0.32, -0.22)),
-    "mug_box": (mujoco.mjtGeom.mjGEOM_BOX, [0.040, 0.040, 0.0475], 0.30, [0.3, 0.7, 0.4, 1], (0.47, -0.20)),
+    "cube": (mujoco.mjtGeom.mjGEOM_BOX, [0.025, 0.025, 0.025], 0.12, [0.2, 0.45, 0.85, 1], (0.28, -0.43)),
+    "cylinder": (mujoco.mjtGeom.mjGEOM_CYLINDER, [0.030, 0.050], 0.15, [0.85, 0.25, 0.2, 1], (0.42, -0.43)),
+    "ball": (mujoco.mjtGeom.mjGEOM_SPHERE, [0.030], 0.06, [0.95, 0.75, 0.15, 1], (0.30, -0.25)),
+    "mug_box": (mujoco.mjtGeom.mjGEOM_BOX, [0.040, 0.040, 0.0475], 0.30, [0.3, 0.7, 0.4, 1], (0.42, -0.27)),
 }
 
 
@@ -460,12 +465,14 @@ def _rot_error(current: np.ndarray, target: np.ndarray) -> np.ndarray:
     return 0.5 * np.array([m[1, 2] - m[2, 1], m[2, 0] - m[0, 2], m[0, 1] - m[1, 0]])
 
 
-def palm_target_rotation(yaw: float = 0.0) -> np.ndarray:
+def palm_target_rotation(yaw: float = 0.0, pitch: float = 0.0) -> np.ndarray:
     """Palm frame (hand axes: x thumb side, y back of the hand, z along the fingers) with the palm facing down and
-    the fingers pointing forward (+x world) turned by `yaw` about the vertical."""
+    the fingers pointing forward (+x world) turned by `yaw` about the vertical, and tilted down by `pitch`."""
     c, s = math.cos(yaw), math.sin(yaw)
-    z = np.array([c, s, 0.0])
-    y = np.array([0.0, 0.0, 1.0])
+    z = np.array([c * math.cos(pitch), s * math.cos(pitch), -math.sin(pitch)])
+    up = np.array([0.0, 0.0, 1.0])
+    y = up - (up @ z) * z
+    y /= np.linalg.norm(y)
     x = np.cross(y, z)
     return np.column_stack([x, y, z])
 
@@ -548,9 +555,9 @@ def tune_damping(spec: mujoco.MjSpec, keys: dict, side: str = SIDE, zeta: float 
         data.qpos[:] = qpos
         mujoco.mj_forward(model, data)
         mujoco.mj_fullM(model, data, mass)
-        for n in inertia:
+        for n, current in inertia.items():
             d = model.jnt_dofadr[model.joint(n).id]
-            inertia[n] = max(inertia[n], mass[d, d])
+            inertia[n] = max(current, mass[d, d])
     for n, inert in inertia.items():
         act = spec.actuator(n)
         kp = act.gainprm[0]
@@ -572,7 +579,6 @@ KEY_JOINTS: dict[str, dict[str, float]] = {
 def solve_keyframes(spec: mujoco.MjSpec, side: str = SIDE) -> dict[str, dict[str, float]]:
     """All keyframes' joint values: rest, ready (constants) and table (IK: palm 10 cm above the table, palm down)."""
     model = spec.compile()
-    names = arm_joint_names(side)
     q_nom = np.array([0.3, 0.17, 0.0, 1.6, 1.0, 0.0, 0.0])  # a comfortable guess: elbow bent, forearm pronated
     target = np.array([TABLE_POSE_XY[0], TABLE_POSE_XY[1], TABLE_TOP + PALM_HEIGHT])
     q, err = solve_arm_pose(model, target, palm_target_rotation(0.0), side, q_nom)

@@ -22,18 +22,20 @@ import mujoco
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import build_robot as br  # noqa: E402
+import build_robot as br
 
 ROOT = Path(__file__).resolve().parent
 RENDERS = ROOT / "renders"
 YAWS_DEG = (-30.0, -15.0, 0.0, 15.0, 30.0)
 STEP = 0.025  # grid spacing (m)
+POS_TOL = 0.005  # palm centre within 5 mm of the grid point
+ROT_TOL_DEG = 15.0  # palm frame within 15 deg of the target (palm down, fingers at the yaw)
 
 
 
 
-def analyse(model, height: float = br.PALM_HEIGHT, x_range=(0.10, 0.90), y_range=(-0.60, 0.30), yaws_deg=YAWS_DEG,
-            step: float = STEP, side: str = br.SIDE) -> dict:
+def analyse(model, height: float = br.PALM_HEIGHT, x_range=(0.10, 0.65), y_range=(-0.60, 0.20), yaws_deg=YAWS_DEG,
+            step: float = STEP, side: str = br.SIDE, pitches_deg=(0.0,), rot_tol_deg: float = ROT_TOL_DEG) -> dict:
     xs = np.arange(x_range[0], x_range[1] + 1e-9, step)
     ys = np.arange(y_range[0], y_range[1] + 1e-9, step)
     names = br.arm_joint_names(side)
@@ -41,25 +43,30 @@ def analyse(model, height: float = br.PALM_HEIGHT, x_range=(0.10, 0.90), y_range
     qadr = model.jnt_qposadr[jid]
     data = mujoco.MjData(model)
     z = br.TABLE_TOP + height
+    palm_site, palm_body = model.site(f"{side}_palm_centre").id, model.body(f"{side}_palm").id
     q_nom = np.array([0.3, 0.17, 0.0, 1.6, 1.0, 0.0, 0.0])
-    reach = np.zeros((len(yaws_deg), len(xs), len(ys)), bool)
-    for k, yaw in enumerate(yaws_deg):
-        rot = br.palm_target_rotation(math.radians(yaw))
+    combos = [(yaw, pitch) for pitch in pitches_deg for yaw in yaws_deg]
+    reach = np.zeros((len(combos), len(xs), len(ys)), bool)
+    for k, (yaw, pitch) in enumerate(combos):
+        rot = br.palm_target_rotation(math.radians(yaw), math.radians(pitch))
         for i, x in enumerate(xs):
             prev = q_nom
             for j, y in enumerate(ys):
-                q, err = br.solve_arm_pose(model, np.array([x, y, z]), rot, side, q_nom=prev, seeds=5, iters=120)
-                if q is None or err > 2e-3:
+                target = np.array([x, y, z])
+                q, _ = br.solve_arm_pose(model, target, rot, side, q_nom=prev, seeds=6, iters=120)
+                if q is None:
                     continue
                 data.qpos[:] = model.qpos0
                 data.qpos[qadr] = q
                 mujoco.mj_forward(model, data)
-                if data.ncon:
+                pos_err = np.linalg.norm(data.site_xpos[palm_site] - target)
+                cos_t = np.clip((np.trace(data.xmat[palm_body].reshape(3, 3) @ rot.T) - 1) / 2, -1, 1)
+                if pos_err > POS_TOL or math.degrees(math.acos(cos_t)) > rot_tol_deg or data.ncon:
                     continue
                 reach[k, i, j] = True
                 prev = q
     union = reach.any(axis=0)
-    return {"xs": xs, "ys": ys, "reach": reach, "yaws_deg": list(yaws_deg), "union": union, "straight": reach[list(yaws_deg).index(0.0)], "height": height}
+    return {"xs": xs, "ys": ys, "reach": reach, "yaws_deg": list(yaws_deg), "pitches_deg": list(pitches_deg), "union": union, "straight": reach[combos.index((0.0, 0.0))], "height": height}
 
 
 def largest_rectangles(mask: np.ndarray, xs, ys, min_w=0.40, min_h=0.30):
@@ -118,27 +125,53 @@ def save_png(res: dict, path: Path, table=None) -> None:
     img.save(path)
 
 
+HEIGHTS = (0.10, 0.15, 0.20)  # palm centre heights above the table top that count for pick and place
+
+
+def analyse_heights(model, heights=HEIGHTS, **kw) -> dict:
+    """analyse() at several palm heights; "union" = reachable at any of them, "straight" likewise (yaw 0 only)."""
+    runs = [analyse(model, h, **kw) for h in heights]
+    out = dict(runs[0])
+    out["union"] = np.any([r["union"] for r in runs], axis=0)
+    out["straight"] = np.any([r["straight"] for r in runs], axis=0)
+    out["per_height"] = {h: r["union"] for h, r in zip(heights, runs)}
+    out["heights"] = list(heights)
+    return out
+
+
+def report(res: dict, step: float) -> None:
+    xs, ys = res["xs"], res["ys"]
+    cell = step**2
+    for h, m in res["per_height"].items():
+        r = largest_rectangles(m, xs, ys)
+        print(f"palm {h * 100:.0f} cm above the table, yaw +-30: {m.sum() * cell * 1e4:.0f} cm2; best 40x30 rectangle: "
+              + (f"x {r[0][1]:.3f}..{r[0][2]:.3f}, y {r[0][3]:.3f}..{r[0][4]:.3f}" if r else "none"))
+    for name, m in (("fingers forward (yaw 0)", res["straight"]), (f"any yaw +-30, heights {res['heights']}", res["union"])):
+        ii, jj = np.nonzero(m)
+        print(f"{name}: {m.sum() * cell * 1e4:.0f} cm2; x {xs[ii].min():.3f}..{xs[ii].max():.3f}, y {ys[jj].min():.3f}..{ys[jj].max():.3f}")
+    rects = largest_rectangles(res["union"], xs, ys)
+    if rects:
+        _, x0, x1, y0, y1 = rects[0]
+        print(f"largest fully reachable rectangle: x {x0:.3f}..{x1:.3f} ({x1 - x0:.2f} m) y {y0:.3f}..{y1:.3f} ({y1 - y0:.2f} m)")
+    else:
+        print("no fully reachable rectangle of at least 40 x 30 cm")
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default=str(br.ROBOT_XML))
-    ap.add_argument("--height", type=float, default=br.PALM_HEIGHT)
+    ap.add_argument("--heights", type=float, nargs="*", default=list(HEIGHTS))
     ap.add_argument("--step", type=float, default=STEP)
+    ap.add_argument("--yaws", type=float, nargs="*", default=list(YAWS_DEG), help="finger yaw angles to include (deg)")
+    ap.add_argument("--pitches", type=float, nargs="*", default=[0.0], help="fingers-down tilts to include (deg)")
+    ap.add_argument("--dump", default="", help="save the masks to this .npz")
     args = ap.parse_args(argv)
     model = mujoco.MjModel.from_xml_path(args.model)
-    res = analyse(model, args.height, step=args.step)
-    xs, ys = res["xs"], res["ys"]
-    cell = args.step**2
-    for name, m in (("palm down, fingers forward", res["straight"]), ("any yaw within +-30 deg", res["union"])):
-        ii, jj = np.nonzero(m)
-        print(f"{name}: {m.sum()} cells = {m.sum() * cell * 1e4:.0f} cm2; x {xs[ii].min():.3f}..{xs[ii].max():.3f}, "
-              f"y {ys[jj].min():.3f}..{ys[jj].max():.3f}")
-    for name, m in (("fingers forward", res["straight"]), ("yaw +-30", res["union"])):
-        rects = largest_rectangles(m, xs, ys)
-        if rects:
-            a, x0, x1, y0, y1 = rects[0]
-            print(f"largest rectangle ({name}): x {x0:.3f}..{x1:.3f} ({x1 - x0:.2f} m) y {y0:.3f}..{y1:.3f} ({y1 - y0:.2f} m)")
-        else:
-            print(f"no >= 40x30 cm rectangle ({name})")
+    res = analyse_heights(model, tuple(args.heights), step=args.step, pitches_deg=tuple(args.pitches),
+                          yaws_deg=tuple(args.yaws))  # fmt: skip
+    if args.dump:
+        np.savez(args.dump, union=res["union"], straight=res["straight"], xs=res["xs"], ys=res["ys"])
+    report(res, args.step)
     save_png(res, RENDERS / "workspace.png", (br.TABLE_CENTRE[0], br.TABLE_CENTRE[1], br.TABLE_HALF[0], br.TABLE_HALF[1]))
     print("wrote", RENDERS / "workspace.png")
     return 0

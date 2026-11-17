@@ -557,10 +557,100 @@
   "stl": "out/18/thumb/stl/roller_pin_B_ip_ext.stl",
   "color": "#b5b9bd"
  },
- "turning_block_A": {
+ "fork_A_cmc_rot_flex": {
   "body": "mount",
   "material": "PETG",
-  "stl": "out/18/thumb/stl/turning_block_A.stl",
+  "stl": "out/18/thumb/stl/fork_A_cmc_rot_flex.stl",
+  "color": "#d9dde3"
+ },
+ "fork_A_cmc_rot_ext": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/fork_A_cmc_rot_ext.stl",
+  "color": "#d9dde3"
+ },
+ "fork_A_cmc_flex_flex": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/fork_A_cmc_flex_flex.stl",
+  "color": "#d9dde3"
+ },
+ "fork_A_cmc_flex_ext": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/fork_A_cmc_flex_ext.stl",
+  "color": "#d9dde3"
+ },
+ "fork_A_mcp_flex_flex": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/fork_A_mcp_flex_flex.stl",
+  "color": "#d9dde3"
+ },
+ "fork_A_mcp_flex_ext": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/fork_A_mcp_flex_ext.stl",
+  "color": "#d9dde3"
+ },
+ "fork_A_ip_flex": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/fork_A_ip_flex.stl",
+  "color": "#d9dde3"
+ },
+ "fork_A_ip_ext": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/fork_A_ip_ext.stl",
+  "color": "#d9dde3"
+ },
+ "fork_C_cmc_rot_flex": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/fork_C_cmc_rot_flex.stl",
+  "color": "#d9dde3"
+ },
+ "fork_C_cmc_rot_ext": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/fork_C_cmc_rot_ext.stl",
+  "color": "#d9dde3"
+ },
+ "fork_B_cmc_flex_flex": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/fork_B_cmc_flex_flex.stl",
+  "color": "#d9dde3"
+ },
+ "fork_B_cmc_flex_ext": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/fork_B_cmc_flex_ext.stl",
+  "color": "#d9dde3"
+ },
+ "fork_B_mcp_flex_flex": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/fork_B_mcp_flex_flex.stl",
+  "color": "#d9dde3"
+ },
+ "fork_B_mcp_flex_ext": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/fork_B_mcp_flex_ext.stl",
+  "color": "#d9dde3"
+ },
+ "fork_B_ip_flex": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/fork_B_ip_flex.stl",
+  "color": "#d9dde3"
+ },
+ "fork_B_ip_ext": {
+  "body": "mount",
+  "material": "PETG",
+  "stl": "out/18/thumb/stl/fork_B_ip_ext.stl",
   "color": "#d9dde3"
  }
 }

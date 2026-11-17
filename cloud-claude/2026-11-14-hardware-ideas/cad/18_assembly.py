@@ -50,6 +50,9 @@ W13 = _load("w13", HERE / "13_wrist_parts.py")  # patches V2 wrist constants to 
 KIN = W13.KIN
 W = W13.W
 import params as P  # noqa: E402  (V2)
+# Package A moved ring/little to an even 20 mm pitch (x -20 / -40; V2: -19.5 / -38). Match the palm to it.
+for _f, _x in (("ring", -20.0), ("little", -40.0)):
+    _m = list(P.FINGERS[_f]["mcp"]); _m[0] = _x; P.FINGERS[_f]["mcp"] = type(P.FINGERS[_f]["mcp"])(_m)
 
 FINGERS = ("index", "middle", "ring", "little")
 DENS = {"PETG": 1.27, "PAHT-CF": 1.20, "7075": 2.81, "steel": 7.85, "stainless": 7.95, "silicone": 1.08, "TPU": 1.21,

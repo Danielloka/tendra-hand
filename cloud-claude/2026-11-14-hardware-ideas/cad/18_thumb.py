@@ -251,6 +251,33 @@ def _drum_arc(st, Tw, aT, sense, wrap, Fq, q, n=9):
             for s in np.linspace(0, wrap, n)]
 
 
+ROT_C_W = 19.5  # roller C touches the drum tangent line this far along W2 from the axis (outside the posts, r 18.6)
+
+
+def rot_line(name):
+    """fixed tangent line of a cmc_rot strand in its lane plane: it leaves the drum toward the palm plate
+    (direction W = the plate centre projected into the drum plane), on the same side (+-R) as in V2 so that
+    flex stays flex. Returns the point L0 where it meets roller C and the direction toward the drum."""
+    st = STRANDS[name]
+    sock = to_local(C, TH.node(st, "socket")["p"])[:2]
+    latv2 = np.array([-TH.W2[1], TH.W2[0]])
+    sgn = np.sign((sock - TH.ROT_SOCKET_W[0] * np.asarray(TH.W2)) @ latv2)
+    tgt = to_local(C, np.array([0.0, 0.0, Z_PLATE_TOP + 6.0]))[:2]
+    W = unit(tgt)
+    lat = np.array([-W[1], W[0]])
+    xy = ROT_C_W * W + sgn * R * lat
+    L0 = to_world(C, [xy[0], xy[1], st["drum"]["groove_x"]])
+    d = unit(to_world(C, [xy[0] - W[0], xy[1] - W[1], st["drum"]["groove_x"]]) - L0)
+    return L0, d
+
+
+def rot_c_centre(name, cA):
+    L0, d = rot_line(name)
+    v = cA - L0
+    n = unit(v - (v @ d) * d)
+    return L0 + RS * n
+
+
 def strand_path(name, q=None, detail=False):
     """World polyline of one strand (palm plate hole -> fuse-cup anchor) at pose q, plus bend data."""
     q = _qdict(q)
@@ -260,7 +287,8 @@ def strand_path(name, q=None, detail=False):
     E = eye_point(name)
     info = {}
     if st["joint"] == "cmc_rot":
-        cA, cC = cen[f"A_{name}"], cen[f"C_{name}"]
+        cA = cen[f"A_{name}"]
+        cC = rot_c_centre(name, cA)
         # iterate: C's exit tangent toward the drum depends on the drum tangent and vice versa
         Q = cC.copy()
         for _ in range(4):
@@ -353,12 +381,12 @@ def wire_waypoints():
     add(C, [xw, yw, CAP_Z[0] + 0.1], "base", "axial hole exit at the cap")
     # clock spring: 1.5 turns from r 6.5 (cap, rotating) to r 11.6 (mount wall, fixed); modelled at rest
     a0 = np.arctan2(yw, xw)
-    for k, t in enumerate(np.linspace(0, 1, 13)[1:]):
-        a = a0 + t * 3 * np.pi
-        r = 6.6 + 5.0 * t
+    span = (-a0) % (2 * np.pi) + 2 * np.pi  # >= 1 turn, ends at the chip azimuth (+x of the C frame)
+    for k, t in enumerate(np.linspace(0, 1, 17)[1:]):
+        a = a0 + t * span
+        r = 6.6 + 4.9 * t
         add(C, [r * np.cos(a), r * np.sin(a), 0.5 * (CLOCK_Z[0] + CLOCK_Z[1])], "mount", "clock spring (flat, 4 wires side by side)")
-    ae = a0 + 3 * np.pi
-    add(C, [13.0 * np.cos(ae), 13.0 * np.sin(ae), -27.0], "mount", "through the mount wall to the rot chip board")
+    add(C, [12.75, 0.0, -27.55], "mount", "through the mount wall (Ø1.2 channel) to the rot chip board")
     add(C, [ROT_CHIP_R + 1.2, 0.0, -26.6], "mount", "cmc_rot chip board (mount wall)")
     add(C, [16.5, 2.0, -26.0], "mount", "JST SH 4-pin socket on the mount (thumb plug)")
     return W
@@ -504,7 +532,8 @@ def _route_paths(cen):
         st = STRANDS[n]
         E = eye_point(n)
         if st["joint"] == "cmc_rot":
-            cA, cC = cen[f"A_{n}"], cen[f"C_{n}"]
+            cA = cen[f"A_{n}"]
+            cC = rot_c_centre(n, cA)
             Ai, Ao, wA, _, _ = pulley(E, cA, cC)
             Q = cC
             for _ in range(3):
@@ -1055,7 +1084,8 @@ def _roller_axes():
     for n in STRAND_NAMES:
         _, info = strand_path(n, {}, detail=True)
         for k, ax in info["axes"].items():
-            out[f"{k}_{n}"] = (route()[f"{k}_{n}"], ax)
+            c = rot_c_centre(n, route()[f"A_{n}"]) if k == "C" else route()[f"{k}_{n}"]
+            out[f"{k}_{n}"] = (c, ax)
     return out
 
 
@@ -1158,20 +1188,10 @@ def build(quick=False):
     _hinge_hardware("mcp_flex", parts, "metacarpal", "proximal")
     _hinge_hardware("ip", parts, "proximal", "distal")
     forks_A, forks_BC = make_rollers(parts)
-    _reg(parts, "turning_block_A", make_turning_block(forks_A), "mount", "PETG")
-    m = parts["thumb_mount"]
-    for key, fw, fr, back in forks_BC:
-        m = m.fuse(fw)
-        bw = TH.to_world(fr, [back[0] * 5.2, back[1] * 5.2, 0.0])
-        # strut from the fork back to the nearest point of the mount's housing surface
-        loc = to_local(C, bw)
-        rr = np.hypot(loc[0], loc[1])
-        tgt = to_world(C, [loc[0] / rr * 13.8, loc[1] / rr * 13.8, np.clip(loc[2], MOUNT_Z[0] + 1.2, MOUNT_Z[1] - 1.2)])
-        m = m.fuse(_strut(bw, tgt, 1.4))
-    m = TH.main_solid(m.clean())
-    if not m.isValid():
-        m = TH.main_solid(m.fix())
-    parts["thumb_mount"] = m
+    # each MR63 sits in its own printed fork (two cheeks + a back boss with an M2 pilot); the integrator merges the
+    # row-A forks into the palm's dorsal web and the B/C forks into the thumb-bay floor (report 18 §3)
+    for key, fw, fr, back in forks_A + forks_BC:
+        _reg(parts, f"fork_{key}", TH.main_solid(fw.clean()), "mount", "PETG")
     print(f"  parts built: {len(parts)} in {time.time() - t0:.0f} s", flush=True)
     return parts
 
@@ -1185,6 +1205,8 @@ def greedy_route(cen, liners, sweeps=3, ncand=160, seed=1):
     best = _route_eval(cen, liners)
     for sw in range(sweeps):
         for k in list(cen):
+            if k.startswith("C"):
+                continue  # rot rollers C are placed by construction (rot_c_centre)
             if k.startswith("A"):
                 lo, hi = np.array([-6.0, -7.2, 34.5]), np.array([27.0, 7.2, 62.0])
             elif k.startswith("B"):
@@ -1255,7 +1277,7 @@ IGNORE_PAIRS = [  # parts that sit in their own seats / press fits (same body or
     ("ring_ip", "thumb_distal"), ("cup_rot_*", "thumb_base"), ("cup_cmc_*", "thumb_metacarpal"), ("cup_mcp_*", "thumb_proximal"),
     ("cup_ip_*", "thumb_distal"), ("cup_*", "ring_*"), ("tip_*", "thumb_distal"), ("tip_magnet", "tip_skin"),
     ("tip_chip_mlx90393", "tip_board"), ("thenar_pad", "thumb_metacarpal"), ("roller_pin_*", "thumb_mount"),
-    ("roller_pin_*", "turning_block_A"), ("roller_pin_*", "roller_*"), ("base_cap", "thumb_base"),
+    ("roller_pin_*", "fork_*"), ("roller_pin_*", "roller_*"), ("base_cap", "thumb_base"),
 ]
 
 
@@ -1688,7 +1710,11 @@ def main(quick=False):
     eta = efficiency()
     checks["eta_strand"] = eta
     checks["pinch_N"] = pinch_estimate(eta)
-    checks["opposition_cad"] = opposition_check(meshes)
+    (OUT / "checks.json").write_text(json.dumps(checks, indent=1, default=str))
+    if "--opp" in sys.argv:
+        checks["opposition_cad"] = opposition_check(meshes)
+    else:
+        checks["opposition_cad"] = "run separately: python cad/18_thumb.py --opp-only (results in opposition.json)"
     print("  check step done:", 'opposition_cad', f"{time.time() - t0:.0f} s", flush=True)
     widths = {}
     for j in ("cmc_flex", "mcp_flex", "ip"):
@@ -1713,5 +1739,18 @@ def main(quick=False):
     return checks
 
 
-if __name__ == "__main__" and "--route" not in sys.argv:
+def opp_only():
+    import trimesh
+    for n, info in parts().items():
+        BODY[n] = info["body"]
+        MATERIAL[n] = info["material"]
+    meshes = {n: trimesh.load(STL / f"{n}.stl", force="mesh") for n in parts() if BODY[n] in ("distal", "proximal", "metacarpal")}
+    res = opposition_check(meshes)
+    (OUT / "opposition.json").write_text(json.dumps(res, indent=1, default=str))
+    print(json.dumps(res, indent=1, default=str))
+
+
+if __name__ == "__main__" and "--opp-only" in sys.argv:
+    opp_only()
+elif __name__ == "__main__" and "--route" not in sys.argv:
     main(quick="--quick" in sys.argv)

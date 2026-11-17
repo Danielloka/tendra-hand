@@ -1,0 +1,1843 @@
+{
+ "validity": {
+  "thumb_mount": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 7277.31
+  },
+  "bearing_rot_top_6704zz": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 1033.58
+  },
+  "bearing_rot_bottom_6704_zro2": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 1033.58
+  },
+  "neck_eyelet": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 43.74
+  },
+  "rot_sensor_chip": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 11.77
+  },
+  "rot_sensor_board": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 10.2
+  },
+  "plug_board": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 21.6
+  },
+  "plug_jst_sh4": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 53.59
+  },
+  "thumb_base": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 5454.05
+  },
+  "base_cap": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 696.28
+  },
+  "rot_magnet_ring": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 100.53
+  },
+  "ring_rot": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 63.62
+  },
+  "cup_rot_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 13.1
+  },
+  "cup_rot_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 13.1
+  },
+  "thumb_metacarpal": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 13864.07
+  },
+  "ring_cmc": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 63.62
+  },
+  "cup_cmc_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 13.1
+  },
+  "cup_cmc_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 13.1
+  },
+  "nip_cmc_a": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 4.87
+  },
+  "nip_cmc_b": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 4.87
+  },
+  "thenar_pad": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 926.42
+  },
+  "thumb_proximal": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 8762.99
+  },
+  "ring_mcp": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 63.62
+  },
+  "cup_mcp_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 13.1
+  },
+  "cup_mcp_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 13.1
+  },
+  "nip_mcp_a": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 3.3
+  },
+  "nip_mcp_b": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 3.3
+  },
+  "thumb_distal": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 4956.83
+  },
+  "ring_ip": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 63.62
+  },
+  "cup_ip_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 13.1
+  },
+  "cup_ip_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 13.1
+  },
+  "tip_board": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 66.24
+  },
+  "tip_chip_mlx90393": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 9.0
+  },
+  "tip_skin": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 1108.35
+  },
+  "tip_magnet": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 6.97
+  },
+  "bearing_cmc_sensor_zro2": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 75.4
+  },
+  "bearing_cmc_wire_mr84zz": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 113.1
+  },
+  "axle_cmc_sensor_tube": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 43.98
+  },
+  "axle_cmc_wire_tube": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 49.08
+  },
+  "magnet_cmc": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 6.97
+  },
+  "sensor_plug_cmc": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 40.95
+  },
+  "sensor_chip_cmc": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 11.77
+  },
+  "sensor_board_cmc": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 12.87
+  },
+  "wire_keeper_cmc": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 46.28
+  },
+  "bearing_mcp_sensor_zro2": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 75.4
+  },
+  "bearing_mcp_wire_mr84zz": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 113.1
+  },
+  "axle_mcp_sensor_tube": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 38.48
+  },
+  "axle_mcp_wire_tube": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 43.58
+  },
+  "magnet_mcp": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 6.97
+  },
+  "sensor_plug_mcp": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 40.95
+  },
+  "sensor_chip_mcp": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 11.77
+  },
+  "sensor_board_mcp": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 12.87
+  },
+  "wire_keeper_mcp": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 46.28
+  },
+  "bearing_ip_sensor_zro2": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 75.4
+  },
+  "bearing_ip_wire_mr84zz": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 113.1
+  },
+  "axle_ip_tube": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 104.61
+  },
+  "magnet_ip": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 6.97
+  },
+  "sensor_plug_ip": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 40.95
+  },
+  "sensor_chip_ip": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 11.77
+  },
+  "sensor_board_ip": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 12.87
+  },
+  "wire_keeper_ip": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 46.28
+  },
+  "roller_A_cmc_rot_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 53.01
+  },
+  "roller_pin_A_cmc_rot_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 55.13
+  },
+  "roller_C_cmc_rot_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 53.01
+  },
+  "roller_pin_C_cmc_rot_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 55.13
+  },
+  "roller_A_cmc_rot_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 53.01
+  },
+  "roller_pin_A_cmc_rot_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 55.13
+  },
+  "roller_C_cmc_rot_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 53.01
+  },
+  "roller_pin_C_cmc_rot_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 55.13
+  },
+  "roller_A_cmc_flex_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 53.01
+  },
+  "roller_pin_A_cmc_flex_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 55.13
+  },
+  "roller_B_cmc_flex_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 53.01
+  },
+  "roller_pin_B_cmc_flex_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 55.13
+  },
+  "roller_A_cmc_flex_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 53.01
+  },
+  "roller_pin_A_cmc_flex_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 55.13
+  },
+  "roller_B_cmc_flex_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 53.01
+  },
+  "roller_pin_B_cmc_flex_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 55.13
+  },
+  "roller_A_mcp_flex_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 53.01
+  },
+  "roller_pin_A_mcp_flex_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 55.13
+  },
+  "roller_B_mcp_flex_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 53.01
+  },
+  "roller_pin_B_mcp_flex_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 55.13
+  },
+  "roller_A_mcp_flex_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 53.01
+  },
+  "roller_pin_A_mcp_flex_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 55.13
+  },
+  "roller_B_mcp_flex_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 53.01
+  },
+  "roller_pin_B_mcp_flex_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 55.13
+  },
+  "roller_A_ip_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 53.01
+  },
+  "roller_pin_A_ip_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 55.13
+  },
+  "roller_B_ip_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 53.01
+  },
+  "roller_pin_B_ip_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 55.13
+  },
+  "roller_A_ip_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 53.01
+  },
+  "roller_pin_A_ip_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 55.13
+  },
+  "roller_B_ip_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 53.01
+  },
+  "roller_pin_B_ip_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 55.13
+  },
+  "fork_A_cmc_rot_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 156.45
+  },
+  "fork_A_cmc_rot_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 156.45
+  },
+  "fork_A_cmc_flex_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 156.45
+  },
+  "fork_A_cmc_flex_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 156.45
+  },
+  "fork_A_mcp_flex_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 156.45
+  },
+  "fork_A_mcp_flex_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 156.45
+  },
+  "fork_A_ip_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 156.45
+  },
+  "fork_A_ip_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 156.45
+  },
+  "fork_C_cmc_rot_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 156.45
+  },
+  "fork_C_cmc_rot_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 156.45
+  },
+  "fork_B_cmc_flex_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 156.45
+  },
+  "fork_B_cmc_flex_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 156.45
+  },
+  "fork_B_mcp_flex_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 156.45
+  },
+  "fork_B_mcp_flex_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 156.45
+  },
+  "fork_B_ip_flex": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 156.45
+  },
+  "fork_B_ip_ext": {
+   "valid": true,
+   "solids": 1,
+   "watertight": true,
+   "volume": 156.45
+  }
+ },
+ "invalid": {},
+ "part_count": 109,
+ "interference_q0_all_pairs": [
+  [
+   "thumb_mount",
+   "roller_C_cmc_rot_flex",
+   3.69
+  ],
+  [
+   "thumb_mount",
+   "roller_A_mcp_flex_ext",
+   20.34
+  ],
+  [
+   "thumb_mount",
+   "fork_A_mcp_flex_ext",
+   29.67
+  ],
+  [
+   "thumb_mount",
+   "fork_C_cmc_rot_flex",
+   19.93
+  ],
+  [
+   "thumb_mount",
+   "fork_B_mcp_flex_flex",
+   27.5
+  ],
+  [
+   "bearing_rot_bottom_6704_zro2",
+   "rot_sensor_chip",
+   0.84
+  ],
+  [
+   "cup_cmc_flex",
+   "cup_cmc_ext",
+   0.76
+  ],
+  [
+   "cup_mcp_flex",
+   "cup_mcp_ext",
+   0.76
+  ],
+  [
+   "cup_ip_flex",
+   "cup_ip_ext",
+   0.76
+  ],
+  [
+   "roller_B_cmc_flex_ext",
+   "fork_B_ip_ext",
+   1.76
+  ],
+  [
+   "roller_B_mcp_flex_flex",
+   "fork_B_mcp_flex_ext",
+   0.31
+  ],
+  [
+   "fork_A_cmc_flex_flex",
+   "fork_A_mcp_flex_ext",
+   3.48
+  ],
+  [
+   "fork_A_mcp_flex_flex",
+   "fork_A_ip_ext",
+   1.41
+  ],
+  [
+   "fork_B_cmc_flex_flex",
+   "fork_B_ip_flex",
+   0.57
+  ],
+  [
+   "fork_B_cmc_flex_ext",
+   "fork_B_mcp_flex_ext",
+   1.21
+  ],
+  [
+   "fork_B_cmc_flex_ext",
+   "fork_B_ip_ext",
+   13.39
+  ],
+  [
+   "fork_B_mcp_flex_flex",
+   "fork_B_mcp_flex_ext",
+   8.7
+  ],
+  [
+   "fork_B_mcp_flex_flex",
+   "fork_B_ip_ext",
+   0.56
+  ],
+  [
+   "fork_B_mcp_flex_ext",
+   "fork_B_ip_ext",
+   5.06
+  ]
+ ],
+ "interference_grid": [
+  {
+   "q": {
+    "cmc_rot": -31.0,
+    "cmc_flex": -37.0,
+    "mcp_flex": -10.0,
+    "ip": -15.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": -31.0,
+    "cmc_flex": -37.0,
+    "mcp_flex": 30.0,
+    "ip": 35.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": -31.0,
+    "cmc_flex": -37.0,
+    "mcp_flex": 70.0,
+    "ip": 85.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": -31.0,
+    "cmc_flex": 13.0,
+    "mcp_flex": -10.0,
+    "ip": -15.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": -31.0,
+    "cmc_flex": 13.0,
+    "mcp_flex": 30.0,
+    "ip": 35.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": -31.0,
+    "cmc_flex": 13.0,
+    "mcp_flex": 70.0,
+    "ip": 85.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": -31.0,
+    "cmc_flex": 63.0,
+    "mcp_flex": -10.0,
+    "ip": -15.0
+   },
+   "hits": [
+    [
+     "thenar_pad",
+     "fork_A_cmc_rot_ext",
+     1.55
+    ]
+   ]
+  },
+  {
+   "q": {
+    "cmc_rot": -31.0,
+    "cmc_flex": 63.0,
+    "mcp_flex": 30.0,
+    "ip": 35.0
+   },
+   "hits": [
+    [
+     "thenar_pad",
+     "fork_A_cmc_rot_ext",
+     1.55
+    ]
+   ]
+  },
+  {
+   "q": {
+    "cmc_rot": -31.0,
+    "cmc_flex": 63.0,
+    "mcp_flex": 70.0,
+    "ip": 85.0
+   },
+   "hits": [
+    [
+     "thenar_pad",
+     "fork_A_cmc_rot_ext",
+     1.55
+    ]
+   ]
+  },
+  {
+   "q": {
+    "cmc_rot": 39.5,
+    "cmc_flex": -37.0,
+    "mcp_flex": -10.0,
+    "ip": -15.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 39.5,
+    "cmc_flex": -37.0,
+    "mcp_flex": 30.0,
+    "ip": 35.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 39.5,
+    "cmc_flex": -37.0,
+    "mcp_flex": 70.0,
+    "ip": 85.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 39.5,
+    "cmc_flex": 13.0,
+    "mcp_flex": -10.0,
+    "ip": -15.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 39.5,
+    "cmc_flex": 13.0,
+    "mcp_flex": 30.0,
+    "ip": 35.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 39.5,
+    "cmc_flex": 13.0,
+    "mcp_flex": 70.0,
+    "ip": 85.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 39.5,
+    "cmc_flex": 63.0,
+    "mcp_flex": -10.0,
+    "ip": -15.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 39.5,
+    "cmc_flex": 63.0,
+    "mcp_flex": 30.0,
+    "ip": 35.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 39.5,
+    "cmc_flex": 63.0,
+    "mcp_flex": 70.0,
+    "ip": 85.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 110.0,
+    "cmc_flex": -37.0,
+    "mcp_flex": -10.0,
+    "ip": -15.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 110.0,
+    "cmc_flex": -37.0,
+    "mcp_flex": 30.0,
+    "ip": 35.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 110.0,
+    "cmc_flex": -37.0,
+    "mcp_flex": 70.0,
+    "ip": 85.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 110.0,
+    "cmc_flex": 13.0,
+    "mcp_flex": -10.0,
+    "ip": -15.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 110.0,
+    "cmc_flex": 13.0,
+    "mcp_flex": 30.0,
+    "ip": 35.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 110.0,
+    "cmc_flex": 13.0,
+    "mcp_flex": 70.0,
+    "ip": 85.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 110.0,
+    "cmc_flex": 63.0,
+    "mcp_flex": -10.0,
+    "ip": -15.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 110.0,
+    "cmc_flex": 63.0,
+    "mcp_flex": 30.0,
+    "ip": 35.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 110.0,
+    "cmc_flex": 63.0,
+    "mcp_flex": 70.0,
+    "ip": 85.0
+   },
+   "hits": []
+  },
+  {
+   "q": {
+    "cmc_rot": 0.0,
+    "cmc_flex": 0.0,
+    "mcp_flex": 0.0,
+    "ip": 0.0
+   },
+   "hits": []
+  }
+ ],
+ "interference_grid_clear": "25/28",
+ "fixed_neighbours_vertices_inside": {
+  "palm_yoke_w13": {
+   "thumb_mount": 1,
+   "fork_B_cmc_flex_flex": 12
+  }
+ },
+ "strand_centreline_in_solids": {
+  "thumb_cmc_rot_flex": [
+   {
+    "q": [
+     -31,
+     -37,
+     -10,
+     -15
+    ],
+    "points": {
+     "thumb_mount": 12
+    }
+   },
+   {
+    "q": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "points": {
+     "thumb_mount": 12
+    }
+   },
+   {
+    "q": [
+     40,
+     13,
+     70,
+     85
+    ],
+    "points": {
+     "thumb_mount": 12
+    }
+   },
+   {
+    "q": [
+     110,
+     63,
+     70,
+     85
+    ],
+    "points": {
+     "thumb_mount": 12,
+     "ring_rot": 64
+    }
+   }
+  ],
+  "thumb_cmc_rot_ext": [
+   {
+    "q": [
+     -31,
+     -37,
+     -10,
+     -15
+    ],
+    "points": {
+     "roller_pin_C_cmc_rot_ext": 1
+    }
+   },
+   {
+    "q": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "points": {
+     "ring_rot": 16,
+     "roller_pin_C_cmc_rot_ext": 1
+    }
+   },
+   {
+    "q": [
+     40,
+     13,
+     70,
+     85
+    ],
+    "points": {
+     "ring_rot": 56,
+     "roller_pin_C_cmc_rot_ext": 1
+    }
+   },
+   {
+    "q": [
+     110,
+     63,
+     70,
+     85
+    ],
+    "points": {
+     "ring_rot": 104,
+     "roller_pin_C_cmc_rot_ext": 1
+    }
+   }
+  ],
+  "thumb_cmc_flex_ext": [
+   {
+    "q": [
+     -31,
+     -37,
+     -10,
+     -15
+    ],
+    "points": {
+     "thumb_metacarpal": 4
+    }
+   },
+   {
+    "q": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "points": {
+     "thumb_metacarpal": 4
+    }
+   },
+   {
+    "q": [
+     40,
+     13,
+     70,
+     85
+    ],
+    "points": {
+     "thumb_metacarpal": 4
+    }
+   },
+   {
+    "q": [
+     110,
+     63,
+     70,
+     85
+    ],
+    "points": {
+     "thumb_metacarpal": 4
+    }
+   }
+  ],
+  "thumb_mcp_flex_flex": [
+   {
+    "q": [
+     -31,
+     -37,
+     -10,
+     -15
+    ],
+    "points": {
+     "thumb_mount": 15,
+     "fork_B_ip_flex": 1
+    }
+   },
+   {
+    "q": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "points": {
+     "thumb_mount": 15,
+     "fork_B_ip_flex": 1
+    }
+   },
+   {
+    "q": [
+     40,
+     13,
+     70,
+     85
+    ],
+    "points": {
+     "thumb_mount": 15,
+     "fork_B_ip_flex": 1
+    }
+   },
+   {
+    "q": [
+     110,
+     63,
+     70,
+     85
+    ],
+    "points": {
+     "thumb_mount": 15,
+     "nip_cmc_a": 2,
+     "fork_B_ip_flex": 1
+    }
+   }
+  ],
+  "thumb_mcp_flex_ext": [
+   {
+    "q": [
+     -31,
+     -37,
+     -10,
+     -15
+    ],
+    "points": {
+     "thumb_mount": 2,
+     "fork_B_ip_ext": 9
+    }
+   },
+   {
+    "q": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "points": {
+     "thumb_mount": 2,
+     "fork_B_ip_ext": 9
+    }
+   },
+   {
+    "q": [
+     40,
+     13,
+     70,
+     85
+    ],
+    "points": {
+     "thumb_mount": 2,
+     "fork_B_ip_ext": 9
+    }
+   },
+   {
+    "q": [
+     110,
+     63,
+     70,
+     85
+    ],
+    "points": {
+     "thumb_mount": 2,
+     "nip_cmc_a": 2,
+     "fork_B_ip_ext": 9
+    }
+   }
+  ],
+  "thumb_ip_flex": [
+   {
+    "q": [
+     -31,
+     -37,
+     -10,
+     -15
+    ],
+    "points": {
+     "thumb_mount": 27,
+     "thumb_metacarpal": 1,
+     "fork_B_cmc_flex_flex": 5
+    }
+   },
+   {
+    "q": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "points": {
+     "thumb_mount": 27,
+     "thumb_metacarpal": 1,
+     "fork_B_cmc_flex_flex": 5
+    }
+   },
+   {
+    "q": [
+     40,
+     13,
+     70,
+     85
+    ],
+    "points": {
+     "thumb_mount": 27,
+     "thumb_metacarpal": 1,
+     "nip_mcp_a": 1,
+     "tip_skin": 5,
+     "fork_B_cmc_flex_flex": 5
+    }
+   },
+   {
+    "q": [
+     110,
+     63,
+     70,
+     85
+    ],
+    "points": {
+     "thumb_mount": 27,
+     "thumb_metacarpal": 1,
+     "nip_cmc_a": 2,
+     "nip_mcp_a": 1,
+     "tip_skin": 5,
+     "fork_B_cmc_flex_flex": 5
+    }
+   }
+  ],
+  "thumb_ip_ext": [
+   {
+    "q": [
+     -31,
+     -37,
+     -10,
+     -15
+    ],
+    "points": {
+     "thumb_mount": 11,
+     "thumb_metacarpal": 1,
+     "fork_A_cmc_flex_flex": 1,
+     "fork_A_mcp_flex_ext": 21,
+     "fork_B_mcp_flex_ext": 15
+    }
+   },
+   {
+    "q": [
+     0,
+     0,
+     0,
+     0
+    ],
+    "points": {
+     "thumb_mount": 11,
+     "thumb_metacarpal": 1,
+     "fork_A_cmc_flex_flex": 1,
+     "fork_A_mcp_flex_ext": 21,
+     "fork_B_mcp_flex_ext": 15
+    }
+   },
+   {
+    "q": [
+     40,
+     13,
+     70,
+     85
+    ],
+    "points": {
+     "thumb_mount": 11,
+     "thumb_metacarpal": 1,
+     "nip_mcp_a": 1,
+     "fork_A_cmc_flex_flex": 1,
+     "fork_A_mcp_flex_ext": 21,
+     "fork_B_mcp_flex_ext": 15
+    }
+   },
+   {
+    "q": [
+     110,
+     63,
+     70,
+     85
+    ],
+    "points": {
+     "thumb_mount": 11,
+     "thumb_metacarpal": 1,
+     "nip_cmc_a": 2,
+     "nip_mcp_a": 1,
+     "fork_A_cmc_flex_flex": 1,
+     "fork_A_mcp_flex_ext": 21,
+     "fork_B_mcp_flex_ext": 15
+    }
+   }
+  ]
+ },
+ "wire_centreline_in_solids": {
+  "thumb_sensor_wire": [
+   {
+    "q": [
+     110,
+     63,
+     70,
+     85
+    ],
+    "points": {
+     "base_cap": 1
+    }
+   }
+  ]
+ },
+ "wire_length_mm": [
+  361.08,
+  367.68
+ ],
+ "loops": {
+  "cmc_rot": {
+   "loop_range_mm": 44.32602129809672,
+   "own_slope_mm_per_deg": [
+    0.2159,
+    0.1203
+   ],
+   "coupling_max_mm": 0.0,
+   "coupling_max_deg": 0.0
+  },
+  "cmc_flex": {
+   "loop_range_mm": 0.04410579260618874,
+   "own_slope_mm_per_deg": [
+    -0.1252,
+    0.1252
+   ],
+   "coupling_max_mm": 0.0,
+   "coupling_max_deg": 0.0
+  },
+  "mcp_flex": {
+   "loop_range_mm": 0.027211084028635923,
+   "own_slope_mm_per_deg": [
+    -0.1253,
+    0.1253
+   ],
+   "coupling_max_mm": 2.842170943040401e-14,
+   "coupling_max_deg": 2.250786450462088e-13
+  },
+  "ip": {
+   "loop_range_mm": 0.04333655777634249,
+   "own_slope_mm_per_deg": [
+    -0.1252,
+    0.1252
+   ],
+   "coupling_max_mm": 5.684341886080802e-14,
+   "coupling_max_deg": 4.501572900924176e-13
+  }
+ },
+ "bends_deg_over_grid": {
+  "thumb_cmc_rot_flex": {
+   "plate": [
+    23.3,
+    23.3
+   ],
+   "wA": [
+    110.0,
+    110.0
+   ],
+   "wC": [
+    38.7,
+    38.7
+   ],
+   "drum_fleet": [
+    8.4,
+    8.4
+   ],
+   "wrap": [
+    0.5,
+    290.0
+   ]
+  },
+  "thumb_cmc_rot_ext": {
+   "plate": [
+    40.9,
+    40.9
+   ],
+   "wA": [
+    162.7,
+    162.7
+   ],
+   "wC": [
+    109.0,
+    109.0
+   ],
+   "drum_fleet": [
+    1.6,
+    1.6
+   ],
+   "wrap": [
+    210.1,
+    351.1
+   ]
+  },
+  "thumb_cmc_flex_flex": {
+   "plate": [
+    81.0,
+    81.0
+   ],
+   "wA": [
+    73.9,
+    73.9
+   ],
+   "wB": [
+    75.7,
+    75.7
+   ],
+   "neck": [
+    59.3,
+    76.7
+   ],
+   "wrap": [
+    67.8,
+    167.8
+   ]
+  },
+  "thumb_cmc_flex_ext": {
+   "plate": [
+    14.5,
+    14.5
+   ],
+   "wA": [
+    142.6,
+    142.6
+   ],
+   "wB": [
+    67.2,
+    67.2
+   ],
+   "neck": [
+    60.3,
+    75.0
+   ],
+   "wrap": [
+    67.8,
+    167.8
+   ]
+  },
+  "thumb_mcp_flex_flex": {
+   "plate": [
+    13.2,
+    13.2
+   ],
+   "wA": [
+    143.6,
+    143.6
+   ],
+   "wB": [
+    110.3,
+    110.3
+   ],
+   "neck": [
+    24.3,
+    25.5
+   ],
+   "wrap": [
+    73.5,
+    153.5
+   ]
+  },
+  "thumb_mcp_flex_ext": {
+   "plate": [
+    49.6,
+    49.6
+   ],
+   "wA": [
+    129.2,
+    129.2
+   ],
+   "wB": [
+    142.4,
+    142.4
+   ],
+   "neck": [
+    5.5,
+    7.3
+   ],
+   "wrap": [
+    73.5,
+    153.5
+   ]
+  },
+  "thumb_ip_flex": {
+   "plate": [
+    32.1,
+    32.1
+   ],
+   "wA": [
+    110.2,
+    110.2
+   ],
+   "wB": [
+    167.2,
+    167.2
+   ],
+   "neck": [
+    56.9,
+    57.8
+   ],
+   "wrap": [
+    65.7,
+    165.7
+   ]
+  },
+  "thumb_ip_ext": {
+   "plate": [
+    13.5,
+    13.5
+   ],
+   "wA": [
+    135.6,
+    135.6
+   ],
+   "wB": [
+    155.9,
+    155.9
+   ],
+   "neck": [
+    34.6,
+    38.2
+   ],
+   "wrap": [
+    65.7,
+    165.7
+   ]
+  }
+ },
+ "eta_strand": {
+  "thumb_cmc_rot_flex": 0.859,
+  "thumb_cmc_rot_ext": 0.828,
+  "thumb_cmc_flex_flex": 0.648,
+  "thumb_cmc_flex_ext": 0.748,
+  "thumb_mcp_flex_flex": 0.781,
+  "thumb_mcp_flex_ext": 0.752,
+  "thumb_ip_flex": 0.659,
+  "thumb_ip_ext": 0.714
+ },
+ "pinch_N": {
+  "SCS0009_100": {
+   "index_pad": [
+    4.1,
+    "cmc_flex"
+   ],
+   "tip_to_tip": [
+    4.2,
+    "cmc_flex"
+   ],
+   "key_pinch": [
+    4.4,
+    "cmc_flex"
+   ],
+   "power55": [
+    6.4,
+    "mcp_flex"
+   ]
+  },
+  "SCS0009_80": {
+   "index_pad": [
+    3.3,
+    "cmc_flex"
+   ],
+   "tip_to_tip": [
+    3.4,
+    "cmc_flex"
+   ],
+   "key_pinch": [
+    3.5,
+    "cmc_flex"
+   ],
+   "power55": [
+    5.1,
+    "mcp_flex"
+   ]
+  },
+  "HLS3606M_100": {
+   "index_pad": [
+    10.6,
+    "cmc_flex"
+   ],
+   "tip_to_tip": [
+    11.1,
+    "cmc_flex"
+   ],
+   "key_pinch": [
+    11.5,
+    "cmc_flex"
+   ],
+   "power55": [
+    16.7,
+    "mcp_flex"
+   ]
+  },
+  "HLS3606M_80": {
+   "index_pad": [
+    8.5,
+    "cmc_flex"
+   ],
+   "tip_to_tip": [
+    8.9,
+    "cmc_flex"
+   ],
+   "key_pinch": [
+    9.2,
+    "cmc_flex"
+   ],
+   "power55": [
+    13.3,
+    "mcp_flex"
+   ]
+  }
+ },
+ "opposition_cad": "run separately: python cad/18_thumb.py --opp-only (results in opposition.json)",
+ "joint_widths_mm": {
+  "cmc_flex": 28.85,
+  "mcp_flex": 24.05,
+  "ip": 22.45
+ },
+ "mass_g": {
+  "thumb_mount": 9.24,
+  "bearing_rot_top_6704zz": 8.11,
+  "bearing_rot_bottom_6704_zro2": 6.2,
+  "neck_eyelet": 0.35,
+  "rot_sensor_chip": 0.02,
+  "rot_sensor_board": 0.02,
+  "plug_board": 0.04,
+  "plug_jst_sh4": 0.07,
+  "thumb_base": 6.93,
+  "base_cap": 0.88,
+  "rot_magnet_ring": 0.75,
+  "ring_rot": 0.54,
+  "cup_rot_flex": 0.02,
+  "cup_rot_ext": 0.02,
+  "thumb_metacarpal": 17.61,
+  "ring_cmc": 0.54,
+  "cup_cmc_flex": 0.02,
+  "cup_cmc_ext": 0.02,
+  "nip_cmc_a": 0.04,
+  "nip_cmc_b": 0.04,
+  "thenar_pad": 1.12,
+  "thumb_proximal": 11.13,
+  "ring_mcp": 0.54,
+  "cup_mcp_flex": 0.02,
+  "cup_mcp_ext": 0.02,
+  "nip_mcp_a": 0.03,
+  "nip_mcp_b": 0.03,
+  "thumb_distal": 6.3,
+  "ring_ip": 0.54,
+  "cup_ip_flex": 0.02,
+  "cup_ip_ext": 0.02,
+  "tip_board": 0.13,
+  "tip_chip_mlx90393": 0.02,
+  "tip_skin": 1.2,
+  "tip_magnet": 0.05,
+  "bearing_cmc_sensor_zro2": 0.45,
+  "bearing_cmc_wire_mr84zz": 0.89,
+  "axle_cmc_sensor_tube": 0.35,
+  "axle_cmc_wire_tube": 0.39,
+  "magnet_cmc": 0.05,
+  "sensor_plug_cmc": 0.05,
+  "sensor_chip_cmc": 0.02,
+  "sensor_board_cmc": 0.02,
+  "wire_keeper_cmc": 0.06,
+  "bearing_mcp_sensor_zro2": 0.45,
+  "bearing_mcp_wire_mr84zz": 0.89,
+  "axle_mcp_sensor_tube": 0.31,
+  "axle_mcp_wire_tube": 0.35,
+  "magnet_mcp": 0.05,
+  "sensor_plug_mcp": 0.05,
+  "sensor_chip_mcp": 0.02,
+  "sensor_board_mcp": 0.02,
+  "wire_keeper_mcp": 0.06,
+  "bearing_ip_sensor_zro2": 0.45,
+  "bearing_ip_wire_mr84zz": 0.89,
+  "axle_ip_tube": 0.83,
+  "magnet_ip": 0.05,
+  "sensor_plug_ip": 0.05,
+  "sensor_chip_ip": 0.02,
+  "sensor_board_ip": 0.02,
+  "wire_keeper_ip": 0.06,
+  "roller_A_cmc_rot_flex": 0.42,
+  "roller_pin_A_cmc_rot_flex": 0.43,
+  "roller_C_cmc_rot_flex": 0.42,
+  "roller_pin_C_cmc_rot_flex": 0.43,
+  "roller_A_cmc_rot_ext": 0.42,
+  "roller_pin_A_cmc_rot_ext": 0.43,
+  "roller_C_cmc_rot_ext": 0.42,
+  "roller_pin_C_cmc_rot_ext": 0.43,
+  "roller_A_cmc_flex_flex": 0.42,
+  "roller_pin_A_cmc_flex_flex": 0.43,
+  "roller_B_cmc_flex_flex": 0.42,
+  "roller_pin_B_cmc_flex_flex": 0.43,
+  "roller_A_cmc_flex_ext": 0.42,
+  "roller_pin_A_cmc_flex_ext": 0.43,
+  "roller_B_cmc_flex_ext": 0.42,
+  "roller_pin_B_cmc_flex_ext": 0.43,
+  "roller_A_mcp_flex_flex": 0.42,
+  "roller_pin_A_mcp_flex_flex": 0.43,
+  "roller_B_mcp_flex_flex": 0.42,
+  "roller_pin_B_mcp_flex_flex": 0.43,
+  "roller_A_mcp_flex_ext": 0.42,
+  "roller_pin_A_mcp_flex_ext": 0.43,
+  "roller_B_mcp_flex_ext": 0.42,
+  "roller_pin_B_mcp_flex_ext": 0.43,
+  "roller_A_ip_flex": 0.42,
+  "roller_pin_A_ip_flex": 0.43,
+  "roller_B_ip_flex": 0.42,
+  "roller_pin_B_ip_flex": 0.43,
+  "roller_A_ip_ext": 0.42,
+  "roller_pin_A_ip_ext": 0.43,
+  "roller_B_ip_ext": 0.42,
+  "roller_pin_B_ip_ext": 0.43,
+  "fork_A_cmc_rot_flex": 0.2,
+  "fork_A_cmc_rot_ext": 0.2,
+  "fork_A_cmc_flex_flex": 0.2,
+  "fork_A_cmc_flex_ext": 0.2,
+  "fork_A_mcp_flex_flex": 0.2,
+  "fork_A_mcp_flex_ext": 0.2,
+  "fork_A_ip_flex": 0.2,
+  "fork_A_ip_ext": 0.2,
+  "fork_C_cmc_rot_flex": 0.2,
+  "fork_C_cmc_rot_ext": 0.2,
+  "fork_B_cmc_flex_flex": 0.2,
+  "fork_B_cmc_flex_ext": 0.2,
+  "fork_B_mcp_flex_flex": 0.2,
+  "fork_B_mcp_flex_ext": 0.2,
+  "fork_B_ip_flex": 0.2,
+  "fork_B_ip_ext": 0.2
+ },
+ "mass_g_total": 96.3
+}

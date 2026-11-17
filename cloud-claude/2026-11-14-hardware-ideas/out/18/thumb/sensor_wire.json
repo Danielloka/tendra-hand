@@ -1,0 +1,354 @@
+{
+ "waypoints": [
+  [
+   66.065,
+   -74.413,
+   122.011,
+   "distal",
+   "tip board pads (proximal edge)"
+  ],
+  [
+   66.477,
+   -74.269,
+   116.056,
+   "distal",
+   "distal channel \u00d81.2"
+  ],
+  [
+   65.431,
+   -74.474,
+   111.379,
+   "distal",
+   "distal channel, dorsal of the IP ring"
+  ],
+  [
+   64.618,
+   -71.277,
+   108.66,
+   "distal",
+   "radial hole into the IP axle tube (glue)"
+  ],
+  [
+   65.632,
+   -69.265,
+   109.957,
+   "distal",
+   "IP axle bore"
+  ],
+  [
+   71.226,
+   -70.255,
+   107.12,
+   "proximal",
+   "IP keeper plug on the axis (glue): twist only"
+  ],
+  [
+   69.161,
+   -70.153,
+   102.564,
+   "proximal",
+   "keeper slot -> cheek groove"
+  ],
+  [
+   61.23,
+   -70.361,
+   99.866,
+   "proximal",
+   "dorsal cross groove"
+  ],
+  [
+   52.42,
+   -68.801,
+   104.334,
+   "proximal",
+   "dorsal cross groove"
+  ],
+  [
+   50.681,
+   -68.749,
+   114.43,
+   "proximal",
+   "IP board (pads)"
+  ],
+  [
+   49.425,
+   -63.308,
+   104.568,
+   "proximal",
+   "S face groove of the proximal"
+  ],
+  [
+   48.579,
+   -53.003,
+   89.815,
+   "proximal",
+   "proximal channel to the MCP stub"
+  ],
+  [
+   47.819,
+   -47.512,
+   85.875,
+   "proximal",
+   "radial hole into the MCP wire-side stub (glue)"
+  ],
+  [
+   49.094,
+   -45.561,
+   87.027,
+   "proximal",
+   "MCP stub bore"
+  ],
+  [
+   42.875,
+   -43.719,
+   90.793,
+   "metacarpal",
+   "MCP keeper plug on the axis (glue): twist only"
+  ],
+  [
+   39.934,
+   -43.309,
+   86.134,
+   "metacarpal",
+   "keeper slot -> cheek groove"
+  ],
+  [
+   41.609,
+   -46.057,
+   77.198,
+   "metacarpal",
+   "dorsal cross groove (metacarpal)"
+  ],
+  [
+   49.901,
+   -48.512,
+   72.177,
+   "metacarpal",
+   "dorsal cross groove (metacarpal)"
+  ],
+  [
+   60.177,
+   -51.354,
+   76.894,
+   "metacarpal",
+   "MCP board (pads)"
+  ],
+  [
+   54.089,
+   -46.0,
+   68.703,
+   "metacarpal",
+   "metacarpal side groove"
+  ],
+  [
+   48.999,
+   -25.518,
+   52.915,
+   "metacarpal",
+   "metacarpal channel to the cmc stub"
+  ],
+  [
+   42.961,
+   -21.037,
+   46.678,
+   "metacarpal",
+   "radial hole into the cmc wire-side stub (glue)"
+  ],
+  [
+   40.48,
+   -21.75,
+   46.983,
+   "metacarpal",
+   "cmc stub bore"
+  ],
+  [
+   41.601,
+   -28.042,
+   41.378,
+   "base",
+   "cmc keeper plug on the axis (glue): twist only"
+  ],
+  [
+   36.829,
+   -27.206,
+   39.182,
+   "base",
+   "keeper slot -> cheek groove"
+  ],
+  [
+   31.073,
+   -25.839,
+   36.572,
+   "base",
+   "base cheek groove"
+  ],
+  [
+   27.406,
+   -5.263,
+   54.903,
+   "base",
+   "groove across the base plate (palmar)"
+  ],
+  [
+   34.429,
+   -7.993,
+   59.903,
+   "base",
+   "cmc_flex board (pads)"
+  ],
+  [
+   29.904,
+   -3.684,
+   54.161,
+   "base",
+   "base cheek groove (back down, 3 mm beside the way up)"
+  ],
+  [
+   32.781,
+   -16.83,
+   41.027,
+   "base",
+   "into the axial hole through drum + sleeve (r 5.9, \u00d81.0)"
+  ],
+  [
+   25.691,
+   -7.056,
+   28.638,
+   "base",
+   "axial hole exit at the cap"
+  ],
+  [
+   27.375,
+   -7.352,
+   26.045,
+   "mount",
+   "clock spring (flat, 4 wires side by side)"
+  ],
+  [
+   30.176,
+   -6.563,
+   25.064,
+   "mount",
+   "clock spring (flat, 4 wires side by side)"
+  ],
+  [
+   32.813,
+   -4.748,
+   24.987,
+   "mount",
+   "clock spring (flat, 4 wires side by side)"
+  ],
+  [
+   34.741,
+   -2.187,
+   25.904,
+   "mount",
+   "clock spring (flat, 4 wires side by side)"
+  ],
+  [
+   35.513,
+   0.667,
+   27.714,
+   "mount",
+   "clock spring (flat, 4 wires side by side)"
+  ],
+  [
+   34.884,
+   3.265,
+   30.123,
+   "mount",
+   "clock spring (flat, 4 wires side by side)"
+  ],
+  [
+   32.874,
+   5.068,
+   32.697,
+   "mount",
+   "clock spring (flat, 4 wires side by side)"
+  ],
+  [
+   29.781,
+   5.661,
+   34.934,
+   "mount",
+   "clock spring (flat, 4 wires side by side)"
+  ],
+  [
+   26.143,
+   4.839,
+   36.367,
+   "mount",
+   "clock spring (flat, 4 wires side by side)"
+  ],
+  [
+   22.644,
+   2.669,
+   36.658,
+   "mount",
+   "clock spring (flat, 4 wires side by side)"
+  ],
+  [
+   19.984,
+   -0.508,
+   35.673,
+   "mount",
+   "clock spring (flat, 4 wires side by side)"
+  ],
+  [
+   18.74,
+   -4.132,
+   33.526,
+   "mount",
+   "clock spring (flat, 4 wires side by side)"
+  ],
+  [
+   19.244,
+   -7.517,
+   30.567,
+   "mount",
+   "clock spring (flat, 4 wires side by side)"
+  ],
+  [
+   21.504,
+   -9.984,
+   27.328,
+   "mount",
+   "clock spring (flat, 4 wires side by side)"
+  ],
+  [
+   25.177,
+   -10.996,
+   24.427,
+   "mount",
+   "clock spring (flat, 4 wires side by side)"
+  ],
+  [
+   29.625,
+   -10.274,
+   22.451,
+   "mount",
+   "clock spring (flat, 4 wires side by side)"
+  ],
+  [
+   30.179,
+   -11.736,
+   22.307,
+   "mount",
+   "through the mount wall (\u00d81.2 channel) to the rot chip board"
+  ],
+  [
+   30.641,
+   -12.68,
+   22.625,
+   "mount",
+   "cmc_rot chip board (mount wall)"
+  ],
+  [
+   33.114,
+   -14.658,
+   20.487,
+   "mount",
+   "JST SH 4-pin socket on the mount (thumb plug)"
+  ]
+ ]
+}

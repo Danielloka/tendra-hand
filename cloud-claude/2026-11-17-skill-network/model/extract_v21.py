@@ -192,19 +192,15 @@ def fit_hinge(Trel: list[np.ndarray], lead: np.ndarray, ref_point: np.ndarray, t
 def mass_props(m, mass_g: float, pitch: float = 0.25) -> tuple[np.ndarray, np.ndarray, str]:
     """COM (mm) and inertia about the COM (g mm^2) of a part mesh scaled to its real mass.
 
-    Watertight -> exact (signed-volume integrals). Otherwise try merging vertices + filling holes; if it is still
+    Watertight -> exact (signed-volume integrals). Otherwise weld vertices to 1e-4 mm; if it is still
     open, voxelise at ``pitch`` mm (filled) and use the voxel centres (a convex hull would fill ring bores).
     """
-    import trimesh
-
     method = "exact"
     mm = m
     if not mm.is_watertight:
         mm = m.copy()
-        mm.merge_vertices()
-        trimesh.repair.fill_holes(mm)
-        trimesh.repair.fix_normals(mm)
-        method = "repaired"
+        mm.merge_vertices(digits_vertex=4)  # welds float32 seams (no networkx needed, unlike fill_holes)
+        method = "welded"
     if mm.is_watertight and abs(mm.volume) > 1e-6:
         if mm.volume < 0:
             mm.invert()

@@ -133,7 +133,7 @@
                         <geom name="right_wrist_ring_g" size="0.045 0.03 0.015" pos="0 0 -0.015" type="box" contype="0" conaffinity="0" rgba="0.82 0.83 0.86 1" mass="0.05" />
                         <body name="right_palm" gravcomp="1">
                           <joint name="right_wrist_flex" range="-1.0472 1.22173" armature="0.002" damping="0.02" axis="1 0 0" limited="true" />
-                          <geom name="right_palm_g" size="0.04 0.014 0.045" pos="0 0 0.045" type="box" friction="1 0.01 0.001" rgba="0.82 0.83 0.86 1" mass="0.15" />
+                          <geom name="right_palm_g" size="0.04 0.014 0.04" pos="0 0 0.04" type="box" friction="1 0.01 0.001" rgba="0.82 0.83 0.86 1" mass="0.15" />
                           <site name="right_palm_centre" size="0.003" pos="0 -0.014 0.045" quat="0.707107 0.707107 0 0" />
                           <body name="right_index_yoke" pos="0.03 0 0.09" gravcomp="1">
                             <inertial pos="0 0 0" mass="0.004" diaginertia="2e-07 2e-07 2e-07" />
@@ -203,7 +203,7 @@
                               </body>
                             </body>
                           </body>
-                          <body name="right_thumb_base" pos="0.046 -0.01 0.02" quat="0.953717 0.300706 0 0" gravcomp="1">
+                          <body name="right_thumb_base" pos="0.052 -0.01 0.02" quat="0.953717 0.300706 0 0" gravcomp="1">
                             <inertial pos="0 0 0" mass="0.006" diaginertia="5e-07 5e-07 5e-07" />
                             <joint name="right_thumb_cmc_rot" range="-0.6 1.3" armature="0.0002" damping="0.01" axis="0 -1 0" limited="true" />
                             <body name="right_thumb_metacarpal" gravcomp="1">
@@ -231,11 +231,11 @@
         </body>
       </body>
     </frame>
-    <body name="head_pole" pos="-0.22 0 0">
+    <body name="head_pole" pos="-0.32 0 0">
       <geom name="head_pole_post" size="0.018 0.69" pos="0 0 0.69" quat="0 1 0 0" type="cylinder" contype="0" conaffinity="0" group="2" rgba="0.2 0.2 0.22 1" />
       <geom name="head_pole_foot" size="0.11 0.006" pos="0 0 0.006" quat="0 1 0 0" type="cylinder" contype="0" conaffinity="0" group="2" rgba="0.2 0.2 0.22 1" />
       <geom name="head_cam_body" size="0.012 0.045 0.012" pos="0 0 1.4" type="box" contype="0" conaffinity="0" group="2" rgba="0.05 0.05 0.05 1" />
-      <camera name="head_cam" quat="0.623521 0.206005 -0.236594 -0.716106" resolution="1280 720" pos="0 0 1.38" fovy="42.2726" />
+      <camera name="head_cam" quat="0.622693 0.227434 -0.256855 -0.703245" resolution="1280 720" pos="0 0 1.38" fovy="42.2726" />
     </body>
   </worldbody>
   <contact>
@@ -248,13 +248,13 @@
     <joint name="right_little_dip_couple" joint1="right_little_dip" joint2="right_little_pip" polycoef="0 0.75 0 0 0" />
   </equality>
   <actuator>
-    <general name="right_shoulder_pitch" class="motor_DM8009" joint="right_shoulder_pitch" ctrlrange="-1.39626 3.49066" gainprm="230" biasprm="0 -230 -15.768" />
-    <general name="right_shoulder_roll" class="motor_DM8009" joint="right_shoulder_roll" ctrlrange="-0.174533 3.31613" gainprm="230" biasprm="0 -230 -15.419" />
-    <general name="right_shoulder_yaw" class="motor_DM4340" joint="right_shoulder_yaw" ctrlrange="-1.5708 1.5708" gainprm="190" biasprm="0 -190 -12.722" />
-    <general name="right_elbow" class="motor_DM4340" joint="right_elbow" ctrlrange="0 2.44346" gainprm="190" biasprm="0 -190 -12.715" />
+    <general name="right_shoulder_pitch" class="motor_DM8009" joint="right_shoulder_pitch" ctrlrange="-1.39626 3.49066" gainprm="230" biasprm="0 -230 -15.047" />
+    <general name="right_shoulder_roll" class="motor_DM8009" joint="right_shoulder_roll" ctrlrange="-0.174533 3.31613" gainprm="230" biasprm="0 -230 -16.299" />
+    <general name="right_shoulder_yaw" class="motor_DM4340" joint="right_shoulder_yaw" ctrlrange="-1.5708 1.5708" gainprm="190" biasprm="0 -190 -12.706" />
+    <general name="right_elbow" class="motor_DM4340" joint="right_elbow" ctrlrange="0 2.44346" gainprm="190" biasprm="0 -190 -12.7" />
     <general name="right_forearm_twist" joint="right_forearm_twist" ctrlrange="-1.5708 1.5708" ctrllimited="true" forcelimited="true" forcerange="-7 7" biastype="affine" gainprm="30" biasprm="0 -30 -1.5" />
-    <general name="right_wrist_flex" joint="right_wrist_flex" ctrlrange="-1.0472 1.22173" ctrllimited="true" forcelimited="true" forcerange="-4 4" biastype="affine" gainprm="12" biasprm="0 -12 -0.487" />
-    <general name="right_wrist_dev" joint="right_wrist_dev" ctrlrange="-0.523599 0.349066" ctrllimited="true" forcelimited="true" forcerange="-4 4" biastype="affine" gainprm="12" biasprm="0 -12 -0.498" />
+    <general name="right_wrist_flex" joint="right_wrist_flex" ctrlrange="-1.0472 1.22173" ctrllimited="true" forcelimited="true" forcerange="-4 4" biastype="affine" gainprm="12" biasprm="0 -12 -0.483" />
+    <general name="right_wrist_dev" joint="right_wrist_dev" ctrlrange="-0.523599 0.349066" ctrllimited="true" forcelimited="true" forcerange="-4 4" biastype="affine" gainprm="12" biasprm="0 -12 -0.495" />
     <general name="right_index_pip" joint="right_index_pip" ctrlrange="0 1.9" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
     <general name="right_index_mcp_flex" joint="right_index_mcp_flex" ctrlrange="-0.2 1.6" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
     <general name="right_index_mcp_abd" joint="right_index_mcp_abd" ctrlrange="-0.35 0.35" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
@@ -273,7 +273,7 @@
     <general name="right_little_mcp_abd" joint="right_little_mcp_abd" ctrlrange="-0.35 0.35" ctrllimited="true" forcelimited="true" forcerange="-0.25 0.25" biastype="affine" gainprm="1.5" biasprm="0 -1.5 -0.04" />
   </actuator>
   <keyframe>
-    <key name="rest" qpos="0 0.17 0 0.5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" ctrl="0 0.17 0 0.5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" />
+    <key name="rest" qpos="0 0.6 0 0.1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" ctrl="0 0.6 0 0.1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" />
     <key name="ready" qpos="0 0 0 1.5708 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" ctrl="0 0 0 1.5708 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" />
     <key name="table" qpos="0.6634 0.0338 -0.2699 0.8971 1.3734 -0.1883 -0.0336 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" ctrl="0.6634 0.0338 -0.2699 0.8971 1.3734 -0.0336 -0.1883 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" />
   </keyframe>

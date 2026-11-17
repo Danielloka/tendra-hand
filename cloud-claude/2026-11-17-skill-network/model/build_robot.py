@@ -79,8 +79,8 @@ WRIST_CAM_TILT_DEG = 12.0  # looks along the fingers (+Z), tilted this far towar
 WRIST_CAM_FOVY_DEG = 93.0  # 640 x 480, horizontal FOV 110 deg
 WRIST_CAM_RES = (640, 480)
 # Head camera on a pole behind the shoulders.
-POLE_XY = (-0.22, 0.0)
-HEAD_CAM_POS = (-0.22, 0.0, 1.38)
+POLE_XY = (-0.32, 0.0)
+HEAD_CAM_POS = (-0.32, 0.0, 1.38)
 HEAD_CAM_TARGET = (0.50, -0.10, 0.40)
 HEAD_CAM_RES = (1280, 720)
 HEAD_CAM_FOVY_DEG = 2 * math.degrees(math.atan(math.tan(math.radians(69.0 / 2)) * 720 / 1280))  # 42.3
@@ -159,7 +159,7 @@ def stub_hand_spec() -> mujoco.MjSpec:
     palm = ring.add_body(name="palm")
     palm.add_joint(name="wrist_flex", type=hinge, axis=[1, 0, 0], range=[-math.radians(60), math.radians(70)],
                    limited=mujoco.mjtLimited.mjLIMITED_TRUE, damping=0.02, armature=0.002)  # fmt: skip
-    palm.add_geom(name="palm_g", type=box, size=[0.040, 0.014, 0.045], pos=[0, 0, 0.045], mass=0.15,
+    palm.add_geom(name="palm_g", type=box, size=[0.040, 0.014, 0.040], pos=[0, 0, 0.040], mass=0.15,
                   rgba=rgba_shell, contype=1, conaffinity=1, friction=[1.0, 0.01, 0.001])  # fmt: skip
     palm.add_site(name="palm_centre", pos=[0, -0.014, 0.045], quat=_quat_x(90), size=[0.003])  # z = out of palm
 
@@ -192,7 +192,7 @@ def stub_hand_spec() -> mujoco.MjSpec:
         seg(dist, f"{f}_distal_g", lens[f][2], mass=0.008)
         dist.add_site(name=f"{f}_tip", pos=[0, -0.005, lens[f][2]], size=[0.003])
     # thumb: at the thumb-side edge of the palm, pointing along the fingers and 35 deg toward the palm side
-    tb = palm.add_body(name="thumb_base", pos=[0.046, -0.010, 0.020], quat=_quat_x(35))
+    tb = palm.add_body(name="thumb_base", pos=[0.052, -0.010, 0.020], quat=_quat_x(35))
     joint(tb, "thumb_cmc_rot", [0, -1, 0], (-0.6, 1.3))
     _inertial(tb, 0.006, [0, 0, 0], [5e-7] * 3)
     tm = tb.add_body(name="thumb_metacarpal")
@@ -564,7 +564,7 @@ def tune_damping(spec: mujoco.MjSpec, keys: dict, side: str = SIDE, zeta: float 
 
 # Keyframe joint values that do not need IK. `table` is solved (needs the compiled model).
 KEY_JOINTS: dict[str, dict[str, float]] = {
-    "rest": {"shoulder_roll": 0.17, "elbow": 0.5},
+    "rest": {"shoulder_roll": 0.6, "elbow": 0.1},  # arm hangs, 34 deg out: hand clear of floor, pedestal and table
     "ready": {"elbow": math.pi / 2},
 }
 

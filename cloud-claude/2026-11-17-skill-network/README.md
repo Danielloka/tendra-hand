@@ -25,6 +25,13 @@ Owner's choices (2026-11-17):
 - Cameras: a **plain colour (RGB) wrist camera** on every hand, plus a head RGB-D (depth) camera.
 - Grip types for stage 1: `power`, `pinch`, `tripod`.
 - The scripted planner gets a small text interface from the start (`pick cube place red_spot`).
+- Servos: **HLS3606M** on all 16 hand joints (not SCS0009), capped at 80 % torque; wrist 2 × STS3215
+  (`model/actuators.json`, `model/ACTUATORS.md`).
+- Tendons: **keep PE#8 Dyneema** (it stretches: ≈ 25° of joint angle at 94 N). The sim models the stretch
+  truthfully (the actuator `kp` is servo stiffness in series with the tendon), and the training env adds what
+  the real firmware will do: an **outer loop on the V2.1 joint-angle sensors** (TMAG5273 in every joint) that
+  corrects the servo target so the *joint* reaches its target, with realistic sensor noise (≈ 0.5°) and rate.
+  A stiffer line (thicker Dyneema) is a later option that only changes numbers in `actuators.json`.
 - **On the real robot, perception turns camera + depth into a MuJoCo world, and the skills run on that
   world** (section 6b).
 

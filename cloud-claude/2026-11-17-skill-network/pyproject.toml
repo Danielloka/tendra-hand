@@ -15,6 +15,11 @@ dependencies = [
 cad = ["cadquery>=2.4", "scipy>=1.13", "trimesh>=4.4", "manifold3d", "rtree", "coacd", "fast-simplification>=0.1.7"]
 # GPU-path compatibility checks (run on CPU here; on GPU on RunPod later).
 warp = ["mujoco-warp==3.14.0", "warp-lang==1.17.0"]
+# Stage 1 training stack. Versions proven together in the main project's Colab runs (brax 0.14 breaks on
+# jax >= 0.10). CPU jax here; the RunPod image installs jax[cuda12]==0.9.2 instead.
+train = ["jax[cpu]==0.9.2", "brax==0.14.2", "mujoco-mjx==3.14.0", "playground==0.2.0", "tensorboardX>=2.6",
+         "pyyaml>=6"]
+wandb = ["wandb>=0.18"]
 dev = ["pytest>=8", "ruff>=0.6", "trimesh>=4.4", "pillow"]
 
 [tool.uv]

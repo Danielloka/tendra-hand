@@ -26,7 +26,9 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_robot as br
 
-RAY_MASK = np.array([1, 1, 0, 1, 0, 1], dtype=np.uint8)  # skip groups 2 (visual) and 4 (camera housing, sites)
+RAY_MASK = np.array(
+    [1, 1, 0, 1, 0, 1], dtype=np.uint8
+)  # skip groups 2 (visual) and 4 (camera housing, sites)
 OCCLUDERS = ("right_forearm", "right_wrist_ring", "right_palm")
 
 
@@ -119,7 +121,9 @@ def clearance_hand_frame(model) -> float:
     worst = np.inf
     for thumb_open in (True, False):
         d = hand_pose_data(model, thumb_open=thumb_open)
-        up = d.xmat[model.body("right_forearm").id].reshape(3, 3)[:, 1]  # hand +Y in the world = up when palm down
+        up = d.xmat[model.body("right_forearm").id].reshape(3, 3)[
+            :, 1
+        ]  # hand +Y in the world = up when palm down
         hand, house = lowest_points(model, d, up)
         worst = min(worst, house - hand)
     return float(worst)
@@ -145,7 +149,9 @@ def grasp_space_visibility(model) -> float:
     cam_R = d.cam_xmat[cam].reshape(3, 3)
     geom = np.zeros(1, dtype=np.int32)
     ok = tot = 0
-    for x, y, z in itertools.product(np.linspace(-0.04, 0.04, 5), np.linspace(-0.03, -0.09, 4), np.linspace(0.06, 0.14, 5)):
+    for x, y, z in itertools.product(
+        np.linspace(-0.04, 0.04, 5), np.linspace(-0.03, -0.09, 4), np.linspace(0.06, 0.14, 5)
+    ):
         p = p0 + R @ [x, y, z]
         rel = cam_R.T @ (p - d.cam_xpos[cam])
         depth = -rel[2]
@@ -181,7 +187,9 @@ def tip_coverage(model, flexes_deg, devs_deg, closed=0.0, margin=0.04) -> float:
                 rel = cam_R.T @ vec
                 depth = -rel[2]
                 u, v = W / 2 + f * rel[0] / depth, H / 2 - f * rel[1] / depth
-                good &= depth > 0.02 and margin * W < u < (1 - margin) * W and margin * H < v < (1 - margin) * H
+                good &= (
+                    depth > 0.02 and margin * W < u < (1 - margin) * W and margin * H < v < (1 - margin) * H
+                )
                 hit = mujoco.mj_ray(model, d, d.cam_xpos[cam], vec / dist, RAY_MASK, 1, -1, geom)
                 if 0 <= hit < dist and model.body(model.geom_bodyid[geom[0]]).name in OCCLUDERS:
                     good = False
@@ -206,7 +214,16 @@ def search(model, candidates, top=10):
     for gs, pos, tilt, yaw in rows[: top * 4]:
         set_cam(model, pos, tilt, yaw)
         o, c = tip_coverage(model, MID_FLEX, MID_DEV), tip_coverage(model, MID_FLEX, MID_DEV, closed=1.2)
-        out.append((round(gs, 3), round((o + c) / 2, 3), pos, tilt, yaw, round(clearance_hand_frame(model) * 1000, 1)))
+        out.append(
+            (
+                round(gs, 3),
+                round((o + c) / 2, 3),
+                pos,
+                tilt,
+                yaw,
+                round(clearance_hand_frame(model) * 1000, 1),
+            )
+        )
     out.sort(key=lambda r: (-r[0], -r[1]))
     return out[:top]
 

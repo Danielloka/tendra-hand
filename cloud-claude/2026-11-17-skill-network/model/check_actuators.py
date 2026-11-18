@@ -3,6 +3,7 @@
 Run from the study root: uv run python model/check_actuators.py
 Reports 10-90 % rise time, overshoot, 2 % settling time and steady-state error (coulomb friction makes a small one).
 """
+
 import json
 import math
 import sys
@@ -11,12 +12,36 @@ from pathlib import Path
 import mujoco
 
 HERE = Path(__file__).resolve().parent
-SERVOS = ("index_pip index_mcp_flex index_mcp_abd thumb_ip thumb_mcp_flex thumb_cmc_flex thumb_cmc_rot "
-          "middle_pip middle_mcp_flex middle_mcp_abd ring_pip ring_mcp_flex ring_mcp_abd "
-          "little_pip little_mcp_flex little_mcp_abd").split()
+SERVOS = [
+    "index_pip",
+    "index_mcp_flex",
+    "index_mcp_abd",
+    "thumb_ip",
+    "thumb_mcp_flex",
+    "thumb_cmc_flex",
+    "thumb_cmc_rot",
+    "middle_pip",
+    "middle_mcp_flex",
+    "middle_mcp_abd",
+    "ring_pip",
+    "ring_mcp_flex",
+    "ring_mcp_abd",
+    "little_pip",
+    "little_mcp_flex",
+    "little_mcp_abd",
+]
 WRIST = ("wrist_flex", "wrist_dev")
-KEYS = ("kp", "damping", "armature", "frictionloss", "velocity_limit_rad_s", "ratio", "efficiency",
-        "stall_torque_servo_Nm", "load_inertia_kgm2")
+KEYS = (
+    "kp",
+    "damping",
+    "armature",
+    "frictionloss",
+    "velocity_limit_rad_s",
+    "ratio",
+    "efficiency",
+    "stall_torque_servo_Nm",
+    "load_inertia_kgm2",
+)
 
 
 def validate(d):
@@ -45,11 +70,11 @@ def validate(d):
 
 def step(v, ang=30.0, dt=0.002, T=1.5):
     xml = f"""<mujoco><option timestep="{dt}" gravity="0 0 0"/>
-    <worldbody><body><joint name="j" type="hinge" axis="0 0 1" armature="{v['armature']}"
-      damping="{v['damping']}" frictionloss="{v['frictionloss']}"/>
+    <worldbody><body><joint name="j" type="hinge" axis="0 0 1" armature="{v["armature"]}"
+      damping="{v["damping"]}" frictionloss="{v["frictionloss"]}"/>
       
-      <inertial pos="0 0 0" mass="1e-3" diaginertia="{v['load_inertia_kgm2']} {v['load_inertia_kgm2']} {v['load_inertia_kgm2']}"/></body></worldbody>
-    <actuator><position name="a" joint="j" kp="{v['kp']}" forcerange="{v['forcerange'][0]} {v['forcerange'][1]}"
+      <inertial pos="0 0 0" mass="1e-3" diaginertia="{v["load_inertia_kgm2"]} {v["load_inertia_kgm2"]} {v["load_inertia_kgm2"]}"/></body></worldbody>
+    <actuator><position name="a" joint="j" kp="{v["kp"]}" forcerange="{v["forcerange"][0]} {v["forcerange"][1]}"
       ctrllimited="false"/></actuator></mujoco>"""
     m = mujoco.MjModel.from_xml_string(xml)
     d = mujoco.MjData(m)
@@ -75,36 +100,46 @@ def step(v, ang=30.0, dt=0.002, T=1.5):
 
 
 def main():
-    d = json.load(open(HERE / "actuators.json"))
+    d = json.loads((HERE / "actuators.json").read_text())
     errs = validate(d)
     if errs:
         print("INVALID:", *errs, sep="\n  ")
         sys.exit(1)
     print("actuators.json: all 18 contract joints present, positive values")
-    print(f"{'joint':16s} {'kp':>7s} {'tau_max':>8s} {'damp':>7s} {'arm':>8s} {'I_load':>8s} {'rise ms':>8s} {'OS %':>6s} {'settle ms':>9s} {'ss err %':>8s} {'vmax rad/s':>10s}")
+    print(
+        f"{'joint':16s} {'kp':>7s} {'tau_max':>8s} {'damp':>7s} {'arm':>8s} {'I_load':>8s} {'rise ms':>8s} {'OS %':>6s} {'settle ms':>9s} {'ss err %':>8s} {'vmax rad/s':>10s}"
+    )
     for grp in ("servos", "wrist"):
         for n, v in d[grp].items():
             r, o, s, e = step(v, 30.0 if grp == "servos" else 20.0)
-            print(f"{n:16s} {v['kp']:7.3f} {v['forcerange'][1]:8.4f} {v['damping']:7.4f} {v['armature']:8.5f} "
-                  f"{v['load_inertia_kgm2']:8.1e} {r*1e3:8.0f} {o:6.1f} {s*1e3:9.0f} {e:8.2f} {v['velocity_limit_rad_s']:10.2f}")
+            print(
+                f"{n:16s} {v['kp']:7.3f} {v['forcerange'][1]:8.4f} {v['damping']:7.4f} {v['armature']:8.5f} "
+                f"{v['load_inertia_kgm2']:8.1e} {r * 1e3:8.0f} {o:6.1f} {s * 1e3:9.0f} {e:8.2f} {v['velocity_limit_rad_s']:10.2f}"
+            )
     print("(fingers: 30 deg step; wrist: 20 deg step)")
     # cross-check: index pinch force = (tau_pip - pretension) / lever, vs the reports' HLS3606M numbers
     pip = d["servos"]["index_pip"]
     pre = 5.0 * 7.235e-3
-    f100 = (pip['forcerange'][1] - pre) / 0.0462
-    f80 = (pip['forcerange_cap80'][1] - pre) / 0.0462
-    print(f"index pinch: stall {f100:.1f} N, 80 % cap {f80:.1f} N "
-          "(reports, HLS3606M: 11.6 N (review) / 15.7 N hand / 16.6 N bench / 17.6 N after the roller fix; 80 %: 12.4-13.1 N)")
+    f100 = (pip["forcerange"][1] - pre) / 0.0462
+    f80 = (pip["forcerange_cap80"][1] - pre) / 0.0462
+    print(
+        f"index pinch: stall {f100:.1f} N, 80 % cap {f80:.1f} N "
+        "(reports, HLS3606M: 11.6 N (review) / 15.7 N hand / 16.6 N bench / 17.6 N after the roller fix; 80 %: 12.4-13.1 N)"
+    )
     # strand tension at stall vs part ratings (reports 02, 12, 13)
     print("\nstrand tension at servo stall (5 mm spool):")
     for n, v in d["servos"].items():
         t = v["strand_tension_stall_N"]
         break
-    print(f"  {t:.1f} N on every joint (80 % cap {0.8*t:.1f} N). Fuse cup HLS version trips at 148 N (1.26x stall, 111 N at -25 % scatter = BELOW stall); "
-          "SCS version (67 N) would trip at 0.57x stall.")
-    print("  other limits: PE#8 445 N break (SF 3.8), MR63 roller/idler s0 0.48/0.59 at 80 %, MR84 lug 0.93, dog slots 27 MPa on PETG, eye lip 418 MPa")
+    print(
+        f"  {t:.1f} N on every joint (80 % cap {0.8 * t:.1f} N). Fuse cup HLS version trips at 148 N (1.26x stall, 111 N at -25 % scatter = BELOW stall); "
+        "SCS version (67 N) would trip at 0.57x stall."
+    )
+    print(
+        "  other limits: PE#8 445 N break (SF 3.8), MR63 roller/idler s0 0.48/0.59 at 80 %, MR84 lug 0.93, dog slots 27 MPa on PETG, eye lip 418 MPa"
+    )
     # power
-    print(f"\nstall current 16 x 1.3 A = {16*1.3:.1f} A at 6 V (+ 2 x 2.7 A at 12 V for the wrist)")
+    print(f"\nstall current 16 x 1.3 A = {16 * 1.3:.1f} A at 6 V (+ 2 x 2.7 A at 12 V for the wrist)")
 
 
 if __name__ == "__main__":

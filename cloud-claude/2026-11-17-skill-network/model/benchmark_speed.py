@@ -1,6 +1,6 @@
 """MuJoCo CPU speed of v21_scene.xml, one thread (mj_step only, arm holding the `table` pose).
 
-    uv run python model/benchmark_speed.py
+uv run python model/benchmark_speed.py
 """
 
 import sys
@@ -24,7 +24,9 @@ def main() -> None:
     for _ in range(n):
         mujoco.mj_step(m, d)
     dt = time.perf_counter() - t
-    print(f"{n / dt:.0f} steps/s (x{n / dt * m.opt.timestep:.1f} real time), nbody {m.nbody} ngeom {m.ngeom} nv {m.nv}")
+    print(
+        f"{n / dt:.0f} steps/s (x{n / dt * m.opt.timestep:.1f} real time), nbody {m.nbody} ngeom {m.ngeom} nv {m.nv}"
+    )
 
 
 if __name__ == "__main__":

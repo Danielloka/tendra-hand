@@ -107,14 +107,22 @@ ZETA = 1.0  # damping ratio the arm servos are tuned to (critical)
 BIT_ARM = 256  # bit 8: the hand file uses bit 0 (the world) and bits 1-7 (its own parts), see CONTRACT.md
 # Boxes (xmin, xmax, ymin, ymax, zmin, zmax) in the body frame: the extents of OpenArm's own collision hulls.
 ARM_BOXES = {
-    "world": (-0.155, 0.095, -0.095, 0.095, 0.0, 0.773),  # pedestal (OpenArm: a 2932-vertex hull)
+    # the pedestal (OpenArm: one 2932-vertex hull; its cross-sections in the world frame): base plate, thin column, head
+    "pedestal_base": (-0.155, 0.095, -0.095, 0.095, 0.0, 0.065),
+    "pedestal_column": (-0.03, 0.03, -0.03, 0.03, 0.065, 0.585),
+    "pedestal_head": (-0.085, 0.065, -0.08, 0.08, 0.585, 0.773),
     "base_link": (-0.049, 0.049, -0.062, 0.0, -0.061, 0.061),
     "link1": (-0.046, 0.049, -0.109, 0.0, -0.049, 0.049),
     "link2": (-0.048, 0.035, -0.049, 0.049, -0.066, 0.049),
     "link3": (-0.042, 0.035, -0.033, 0.033, -0.182, 0.0),
     "link4": (-0.042, 0.032, -0.039, 0.039, -0.097, 0.029),
 }
-HAND_ARM_PAIR_BOXES = ("link2", "link3", "world")  # hand parts that may touch these: forearm, wrist ring, palm
+HAND_ARM_PAIR_BOXES = (
+    "link2",
+    "link3",
+    "pedestal_column",
+    "pedestal_head",
+)  # hand parts that may touch these: forearm, wrist ring, palm
 HAND_ARM_PAIR_BODIES = ("forearm", "wrist_ring", "palm")
 
 
@@ -191,7 +199,9 @@ def stub_hand_spec() -> mujoco.MjSpec:
                    limited=mujoco.mjtLimited.mjLIMITED_TRUE, damping=0.02, armature=0.002)  # fmt: skip
     palm.add_geom(name="palm_g", type=box, size=[0.040, 0.014, 0.040], pos=[0, 0, 0.040], mass=0.15,
                   rgba=rgba_shell, contype=1, conaffinity=1, friction=[1.0, 0.01, 0.001])  # fmt: skip
-    palm.add_site(name="palm_centre", pos=[0, -0.014, 0.045], quat=_quat_x(90), size=[0.003])  # z = out of palm
+    palm.add_site(
+        name="palm_centre", pos=[0, -0.014, 0.045], quat=_quat_x(90), size=[0.003]
+    )  # z = out of palm
 
     servo_kw = {"kp": 1.5, "kv": 0.04, "forcerange": (-0.25, 0.25)}
 
@@ -236,7 +246,9 @@ def stub_hand_spec() -> mujoco.MjSpec:
     td.add_site(name="thumb_tip", pos=[0, -0.005, 0.026], size=[0.003])
 
     for f in FINGERS:  # DIP follows the PIP (the real hand: a rigid bar)
-        eq = s.add_equality(name=f"{f}_dip_couple", type=mujoco.mjtEq.mjEQ_JOINT, name1=f"{f}_dip", name2=f"{f}_pip")
+        eq = s.add_equality(
+            name=f"{f}_dip_couple", type=mujoco.mjtEq.mjEQ_JOINT, name1=f"{f}_dip", name2=f"{f}_pip"
+        )
         eq.data[:5] = [0.0, 0.75, 0.0, 0.0, 0.0]
 
     for name in SERVO_JOINTS:
@@ -253,7 +265,7 @@ def stub_hand_spec() -> mujoco.MjSpec:
 def trim_openarm(side: str = SIDE, vendored: bool = True) -> mujoco.MjSpec:
     """OpenArm's pedestal with one arm: base, J1-J4 (renamed `<side>_shoulder_pitch` ...), the J5 motor in link4;
     link5 and below (forearm, wrist, gripper) removed; the other arm removed; its cameras/lights/keyframes too.
-    `vendored`: collision = boxes (ARM_BOXES) and the visual meshes are the decimated copies in
+    `vendored`: collision = boxes (ARM_BOXES) and the visual meshes are the unchanged copies in
     model/assets/openarm/ (so no file outside the study is needed); False: OpenArm's own geoms (for vendoring)."""
     from openarm_mujoco.v2 import asset_path
 
@@ -288,8 +300,10 @@ def trim_openarm(side: str = SIDE, vendored: bool = True) -> mujoco.MjSpec:
                 spec.delete(geom)
         _drop_unused_meshes(spec)
         for mesh in spec.meshes:
-            mesh.file = str(OPENARM_ASSETS / f"{mesh.name}.stl")  # absolute while building; the XML text is relativised
-            mesh.content_type = "model/stl"
+            suffix = Path(mesh.file).suffix  # OpenArm's own files, copied unchanged (model/vendor_openarm.py)
+            mesh.file = str(
+                OPENARM_ASSETS / f"{mesh.name}{suffix}"
+            )  # absolute while building; relativised later
         spec.meshdir = str(ASSETS)
         _add_arm_boxes(spec, side)
     else:
@@ -299,8 +313,9 @@ def trim_openarm(side: str = SIDE, vendored: bool = True) -> mujoco.MjSpec:
 
 def _add_arm_boxes(spec: mujoco.MjSpec, side: str) -> None:
     for key, (x0, x1, y0, y1, z0, z1) in ARM_BOXES.items():
-        body = spec.worldbody if key == "world" else spec.body(f"openarm_{side}_{key}")
-        name = "pedestal_box" if key == "world" else f"{side}_{key}_box"
+        pedestal = key.startswith("pedestal")
+        body = spec.worldbody if pedestal else spec.body(f"openarm_{side}_{key}")
+        name = f"{key}_box" if pedestal else f"{side}_{key}_box"
         body.add_geom(name=name, type=mujoco.mjtGeom.mjGEOM_BOX, size=[(x1 - x0) / 2, (y1 - y0) / 2, (z1 - z0) / 2],
                       pos=[(x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2], contype=BIT_ARM, conaffinity=0, group=3,
                       friction=[1.0, 0.01, 0.01], rgba=[0.9, 0.3, 0.3, 0.3])  # fmt: skip
@@ -332,10 +347,12 @@ def _hand_mesh_paths(hand: mujoco.MjSpec, assets_dir: Path, xml_dir: Path) -> No
     """Re-point the hand's mesh files at paths relative to model/assets (the merged spec has one meshdir)."""
     meshdir = Path(hand.meshdir) if hand.meshdir else Path(".")
     if not meshdir.is_absolute():
-        meshdir = (xml_dir / meshdir)
+        meshdir = xml_dir / meshdir
     for mesh in hand.meshes:
         if mesh.file:
-            mesh.file = str((meshdir / mesh.file).resolve())  # absolute while building; the XML text is relativised
+            mesh.file = str(
+                (meshdir / mesh.file).resolve()
+            )  # absolute while building; the XML text is relativised
     hand.meshdir = str(assets_dir)
 
 
@@ -348,8 +365,12 @@ def build_robot_spec(hand: mujoco.MjSpec, side: str = SIDE) -> mujoco.MjSpec:
     # --- solver / physics ---------------------------------------------------------------------------------
     opt = spec.option
     opt.timestep = PHYSICS["timestep"]
-    opt.integrator = getattr(mujoco.mjtIntegrator, f"mjINT_{PHYSICS['integrator'].upper()}")  # implicit damping
-    opt.cone = getattr(mujoco.mjtCone, f"mjCONE_{PHYSICS['cone'].upper()}")  # true friction cone: exact grasp friction
+    opt.integrator = getattr(
+        mujoco.mjtIntegrator, f"mjINT_{PHYSICS['integrator'].upper()}"
+    )  # implicit damping
+    opt.cone = getattr(
+        mujoco.mjtCone, f"mjCONE_{PHYSICS['cone'].upper()}"
+    )  # true friction cone: exact grasp friction
     opt.impratio = PHYSICS["impratio"]  # stiff friction: held objects do not creep
     opt.solver = getattr(mujoco.mjtSolver, f"mjSOL_{PHYSICS['solver'].upper()}")
     opt.iterations = 50
@@ -374,13 +395,36 @@ def build_robot_spec(hand: mujoco.MjSpec, side: str = SIDE) -> mujoco.MjSpec:
     # here (targets resolve by name at compile time, so the joints may not exist yet).
     # OpenArm J5's torque limit (+-7 Nm) but kp 80 (stock 30): the hand and forearm are heavier than a gripper and,
     # not being gravity-compensated, sag a little with the thumb up (kp 30 gave 2.2 deg)
-    _position_actuator(spec, f"{side}_forearm_twist", f"{side}_forearm_twist", 80.0, 1.5,
-                       (-math.pi / 2, math.pi / 2), (-7.0, 7.0))
+    _position_actuator(
+        spec,
+        f"{side}_forearm_twist",
+        f"{side}_forearm_twist",
+        80.0,
+        1.5,
+        (-math.pi / 2, math.pi / 2),
+        (-7.0, 7.0),
+    )
     for name in ("wrist_flex", "wrist_dev"):
         old = hand.actuator(name)
-        new = spec.add_actuator(name=f"{side}_{name}", target=f"{side}_{name}", trntype=mujoco.mjtTrn.mjTRN_JOINT)
-        for attr in ("gaintype", "biastype", "dyntype", "gainprm", "biasprm", "dynprm", "ctrllimited", "ctrlrange",
-                     "forcelimited", "forcerange", "actlimited", "actrange", "gear", "group"):
+        new = spec.add_actuator(
+            name=f"{side}_{name}", target=f"{side}_{name}", trntype=mujoco.mjtTrn.mjTRN_JOINT
+        )
+        for attr in (
+            "gaintype",
+            "biastype",
+            "dyntype",
+            "gainprm",
+            "biasprm",
+            "dynprm",
+            "ctrllimited",
+            "ctrlrange",
+            "forcelimited",
+            "forcerange",
+            "actlimited",
+            "actrange",
+            "gear",
+            "group",
+        ):
             setattr(new, attr, getattr(old, attr))
         hand.delete(old)
 
@@ -406,7 +450,9 @@ def build_robot_spec(hand: mujoco.MjSpec, side: str = SIDE) -> mujoco.MjSpec:
     frame = twist.add_frame(pos=list(-rot.reshape(3, 3) @ flange), quat=list(HAND_IN_TWIST))
     spec.attach(hand, frame=frame, prefix=f"{side}_")
     # the twist body is massless geometry-wise: link4 and the forearm must not collide with each other
-    spec.add_exclude(name=f"{side}_link4_forearm", bodyname1=f"openarm_{side}_link4", bodyname2=f"{side}_forearm")
+    spec.add_exclude(
+        name=f"{side}_link4_forearm", bodyname1=f"openarm_{side}_link4", bodyname2=f"{side}_forearm"
+    )
 
     _add_hand_arm_pairs(spec, side)
     _add_gravcomp(spec, side)
@@ -421,7 +467,7 @@ def _add_hand_arm_pairs(spec: mujoco.MjSpec, side: str) -> None:
     cannot reach them. Everything else of the arm collides with the environment only (BIT_ARM)."""
     model = spec.compile()
     hand_bodies = {f"{side}_{b}" for b in HAND_ARM_PAIR_BODIES}
-    boxes = ["pedestal_box" if k == "world" else f"{side}_{k}_box" for k in HAND_ARM_PAIR_BOXES]
+    boxes = [f"{k}_box" if k.startswith("pedestal") else f"{side}_{k}_box" for k in HAND_ARM_PAIR_BOXES]
     for g in range(model.ngeom):
         body = model.body(model.geom_bodyid[g]).name
         if body in hand_bodies and (model.geom_contype[g] or model.geom_conaffinity[g]):
@@ -469,7 +515,9 @@ def _add_cameras(spec: mujoco.MjSpec, side: str) -> None:
 
     # head camera on a pole behind and above the shoulders
     pole = spec.worldbody.add_body(name="head_pole", pos=[POLE_XY[0], POLE_XY[1], 0.0])
-    _inertial(pole, 5.0, [0, 0, 0.7], [1.0, 1.0, 0.01])  # static (no joint): the mass is only explicit, not used
+    _inertial(
+        pole, 5.0, [0, 0, 0.7], [1.0, 1.0, 0.01]
+    )  # static (no joint): the mass is only explicit, not used
     pole.add_geom(name="head_pole_post", type=mujoco.mjtGeom.mjGEOM_CYLINDER, fromto=[0, 0, 0.0, 0, 0, HEAD_CAM_POS[2]],
                   size=[0.018, 0, 0], rgba=[0.2, 0.2, 0.22, 1], contype=0, conaffinity=0, group=2)  # fmt: skip
     pole.add_geom(name="head_pole_foot", type=mujoco.mjtGeom.mjGEOM_CYLINDER, fromto=[0, 0, 0.0, 0, 0, 0.012],
@@ -477,7 +525,9 @@ def _add_cameras(spec: mujoco.MjSpec, side: str) -> None:
     pole.add_geom(name="head_cam_body", type=mujoco.mjtGeom.mjGEOM_BOX, size=[0.012, 0.045, 0.012],
                   pos=[0, 0, HEAD_CAM_POS[2] + 0.02], rgba=[0.05, 0.05, 0.05, 1], contype=0, conaffinity=0, group=2)  # fmt: skip
     cam_pos = np.array(HEAD_CAM_POS) - np.array([POLE_XY[0], POLE_XY[1], 0.0])
-    cam = pole.add_camera(name="head_cam", pos=list(cam_pos), fovy=HEAD_CAM_FOVY_DEG, resolution=list(HEAD_CAM_RES))
+    cam = pole.add_camera(
+        name="head_cam", pos=list(cam_pos), fovy=HEAD_CAM_FOVY_DEG, resolution=list(HEAD_CAM_RES)
+    )
     cam.alt.type = mujoco.mjtOrientation.mjORIENTATION_XYAXES
     cam.alt.xyaxes = look_at_xyaxes(HEAD_CAM_POS, HEAD_CAM_TARGET, [0, 0, 1])
 
@@ -486,20 +536,26 @@ def _add_scene_basics(spec: mujoco.MjSpec) -> None:
     wb = spec.worldbody
     wb.add_light(name="key", pos=[0.6, -0.6, 2.2], dir=[-0.2, 0.3, -1.0], castshadow=True, diffuse=[0.65, 0.65, 0.65],
                  specular=[0.2, 0.2, 0.2])  # fmt: skip
-    wb.add_light(name="fill", pos=[-0.8, 0.8, 1.8], dir=[0.4, -0.4, -1.0], castshadow=False, diffuse=[0.3, 0.3, 0.3])
+    wb.add_light(
+        name="fill", pos=[-0.8, 0.8, 1.8], dir=[0.4, -0.4, -1.0], castshadow=False, diffuse=[0.3, 0.3, 0.3]
+    )
     spec.add_material(name="floor_mat", rgba=[0.62, 0.64, 0.67, 1], reflectance=0.1)
     spec.add_material(name="table_mat", rgba=[0.78, 0.66, 0.52, 1])
     spec.add_material(name="leg_mat", rgba=[0.25, 0.25, 0.27, 1])
     wb.add_geom(name="floor", type=mujoco.mjtGeom.mjGEOM_PLANE, size=[3, 3, 0.1], material="floor_mat",
                 friction=[0.8, 0.01, 0.0001], contype=1, conaffinity=1 | BIT_ARM)  # fmt: skip
-    ov = wb.add_camera(name="overview", pos=[1.25, 0.95, 1.25], fovy=45.0, resolution=[960, 720])  # for renders
+    ov = wb.add_camera(
+        name="overview", pos=[1.25, 0.95, 1.25], fovy=45.0, resolution=[960, 720]
+    )  # for renders
     ov.alt.type = mujoco.mjtOrientation.mjORIENTATION_XYAXES
     ov.alt.xyaxes = look_at_xyaxes([1.25, 0.95, 1.25], [0.25, -0.2, 0.5], [0, 0, 1])
     cx, cy = TABLE_CENTRE
     hx, hy = TABLE_HALF
     wb.add_geom(name="table", type=mujoco.mjtGeom.mjGEOM_BOX, size=[hx, hy, 0.02], pos=[cx, cy, TABLE_TOP - 0.02],
                 material="table_mat", friction=[0.8, 0.01, 0.0001], contype=1, conaffinity=1 | BIT_ARM)  # fmt: skip
-    for i, (sx, sy) in enumerate(((1, 1), (1, -1), (-1, 1), (-1, -1))):  # legs (visual only; kept out of the arm's way)
+    for i, (sx, sy) in enumerate(
+        ((1, 1), (1, -1), (-1, 1), (-1, -1))
+    ):  # legs (visual only; kept out of the arm's way)
         wb.add_geom(name=f"table_leg{i}", type=mujoco.mjtGeom.mjGEOM_BOX, size=[0.025, 0.025, (TABLE_TOP - 0.04) / 2],
                     pos=[cx + sx * (hx - 0.04), cy + sy * (hy - 0.04), (TABLE_TOP - 0.04) / 2], material="leg_mat",
                     contype=0, conaffinity=0)  # fmt: skip
@@ -516,7 +572,11 @@ OBJECTS = {
 
 def add_objects(spec: mujoco.MjSpec) -> None:
     for name, (gtype, size, mass, rgba, (x, y)) in OBJECTS.items():
-        half_h = {mujoco.mjtGeom.mjGEOM_BOX: 2, mujoco.mjtGeom.mjGEOM_CYLINDER: 1, mujoco.mjtGeom.mjGEOM_SPHERE: 0}[gtype]
+        half_h = {
+            mujoco.mjtGeom.mjGEOM_BOX: 2,
+            mujoco.mjtGeom.mjGEOM_CYLINDER: 1,
+            mujoco.mjtGeom.mjGEOM_SPHERE: 0,
+        }[gtype]
         half_h = size[half_h]
         size = [*size, 0.0, 0.0][:3]
         body = spec.worldbody.add_body(name=name, pos=[x, y, TABLE_TOP + half_h + 1e-3])
@@ -589,7 +649,9 @@ def solve_arm_pose(model, pos, rot, side=SIDE, q_nom=None, seeds=24, rng_seed=0,
             q = np.clip(q + dq, lo, hi)
         data.qpos[qadr] = q
         mujoco.mj_kinematics(model, data)
-        err = np.concatenate([pos - data.site_xpos[site], rot_weight * _rot_error(data.xmat[body].reshape(3, 3), rot)])
+        err = np.concatenate(
+            [pos - data.site_xpos[site], rot_weight * _rot_error(data.xmat[body].reshape(3, 3), rot)]
+        )
         e = float(np.linalg.norm(err))
         # prefer small error, then close to the nominal posture
         score = e + 1e-3 * np.linalg.norm(q - q_nom)
@@ -649,7 +711,10 @@ def tune_damping(spec: mujoco.MjSpec, keys: dict, side: str = SIDE, zeta: float 
 
 # Keyframe joint values that do not need IK. `table` is solved (needs the compiled model).
 KEY_JOINTS: dict[str, dict[str, float]] = {
-    "rest": {"shoulder_roll": 0.6, "elbow": 0.1},  # arm hangs, 34 deg out: hand clear of floor, pedestal and table
+    "rest": {
+        "shoulder_roll": 0.6,
+        "elbow": 0.1,
+    },  # arm hangs, 34 deg out: hand clear of floor, pedestal and table
     "ready": {"shoulder_pitch": 0.6, "elbow": math.pi / 2 - 0.6},  # forearm level, raised: clear of the table
 }
 
@@ -664,7 +729,9 @@ def solve_keyframes(spec: mujoco.MjSpec, side: str = SIDE) -> dict[str, dict[str
     """All keyframes' joint values: rest, ready (constants) and table (IK: palm 10 cm above the table, palm down).
     `ready` and `table` carry the CAD open thumb; hand joints are keyed by their short names (`thumb_ip`)."""
     model = spec.compile()
-    q_nom = np.array([0.3, 0.17, 0.0, 1.6, 1.0, 0.0, 0.0])  # a comfortable guess: elbow bent, forearm pronated
+    q_nom = np.array(
+        [0.3, 0.17, 0.0, 1.6, 1.0, 0.0, 0.0]
+    )  # a comfortable guess: elbow bent, forearm pronated
     target = np.array([TABLE_POSE_XY[0], TABLE_POSE_XY[1], TABLE_TOP + PALM_HEIGHT])
     q, err = solve_arm_pose(model, target, palm_target_rotation(0.0), side, q_nom)
     if q is None or err > 2e-3:
@@ -693,10 +760,14 @@ def add_keyframes(spec: mujoco.MjSpec, keys: dict[str, dict[str, float]], side: 
         ctrl = np.zeros(model.nu)
         for n, v in joints.items():
             ctrl[model.actuator(f"{side}_{n}").id] = v
-        for a in range(model.nu):  # hand servos and anything else: hold q = 0 (fingers open); clamp to ctrlrange
+        for a in range(
+            model.nu
+        ):  # hand servos and anything else: hold q = 0 (fingers open); clamp to ctrlrange
             lo, hi = model.actuator_ctrlrange[a]
             ctrl[a] = min(max(ctrl[a], lo), hi)
-        spec.add_key(name=key, qpos=[round(float(v), 6) for v in qpos], ctrl=[round(float(v), 6) for v in ctrl])
+        spec.add_key(
+            name=key, qpos=[round(float(v), 6) for v in qpos], ctrl=[round(float(v), 6) for v in ctrl]
+        )
 
 
 # ----------------------------------------------------------------------------------------------------------

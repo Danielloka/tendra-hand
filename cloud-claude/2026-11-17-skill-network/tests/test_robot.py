@@ -79,7 +79,9 @@ def test_joint_ranges_and_openarm_limits(robot):
     oa = mujoco.MjModel.from_xml_path(asset_path("openarm_bimanual.xml"))
     for ours, theirs in (("shoulder_pitch", 1), ("shoulder_roll", 2), ("shoulder_yaw", 3), ("elbow", 4),
                          ("forearm_twist", 5)):  # fmt: skip
-        np.testing.assert_allclose(robot.joint(f"right_{ours}").range, oa.joint(f"openarm_right_joint{theirs}").range)
+        np.testing.assert_allclose(
+            robot.joint(f"right_{ours}").range, oa.joint(f"openarm_right_joint{theirs}").range
+        )
     for name in ARM[:5]:
         assert robot.jnt_limited[robot.joint(name).id]
     # the contract's wrist signs: + = toward the palm (flex), + = toward the thumb (dev)
@@ -95,7 +97,9 @@ def test_options_and_gravcomp(robot, scene):
     arm = {b for b in range(robot.nbody) if robot.body(b).name.startswith("openarm_right_link")}
     arm.add(robot.body("right_forearm_twist_link").id)
     assert len(arm) == 5
-    for b in range(robot.nbody):  # gravity compensation on the arm only; hand, forearm, objects and the rest feel gravity
+    for b in range(
+        robot.nbody
+    ):  # gravity compensation on the arm only; hand, forearm, objects and the rest feel gravity
         assert robot.body_gravcomp[b] == (1.0 if b in arm else 0.0), robot.body(b).name
     for name in br.OBJECTS:
         assert scene.body_gravcomp[scene.body(name).id] == 0.0
@@ -107,7 +111,10 @@ def test_sensors_in_actuator_order(robot, scene):
         names = [model.sensor(i).name for i in range(model.nsensor)]
         assert names[:7] == [f"{j}_pos" for j in ARM] and names[7:14] == [f"{j}_frc" for j in ARM]
         for i, j in enumerate(ARM):
-            assert model.sensor_type[i] == mujoco.mjtSensor.mjSENS_JOINTPOS and model.joint(j).id == model.sensor_objid[i]
+            assert (
+                model.sensor_type[i] == mujoco.mjtSensor.mjSENS_JOINTPOS
+                and model.joint(j).id == model.sensor_objid[i]
+            )
             assert model.sensor_type[7 + i] == mujoco.mjtSensor.mjSENS_ACTUATORFRC
             assert model.actuator(j).id == model.sensor_objid[7 + i]
     # readings follow the sensors
@@ -141,8 +148,13 @@ def test_scene_objects(scene):
     for name, (_, _, mass, _, _) in br.OBJECTS.items():
         b = scene.body(name)
         assert scene.body_mass[b.id] == pytest.approx(mass, rel=1e-6)
-        assert scene.body_jntnum[b.id] == 1 and scene.jnt_type[scene.body_jntadr[b.id]] == mujoco.mjtJoint.mjJNT_FREE
-        g = scene.geom(name)  # no `priority`: the hand's pad settings win (review B2); pad-compatible own values
+        assert (
+            scene.body_jntnum[b.id] == 1
+            and scene.jnt_type[scene.body_jntadr[b.id]] == mujoco.mjtJoint.mjJNT_FREE
+        )
+        g = scene.geom(
+            name
+        )  # no `priority`: the hand's pad settings win (review B2); pad-compatible own values
         assert scene.geom_priority[g.id] == 0 and scene.geom_condim[g.id] == 4
         assert scene.geom_solref[g.id][0] <= 0.005 + 1e-9
     assert scene.geom("table").id >= 0 and scene.geom("floor").id >= 0
@@ -182,7 +194,9 @@ def test_mounting_orientation(robot):
 def _open_pose_rad() -> dict[str, float]:
     import json
 
-    poses = json.loads((STUDY / "model" / "assets" / "v21" / "fk_reference.json").read_text())["poses"]["open"]["q"]
+    poses = json.loads((STUDY / "model" / "assets" / "v21" / "fk_reference.json").read_text())["poses"][
+        "open"
+    ]["q"]
     return {k: math.radians(v) for k, v in poses.items() if k.startswith("thumb")}
 
 
@@ -203,10 +217,15 @@ def test_keyframes_exist(robot, scene, key):
             lo, hi = model.actuator_ctrlrange[a]
             assert lo - 1e-9 <= ctrl[a] <= hi + 1e-9, model.actuator(a).name
         for name in br.SERVO_JOINTS:
-            expected = thumb.get(name, 0.0) if key != "rest" else 0.0  # ready, table: CAD open thumb; fingers straight
+            expected = (
+                thumb.get(name, 0.0) if key != "rest" else 0.0
+            )  # ready, table: CAD open thumb; fingers straight
             q = qpos[model.joint(f"right_{name}").qposadr[0]]
             c = ctrl[model.actuator(f"right_{name}").id]
-            assert q == pytest.approx(expected, abs=1e-4) and c == pytest.approx(expected, abs=1e-4), (key, name)
+            assert q == pytest.approx(expected, abs=1e-4) and c == pytest.approx(expected, abs=1e-4), (
+                key,
+                name,
+            )
 
 
 def test_table_keyframe_palm_down_over_table(robot):
@@ -218,7 +237,9 @@ def test_table_keyframe_palm_down_over_table(robot):
     assert normal[2] < -0.99  # facing down
     cx, cy = br.TABLE_CENTRE
     assert abs(pc[0] - cx) < br.TABLE_HALF[0] and abs(pc[1] - cy) < br.TABLE_HALF[1]  # over the table top
-    tips = np.array([d.site_xpos[robot.site(f"right_{f}_tip").id] for f in ("index", "middle", "ring", "little")])
+    tips = np.array(
+        [d.site_xpos[robot.site(f"right_{f}_tip").id] for f in ("index", "middle", "ring", "little")]
+    )
     assert tips[:, 2].min() > br.TABLE_TOP + 0.03  # fingers open, above the table
     # the open thumb (the lowest part of the open hand) clears the table by >= 1 cm; so does the camera housing
     low_hand, low_house = cd.lowest_points(robot, d, [0, 0, 1])
@@ -242,7 +263,10 @@ def _hold(model, key, seconds=3.0):
     for _ in range(int(seconds / model.opt.timestep)):
         mujoco.mj_step(model, d)
     assert np.all(np.isfinite(d.qpos)) and np.all(np.isfinite(d.qvel))
-    drift = {n: math.degrees(abs(d.qpos[model.joint(n).qposadr[0]] - q0[model.joint(n).qposadr[0]])) for n in (*ARM, *HAND)}
+    drift = {
+        n: math.degrees(abs(d.qpos[model.joint(n).qposadr[0]] - q0[model.joint(n).qposadr[0]]))
+        for n in (*ARM, *HAND)
+    }
     return d, drift
 
 
@@ -254,7 +278,9 @@ def test_hold_keyframe(scene, key):
     one is printed."""
     d, drift = _hold(scene, key)
     worst = max(drift, key=drift.get)
-    print(f"hold {key}: worst drift {worst} {drift[worst]:.3f} deg; arm max {max(drift[n] for n in ARM):.4f} deg")
+    print(
+        f"hold {key}: worst drift {worst} {drift[worst]:.3f} deg; arm max {max(drift[n] for n in ARM):.4f} deg"
+    )
     assert drift[worst] < 2.0, f"{key}: {worst} drifts {drift[worst]:.3f} deg"
     for name in br.OBJECTS:  # the objects stay on the table
         assert d.qpos[scene.joint(f"{name}_free").qposadr[0] + 2] > br.TABLE_TOP
@@ -275,7 +301,9 @@ def _step_response(model, key, joint_index, step):
         mujoco.mj_step(m, d)
         qs.append(d.qpos[adr])
     qs = (np.array(qs) - q0) * math.copysign(1.0, step)
-    final = qs[-1]  # the unloaded hand's weight droops the arm joints slightly: measure against the settled value
+    final = qs[
+        -1
+    ]  # the unloaded hand's weight droops the arm joints slightly: measure against the settled value
     overshoot = (qs.max() - final) / abs(step)
     err = np.abs(qs - final)
     idx = np.nonzero(err > 0.02 * abs(step))[0]
@@ -298,7 +326,9 @@ def test_arm_step_response_not_underdamped(robot, key):
                 continue
             overshoot, settle, final = _step_response(model, key, i, step)
             assert overshoot < 0.05, f"{name} {step:+.2f} rad: overshoot {100 * overshoot:.1f} %"
-            assert abs(final) < 0.15, f"{name} {step:+.2f} rad: {100 * final:.1f} % short of the command (hand weight)"
+            assert abs(final) < 0.15, (
+                f"{name} {step:+.2f} rad: {100 * final:.1f} % short of the command (hand weight)"
+            )
             assert settle < 0.8, f"{name} settles in {settle:.2f} s"
             checked += 1
     assert checked >= 10
@@ -383,7 +413,9 @@ def test_wrist_camera_sees_the_fingertips(robot):
     # and not hidden by the forearm, wrist ring or palm
     open_cov = cd.tip_coverage(robot, cd.MID_FLEX, cd.MID_DEV)
     closed_cov = cd.tip_coverage(robot, cd.MID_FLEX, cd.MID_DEV, closed=1.2)
-    print(f"wrist camera, grasping range: fingertips visible {100 * open_cov:.0f} % open / {100 * closed_cov:.0f} % closed")
+    print(
+        f"wrist camera, grasping range: fingertips visible {100 * open_cov:.0f} % open / {100 * closed_cov:.0f} % closed"
+    )
     assert open_cov >= 0.8 and closed_cov >= 0.8
     # the grasp space in front of the palm (8 x 6 x 8 cm box) is in view and not hidden
     space = cd.grasp_space_visibility(robot)
@@ -485,7 +517,9 @@ def test_table_workspace_quick(robot):
             d.qpos[qadr] = q
             mujoco.mj_forward(robot, d)
             pos_err = np.linalg.norm(d.site_xpos[palm_site] - [x, y, z])
-            tilt = math.degrees(math.acos(np.clip(d.xmat[palm_body].reshape(3, 3)[2, 1], -1, 1)))  # palm normal vs down
+            tilt = math.degrees(
+                math.acos(np.clip(d.xmat[palm_body].reshape(3, 3)[2, 1], -1, 1))
+            )  # palm normal vs down
             if pos_err < 0.005 and tilt < 8.0 and d.ncon == 0:
                 best = yaw
                 break
@@ -505,7 +539,9 @@ def test_workspace_at_least_40_by_30(robot):
     _, x0, x1, y0, y1 = rects[0]
     cx, cy = br.TABLE_CENTRE
     hx, hy = br.TABLE_HALF
-    assert cx - hx + 0.03 < x0 and x1 < cx + hx - 0.03 and cy - hy < y0 and y1 < cy + hy  # on the table, with margin
+    assert (
+        cx - hx + 0.03 < x0 and x1 < cx + hx - 0.03 and cy - hy < y0 and y1 < cy + hy
+    )  # on the table, with margin
 
 
 # ------------------------------------------------------------------------------------------------ collision
@@ -518,7 +554,10 @@ def count_collision_pairs(model) -> int:
             b1, b2 = model.geom_bodyid[g1], model.geom_bodyid[g2]
             if b1 == b2 or model.body_weldid[b1] == model.body_weldid[b2]:
                 continue
-            if not (model.geom_contype[g1] & model.geom_conaffinity[g2] or model.geom_contype[g2] & model.geom_conaffinity[g1]):
+            if not (
+                model.geom_contype[g1] & model.geom_conaffinity[g2]
+                or model.geom_contype[g2] & model.geom_conaffinity[g1]
+            ):
                 continue
             p1, p2 = model.body_parentid[b1], model.body_parentid[b2]
             if (p1 == b2 and model.body_weldid[p1] != 0) or (p2 == b1 and model.body_weldid[p2] != 0):
@@ -534,24 +573,38 @@ def test_openarm_collision_is_boxes_on_their_own_layer(robot):
     """Review M4: OpenArm's hulls (a 2932-vertex pedestal hull...) are replaced by boxes that collide with the
     environment only; hand-vs-arm contacts are a handful of explicit pairs (forearm, wrist ring, palm only)."""
     arm_geoms = [g for g in range(robot.ngeom) if robot.geom_group[g] == 3 and "_box" in robot.geom(g).name]
-    assert len(arm_geoms) == 6  # pedestal + base_link, link1..link4
+    assert len(arm_geoms) == 8  # pedestal base, column, head + base_link, link1..link4
     for g in arm_geoms:
         assert robot.geom_type[g] == mujoco.mjtGeom.mjGEOM_BOX
         assert robot.geom_contype[g] == br.BIT_ARM and robot.geom_conaffinity[g] == 0
     for g in range(robot.ngeom):  # no other collision geom on the arm or the pedestal
         body = robot.body(robot.geom_bodyid[g]).name
-        if (body == "world" or body.startswith("openarm_")) and (robot.geom_contype[g] or robot.geom_conaffinity[g]):
+        if (body == "world" or body.startswith("openarm_")) and (
+            robot.geom_contype[g] or robot.geom_conaffinity[g]
+        ):
             assert g in arm_geoms or robot.geom(g).name in ("floor", "table"), robot.geom(g).name
     arm_set = {robot.geom(g).id for g in arm_geoms}
     for i in range(robot.npair):
-        g1, g2 = sorted((robot.pair_geom1[i], robot.pair_geom2[i]), key=lambda g: g in arm_set)  # (hand geom, box)
-        assert g2 in arm_set and robot.body(robot.geom_bodyid[g1]).name in ("right_forearm", "right_wrist_ring", "right_palm")
+        g1, g2 = sorted(
+            (robot.pair_geom1[i], robot.pair_geom2[i]), key=lambda g: g in arm_set
+        )  # (hand geom, box)
+        assert g2 in arm_set and robot.body(robot.geom_bodyid[g1]).name in (
+            "right_forearm",
+            "right_wrist_ring",
+            "right_palm",
+        )
     assert 0 < robot.npair <= 80
     # no arm box collides with a finger through the filters
     for g in arm_geoms:
         for h in range(robot.ngeom):
-            if robot.body(robot.geom_bodyid[h]).name.startswith("right_") and "finger" not in robot.geom(h).name:
-                filtered = robot.geom_contype[g] & robot.geom_conaffinity[h] or robot.geom_contype[h] & robot.geom_conaffinity[g]
+            if (
+                robot.body(robot.geom_bodyid[h]).name.startswith("right_")
+                and "finger" not in robot.geom(h).name
+            ):
+                filtered = (
+                    robot.geom_contype[g] & robot.geom_conaffinity[h]
+                    or robot.geom_contype[h] & robot.geom_conaffinity[g]
+                )
                 assert not filtered, (robot.geom(g).name, robot.geom(h).name)
 
 
@@ -585,11 +638,17 @@ def test_pad_object_contact_dim4_and_pad_friction(scene, cube_grasp):
         if scene.geom(g).name.startswith("right_middle_distal_c"):
             pad_friction = scene.geom_friction[g][0]
     assert pad_friction == pytest.approx(1.2)
-    hand_contacts = [c for c in cube_grasp["contacts"] if c[0] != "table" and c[1] != "table" and "mug" not in c[0] + c[1]]
+    hand_contacts = [
+        c for c in cube_grasp["contacts"] if c[0] != "table" and c[1] != "table" and "mug" not in c[0] + c[1]
+    ]
     assert hand_contacts, cube_grasp["contacts"]
     dims = {c[2] for c in hand_contacts}
     assert dims == {4}, dims
-    pads = [c for c in hand_contacts if scene.geom_friction[scene.geom(c[1] if c[0] == "cube" else c[0]).id][0] >= 1.2 - 1e-9]
+    pads = [
+        c
+        for c in hand_contacts
+        if scene.geom_friction[scene.geom(c[1] if c[0] == "cube" else c[0]).id][0] >= 1.2 - 1e-9
+    ]
     assert pads, hand_contacts
     for _, _, _, fr in pads:
         assert fr[0] == pytest.approx(pad_friction) and fr[1] == pytest.approx(pad_friction)
@@ -651,7 +710,12 @@ def test_warp_put_model_cpu(scene):
     mjw = pytest.importorskip("mujoco_warp")
     with wp.ScopedDevice("cpu"):
         mw = mjw.put_model(scene)
-        print("warp broadphase pairs: all", mw.nxn_geom_pair.shape[0], "filtered", mw.nxn_geom_pair_filtered.shape[0])
+        print(
+            "warp broadphase pairs: all",
+            mw.nxn_geom_pair.shape[0],
+            "filtered",
+            mw.nxn_geom_pair_filtered.shape[0],
+        )
         assert mw.nxn_geom_pair_filtered.shape[0] < 1000
 
 
@@ -687,6 +751,8 @@ def test_warp_matches_mujoco_in_a_contact_rich_grasp(scene):
     diff = np.abs(q[adr] - dc.qpos[adr])
     ob = scene.joint("cube_free").qposadr[0]
     cube_mm = np.linalg.norm(q[ob : ob + 3] - dc.qpos[ob : ob + 3]) * 1000
-    print(f"Warp vs C after {n_steps} steps: max joint diff {diff.max():.4f} rad, cube {cube_mm:.2f} mm, C max contacts {max_ncon}")
+    print(
+        f"Warp vs C after {n_steps} steps: max joint diff {diff.max():.4f} rad, cube {cube_mm:.2f} mm, C max contacts {max_ncon}"
+    )
     assert max_ncon >= 10
     assert diff.max() < 0.05 and cube_mm < 5.0

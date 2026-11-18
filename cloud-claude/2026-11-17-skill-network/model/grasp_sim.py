@@ -22,7 +22,12 @@ D2R = math.pi / 180
 # object centre in the hand frame (m) for a palm-down grasp that fits the hand; cylinder: not used
 FIT = {"ball": (0.005, -0.0475, 0.0975), "cube": (0.0, -0.0425, 0.075), "cylinder": (0.0, -0.0675, 0.075)}
 PALM_CENTRE_IN_HAND = np.array([-8.5, -16.0, 43.7]) / 1000
-PARK = {"cube": [0.65, 0.3, 0.43], "cylinder": [0.65, 0.45, 0.455], "ball": [0.65, 0.15, 0.435], "mug_box": [0.65, 0.6, 0.45]}
+PARK = {
+    "cube": [0.65, 0.3, 0.43],
+    "cylinder": [0.65, 0.45, 0.455],
+    "ball": [0.65, 0.15, 0.435],
+    "mug_box": [0.65, 0.6, 0.45],
+}
 
 
 def power_grasp() -> dict[str, float]:
@@ -30,7 +35,9 @@ def power_grasp() -> dict[str, float]:
     return ref["poses"]["power_grasp"]["q"]
 
 
-def setup(model: mujoco.MjModel, obj: str = "cube", xy=(0.32, -0.25), s0: float = 0.6, on_mug: bool | None = None):
+def setup(
+    model: mujoco.MjModel, obj: str = "cube", xy=(0.32, -0.25), s0: float = 0.6, on_mug: bool | None = None
+):
     """(data, q_arm, q_lift): `table` keyframe, `obj` at xy, the other objects parked, arm placed so the object sits
     in the hand, fingers at s0 x power grasp. The 5 cm cube is too low for a palm-down power grasp (the thumb would
     pierce the table), so by default it sits on top of the mug-sized box (`on_mug`)."""

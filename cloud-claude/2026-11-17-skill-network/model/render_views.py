@@ -1,6 +1,6 @@
 """Render the robot's cameras and an overview into model/renders/ (needs an OpenGL backend: MUJOCO_GL=egl|osmesa).
 
-    uv run python model/render_views.py
+uv run python model/render_views.py
 """
 
 from __future__ import annotations
@@ -40,7 +40,9 @@ def set_pose(model, key="table", **joints):
     data = mujoco.MjData(model)
     mujoco.mj_resetDataKeyframe(model, data, model.key(key).id)
     for name, deg in joints.items():
-        data.qpos[model.joint(f"right_{name}").qposadr[0]] = math.radians(deg) if not name.endswith("_rad") else deg
+        data.qpos[model.joint(f"right_{name}").qposadr[0]] = (
+            math.radians(deg) if not name.endswith("_rad") else deg
+        )
     mujoco.mj_forward(model, data)
     return data
 

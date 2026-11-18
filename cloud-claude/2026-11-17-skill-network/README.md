@@ -37,6 +37,45 @@ Owner's choices (2026-11-17):
 
 ---
 
+## Stage 0 status: the model (done 2026-11-18)
+
+V2.1 hand + 2-DOF wrist + forearm on OpenArm's right arm (J1–J4) with a new forearm twist, wrist and head cameras,
+a table scene. Built by three agents, attacked by an independent reviewer, fixed, verified.
+Interface: [`model/CONTRACT.md`](model/CONTRACT.md). Servo numbers: [`model/ACTUATORS.md`](model/ACTUATORS.md).
+
+```
+uv sync                                          # in this folder (standalone project, Python 3.12)
+uv run --group warp pytest -m "not cad"          # 60 tests, ~2 min (MUJOCO_GL=osmesa for the render test)
+uv run python model/build_hand.py --check        # also build_robot.py --check
+uv run --group cad python model/extract_v21.py   # only after the V2.1 CAD changes (~2.5 min)
+```
+
+| What | Measured |
+|---|---|
+| Fidelity to the CAD | 9 CAD poses + 150 random poses: every part within **0.022 mm / 0.065°**; all 28 joints are pure hinges (axes taken from the CAD's FK) |
+| DIP/bar linkage | fit ≤ 0.065°; under 15 N at the fingertip ≤ 0.22° |
+| Mass | 1112.9 g = CAD |
+| Servos | HLS3606M, 80 % cap (0.72–0.76 N·m at finger joints, index pinch ≈ 12–15 N), 30° step in ~0.15 s, no overshoot; command may go past the joint range (tendon stretch) |
+| Sensors | joint angle + servo force per actuator, in actuator order |
+| Grasp | scripted cube grasp lifts 84 mm, 1 mm slip, 0.7 mm penetration; pads give condim 4 contacts |
+| Arm | no overshoot (critically damped), gravity compensation on the arm only |
+| Workspace (palm down) | 30 × 45 cm fully reachable at 10 cm palm height |
+| Wrist camera (RGB, 110°) | little-finger side of the forearm, collision housing, never the lowest point; grasp space 100 % visible, fingertips 92 % |
+| Speed | ~14,000 steps/s on one CPU thread (28× real time) |
+| GPU path | MuJoCo Warp = MuJoCo C within 0.13 mm over 300 steps of a contact-rich grasp, 64 worlds identical; hand self-collision pairs 767 → 236 |
+| Portable | self-contained (OpenArm meshes copied unchanged with its Apache-2.0 LICENSE + NOTICE), loads from any folder |
+
+**Design findings for the V2.1 hardware:**
+- The `_render` STLs of the CAD study are saved at `wrist_flex_+40`, not at q = 0 (the model undoes this).
+- The thumb metacarpal enters the index knuckle module by up to 5.1 mm when `cmc_rot` < −5° and `cmc_flex` > 35°
+  (inside the joint ranges). Needs a CAD fix or a range rule (open question to the owner).
+- Palm vs forearm shell 0.8 mm at the wrist-range corners (dev −30°, flex ±50°).
+- In the fist pose the little fingertip skin is 1.8 mm inside its own knuckle module.
+- At full HLS3606M stall (118 N per strand) the SCS fuse cups, MR63 rollers and the wrist eye plate are marginal.
+
+**Open for Stage 1:** joint-speed limiting and the joint-sensor outer loop live in the env; real HLS3606M travel
+(assumed 360°) and servo stiffness need a bench test; left arm not built.
+
 ## 1. The layers
 
 | Layer | Human version | Tendra version | Rate |

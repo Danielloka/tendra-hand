@@ -65,20 +65,20 @@
     <material name="table_mat" rgba="0.78 0.66 0.52 1" />
     <material name="leg_mat" rgba="0.25 0.25 0.27 1" />
     <mesh name="body_link0" content_type="model/stl" file="openarm/body_link0.stl" scale="0.001 0.001 0.001" />
-    <mesh name="base_link_right_00" content_type="model/stl" file="openarm/base_link_right_00.stl" />
-    <mesh name="base_link_right_01" content_type="model/stl" file="openarm/base_link_right_01.stl" />
-    <mesh name="link1_right_00" content_type="model/stl" file="openarm/link1_right_00.stl" />
-    <mesh name="link1_right_01" content_type="model/stl" file="openarm/link1_right_01.stl" />
-    <mesh name="link1_right_02" content_type="model/stl" file="openarm/link1_right_02.stl" />
-    <mesh name="link2_right_00" content_type="model/stl" file="openarm/link2_right_00.stl" />
-    <mesh name="link2_right_01" content_type="model/stl" file="openarm/link2_right_01.stl" />
-    <mesh name="link2_right_02" content_type="model/stl" file="openarm/link2_right_02.stl" />
-    <mesh name="link3_right_00" content_type="model/stl" file="openarm/link3_right_00.stl" />
-    <mesh name="link3_right_01" content_type="model/stl" file="openarm/link3_right_01.stl" />
-    <mesh name="link3_right_02" content_type="model/stl" file="openarm/link3_right_02.stl" />
-    <mesh name="link4_right_00" content_type="model/stl" file="openarm/link4_right_00.stl" />
-    <mesh name="link4_right_01" content_type="model/stl" file="openarm/link4_right_01.stl" />
-    <mesh name="link4_right_02" content_type="model/stl" file="openarm/link4_right_02.stl" />
+    <mesh name="base_link_right_00" content_type="model/obj" file="openarm/base_link_right_00.obj" />
+    <mesh name="base_link_right_01" content_type="model/obj" file="openarm/base_link_right_01.obj" />
+    <mesh name="link1_right_00" content_type="model/obj" file="openarm/link1_right_00.obj" />
+    <mesh name="link1_right_01" content_type="model/obj" file="openarm/link1_right_01.obj" />
+    <mesh name="link1_right_02" content_type="model/obj" file="openarm/link1_right_02.obj" />
+    <mesh name="link2_right_00" content_type="model/obj" file="openarm/link2_right_00.obj" />
+    <mesh name="link2_right_01" content_type="model/obj" file="openarm/link2_right_01.obj" />
+    <mesh name="link2_right_02" content_type="model/obj" file="openarm/link2_right_02.obj" />
+    <mesh name="link3_right_00" content_type="model/obj" file="openarm/link3_right_00.obj" />
+    <mesh name="link3_right_01" content_type="model/obj" file="openarm/link3_right_01.obj" />
+    <mesh name="link3_right_02" content_type="model/obj" file="openarm/link3_right_02.obj" />
+    <mesh name="link4_right_00" content_type="model/obj" file="openarm/link4_right_00.obj" />
+    <mesh name="link4_right_01" content_type="model/obj" file="openarm/link4_right_01.obj" />
+    <mesh name="link4_right_02" content_type="model/obj" file="openarm/link4_right_02.obj" />
     <mesh name="right_v21_forearm_vis" file="v21/meshes/forearm.stl" inertia="shell" />
     <mesh name="right_v21_forearm_c0" file="v21/meshes/forearm_c0.stl" />
     <mesh name="right_v21_forearm_c1" file="v21/meshes/forearm_c1.stl" />
@@ -156,7 +156,9 @@
   </asset>
   <worldbody>
     <geom name="openarm_body_link0_visual" class="pedestal_visual" pos="0 0 0" quat="1 0 0 0" type="mesh" material="openarm_body_link0_material" mesh="body_link0" />
-    <geom name="pedestal_box" size="0.125 0.095 0.3865" pos="-0.03 0 0.3865" type="box" contype="256" conaffinity="0" group="3" friction="1 0.01 0.01" rgba="0.9 0.3 0.3 0.3" />
+    <geom name="pedestal_base_box" size="0.125 0.095 0.0325" pos="-0.03 0 0.0325" type="box" contype="256" conaffinity="0" group="3" friction="1 0.01 0.01" rgba="0.9 0.3 0.3 0.3" />
+    <geom name="pedestal_column_box" size="0.03 0.03 0.26" pos="0 0 0.325" type="box" contype="256" conaffinity="0" group="3" friction="1 0.01 0.01" rgba="0.9 0.3 0.3 0.3" />
+    <geom name="pedestal_head_box" size="0.075 0.08 0.094" pos="-0.01 0 0.679" type="box" contype="256" conaffinity="0" group="3" friction="1 0.01 0.01" rgba="0.9 0.3 0.3 0.3" />
     <geom name="floor" size="3 3 0.1" type="plane" conaffinity="257" friction="0.8 0.01" material="floor_mat" />
     <geom name="table" size="0.33 0.65 0.02" pos="0.45 0 0.38" type="box" conaffinity="257" friction="0.8 0.01" material="table_mat" />
     <geom name="table_leg0" size="0.025 0.025 0.18" pos="0.74 0.61 0.18" type="box" contype="0" conaffinity="0" material="leg_mat" />
@@ -184,22 +186,22 @@
             <inertial pos="-0.0247185 7.60578e-08 -0.0312643" quat="0.999342 6.47495e-06 -0.0362804 -3.02331e-06" mass="0.277509" diaginertia="0.000153968 0.000113062 8.19211e-05" />
             <joint name="right_shoulder_roll" class="motor_DM8009" range="-0.17453 3.3161" actuatorfrcrange="-40 40" axis="-1 0 0" />
             <geom name="link2_right_00" class="visual" type="mesh" material="matte_black" mesh="link2_right_00" />
-            <geom name="link2_right_01" class="visual" quat="1 0 0 0" type="mesh" material="metal_silver" mesh="link2_right_01" />
+            <geom name="link2_right_01" class="visual" type="mesh" material="metal_silver" mesh="link2_right_01" />
             <geom name="link2_right_02" class="visual" pos="0 0 0" quat="1 0 0 0" type="mesh" material="pale_silver" mesh="link2_right_02" />
             <geom name="right_link2_box" size="0.0415 0.049 0.0575" pos="-0.0065 0 -0.0085" type="box" contype="256" conaffinity="0" group="3" friction="1 0.01 0.01" rgba="0.9 0.3 0.3 0.3" />
             <body name="openarm_right_link3" pos="0 0 -0.06625" gravcomp="1">
               <inertial pos="-0.00300862 -0.000514813 -0.109368" quat="0.998906 -0.00891348 0.0458105 0.00280505" mass="1.07386" diaginertia="0.00129561 0.00114038 0.000553361" />
               <joint name="right_shoulder_yaw" class="motor_DM4340" range="-1.5708 1.5708" actuatorfrcrange="-27 27" axis="0 0 -1" />
-              <geom name="link3_right_00" class="visual" quat="1 0 0 0" type="mesh" material="matte_black" mesh="link3_right_00" />
-              <geom name="link3_right_01" class="visual" type="mesh" material="metal_silver" mesh="link3_right_01" />
+              <geom name="link3_right_00" class="visual" pos="0 0 0" quat="1 0 0 0" type="mesh" material="matte_black" mesh="link3_right_00" />
+              <geom name="link3_right_01" class="visual" quat="1 0 0 0" type="mesh" material="metal_silver" mesh="link3_right_01" />
               <geom name="link3_right_02" class="visual" pos="0 0 0" quat="1 0 0 0" type="mesh" material="pale_silver" mesh="link3_right_02" />
               <geom name="right_link3_box" size="0.0385 0.033 0.091" pos="-0.0035 0 -0.091" type="box" contype="256" conaffinity="0" group="3" friction="1 0.01 0.01" rgba="0.9 0.3 0.3 0.3" />
               <body name="openarm_right_link4" pos="0 0 -0.15375" gravcomp="1">
                 <inertial pos="-0.00310326 -0.00136539 -0.0574601" quat="0.996952 0.00947325 0.00348083 0.0773554" mass="0.634853" diaginertia="0.000469894 0.000433114 0.000245134" />
                 <joint name="right_elbow" class="motor_DM4340" range="0 2.4435" actuatorfrcrange="-27 27" axis="0 -1 0" />
                 <geom name="link4_right_00" class="visual" pos="0 0 0" quat="1 0 0 0" type="mesh" material="matte_black" mesh="link4_right_00" />
-                <geom name="link4_right_01" class="visual" pos="0 0 0" quat="1 0 0 0" type="mesh" material="pale_silver" mesh="link4_right_01" />
-                <geom name="link4_right_02" class="visual" quat="1 0 0 0" type="mesh" material="metal_silver" mesh="link4_right_02" />
+                <geom name="link4_right_01" class="visual" quat="1 0 0 0" type="mesh" material="pale_silver" mesh="link4_right_01" />
+                <geom name="link4_right_02" class="visual" type="mesh" material="metal_silver" mesh="link4_right_02" />
                 <geom name="right_link4_box" size="0.037 0.039 0.063" pos="-0.005 0 -0.034" type="box" contype="256" conaffinity="0" group="3" friction="1 0.01 0.01" rgba="0.9 0.3 0.3 0.3" />
                 <body name="right_forearm_twist_link" pos="0 0 -0.0955" gravcomp="1">
                   <inertial pos="0 0 -0.01" mass="0.15" diaginertia="0.0002 0.0002 0.0001" />
@@ -416,20 +418,34 @@
     </body>
   </worldbody>
   <contact>
-    <pair geom1="pedestal_box" geom2="right_forearm_c0" />
-    <pair geom1="pedestal_box" geom2="right_forearm_c1" />
-    <pair geom1="pedestal_box" geom2="right_wrist_ring_c0" />
-    <pair geom1="pedestal_box" geom2="right_wrist_ring_c1" />
-    <pair geom1="pedestal_box" geom2="right_wrist_ring_c2" />
-    <pair geom1="pedestal_box" geom2="right_wrist_ring_c3" />
-    <pair geom1="pedestal_box" geom2="right_palm_c0" />
-    <pair geom1="pedestal_box" geom2="right_palm_c1" />
-    <pair geom1="pedestal_box" geom2="right_palm_c2" />
-    <pair geom1="pedestal_box" geom2="right_palm_c3" />
-    <pair geom1="pedestal_box" geom2="right_palm_c4" />
-    <pair geom1="pedestal_box" geom2="right_palm_c5" />
-    <pair geom1="pedestal_box" geom2="right_palm_c6" />
-    <pair geom1="pedestal_box" geom2="right_palm_c7" />
+    <pair geom1="pedestal_column_box" geom2="right_forearm_c0" />
+    <pair geom1="pedestal_head_box" geom2="right_forearm_c0" />
+    <pair geom1="pedestal_column_box" geom2="right_forearm_c1" />
+    <pair geom1="pedestal_head_box" geom2="right_forearm_c1" />
+    <pair geom1="pedestal_column_box" geom2="right_wrist_ring_c0" />
+    <pair geom1="pedestal_head_box" geom2="right_wrist_ring_c0" />
+    <pair geom1="pedestal_column_box" geom2="right_wrist_ring_c1" />
+    <pair geom1="pedestal_head_box" geom2="right_wrist_ring_c1" />
+    <pair geom1="pedestal_column_box" geom2="right_wrist_ring_c2" />
+    <pair geom1="pedestal_head_box" geom2="right_wrist_ring_c2" />
+    <pair geom1="pedestal_column_box" geom2="right_wrist_ring_c3" />
+    <pair geom1="pedestal_head_box" geom2="right_wrist_ring_c3" />
+    <pair geom1="pedestal_column_box" geom2="right_palm_c0" />
+    <pair geom1="pedestal_head_box" geom2="right_palm_c0" />
+    <pair geom1="pedestal_column_box" geom2="right_palm_c1" />
+    <pair geom1="pedestal_head_box" geom2="right_palm_c1" />
+    <pair geom1="pedestal_column_box" geom2="right_palm_c2" />
+    <pair geom1="pedestal_head_box" geom2="right_palm_c2" />
+    <pair geom1="pedestal_column_box" geom2="right_palm_c3" />
+    <pair geom1="pedestal_head_box" geom2="right_palm_c3" />
+    <pair geom1="pedestal_column_box" geom2="right_palm_c4" />
+    <pair geom1="pedestal_head_box" geom2="right_palm_c4" />
+    <pair geom1="pedestal_column_box" geom2="right_palm_c5" />
+    <pair geom1="pedestal_head_box" geom2="right_palm_c5" />
+    <pair geom1="pedestal_column_box" geom2="right_palm_c6" />
+    <pair geom1="pedestal_head_box" geom2="right_palm_c6" />
+    <pair geom1="pedestal_column_box" geom2="right_palm_c7" />
+    <pair geom1="pedestal_head_box" geom2="right_palm_c7" />
     <pair geom1="right_link2_box" geom2="right_forearm_c0" />
     <pair geom1="right_link2_box" geom2="right_forearm_c1" />
     <pair geom1="right_link2_box" geom2="right_wrist_ring_c0" />
